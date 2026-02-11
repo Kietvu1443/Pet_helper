@@ -1,12 +1,12 @@
 -- Pet Helper Database Schema
 -- Run this file to create the required tables
 
--- Create database if not exists
+-- Tạo database nếu chưa có
 CREATE DATABASE IF NOT EXISTS pet_helper CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 USE pet_helper;
 
--- Users table (unified for all roles)
+-- Bảng của người dùng để phân cấp phân quyền
 CREATE TABLE IF NOT EXISTS users (
     id INT PRIMARY KEY AUTO_INCREMENT,
     display_name VARCHAR(100) NOT NULL,
@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS users (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- Pets table (HPA structure)
+-- Bảng của các bé thú cưng
 CREATE TABLE IF NOT EXISTS pets (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS pets (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- Pet Likes table (Tinder-style interactions)
+-- Bảng khi thích các bé thú cưng
 CREATE TABLE IF NOT EXISTS pet_likes (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS pet_likes (
     UNIQUE KEY unique_interaction (user_id, pet_id)
 );
 
--- Insert default admin account (password: admin123)
+-- Tài khoản admin mặc định (mật khẩu: admin123)
 INSERT INTO users (display_name, name, email, password, role) VALUES
 ('Admin', 'Administrator', 'admin@pethelper.vn', '$2b$10$nFNIfeHOuxNCv2pLT9pueepurMfH1exUieBvdu0Z6kXy70ph6vp', 0)
 ON DUPLICATE KEY UPDATE id=id;

@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Pet Helper - Nền tảng hỗ trợ và bảo vệ vật nuôi hàng đầu Việt Nam">
+  <title>
+    <%= title %>
+  </title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/stylesheets/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body>
+  <%- include('partials/header') %>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Hỗ Trợ và Bảo Vệ Thú Cưng</h1>
+      <p>Nền tảng kết nối cộng đồng yêu thương động vật. Nhận nuôi thú cưng, tìm kiếm thú cưng thất lạc, cảnh báo tin
+        tức và nhiều hơn nữa.</p>
+      <div class="hero-buttons">
+        <a href="/adopt" class="btn btn-primary">🏠 Nhận nuôi ngay</a>
+        <button class="btn btn-outline" id="Button_test">🔍 Báo cáo thất lạc</button>
+      </div>
+    </div>
+  </section>
+
+  <main class="container">
+    <!-- About Section - Card Box Style -->
+    <section class="card-box">
+      <div style="text-align: center; max-width: 800px; margin: 0 auto 30px;">
+        <div class="section-header" style="margin-bottom: 20px;">
+          <h2>Về Pet Helper</h2>
+        </div>
+        <p style="font-size: 1.1rem; color: #333; line-height: 1.6; font-weight: 500;">
+          Hành trình kết nối những tâm hồn yêu động vật và xây dựng một cộng đồng bền vững.
+        </p>
+      </div>
+
+      <div style="display: flex; gap: 40px; align-items: center; margin-bottom: 30px;">
+        <div style="flex: 1.1;">
+          <p style="color: #222; line-height: 1.8; margin-bottom: 18px; font-size: 1.1rem; font-weight: 500;">
+            Được thành lập tại <strong>BDU UNIS Campus</strong>, Pet Helper là hệ sinh thái toàn diện dành cho những
+            người bạn bốn chân.
+          </p>
+          <p style="color: #444; line-height: 1.8; margin-bottom: 18px; font-size: 1rem;">
+            Chúng tôi tập trung giảm thiểu số lượng thú cưng bị bỏ rơi và hỗ trợ cộng đồng tìm kiếm thú lạc nhanh chóng,
+            hiệu quả nhất.
+          </p>
+          <p style="color: #444; line-height: 1.8; font-size: 1rem;">
+            Mọi hoạt động thuộc dự án <strong>Green Project</strong> đều hướng tới môi trường sống nhân văn và tràn đầy
+            tình thương.
+          </p>
+        </div>
+
+        <div style="flex: 0.9; display: flex; flex-direction: column; gap: 12px;">
+          <div style="display: flex; gap: 12px;">
+            <div
+              style="flex: 1; aspect-ratio: 1/1; overflow: hidden; border-radius: 10px; box-shadow: var(--shadow);">
+              <img src="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=400&q=80"
+                style="width: 100%; height: 100%; object-fit: cover;" alt="Chó 1">
+            </div>
+            <div
+              style="flex: 1; aspect-ratio: 1/1; overflow: hidden; border-radius: 10px; box-shadow: var(--shadow);">
+              <img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=400&q=80"
+                style="width: 100%; height: 100%; object-fit: cover;" alt="Chó 2">
+            </div>
+          </div>
+          <div style="width: 100%; aspect-ratio: 1.5/1; overflow: hidden; border-radius: 10px; box-shadow: var(--shadow);">
+            <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=600&q=80"
+              style="width: 100%; height: 100%; object-fit: cover;" alt="Mèo">
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature Icons -->
+      <div style="display: flex; gap: 15px; border-top: 1px solid #eee; padding-top: 20px;">
+        <div style="flex: 1; text-align: center; padding: 10px; background: #fdfdfd; border-radius: 10px; border: 1px solid #f0f0f0;">
+          <div style="font-size: 1.3rem; margin-bottom: 3px;">🏠</div>
+          <h4 style="color: var(--primary-color); font-size: 0.85rem;">Nhận Nuôi</h4>
+        </div>
+        <div style="flex: 1; text-align: center; padding: 10px; background: #fdfdfd; border-radius: 10px; border: 1px solid #f0f0f0;">
+          <div style="font-size: 1.3rem; margin-bottom: 3px;">🔍</div>
+          <h4 style="color: var(--primary-color); font-size: 0.85rem;">Tìm Kiếm</h4>
+        </div>
+        <div style="flex: 1; text-align: center; padding: 10px; background: #fdfdfd; border-radius: 10px; border: 1px solid #f0f0f0;">
+          <div style="font-size: 1.3rem; margin-bottom: 3px;">🩺</div>
+          <h4 style="color: var(--primary-color); font-size: 0.85rem;">Y Tế</h4>
+        </div>
+        <div style="flex: 1; text-align: center; padding: 10px; background: #fdfdfd; border-radius: 10px; border: 1px solid #f0f0f0;">
+          <div style="font-size: 1.3rem; margin-bottom: 3px;">🛒</div>
+          <h4 style="color: var(--primary-color); font-size: 0.85rem;">Cửa Hàng</h4>
+        </div>
+      </div>
+    </section>
+
+    <!-- Adopt Slider Section -->
+    <section>
+      <div class="adopt-layout">
+        <div class="adopt-slider-container">
+          <div class="slide-item active">
+            <img src="https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=800&q=80"
+              class="ken-burns-img" alt="Slide 1">
+            <div class="slider-caption-box">
+              <h3>🐶 Bé Golden - Đang tìm mái ấm</h3>
+              <p>3 tuổi, rất ngoan, thích chạy nhảy ngoài công viên.</p>
+            </div>
+          </div>
+          <div class="slide-item">
+            <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=800&q=80"
+              class="ken-burns-img" alt="Slide 2">
+            <div class="slider-caption-box">
+              <h3>🐱 Mèo Mướp - Cần người yêu thương</h3>
+              <p>Được cứu hộ từ bãi đất trống, hiện đã khỏe mạnh.</p>
+            </div>
+          </div>
+          <div class="slide-item">
+            <img src="https://images.unsplash.com/photo-1576201836106-db1758fd1c97?auto=format&fit=crop&w=800&q=80"
+              class="ken-burns-img" style="animation-direction: alternate-reverse;" alt="Slide 3">
+            <div class="slider-caption-box">
+              <h3>🩺 Dịch vụ chăm sóc thú cưng tận tâm</h3>
+              <p>Đặt lịch khám, tiêm phòng và spa cho boss.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="adopt-links">
+          <a href="/reports" class="link-btn"><span>🔍 Bạn lạc thú cưng?</span><span>→</span></a>
+          <a href="/reports/found" class="link-btn"><span>🏠 Bạn nhặt được thú cưng?</span><span>→</span></a>
+          <a href="/about" class="link-btn"><span>🩺 Cách chăm sóc thú cưng?</span><span>→</span></a>
+          <a href="#contact-section" class="link-btn"><span>📞 Liên hệ hỗ trợ</span><span>→</span></a>
+        </div>
+      </div>
+      <a href="/adopt" class="adopt-label-text">Xem thêm thú có thể nhận nuôi</a>
+      <div class="adopt-filter-bar">
+        <a href="/adopt?type=dog"><span>🐶 Chó (12)</span></a>
+        <a href="/adopt?type=cat"><span>🐱 Mèo (8)</span></a>
+        <a href="/adopt" style="color: #666">Xem tất cả →</a>
+      </div>
+    </section>
+
+    <!-- News Section -->
+    <section class="section" style="background: white; border-radius: var(--radius); margin-top: 40px;">
+      <div class="section-header">
+        <h2>Tin Tức & Sự Kiện</h2>
+        <p>Cập nhật những thông tin mới nhất về thế giới thú cưng</p>
+      </div>
+
+      <div class="news-grid">
+        <article class="news-card">
+          <img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=400" alt="Sự kiện">
+          <div class="card-body">
+            <span class="news-date">📅 03/02/2026</span>
+            <h3 class="card-title">Ngày hội nhận nuôi thú cưng 2026</h3>
+            <p class="card-text">Sự kiện thường niên lớn nhất dành cho cộng đồng yêu thú cưng...</p>
+          </div>
+        </article>
+
+        <article class="news-card">
+          <img src="https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=400" alt="Tin tức">
+          <div class="card-body">
+            <span class="news-date">📅 01/02/2026</span>
+            <h3 class="card-title">Hướng dẫn chăm sóc thú cưng mùa đông</h3>
+            <p class="card-text">Những lưu ý quan trọng để bảo vệ thú cưng trong thời tiết lạnh...</p>
+          </div>
+        </article>
+
+        <article class="news-card">
+          <img src="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=400" alt="Tin tức">
+          <div class="card-body">
+            <span class="news-date">📅 28/01/2026</span>
+            <h3 class="card-title">Ra mắt thẻ GPS theo dõi vật nuôi</h3>
+            <p class="card-text">Công nghệ mới giúp bạn luôn biết vị trí thú cưng của mình...</p>
+          </div>
+        </article>
+      </div>
+
+      <div style="text-align: center; margin-top: 40px;">
+        <a href="/news" class="btn btn-green">Xem thêm tin tức →</a>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section" id="contact-section" style="display: flex; gap: 40px; margin-top: 40px;">
+      <div style="flex: 1;">
+        <h2 style="font-size: 1.8rem; margin-bottom: 20px;">LIÊN HỆ HỖ TRỢ</h2>
+        <div style="display: flex; gap: 15px; margin: 25px 0;">
+          <span
+            style="display: inline-block; width: 45px; height: 45px; background: rgba(255,255,255,0.2); border-radius: 50%; text-align: center; line-height: 45px; cursor: pointer; transition: 0.3s;">FB</span>
+          <span
+            style="display: inline-block; width: 45px; height: 45px; background: rgba(255,255,255,0.2); border-radius: 50%; text-align: center; line-height: 45px; cursor: pointer; transition: 0.3s;">YT</span>
+          <span
+            style="display: inline-block; width: 45px; height: 45px; background: rgba(255,255,255,0.2); border-radius: 50%; text-align: center; line-height: 45px; cursor: pointer; transition: 0.3s;">IG</span>
+        </div>
+        <div style="line-height: 1.8;">
+          📍 Trụ sở: BDU UNIS Campus<br>
+          📧 Email: support@pethelper.vn<br>
+          📞 Hotline: 1900-XXXX
+        </div>
+      </div>
+      <div class="form-area" style="flex: 1;">
+        <h3 style="margin-bottom: 20px; color: var(--primary-color);">Gửi tin nhắn</h3>
+        <input class="form-input" placeholder="Họ tên của bạn">
+        <input class="form-input" placeholder="Email / SĐT">
+        <textarea class="form-input" rows="3" placeholder="Lời nhắn..."></textarea>
+        <button class="submit-btn" onclick="Swal.fire('Đã gửi!', 'Chúng tôi sẽ liên hệ lại sớm nhất.', 'success')">Gửi thông tin</button>
+      </div>
+    </section>
+
+    <!-- Footer Bottom -->
+    <div style="margin-top: 40px; text-align: center; color: #52b788; padding-bottom: 20px;">
+      © 2026 Pet Helper Green Project.
+    </div>
+  </main>
+
+  <%- include('partials/footer') %>
+
+  <!-- JavaScript -->
+  <script>
+    // Slider Logic
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide-item');
+    function nextSlide() {
+      slides[currentSlide].classList.remove('active');
+      currentSlide = (currentSlide + 1) % slides.length;
+      slides[currentSlide].classList.add('active');
+    }
+    if (slides.length > 0) {
+      setInterval(nextSlide, 5000);
+    }
+
+    // Section Animation on Scroll
+    document.addEventListener("DOMContentLoaded", function () {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) entry.target.classList.add("visible");
+        });
+      }, { threshold: 0.15 });
+      document.querySelectorAll("section").forEach(s => observer.observe(s));
+    });
+
+    // Report Lost Pet Button
+    document.getElementById("Button_test").addEventListener("click", function () {
+      Swal.fire({
+        title: "Tính năng đang được phát triển!",
+        text: "Chức năng báo cáo thất lạc sẽ sớm được ra mắt.",
+        imageUrl: "/images/Lovely.jpg",
+        imageWidth: 400,
+        imageHeight: 200,
+        imageAlt: "Custom image"
+      });
+    });
+  </script>
+</body>
+
+</html>

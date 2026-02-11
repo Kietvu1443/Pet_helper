@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Nhận nuôi thú cưng - Pet Helper">
+    <title>
+        <%= title %>
+    </title>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        .adopt-hero {
+            background: linear-gradient(135deg, #2d6a4f 0%, #40916c 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .adopt-hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .adopt-hero p {
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+
+        .adopt-filters {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            min-width: 200px;
+        }
+
+        .pets-section {
+            background: #f1f8f5;
+            padding: 60px 20px;
+            min-height: 400px;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .pet-card {
+            background: #fff;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            border: 1px solid #eee;
+            transition: 0.3s;
+        }
+
+        .pet-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(45, 106, 79, 0.2);
+            border-color: #2d6a4f;
+        }
+
+        .card-image {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .card-tag {
+            background: #d8f3dc;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: #2d6a4f;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #1b4332;
+        }
+
+        .card-text {
+            color: #64748B;
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .pet-info {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+            font-size: 0.85rem;
+            color: #64748B;
+        }
+
+        .card-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: #64748B;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            color: #1b4332;
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            color: #64748B;
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('partials/header') %>
+
+        <!-- Hero Section -->
+        <section class="adopt-hero">
+            <div class="container">
+                <h1>🐾 Nhận Nuôi Thú Cưng</h1>
+                <p>Tìm người bạn đồng hành mới từ danh sách thú cưng đang chờ được nhận nuôi</p>
+
+                <!-- PetSnap Banner -->
+                <div
+                    style="background: linear-gradient(135deg, #84cc16 0%, #4d7c0f 100%); border-radius: 15px; padding: 20px; margin-bottom: 30px; margin-top: 20px; color: white; display: flex; align-items: center; justify-content: space-between; position: relative; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
+                    <div style="z-index: 2; text-align: left;">
+                        <h2 style="margin: 0 0 5px 0; font-size: 1.5rem; color: #fff;"><i class="fa-solid fa-fire"
+                                style="color: #fcd34d;"></i> Trải nghiệm PetSnap!</h2>
+                        <p style="margin: 0 0 10px 0; opacity: 0.9; font-size: 0.9rem;">Tìm thú cưng theo phong cách
+                            vuốt chạm hiện đại.</p>
+                        <a href="/adopt/petsnap"
+                            style="background: white; color: #4d7c0f; padding: 8px 20px; border-radius: 20px; text-decoration: none; font-weight: bold; display: inline-block;">Thử
+                            ngay <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                    <i class="fa-solid fa-paw"
+                        style="font-size: 6rem; position: absolute; right: -10px; bottom: -20px; opacity: 0.2; color: white;"></i>
+                </div>
+
+                <!-- Search/Filter -->
+                <div class="adopt-filters">
+                    <div class="filter-group">
+                        <select id="speciesFilter">
+                            <option value="">Tất cả loài</option>
+                            <option value="Chó">🐕 Chó</option>
+                            <option value="Mèo">🐱 Mèo</option>
+                            <option value="Khác">🐰 Khác</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <input type="text" id="searchInput" placeholder="Tìm kiếm theo tên...">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pets List -->
+        <section class="pets-section">
+            <div class="container">
+                <% if (typeof error !=='undefined' && error) { %>
+                    <div class="alert alert-error"
+                        style="text-align: center; padding: 20px; background: #fee2e2; border-radius: 10px; color: #d90429;">
+                        <span>⚠️</span>
+                        <%= error %>
+                    </div>
+                    <% } %>
+
+                        <% if (pets && pets.length> 0) { %>
+                            <div class="card-grid" id="petsGrid">
+                                <% pets.forEach(function(pet) { %>
+                                    <div class="pet-card" data-species="<%= pet.pet_type || '' %>"
+                                        data-name="<%= (pet.name || '').toLowerCase() %>">
+                                        <img src="<%= pet.image_url || 'https://via.placeholder.com/400x220?text=No+Image' %>"
+                                            alt="<%= pet.name %>" class="card-image">
+                                        <div class="card-body">
+                                            <span class="card-tag">
+                                                <%= pet.pet_type==='Chó' ? '🐕 Chó' : pet.pet_type==='Mèo' ? '🐱 Mèo'
+                                                    : '🐰 ' + (pet.pet_type || 'Khác' ) %>
+                                            </span>
+                                            <h3 class="card-title">
+                                                <%= pet.name %>
+                                            </h3>
+                                            <% if (pet.pet_code) { %>
+                                                <p style="font-size: 0.8rem; color: #2d6a4f; margin-bottom: 8px;">Mã:
+                                                    <%= pet.pet_code %>
+                                                </p>
+                                                <% } %>
+                                                    <p class="card-text">
+                                                        <%= pet.description || '' %>
+                                                    </p>
+
+                                                    <div class="pet-info">
+                                                        <% if (pet.breed) { %><span>🐾 <%= pet.breed %></span>
+                                                            <% } %>
+                                                                <% if (pet.age) { %><span>🎂 <%= pet.age %></span>
+                                                                    <% } %>
+                                                                        <% if (pet.gender) { %>
+                                                                            <span>
+                                                                                <%= pet.gender==='Đực' ? '♂️' : '♀️' %>
+                                                                                    <%= pet.gender %>
+                                                                            </span>
+                                                                            <% } %>
+                                                                                <% if (pet.weight) { %><span>⚖️ <%=
+                                                                                            pet.weight %></span>
+                                                                                    <% } %>
+                                                                                        <% if (pet.color) { %><span>🎨
+                                                                                                <%= pet.color %>
+                                                                                            </span>
+                                                                                            <% } %>
+                                                    </div>
+
+                                                    <div class="card-meta">
+                                                        <span>
+                                                            <%= pet.vaccination ? '💉 ' + pet.vaccination : '' %>
+                                                        </span>
+                                                        <a href="/adopt/<%= pet.id %>" class="btn-green">Xem chi
+                                                            tiết</a>
+                                                    </div>
+                                        </div>
+                                    </div>
+                                    <% }); %>
+                            </div>
+                            <% } else { %>
+                                <div class="empty-state">
+                                    <div class="empty-icon">🐾</div>
+                                    <h3>Chưa có thú cưng nào</h3>
+                                    <p>Hiện tại chưa có thú cưng nào trong danh sách nhận nuôi</p>
+                                </div>
+                                <% } %>
+            </div>
+        </section>
+
+        <%- include('partials/footer') %>
+
+            <script>
+                // Filter functionality
+                const speciesFilter = document.getElementById('speciesFilter');
+                const searchInput = document.getElementById('searchInput');
+                const petsGrid = document.getElementById('petsGrid');
+
+                function filterPets() {
+                    const species = speciesFilter.value;
+                    const search = searchInput.value.toLowerCase();
+                    const cards = petsGrid ? petsGrid.querySelectorAll('.pet-card') : [];
+
+                    cards.forEach(card => {
+                        const cardSpecies = card.dataset.species;
+                        const cardName = card.dataset.name;
+
+                        const matchSpecies = !species || cardSpecies === species;
+                        const matchSearch = !search || cardName.includes(search);
+
+                        card.style.display = matchSpecies && matchSearch ? 'block' : 'none';
+                    });
+                }
+
+                if (speciesFilter) speciesFilter.addEventListener('change', filterPets);
+                if (searchInput) searchInput.addEventListener('input', filterPets);
+            </script>
+</body>
+
+</html>

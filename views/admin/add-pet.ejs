@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= title %>
+    </title>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <link rel="stylesheet" href="/stylesheets/auth.css">
+</head>
+
+<body>
+    <%- include('../partials/header') %>
+
+        <main class="auth-container" style="padding: 40px 20px;">
+            <div class="auth-card" style="max-width: 600px;">
+                <div class="auth-header">
+                    <h1>
+                        <%= pet && pet.id ? 'Sửa Thú Cưng' : 'Thêm Thú Cưng Mới' %>
+                    </h1>
+                    <p>Điền thông tin thú cưng bên dưới</p>
+                </div>
+
+                <% if (error) { %>
+                    <div class="alert alert-error">
+                        <span>⚠️</span>
+                        <%= error %>
+                    </div>
+                    <% } %>
+
+                        <form class="auth-form"
+                            action="<%= pet && pet.id ? '/adopt/admin/edit/' + pet.id : '/adopt/admin/add' %>"
+                            method="POST" enctype="multipart/form-data">
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="name">Tên thú cưng *</label>
+                                    <input type="text" id="name" name="name" value="<%= pet ? pet.name : '' %>"
+                                        required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="pet_code">Mã HPA</label>
+                                    <input type="text" id="pet_code" name="pet_code" placeholder="VD: O5184"
+                                        value="<%= pet ? pet.pet_code : '' %>">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="pet_type">Loài *</label>
+                                    <select id="pet_type" name="pet_type" required>
+                                        <option value="Chó" <%=pet && pet.pet_type==='Chó' ? 'selected' : '' %>>🐕 Chó
+                                        </option>
+                                        <option value="Mèo" <%=pet && pet.pet_type==='Mèo' ? 'selected' : '' %>>🐱 Mèo
+                                        </option>
+                                        <option value="Khác" <%=pet && pet.pet_type==='Khác' ? 'selected' : '' %>>🐰
+                                            Khác</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="gender">Giới tính</label>
+                                    <select id="gender" name="gender">
+                                        <option value="">-- Chọn --</option>
+                                        <option value="Đực" <%=pet && pet.gender==='Đực' ? 'selected' : '' %>>♂️ Đực
+                                        </option>
+                                        <option value="Cái" <%=pet && pet.gender==='Cái' ? 'selected' : '' %>>♀️ Cái
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="breed">Giống</label>
+                                    <input type="text" id="breed" name="breed"
+                                        placeholder="VD: Phốc sóc, Mèo tam thể..." value="<%= pet ? pet.breed : '' %>">
+                                </div>
+                                <div class="form-group">
+                                    <label for="age">Tuổi</label>
+                                    <select id="age" name="age">
+                                        <option value="">-- Chọn --</option>
+                                        <option value="Nhí" <%=pet && pet.age==='Nhí' ? 'selected' : '' %>>Nhí</option>
+                                        <option value="Trẻ" <%=pet && pet.age==='Trẻ' ? 'selected' : '' %>>Trẻ</option>
+                                        <option value="Trưởng thành" <%=pet && pet.age==='Trưởng thành' ? 'selected'
+                                            : '' %>>Trưởng thành</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="color">Màu sắc</label>
+                                    <input type="text" id="color" name="color" value="<%= pet ? pet.color : '' %>">
+                                </div>
+                                <div class="form-group">
+                                    <label for="weight">Cân nặng (kg)</label>
+                                    <input type="text" id="weight" name="weight" placeholder="VD: 5kg"
+                                        value="<%= pet ? pet.weight : '' %>">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="vaccination">Tiêm phòng</label>
+                                    <input type="text" id="vaccination" name="vaccination"
+                                        placeholder="VD: Đã tiêm, Chưa tiêm..."
+                                        value="<%= pet ? pet.vaccination : '' %>">
+                                </div>
+                                <div class="form-group">
+                                    <label for="contact_info">TNV liên hệ</label>
+                                    <input type="text" id="contact_info" name="contact_info"
+                                        value="<%= pet ? pet.contact_info : '' %>">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="source_url">URL nguồn</label>
+                                <input type="text" id="source_url" name="source_url" placeholder="URL gốc từ trang web"
+                                    value="<%= pet ? pet.source_url : '' %>">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="description">Mô tả</label>
+                                <textarea id="description" name="description" rows="4"
+                                    style="width: 100%; padding: 12px; border: 2px solid #E5E7EB; border-radius: 10px; font-size: 0.95rem; resize: vertical;"><%= pet ? pet.description : '' %></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="image">Ảnh thú cưng</label>
+                                <% if (pet && pet.image_url) { %>
+                                    <div style="margin-bottom: 10px;">
+                                        <img src="<%= pet.image_url %>" alt="Current image"
+                                            style="max-width: 200px; border-radius: 10px;">
+                                        <p style="font-size: 0.8rem; color: #64748B;">Ảnh hiện tại (chọn file mới để
+                                            thay đổi)</p>
+                                    </div>
+                                    <% } %>
+                                        <input type="file" id="image" name="image" accept="image/*"
+                                            style="padding: 10px; border: 2px dashed #E5E7EB; border-radius: 10px; width: 100%;">
+                                        <p style="font-size: 0.8rem; color: #64748B; margin-top: 5px;">
+                                            Chấp nhận: JPEG, PNG, GIF, WebP (tối đa 5MB)
+                                        </p>
+                            </div>
+
+                            <div style="display: flex; gap: 15px; margin-top: 20px;">
+                                <button type="submit" class="btn btn-green btn-full">
+                                    <%= pet && pet.id ? '💾 Cập nhật' : '➕ Thêm mới' %>
+                                </button>
+                                <a href="/adopt" class="btn btn-outline-gray btn-full" style="text-align: center;">
+                                    ❌ Hủy
+                                </a>
+                            </div>
+                        </form>
+            </div>
+        </main>
+
+        <%- include('../partials/footer') %>
+</body>
+
+</html>

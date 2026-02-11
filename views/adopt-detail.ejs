@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="<%= pet.description || '' %>">
+    <title>
+        <%= title %>
+    </title>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body>
+    <%- include('partials/header') %>
+
+        <main class="pet-detail-page">
+            <div class="container">
+                <a href="/adopt" class="back-link">← Quay lại danh sách</a>
+
+                <div class="pet-detail-grid">
+                    <!-- Pet Image -->
+                    <div class="pet-image-section">
+                        <img src="<%= pet.image_url || 'https://via.placeholder.com/600x400?text=No+Image' %>"
+                            alt="<%= pet.name %>" class="pet-main-image">
+                        <div class="pet-status-badge <%= pet.status %>">
+                            <%= pet.status==='available' ? '🟢 Sẵn sàng nhận nuôi' : pet.status==='pending'
+                                ? '🟡 Đang xử lý' : '🔴 Đã được nhận nuôi' %>
+                        </div>
+                    </div>
+
+                    <!-- Pet Info -->
+                    <div class="pet-info-section">
+                        <span class="pet-species-tag">
+                            <%= pet.pet_type==='Chó' ? '🐕 Chó' : pet.pet_type==='Mèo' ? '🐱 Mèo' : '🐰 ' +
+                                (pet.pet_type || 'Khác' ) %>
+                        </span>
+
+                        <h1 class="pet-name">
+                            <%= pet.name %>
+                        </h1>
+
+                        <% if (pet.pet_code) { %>
+                            <p style="color: #2d6a4f; font-weight: 600; margin-bottom: 15px;">Mã HPA: <%= pet.pet_code
+                                    %>
+                            </p>
+                            <% } %>
+
+                                <p class="pet-description">
+                                    <%= pet.description || '' %>
+                                </p>
+
+                                <div class="pet-details-grid">
+                                    <% if (pet.breed) { %>
+                                        <div class="detail-item">
+                                            <span class="detail-icon">🐾</span>
+                                            <div>
+                                                <span class="detail-label">Giống</span>
+                                                <span class="detail-value">
+                                                    <%= pet.breed %>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <% } %>
+
+                                            <% if (pet.age) { %>
+                                                <div class="detail-item">
+                                                    <span class="detail-icon">🎂</span>
+                                                    <div>
+                                                        <span class="detail-label">Tuổi</span>
+                                                        <span class="detail-value">
+                                                            <%= pet.age %>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <% } %>
+
+                                                    <% if (pet.gender) { %>
+                                                        <div class="detail-item">
+                                                            <span class="detail-icon">
+                                                                <%= pet.gender==='Đực' ? '♂️' : '♀️' %>
+                                                            </span>
+                                                            <div>
+                                                                <span class="detail-label">Giới tính</span>
+                                                                <span class="detail-value">
+                                                                    <%= pet.gender %>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        <% } %>
+
+                                                            <% if (pet.weight) { %>
+                                                                <div class="detail-item">
+                                                                    <span class="detail-icon">kg</span>
+                                                                    <div>
+                                                                        <span class="detail-label">Cân nặng</span>
+                                                                        <span class="detail-value">
+                                                                            <%= pet.weight %>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                                <% } %>
+
+                                                                    <% if (pet.color) { %>
+                                                                        <div class="detail-item">
+                                                                            <span class="detail-icon">🎨</span>
+                                                                            <div>
+                                                                                <span class="detail-label">Màu
+                                                                                    sắc</span>
+                                                                                <span class="detail-value">
+                                                                                    <%= pet.color %>
+                                                                                </span>
+                                                                            </div>
+                                                                        </div>
+                                                                        <% } %>
+
+                                                                            <% if (pet.vaccination) { %>
+                                                                                <div class="detail-item">
+                                                                                    <span class="detail-icon">💉</span>
+                                                                                    <div>
+                                                                                        <span class="detail-label">Tiêm
+                                                                                            phòng</span>
+                                                                                        <span class="detail-value">
+                                                                                            <%= pet.vaccination %>
+                                                                                        </span>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <% } %>
+
+                                                                                    <% if (pet.contact_info) { %>
+                                                                                        <div class="detail-item">
+                                                                                            <span
+                                                                                                class="detail-icon">📞</span>
+                                                                                            <div>
+                                                                                                <span
+                                                                                                    class="detail-label">TNV
+                                                                                                    liên hệ</span>
+                                                                                                <span
+                                                                                                    class="detail-value">
+                                                                                                    <%= pet.contact_info
+                                                                                                        %>
+                                                                                                </span>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <% } %>
+                                </div>
+
+                                <% if (pet.status==='available' ) { %>
+                                    <div class="adopt-actions">
+                                        <% if (typeof isAuthenticated !=='undefined' && isAuthenticated) { %>
+                                            <button class="btn btn-green btn-lg" id="adoptBtn">
+                                                ❤️ Đăng ký nhận nuôi
+                                            </button>
+                                            <% } else { %>
+                                                <a href="/auth/login" class="btn btn-green btn-lg">
+                                                    🔐 Đăng nhập để nhận nuôi
+                                                </a>
+                                                <% } %>
+                                                    <button class="btn btn-outline-gray" id="shareBtn">
+                                                        📤 Chia sẻ
+                                                    </button>
+                                    </div>
+                                    <% } %>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <%- include('partials/footer') %>
+
+            <script>
+                // Adopt button
+                const adoptBtn = document.getElementById('adoptBtn');
+                if (adoptBtn) {
+                    adoptBtn.addEventListener('click', () => {
+                        Swal.fire({
+                            title: 'Đăng ký nhận nuôi',
+                            text: 'Bạn muốn đăng ký nhận nuôi <%= pet.name %>?',
+                            icon: 'question',
+                            showCancelButton: true,
+                            confirmButtonColor: '#10B981',
+                            cancelButtonColor: '#64748B',
+                            confirmButtonText: 'Xác nhận',
+                            cancelButtonText: 'Hủy'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                Swal.fire({
+                                    title: 'Đã đăng ký!',
+                                    text: 'Chúng tôi sẽ liên hệ với bạn sớm nhất.',
+                                    icon: 'success',
+                                    confirmButtonColor: '#10B981'
+                                });
+                            }
+                        });
+                    });
+                }
+
+                // Share button
+                const shareBtn = document.getElementById('shareBtn');
+                if (shareBtn) {
+                    shareBtn.addEventListener('click', () => {
+                        if (navigator.share) {
+                            navigator.share({
+                                title: '<%= pet.name %> - Pet Helper',
+                                text: '<%= pet.description || "" %>',
+                                url: window.location.href
+                            });
+                        } else {
+                            navigator.clipboard.writeText(window.location.href);
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'Đã sao chép link!',
+                                showConfirmButton: false,
+                                timer: 2000
+                            });
+                        }
+                    });
+                }
+            </script>
+
+            <style>
+                .pet-detail-page {
+                    padding: 40px 0 80px;
+                }
+
+                .back-link {
+                    display: inline-block;
+                    color: var(--primary);
+                    font-weight: 500;
+                    margin-bottom: 30px;
+                }
+
+                .back-link:hover {
+                    text-decoration: underline;
+                }
+
+                .pet-detail-grid {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 50px;
+                    align-items: start;
+                }
+
+                .pet-image-section {
+                    position: relative;
+                }
+
+                .pet-main-image {
+                    width: 100%;
+                    border-radius: 20px;
+                    box-shadow: var(--shadow-lg);
+                }
+
+                .pet-status-badge {
+                    position: absolute;
+                    top: 20px;
+                    left: 20px;
+                    padding: 8px 16px;
+                    border-radius: 20px;
+                    font-size: 0.85rem;
+                    font-weight: 600;
+                    background: white;
+                }
+
+                .pet-species-tag {
+                    display: inline-block;
+                    background: var(--bg-main);
+                    padding: 8px 16px;
+                    border-radius: 20px;
+                    font-size: 0.9rem;
+                    color: var(--primary);
+                    font-weight: 500;
+                    margin-bottom: 15px;
+                }
+
+                .pet-name {
+                    font-size: 2.5rem;
+                    color: var(--text-primary);
+                    margin-bottom: 15px;
+                }
+
+                .pet-description {
+                    color: var(--text-secondary);
+                    font-size: 1.1rem;
+                    line-height: 1.7;
+                    margin-bottom: 30px;
+                }
+
+                .pet-details-grid {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 20px;
+                    margin-bottom: 30px;
+                }
+
+                .detail-item {
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    padding: 15px;
+                    background: var(--bg-main);
+                    border-radius: 12px;
+                }
+
+                .detail-icon {
+                    font-size: 1.5rem;
+                }
+
+                .detail-label {
+                    display: block;
+                    font-size: 0.8rem;
+                    color: var(--text-secondary);
+                }
+
+                .detail-value {
+                    font-weight: 600;
+                    color: var(--text-primary);
+                }
+
+                .adopt-actions {
+                    display: flex;
+                    gap: 15px;
+                }
+
+                .btn-lg {
+                    padding: 16px 32px;
+                    font-size: 1.1rem;
+                }
+
+                .btn-outline-gray {
+                    background: transparent;
+                    border: 2px solid var(--border);
+                    color: var(--text-secondary);
+                }
+
+                .btn-outline-gray:hover {
+                    border-color: var(--primary);
+                    color: var(--primary);
+                }
+
+                @media (max-width: 768px) {
+                    .pet-detail-grid {
+                        grid-template-columns: 1fr;
+                        gap: 30px;
+                    }
+
+                    .pet-name {
+                        font-size: 2rem;
+                    }
+
+                    .pet-details-grid {
+                        grid-template-columns: 1fr;
+                    }
+
+                    .adopt-actions {
+                        flex-direction: column;
+                    }
+                }
+            </style>
+</body>
+
+</html>

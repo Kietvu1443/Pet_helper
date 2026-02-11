@@ -1,0 +1,216 @@
+<header class="header">
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <a href="/" class="logo-group">
+            <div class="logo-circle">PET</div>
+            <div class="web-name">PET HELPER</div>
+        </a>
+        <div class="search-box">
+            <span style="margin-right: 10px;">🔍</span>
+            <span class="search-text">Tìm thú cưng, bài viết...</span>
+        </div>
+        <div class="user-actions">
+            <% if (typeof isAuthenticated !=='undefined' && isAuthenticated) { %>
+                <div class="user-dropdown">
+                    <span id="userDropdownBtn" style="cursor: pointer;">
+                        <%= user.display_name %> ▼
+                    </span>
+                    <div class="user-dropdown-menu" id="userDropdownMenu">
+                        <div class="dropdown-header">
+                            <strong>
+                                <%= user.display_name %>
+                            </strong>
+                            <span class="user-role">
+                                <%= user.role===0 ? '👑 Admin' : user.role===1 ? '🛠️ Staff' : '👤 User' %>
+                            </span>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <a href="/profile" class="dropdown-item">👤 Tài khoản</a>
+                        <% if (typeof isStaff !=='undefined' && isStaff) { %>
+                            <a href="/adopt/admin/add" class="dropdown-item">🐾 Thêm thú cưng</a>
+                            <% } %>
+                                <% if (typeof isAdmin !=='undefined' && isAdmin) { %>
+                                    <a href="/admin" class="dropdown-item">⚙️ Quản trị</a>
+                                    <% } %>
+                                        <div class="dropdown-divider"></div>
+                                        <a href="/auth/logout" class="dropdown-item logout">🚪 Đăng xuất</a>
+                    </div>
+                </div>
+                <% } else { %>
+                    <a href="/auth/login"><span>Tài khoản</span></a>
+                    <% } %>
+                        <span>Giỏ hàng <span id="cart-count-display">(0)</span></span>
+                        <span>VN / EN</span>
+        </div>
+    </div>
+
+    <!-- Main Navigation -->
+    <nav class="main-nav">
+        <ul>
+            <li>
+                <a href="#">Nhận nuôi <span class="nav-arrow">▼</span></a>
+                <ul class="nav-dropdown">
+                    <li><a href="/adopt">Xem vật nuôi có thể nhận nuôi</a></li>
+                    <li><a href="/adopt/petsnap" style="color: #ea580c; font-weight: bold;">PetSnap(Tìm kiếm thú cưng
+                            ngẫu hứng!)</a>
+                    </li>
+                    <li><a href="/about">Cách thức nhận nuôi</a></li>
+                    <li><a href="/adopt">Nhận nuôi thú cưng</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#">Thất lạc <span class="nav-arrow">▼</span></a>
+                <ul class="nav-dropdown">
+                    <li><a href="/reports">Báo mất thú cưng</a></li>
+                    <li><a href="/reports">Báo tin nhặt được</a></li>
+                    <li><a href="/about">Mẹo tìm kiếm hiệu quả</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#">Dịch vụ <span class="nav-arrow">▼</span></a>
+                <ul class="nav-dropdown">
+                    <li><a href="/booking">Đặt lịch tiêm phòng</a></li>
+                    <li><a href="/shop">Danh mục đồ ăn/ đồ dùng</a></li>
+                </ul>
+            </li>
+            <li><a href="/news">Tin tức</a></li>
+            <li>
+                <a href="#">Về chúng tôi <span class="nav-arrow">▼</span></a>
+                <ul class="nav-dropdown">
+                    <li><a href="/about">Thông tin về chúng tôi</a></li>
+                    <li><a href="#contact-section">Liên hệ với chúng tôi</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+</header>
+
+<style>
+    /* Navigation Dropdown - Inline Style to Override */
+    .nav-dropdown {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background-color: #ffffff;
+        min-width: 250px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        border-radius: 8px;
+        padding: 10px 0;
+        z-index: 9999;
+        text-align: left;
+        list-style: none;
+        margin: 0;
+    }
+
+    .main-nav li:hover>.nav-dropdown {
+        display: block;
+    }
+
+    .nav-dropdown li {
+        display: block;
+        padding: 0;
+        width: 100%;
+    }
+
+    .nav-dropdown a {
+        display: block;
+        padding: 12px 20px;
+        color: #333 !important;
+        text-transform: none;
+        font-weight: 500;
+        font-size: 0.95rem;
+        border-bottom: 1px solid #f5f5f5;
+        transition: 0.2s;
+        white-space: nowrap;
+        text-decoration: none;
+    }
+
+    .nav-dropdown a:hover {
+        background-color: #f1f8f5;
+        color: #2d6a4f !important;
+        padding-left: 25px;
+    }
+
+    /* User dropdown menu */
+    .user-dropdown-menu {
+        position: absolute;
+        top: calc(100% + 10px);
+        right: 0;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        min-width: 200px;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: all 0.3s ease;
+        z-index: 1000;
+    }
+
+    .user-dropdown.active .user-dropdown-menu {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    .dropdown-header {
+        padding: 15px;
+        text-align: center;
+    }
+
+    .dropdown-header strong {
+        display: block;
+        color: #1b4332;
+        margin-bottom: 4px;
+    }
+
+    .user-role {
+        font-size: 0.8rem;
+        color: #64748B;
+    }
+
+    .dropdown-divider {
+        height: 1px;
+        background: #E5E7EB;
+        margin: 0;
+    }
+
+    .dropdown-item {
+        display: block;
+        padding: 12px 15px;
+        color: #1b4332;
+        transition: all 0.2s;
+        text-decoration: none;
+    }
+
+    .dropdown-item:hover {
+        background: #d8f3dc;
+        color: #2d6a4f;
+    }
+
+    .dropdown-item.logout {
+        color: #d90429;
+    }
+
+    .dropdown-item.logout:hover {
+        background: #FEE2E2;
+    }
+</style>
+
+<script>
+    // User dropdown toggle
+    const userDropdownBtn = document.getElementById('userDropdownBtn');
+    const userDropdown = document.querySelector('.user-dropdown');
+
+    if (userDropdownBtn) {
+        userDropdownBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            userDropdown.classList.toggle('active');
+        });
+
+        document.addEventListener('click', () => {
+            userDropdown.classList.remove('active');
+        });
+    }
+</script>

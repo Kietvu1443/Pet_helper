@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Helper - Pro Cart Logic</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- CẤU HÌNH MÀU SẮC --- */
+        :root {
+            --primary-color: #2d6a4f;
+            --secondary-color: #40916c;
+            --accent-color: #d8f3dc;
+            --bg-color: #f1f8f5;
+            --card-bg: #ffffff;
+            --text-dark: #1b4332;
+            --radius: 15px;
+            --shadow: 0 4px 15px rgba(45, 106, 79, 0.15);
+            --btn-outline-border: #2d6a4f;
+            --btn-solid-bg: #2d6a4f; 
+        }
+
+        /* --- CÀI ĐẶT CƠ BẢN --- */
+        html { scroll-behavior: smooth; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Roboto', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-dark); padding-top: 155px; }
+        a { text-decoration: none; color: inherit; transition: 0.3s; }
+        ul { list-style: none; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+        /* --- HEADER CỐ ĐỊNH --- */
+        header { position: fixed; top: 0; left: 0; width: 100%; background: var(--primary-color); color: #fff; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 12px 40px; border-bottom: 1px solid rgba(255,255,255,0.15); }
+        .logo-group { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        .logo-circle { width: 40px; height: 40px; background: #fff; color: var(--primary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.8rem; }
+        .web-name { font-weight: 800; font-size: 1.1rem; letter-spacing: 1px; }
+        .search-box { background: rgba(255,255,255,0.2); padding: 8px 20px; border-radius: 30px; width: 400px; display: flex; align-items: center; border: 1px solid rgba(255,255,255,0.1); }
+        .search-text { opacity: 0.9; font-size: 0.95rem; color: #fff; }
+        .user-actions { font-size: 0.95rem; font-weight: 500; display: flex; gap: 20px; }
+        .user-actions span { cursor: pointer; opacity: 0.9; } .user-actions span:hover { opacity: 1; text-decoration: underline; }
+        #cart-count-display { font-weight: bold; background: #ffb703; color: #000; padding: 2px 8px; border-radius: 10px; margin-left: 5px;}
+
+        /* --- NAVIGATION --- */
+        .main-nav > ul { display: flex; justify-content: center; gap: 60px; padding: 12px 0; font-weight: 700; font-size: 1rem; text-transform: uppercase; background: rgba(0,0,0,0.05); }
+        .main-nav li { position: relative; padding: 10px 0; }
+        .main-nav > ul > li:hover > a { color: #b7e4c7; }
+        .nav-arrow { font-size: 0.7rem; margin-left: 5px; vertical-align: middle; }
+        .dropdown-menu { display: none; position: absolute; top: 100%; left: 0; background-color: #ffffff; min-width: 250px; box-shadow: 0 5px 20px rgba(0,0,0,0.15); border-radius: 8px; padding: 10px 0; z-index: 9999; text-align: left; }
+        .main-nav li:hover .dropdown-menu { display: block; }
+        .dropdown-menu li { display: block; padding: 0; width: 100%; }
+        .dropdown-menu a { display: block; padding: 12px 20px; color: #333 !important; text-transform: none; font-weight: 500; font-size: 0.95rem; border-bottom: 1px solid #f5f5f5; transition: 0.2s; white-space: nowrap; }
+        .dropdown-menu a:hover { background-color: #f1f8f5; color: var(--primary-color) !important; padding-left: 25px; }
+
+        /* --- OVERLAY CHUNG --- */
+        .full-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(244, 247, 246, 0.98); backdrop-filter: blur(5px);
+            z-index: 2000; overflow-y: auto; display: none;
+            animation: popIn 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+        }
+        @keyframes popIn { 0% { opacity: 0; transform: scale(0.95) translateY(20px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+        .overlay-header { background: var(--primary-color); color: #fff; padding: 15px 40px; position: sticky; top: 0; z-index: 2001; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .close-btn { font-size: 1.2rem; font-weight: bold; cursor: pointer; background: rgba(255,255,255,0.2); width: 35px; height: 35px; border-radius: 50%; text-align: center; line-height: 35px; transition: 0.2s; }
+        .close-btn:hover { background: #ff6b6b; color: #fff; transform: rotate(90deg); }
+
+        /* --- STYLE CHO SHOP --- */
+        .shop-container { max-width: 1000px; margin: 30px auto; padding: 0 20px; }
+        .shop-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .product-card {
+            background: #fff; border-radius: 12px; overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: 1px solid #eee;
+            display: flex; flex-direction: column; transition: 0.3s; height: 100%;
+        }
+        .product-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .prod-img { height: 200px; width: 100%; object-fit: cover; }
+        .prod-info { padding: 15px; flex: 1; display: flex; flex-direction: column; justify-content: space-between;}
+        .prod-name { font-weight: bold; font-size: 1.1rem; margin-bottom: 5px; color: #333; }
+        .prod-price { color: #d90429; font-weight: bold; font-size: 1.2rem; margin-bottom: 15px; }
+        .prod-actions { display: flex; gap: 10px; }
+        .btn-add-cart-icon { flex: 1; padding: 8px; border: 1px solid var(--btn-outline-border); background: #fff; color: var(--primary-color); font-size: 1.2rem; border-radius: 5px; cursor: pointer; transition: 0.2s; display: flex; justify-content: center; align-items: center; }
+        .btn-add-cart-icon:hover { background: var(--accent-color); }
+        .btn-buy-now { flex: 2; padding: 8px; border: none; background: var(--btn-solid-bg); color: #fff; font-weight: bold; border-radius: 5px; cursor: pointer; transition: 0.2s; }
+        .btn-buy-now:hover { background: var(--secondary-color); }
+
+        /* --- STYLE CHO BOOKING --- */
+        .booking-container { max-width: 900px; margin: 40px auto; background: #fff; border-radius: 15px; display: flex; overflow: hidden; box-shadow: 0 5px 30px rgba(0,0,0,0.1); }
+        .booking-img { flex: 1; background: url('https://images.unsplash.com/photo-1628009368231-760335298025?auto=format&fit=crop&w=600&q=80') center/cover no-repeat; }
+        .booking-form { flex: 1; padding: 40px; }
+        .form-group { margin-bottom: 15px; }
+        .form-label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 0.9rem; }
+        .form-control { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; outline: none; }
+        .booking-submit { width: 100%; padding: 12px; background: var(--primary-color); color: #fff; border: none; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; margin-top: 10px; }
+
+        /* --- STYLE CHO GIỎ HÀNG (CẬP NHẬT GIAO DIỆN ITEM) --- */
+        .cart-overlay {
+            position: fixed; top: 0; right: -400px; width: 400px; height: 100%; background: #fff; z-index: 3000;
+            box-shadow: -5px 0 20px rgba(0,0,0,0.1); transition: 0.3s ease; display: flex; flex-direction: column;
+        }
+        .cart-overlay.open { right: 0; }
+        .cart-header { padding: 20px; background: var(--primary-color); color: #fff; display: flex; justify-content: space-between; align-items: center; }
+        .cart-items { flex: 1; overflow-y: auto; padding: 20px; }
+        
+        /* CSS cho từng dòng trong giỏ hàng */
+        .cart-item-row { 
+            border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 15px; 
+            display: flex; flex-direction: column; gap: 8px;
+        }
+        .cart-item-top { display: flex; justify-content: space-between; font-weight: bold; font-size: 1rem; color: #333; }
+        .cart-item-bottom { display: flex; justify-content: space-between; align-items: center; }
+        
+        /* Nút tăng giảm số lượng */
+        .qty-control { display: flex; align-items: center; gap: 8px; background: #f0f0f0; border-radius: 5px; padding: 2px 5px; }
+        .qty-btn { width: 25px; height: 25px; border: none; background: #fff; cursor: pointer; border-radius: 3px; font-weight: bold; display: flex; align-items: center; justify-content: center; }
+        .qty-btn:hover { background: #ddd; }
+        .cart-remove-btn { color: #d90429; font-size: 0.85rem; cursor: pointer; text-decoration: underline; }
+        .cart-remove-btn:hover { color: red; }
+
+        .cart-footer { padding: 20px; border-top: 1px solid #ddd; background: #f9f9f9; }
+        .total-price { font-size: 1.2rem; font-weight: bold; display: flex; justify-content: space-between; margin-bottom: 15px; }
+        .checkout-btn { width: 100%; padding: 12px; background: #d90429; color: #fff; border: none; font-weight: bold; cursor: pointer; border-radius: 8px; }
+
+        /* --- CSS CHO SLIDER --- */
+        .adopt-slider-container { flex: 2; height: 420px; border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; position: relative; }
+        .slide-item { position: absolute; top:0; left:0; width:100%; height:100%; opacity: 0; transition: opacity 1s ease-in-out; }
+        .slide-item.active { opacity: 1; z-index: 1; }
+        .ken-burns-img { width: 100%; height: 100%; object-fit: cover; animation: zoomPan 15s infinite alternate ease-in-out; }
+        @keyframes zoomPan { 0% { transform: scale(1) translate(0, 0); } 100% { transform: scale(1.15) translate(-2%, -1%); } }
+        .slider-caption-box { position: absolute; bottom: 0; width: 100%; background: linear-gradient(to top, var(--primary-color), transparent); color: #fff; padding: 50px 25px 25px; }
+        .slider-caption-box h3 { font-size: 1.5rem; margin-bottom: 8px; } .slider-caption-box p { font-size: 1rem; opacity: 0.9; }
+
+        /* --- CSS CHUNG --- */
+        .hero-news { display: block; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 30px; border: 1px solid #eee; text-decoration: none; }
+        .hero-news img { width: 100%; height: 400px; object-fit: cover; }
+        .hero-content { padding: 25px; }
+        .hero-title { font-size: 1.8rem; font-weight: 900; margin-bottom: 10px; color: var(--text-dark); }
+        .hero-news:hover .hero-title { color: var(--secondary-color); text-decoration: underline; }
+        .news-list-item { display: flex; gap: 20px; background: #fff; padding: 20px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); transition: 0.2s; cursor: pointer; border: 1px solid #f0f0f0; text-decoration: none; color: inherit; }
+        .news-list-item:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.08); border-color: var(--primary-color); }
+        .news-thumb { width: 220px; height: 140px; flex-shrink: 0; border-radius: 8px; overflow: hidden; }
+        .news-thumb img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; } .news-list-item:hover .news-thumb img { transform: scale(1.1); }
+        .news-info { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+        .news-tag { font-size: 0.8rem; font-weight: 700; color: var(--primary-color); text-transform: uppercase; margin-bottom: 8px; }
+        .news-headline { font-size: 1.3rem; font-weight: 700; margin-bottom: 10px; line-height: 1.4; color: #333; }
+        .news-list-item:hover .news-headline { color: var(--secondary-color); text-decoration: underline; }
+        .news-meta { font-size: 0.9rem; color: #777; } .external-icon { font-size: 0.8rem; color: #999; margin-left: 5px; }
+
+        section { padding: 50px 0; margin-bottom: 20px; opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; } section.visible { opacity: 1; transform: translateY(0); }
+        .card-box { background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); padding: 40px; border: 1px solid #e8f5e9; }
+        .news-title { text-align: center; font-weight: 800; font-size: 1.6rem; color: var(--primary-color); margin-bottom: 30px; }
+        .news-grid { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, 200px); gap: 15px; }
+        .grid-item { border-radius: var(--radius); overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); } .grid-item img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; } .grid-item:hover img { transform: scale(1.05); } .item-large { grid-column: span 2; }
+        .adopt-layout { display: flex; gap: 30px; margin-bottom: 20px; } .adopt-links { flex: 1; display: flex; flex-direction: column; gap: 15px; }
+        .link-btn { background: #fff; color: var(--primary-color); border: 2px solid #d8f3dc; padding: 20px; border-radius: var(--radius); font-weight: 700; display: flex; justify-content: space-between; align-items: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); } .link-btn:hover { border-color: var(--primary-color); background: var(--accent-color); transform: translateX(5px); }
+        .adopt-label-text { font-weight: 800; color: var(--primary-color); font-size: 1.2rem; margin-top: 30px; margin-bottom: 10px; display: flex; align-items: center; } .adopt-label-text::before { content: '🐾'; margin-right: 10px; }
+        .adopt-filter-bar { background: #fff; padding: 15px 40px; border-radius: 50px; box-shadow: var(--shadow); display: flex; justify-content: space-between; font-weight: 700; color: var(--primary-color); } .adopt-filter-bar span:hover { color: var(--secondary-color); cursor: pointer; text-decoration: underline; }
+        .section-header { text-align: center; font-size: 2rem; font-weight: 800; color: var(--primary-color); margin-bottom: 40px; } .section-header::after { content: ''; display: block; width: 80px; height: 5px; background: #ffb703; margin: 10px auto 0; border-radius: 5px; }
+        .news-columns { display: flex; gap: 30px; } .news-card { flex: 1; background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; display: flex; flex-direction: column; transition: transform 0.3s; } .news-card:hover { transform: translateY(-10px); }
+        .card-body { padding: 20px; flex: 1; display: flex; flex-direction: column; } .read-more-btn { margin-top: auto; color: var(--primary-color); font-weight: 700; cursor: pointer; }
+        .contact-container { display: flex; justify-content: space-between; background: var(--primary-color); color: #fff; padding: 60px; border-radius: var(--radius); box-shadow: var(--shadow); }
+        .social-icons span { display: inline-block; width: 45px; height: 45px; background: rgba(255,255,255,0.2); border-radius: 50%; text-align: center; line-height: 45px; margin-right: 15px; cursor: pointer; } .social-icons span:hover { background: #fff; color: var(--primary-color); }
+        .form-area { flex: 1; background: #fff; padding: 30px; border-radius: var(--radius); color: #333; } .form-input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; outline: none; } .form-input:focus { border-color: var(--primary-color); background: #f0fff4; } .submit-btn { background: var(--primary-color); color: #fff; border: none; padding: 12px; width: 100%; border-radius: 30px; font-weight: bold; cursor: pointer; } .submit-btn:hover { background: var(--secondary-color); }
+        .footer-bottom { margin-top: 40px; text-align: center; color: #52b788; padding-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+    <div id="news-overlay" class="full-overlay">
+        <div class="overlay-header">
+            <div style="font-size: 1.5rem; font-weight: 900;">📰 BẢNG TIN</div>
+            <div class="close-btn" onclick="closeOverlay('news-overlay')">✕</div>
+        </div>
+        <div class="news-feed-container">
+            <a href="https://vnexpress.net/chu-de/thu-cung-3561" target="_blank" class="hero-news">
+                <img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=1000&q=80" alt="News">
+                <div class="hero-content">
+                    <div class="news-tag">NỔI BẬT</div>
+                    <div class="hero-title">Chiến dịch "Mùa Đông Ấm Áp" cứu trợ 500 chú chó mèo <span class="external-icon">↗</span></div>
+                    <p style="color: #555;">Tổng kết chiến dịch tháng vừa qua...</p>
+                </div>
+            </a>
+            <a href="https://kenh14.vn/thu-cung.html" target="_blank" class="news-list-item">
+                <div class="news-thumb"><img src="https://images.unsplash.com/photo-1574158622682-e40e69881006?auto=format&fit=crop&w=400&q=80" alt="News"></div>
+                <div class="news-info">
+                    <div class="news-tag">SỨC KHỎE</div>
+                    <div class="news-headline">Làm thế nào để bảo vệ thú cưng khỏi bệnh dại? <span class="external-icon">↗</span></div>
+                    <div class="news-meta">2 giờ trước • VnExpress</div>
+                </div>
+            </a>
+            <a href="#" target="_blank" class="news-list-item">
+                <div class="news-thumb"><img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=400&q=80" alt="News"></div>
+                <div class="news-info">
+                    <div class="news-tag">NHẬN NUÔI</div>
+                    <div class="news-headline">Bé Miu tìm được chủ nhân sau 3 tháng điều trị <span class="external-icon">↗</span></div>
+                    <div class="news-meta">1 ngày trước • Kênh 14</div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <div id="shop-overlay" class="full-overlay">
+        <div class="overlay-header">
+            <div style="font-size: 1.5rem; font-weight: 900;">🛒 CỬA HÀNG PET HELPER</div>
+            <div class="close-btn" onclick="closeOverlay('shop-overlay')">✕</div>
+        </div>
+        <div class="shop-container">
+            <h3 style="margin-bottom: 20px; color: var(--primary-color);">Sản phẩm nổi bật</h3>
+            <div class="shop-grid">
+                <div class="product-card">
+                    <img src="https://images.unsplash.com/photo-1589924691195-41432c84c161?auto=format&fit=crop&w=400&q=80" class="prod-img">
+                    <div class="prod-info">
+                        <div>
+                            <div class="prod-name">Hạt Royal Canin cho Chó (1kg)</div>
+                            <div class="prod-price">150.000đ</div>
+                        </div>
+                        <div class="prod-actions">
+                            <button class="btn-add-cart-icon" onclick="addToCart('Hạt Royal Canin', 150000)">🛒</button>
+                            <button class="btn-buy-now" onclick="addToCart('Hạt Royal Canin', 150000); toggleCart();">Mua ngay</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="https://images.unsplash.com/photo-1615266895738-11f1371cd7e5?auto=format&fit=crop&w=400&q=80" class="prod-img">
+                    <div class="prod-info">
+                        <div>
+                            <div class="prod-name">Pate Whiskas cho Mèo (85g)</div>
+                            <div class="prod-price">25.000đ</div>
+                        </div>
+                        <div class="prod-actions">
+                            <button class="btn-add-cart-icon" onclick="addToCart('Pate Whiskas', 25000)">🛒</button>
+                            <button class="btn-buy-now" onclick="addToCart('Pate Whiskas', 25000); toggleCart();">Mua ngay</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="https://images.unsplash.com/photo-1576201836106-db1758fd1c97?auto=format&fit=crop&w=400&q=80" class="prod-img">
+                    <div class="prod-info">
+                        <div>
+                            <div class="prod-name">Chuồng gỗ cao cấp</div>
+                            <div class="prod-price">1.200.000đ</div>
+                        </div>
+                        <div class="prod-actions">
+                            <button class="btn-add-cart-icon" onclick="addToCart('Chuồng gỗ cao cấp', 1200000)">🛒</button>
+                            <button class="btn-buy-now" onclick="addToCart('Chuồng gỗ cao cấp', 1200000); toggleCart();">Mua ngay</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="https://images.unsplash.com/photo-1597843786271-10a015702561?auto=format&fit=crop&w=400&q=80" class="prod-img">
+                    <div class="prod-info">
+                        <div>
+                            <div class="prod-name">Dây dắt chó đi dạo</div>
+                            <div class="prod-price">80.000đ</div>
+                        </div>
+                        <div class="prod-actions">
+                             <button class="btn-add-cart-icon" onclick="addToCart('Dây dắt chó', 80000)">🛒</button>
+                            <button class="btn-buy-now" onclick="addToCart('Dây dắt chó', 80000); toggleCart();">Mua ngay</button>
+                        </div>
+                    </div>
+                </div>
+                 <div class="product-card">
+                    <img src="https://images.unsplash.com/photo-1545249390-6bdfa286032f?auto=format&fit=crop&w=400&q=80" class="prod-img">
+                    <div class="prod-info">
+                        <div>
+                            <div class="prod-name">Sữa tắm diệt ve rận</div>
+                            <div class="prod-price">120.000đ</div>
+                        </div>
+                        <div class="prod-actions">
+                             <button class="btn-add-cart-icon" onclick="addToCart('Sữa tắm', 120000)">🛒</button>
+                            <button class="btn-buy-now" onclick="addToCart('Sữa tắm', 120000); toggleCart();">Mua ngay</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="booking-overlay" class="full-overlay">
+        <div class="overlay-header">
+            <div style="font-size: 1.5rem; font-weight: 900;">🩺 ĐẶT LỊCH HẸN</div>
+            <div class="close-btn" onclick="closeOverlay('booking-overlay')">✕</div>
+        </div>
+        <div class="booking-container">
+            <div class="booking-img"></div>
+            <div class="booking-form">
+                <h2 style="color: var(--primary-color); margin-bottom: 20px;">Phiếu Đăng Ký Tiêm Phòng</h2>
+                <div class="form-group">
+                    <label class="form-label">Tên chủ nuôi</label>
+                    <input type="text" class="form-control" placeholder="Nguyễn Văn A">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Số điện thoại</label>
+                    <input type="text" class="form-control" placeholder="0909...">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Tên thú cưng & Loài</label>
+                    <input type="text" class="form-control" placeholder="VD: Bé Miu (Mèo)">
+                </div>
+                <div style="display: flex; gap: 15px;">
+                    <div class="form-group" style="flex:1">
+                        <label class="form-label">Ngày hẹn</label>
+                        <input type="date" class="form-control">
+                    </div>
+                    <div class="form-group" style="flex:1">
+                        <label class="form-label">Dịch vụ</label>
+                        <select class="form-control">
+                            <option>Tiêm phòng dại</option>
+                            <option>Tiêm đa giá (5 bệnh)</option>
+                            <option>Tẩy giun sán</option>
+                            <option>Khám tổng quát</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="booking-submit" onclick="alert('Đã gửi yêu cầu đặt lịch! Chúng tôi sẽ gọi lại xác nhận.')">Xác nhận đặt lịch</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="cart-sidebar" class="cart-overlay">
+        <div class="cart-header">
+            <div>GIỎ HÀNG CỦA BẠN</div>
+            <div style="cursor: pointer;" onclick="toggleCart()">✕ Đóng</div>
+        </div>
+        <div class="cart-items" id="cart-items-container">
+            </div>
+        <div class="cart-footer">
+            <div class="total-price">
+                <span>Tổng cộng:</span>
+                <span id="cart-total">0đ</span>
+            </div>
+            <button class="checkout-btn" onclick="alert('Chức năng thanh toán đang phát triển!')">THANH TOÁN</button>
+        </div>
+    </div>
+
+
+    <header>
+        <div class="top-bar">
+            <div class="logo-group">
+                <div class="logo-circle">PET</div>
+                <div class="web-name">PET HELPER</div>
+            </div>
+            <div class="search-box">
+                <span style="margin-right: 10px;">🔍</span>
+                <span class="search-text">Tìm thú cưng, bài viết...</span>
+            </div>
+            <div class="user-actions">
+                <span>Tài khoản</span>
+                <span onclick="toggleCart()">Giỏ hàng <span id="cart-count-display">(0)</span></span>
+                <span>VN / EN</span>
+            </div>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li>
+                    <a href="#">Nhận nuôi <span class="nav-arrow">▼</span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">Xem vật nuôi có thể nhận nuôi</a></li>
+                        <li><a href="#">Cách thức nhận nuôi</a></li>
+                        <li><a href="#">Nhận nuôi thú cưng</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#">Thất lạc<span class="nav-arrow">▼</span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">Báo mất thú cưng</a></li>
+                        <li><a href="#">Báo tin nhặt được</a></li>
+                        <li><a href="#">Mẹo tìm kiếm hiệu quả</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#">Dịch vụ <span class="nav-arrow">▼</span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#" onclick="openOverlay('booking-overlay')">Đặt lịch tiêm phòng</a></li>
+                        <li><a href="#" onclick="openOverlay('shop-overlay')">Danh mục đồ ăn/ đồ dùng</a></li>
+                    </ul>
+                </li>
+                <li><a href="#" onclick="openOverlay('news-overlay')">Tin tức</a></li>
+                
+                <li>
+                    <a href="#">Về chúng tôi <span class="nav-arrow">▼</span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">Thông tin về chúng tôi</a></li>
+                        <li><a href="#contact-section">Liên hệ với chúng tôi</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="card-box" style="margin-bottom: 40px; overflow: hidden;">
+    <div style="text-align: center; max-width: 800px; margin: 0 auto 30px;">
+        <h2 class="section-header">Về Pet Helper</h2>
+        <p style="font-size: 1.1rem; color: #333; line-height: 1.6; font-weight: 500;">
+            Hành trình kết nối những tâm hồn yêu động vật và xây dựng một cộng đồng bền vững.
+        </p>
+    </div>
+
+    <div style="display: flex; gap: 40px; align-items: center; margin-bottom: 30px;">
+        
+        <div style="flex: 1.1;">
+            <p style="color: #222; line-height: 1.8; margin-bottom: 18px; font-size: 1.1rem; font-weight: 500;">
+                Được thành lập tại <strong>BDU UNIS Campus</strong>, Pet Helper là hệ sinh thái toàn diện dành cho những người bạn bốn chân.
+            </p>
+            <p style="color: #444; line-height: 1.8; margin-bottom: 18px; font-size: 1rem;">
+                Chúng tôi tập trung giảm thiểu số lượng thú cưng bị bỏ rơi và hỗ trợ cộng đồng tìm kiếm thú lạc nhanh chóng, hiệu quả nhất.
+            </p>
+            <p style="color: #444; line-height: 1.8; font-size: 1rem;">
+                Mọi hoạt động thuộc dự án <strong>Green Project</strong> đều hướng tới môi trường sống nhân văn và tràn đầy tình thương.
+            </p>
+        </div>
+
+        <div style="flex: 0.9; display: flex; flex-direction: column; gap: 12px;">
+            <div style="display: flex; gap: 12px;">
+                <div style="flex: 1; aspect-ratio: 1/1; overflow: hidden; border-radius: 10px; box-shadow: var(--shadow);">
+                    <img src="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=400&q=80" 
+                         style="width: 100%; height: 100%; object-fit: cover;" alt="Chó 1">
+                </div>
+                <div style="flex: 1; aspect-ratio: 1/1; overflow: hidden; border-radius: 10px; box-shadow: var(--shadow);">
+                    <img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=400&q=80" 
+                         style="width: 100%; height: 100%; object-fit: cover;" alt="Chó 2">
+                </div>
+            </div>
+            <div style="width: 100%; aspect-ratio: 1.5/1; overflow: hidden; border-radius: 10px; box-shadow: var(--shadow);">
+                 <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=600&q=80" 
+                     style="width: 100%; height: 100%; object-fit: cover;" alt="Mèo">
+            </div>
+        </div>
+    </div>
+
+    <div style="display: flex; gap: 15px; border-top: 1px solid #eee; padding-top: 20px;">
+        <div style="flex: 1; text-align: center; padding: 10px; background: #fdfdfd; border-radius: 10px; border: 1px solid #f0f0f0;">
+            <div style="font-size: 1.3rem; margin-bottom: 3px;">🏠</div>
+            <h4 style="color: var(--primary-color); font-size: 0.85rem;">Nhận Nuôi</h4>
+        </div>
+        <div style="flex: 1; text-align: center; padding: 10px; background: #fdfdfd; border-radius: 10px; border: 1px solid #f0f0f0;">
+            <div style="font-size: 1.3rem; margin-bottom: 3px;">🔍</div>
+            <h4 style="color: var(--primary-color); font-size: 0.85rem;">Tìm Kiếm</h4>
+        </div>
+        <div style="flex: 1; text-align: center; padding: 10px; background: #fdfdfd; border-radius: 10px; border: 1px solid #f0f0f0;">
+            <div style="font-size: 1.3rem; margin-bottom: 3px;">🩺</div>
+            <h4 style="color: var(--primary-color); font-size: 0.85rem;">Y Tế</h4>
+        </div>
+    </div>
+</section>
+        <section class="card-box">
+            <h2 class="news-title">🌿 Bảng Tin 🌿</h2>
+            <div class="news-grid">
+                <div class="grid-item item-large"><img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=600&q=80" alt="Dog"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=300&q=80" alt="Dog 2"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1533738363-b7f9aef128ce?auto=format&fit=crop&w=300&q=80" alt="Cat 2"></div>
+                <div class="grid-item"><img src="https://images.unsplash.com/photo-1592194996308-7b43878e84a6?auto=format&fit=crop&w=300&q=80" alt="Cat 3"></div>
+                <div class="grid-item item-large"><img src="https://images.unsplash.com/photo-1574158622682-e40e69881006?auto=format&fit=crop&w=600&q=80" alt="Cat Large"></div>
+            </div>
+        </section>
+
+        <section>
+            <div class="adopt-layout">
+                <div class="adopt-slider-container">
+                    <div class="slide-item active">
+                        <img src="https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=800&q=80" class="ken-burns-img" alt="Slide 1">
+                        <div class="slider-caption-box">
+                            <h3>🐶 Bé Golden - Đang tìm mái ấm</h3>
+                            <p>3 tuổi, rất ngoan, thích chạy nhảy ngoài công viên.</p>
+                        </div>
+                    </div>
+                    <div class="slide-item">
+                        <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=800&q=80" class="ken-burns-img" alt="Slide 2">
+                        <div class="slider-caption-box">
+                            <h3>🐱 Mèo Mướp - Cần người yêu thương</h3>
+                            <p>Được cứu hộ từ bãi đất trống, hiện đã khỏe mạnh.</p>
+                        </div>
+                    </div>
+                     <div class="slide-item">
+                        <img src="https://images.unsplash.com/photo-1576201836106-db1758fd1c97?auto=format&fit=crop&w=800&q=80" class="ken-burns-img" style="animation-direction: alternate-reverse;" alt="Slide 3">
+                        <div class="slider-caption-box">
+                            <h3>🩺 Dịch vụ chăm sóc thú cưng tận tâm</h3>
+                            <p>Đặt lịch khám, tiêm phòng và spa cho boss.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="adopt-links">
+                    <div class="link-btn"><span>🔍 Bạn lạc thú cưng?</span><span>&rarr;</span></div>
+                    <div class="link-btn"><span>🏠 Bạn nhặt được thú cưng?</span><span>&rarr;</span></div>
+                    <div class="link-btn"><span>🩺 Cách chăm sóc thú cưng?</span><span>&rarr;</span></div>
+                    <div class="link-btn"><span>📞 Liên hệ hỗ trợ</span><span>&rarr;</span></div>
+                </div>
+            </div>
+            <div class="adopt-label-text">Xem thêm thú có thể nhận nuôi</div>
+            <div class="adopt-filter-bar">
+                <span>🐶 Chó (12)</span>
+                <span>🐱 Mèo (8)</span>
+                <span style="color: #666">Xem tất cả &rarr;</span>
+            </div>
+        </section>
+
+        <section class="contact-container" id="contact-section">
+            <div style="flex:1; padding-right:40px;">
+                <h2>LIÊN HỆ HỖ TRỢ</h2>
+                <div class="social-icons" style="margin:20px 0;"><span>FB</span><span>YT</span><span>IG</span></div>
+                <div style="line-height:1.6;">📍 Trụ sở: BDU UNIS Campus<br> Liên hệ tại: ... </div>
+            </div>
+            <div class="form-area">
+                <h3 style="margin-bottom:20px; color:var(--primary-color);">Gửi tin nhắn</h3>
+                <input class="form-input" placeholder="Họ tên của bạn">
+                <input class="form-input" placeholder="Email / SĐT">
+                <textarea class="form-input" rows="3" placeholder="Lời nhắn..."></textarea>
+                <button class="submit-btn">Gửi thông tin</button>
+            </div>
+        </section>
+        
+        <div class="footer-bottom">&copy; 2026 Pet Helper Green Project.</div>
+    </main>
+
+    <script>
+        // --- SLIDER ---
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide-item');
+        function nextSlide() {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }
+        setInterval(nextSlide, 5000);
+
+        // --- OVERLAY LOGIC ---
+        function openOverlay(id) { document.getElementById(id).style.display = 'block'; document.body.style.overflow = 'hidden'; }
+        function closeOverlay(id) { document.getElementById(id).style.display = 'none'; document.body.style.overflow = 'auto'; }
+
+        // --- LOGIC GIỎ HÀNG NÂNG CAO ---
+        let cart = [];
+
+        function toggleCart() { document.getElementById('cart-sidebar').classList.toggle('open'); }
+
+        // Hàm thêm: Nếu trùng tên thì tăng số lượng
+        function addToCart(name, price) {
+            let existingItem = cart.find(item => item.name === name);
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                cart.push({ name: name, price: price, quantity: 1 });
+            }
+            updateCartUI();
+        }
+
+        // Hàm xóa hẳn item
+        function removeItem(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        // Hàm tăng giảm số lượng (+/-)
+        function changeQty(index, delta) {
+            cart[index].quantity += delta;
+            if (cart[index].quantity <= 0) {
+                cart.splice(index, 1); // Nếu giảm về 0 thì xóa luôn
+            }
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            // Cập nhật số tổng trên menu
+            const totalCount = cart.reduce((acc, item) => acc + item.quantity, 0);
+            document.getElementById('cart-count-display').innerText = `(${totalCount})`;
+
+            const container = document.getElementById('cart-items-container');
+            const totalDisplay = document.getElementById('cart-total');
+            
+            if (cart.length === 0) {
+                container.innerHTML = '<div style="text-align: center; color: #777; margin-top: 20px;">Giỏ hàng trống</div>';
+                totalDisplay.innerText = '0đ';
+                return;
+            }
+
+            let html = '';
+            let totalPrice = 0;
+
+            cart.forEach((item, index) => {
+                totalPrice += item.price * item.quantity;
+                html += `
+                    <div class="cart-item-row">
+                        <div class="cart-item-top">
+                            <span>${item.name}</span>
+                            <span class="cart-remove-btn" onclick="removeItem(${index})">Xóa</span>
+                        </div>
+                        <div class="cart-item-bottom">
+                            <div class="qty-control">
+                                <button class="qty-btn" onclick="changeQty(${index}, -1)">-</button>
+                                <span>${item.quantity}</span>
+                                <button class="qty-btn" onclick="changeQty(${index}, 1)">+</button>
+                            </div>
+                            <div style="font-weight:bold;">${(item.price * item.quantity).toLocaleString()}đ</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+            totalDisplay.innerText = totalPrice.toLocaleString() + 'đ';
+        }
+
+        // --- ANIMATION ---
+        document.addEventListener("DOMContentLoaded", function() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add("visible"); });
+            }, { threshold: 0.15 });
+            document.querySelectorAll("section").forEach(s => observer.observe(s));
+        });
+    </script>
+</body>
+</html>

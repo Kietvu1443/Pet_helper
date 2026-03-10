@@ -4,15 +4,19 @@ const Pet = {
   // Get all available pets
   async findAll(status = null) {
     try {
-      let query = "SELECT * FROM pets";
+      let query = `
+        SELECT p.*, pi.image_path as avatar_image
+        FROM pets p
+        LEFT JOIN pet_images pi ON p.id = pi.pet_id AND pi.display_order = 0
+      `;
       let params = [];
 
       if (status) {
-        query += " WHERE status = ?";
+        query += " WHERE p.status = ?";
         params.push(status);
       }
 
-      query += " ORDER BY created_at DESC";
+      query += " ORDER BY p.created_at DESC";
 
       const [rows] = await pool.execute(query, params);
       return rows;
@@ -25,9 +29,13 @@ const Pet = {
   // Get pet by ID
   async findById(id) {
     try {
-      const [rows] = await pool.execute("SELECT * FROM pets WHERE id = ?", [
-        id,
-      ]);
+      const [rows] = await pool.execute(
+        `SELECT p.*, pi.image_path as avatar_image
+         FROM pets p
+         LEFT JOIN pet_images pi ON p.id = pi.pet_id AND pi.display_order = 0
+         WHERE p.id = ?`,
+        [id],
+      );
       return rows[0] || null;
     } catch (error) {
       console.error("Error finding pet by ID:", error);

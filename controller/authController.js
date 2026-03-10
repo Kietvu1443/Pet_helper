@@ -1,9 +1,9 @@
 const User = require("../models/User");
 
 const authController = {
-  // Show login/register page
+  // Hiện trang đăng nhập
   showLoginPage: (req, res) => {
-    // If already logged in, redirect to home
+    // Điều kiện nếu đăng nhập vào thì về home
     if (req.session && req.session.user) {
       return res.redirect("/");
     }
@@ -15,7 +15,7 @@ const authController = {
     });
   },
 
-  // Handle registration
+  // Xử lí đăng kí
   register: async (req, res) => {
     try {
       const {
@@ -28,7 +28,7 @@ const authController = {
         address,
       } = req.body;
 
-      // Validation
+      // Chuẩn hoá
       if (!display_name || !name || !email || !password) {
         return res.render("auth/login", {
           title: "Đăng nhập - Pet Helper",
@@ -47,16 +47,16 @@ const authController = {
         });
       }
 
-      if (password.length < 6) {
+      if (password.length < 8) {
         return res.render("auth/login", {
           title: "Đăng nhập - Pet Helper",
-          error: "Mật khẩu phải có ít nhất 6 ký tự",
+          error: "Mật khẩu phải có ít nhất 8 ký tự",
           success: null,
           activeTab: "register",
         });
       }
 
-      // Check if email already exists
+      // Kiểm tra xem đã có email tồn tại trong csdl chưa
       const existingUser = await User.findByEmail(email);
       if (existingUser) {
         return res.render("auth/login", {
@@ -67,7 +67,7 @@ const authController = {
         });
       }
 
-      // Create user
+      // Tạo ng dùng
       const newUser = await User.create({
         display_name,
         name,
@@ -77,7 +77,7 @@ const authController = {
         address: address || null,
       });
 
-      // Auto login after registration
+      // Tự đăng nhập sau khi đăng kí
       req.session.user = {
         id: newUser.id,
         display_name: newUser.display_name,
@@ -86,7 +86,7 @@ const authController = {
         role: newUser.role,
       };
 
-      // Redirect to return URL or home
+      // Chuyển tiếp về url hoặc trang chủ
       const returnTo = req.session.returnTo || "/";
       delete req.session.returnTo;
       res.redirect(returnTo);
@@ -101,12 +101,12 @@ const authController = {
     }
   },
 
-  // Handle login
+  // Xử lí đăng nhập
   login: async (req, res) => {
     try {
       const { display_name, password } = req.body;
 
-      // Validation
+      // Chuẩn hoá
       if (!display_name || !password) {
         return res.render("auth/login", {
           title: "Đăng nhập - Pet Helper",
@@ -116,7 +116,7 @@ const authController = {
         });
       }
 
-      // Find user by display name
+      // Tìm user bằng displayname
       const user = await User.findByDisplayName(display_name);
       if (!user) {
         return res.render("auth/login", {
@@ -127,7 +127,7 @@ const authController = {
         });
       }
 
-      // Check password
+      // kiểm tra mật khẩu
       const isMatch = await User.comparePassword(password, user.password);
       if (!isMatch) {
         return res.render("auth/login", {
@@ -138,7 +138,7 @@ const authController = {
         });
       }
 
-      // Set session
+      // Điểu khiển session
       req.session.user = {
         id: user.id,
         display_name: user.display_name,
@@ -147,7 +147,7 @@ const authController = {
         role: user.role,
       };
 
-      // Redirect to return URL or home
+      // Chuyển về url hoặc home
       const returnTo = req.session.returnTo || "/";
       delete req.session.returnTo;
       res.redirect(returnTo);
@@ -162,7 +162,7 @@ const authController = {
     }
   },
 
-  // Handle logout
+  // Xử lí đăng xuất
   logout: (req, res) => {
     req.session.destroy((err) => {
       if (err) {

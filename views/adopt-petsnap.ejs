@@ -132,15 +132,20 @@
         }
 
         .image-dot {
-            width: 8px;
-            height: 8px;
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.5);
             border: 1px solid rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            /* Larger touch target */
+            padding: 4px;
+            box-sizing: content-box;
         }
 
         .image-dot.active {
             background: #fff;
+            transform: scale(1.15);
         }
 
         /* ============ SWIPE OVERLAYS ============ */
@@ -669,8 +674,8 @@
             <div class="match-list" id="matchList">
                 <% likedPets.forEach(function(pet) { %>
                     <a href="/adopt/<%= pet.id %>" class="match-item">
-                        <img src="<%= pet.image_url || 'https://via.placeholder.com/50' %>" class="match-avatar"
-                            alt="<%= pet.name %>">
+                        <img src="<%= pet.avatar_image || pet.image_url || 'https://via.placeholder.com/50' %>"
+                            class="match-avatar" alt="<%= pet.name %>">
                         <span class="match-name">
                             <%= pet.name %>
                         </span>
@@ -692,6 +697,7 @@
     <div class="detail-sheet" id="detailSheet">
         <div class="detail-image-container">
             <img src="" class="detail-image" id="detailImage" alt="Pet">
+            <div class="image-dots" id="detailDots"></div>
             <button class="detail-nav-btn detail-nav-prev" id="detailPrev"><i
                     class="fa-solid fa-arrow-left"></i></button>
             <button class="detail-nav-btn detail-nav-next" id="detailNext"><i
@@ -782,12 +788,27 @@
         sidebarCloseBtn.addEventListener('click', closeSidebar);
 
         // === DETAIL SHEET (Mockup 5) ===
+        var detailImages = [];
+        var detailImageIndex = 0;
+
         function openDetailSheet() {
             if (!currentPet || isDetailOpen) return;
             isDetailOpen = true;
 
-            detailImage.src = currentPet.image_url || 'https://via.placeholder.com/400x400?text=No+Image';
+            // Load all images for this pet
+            var petImages = currentPet.images || [];
+            if (petImages.length > 0) {
+                detailImages = petImages.map(function (img) { return img.image_path; });
+            } else {
+                detailImages = [currentPet.avatar_image || currentPet.image_url || 'https://via.placeholder.com/400x400?text=No+Image'];
+            }
+            detailImageIndex = 0;
+
+            detailImage.src = detailImages[0];
             detailName.innerText = currentPet.name || 'Không tên';
+
+            // Update detail nav button visibility
+            updateDetailNav();
 
             var infoHTML = '';
             if (currentPet.pet_type) infoHTML += '<div class="detail-info-row"><strong>Loại:</strong> ' + currentPet.pet_type + '</div>';
@@ -808,6 +829,37 @@
             animate(detailSheet, { y: [window.innerHeight, 0] }, { duration: 0.4, easing: [0.32, 0.72, 0, 1] });
         }
 
+        function updateDetailNav() {
+            var prevBtn = document.getElementById('detailPrev');
+            var nextBtn = document.getElementById('detailNext');
+            prevBtn.style.display = detailImageIndex > 0 ? 'block' : 'none';
+            nextBtn.style.display = detailImageIndex < detailImages.length - 1 ? 'block' : 'none';
+
+            // Update detail dots
+            var dotsContainer = document.getElementById('detailDots');
+            if (dotsContainer) {
+                var dotsHTML = '';
+                for (var i = 0; i < detailImages.length; i++) {
+                    dotsHTML += '<div class="image-dot' + (i === detailImageIndex ? ' active' : '') + '"></div>';
+                }
+                dotsContainer.innerHTML = dotsHTML;
+            }
+        }
+
+        function detailNavTo(index) {
+            if (index < 0 || index >= detailImages.length) return;
+            detailImageIndex = index;
+            detailImage.style.transition = 'opacity 0.2s ease';
+            detailImage.style.opacity = '0.3';
+            setTimeout(function () {
+                detailImage.src = detailImages[detailImageIndex];
+                detailImage.onload = function () {
+                    detailImage.style.opacity = '1';
+                };
+            }, 150);
+            updateDetailNav();
+        }
+
         function closeDetailSheet() {
             if (!isDetailOpen) return;
             animate(detailSheet, { y: window.innerHeight }, { duration: 0.35, easing: [0.32, 0.72, 0, 1] })
@@ -820,13 +872,16 @@
 
         detailCloseBtn.addEventListener('click', closeDetailSheet);
         detailOpenBtn.addEventListener('click', function () {
-            // Already open, just scroll to content
             detailSheet.scrollTo({ top: 0, behavior: 'smooth' });
         });
 
-        // Detail nav arrows (placeholder for multi-image support)
-        document.getElementById('detailPrev').addEventListener('click', function () { });
-        document.getElementById('detailNext').addEventListener('click', function () { });
+        // Detail nav arrows
+        document.getElementById('detailPrev').addEventListener('click', function () {
+            detailNavTo(detailImageIndex - 1);
+        });
+        document.getElementById('detailNext').addEventListener('click', function () {
+            detailNavTo(detailImageIndex + 1);
+        });
 
         // === CARD RENDERING ===
         function renderCards() {
@@ -860,10 +915,25 @@
 
                 var descShort = pet.description ? (pet.description.length > 40 ? pet.description.substring(0, 40) + '...' : pet.description) : '—';
 
+                var petImages = pet.images || [];
+                var avatarSrc = (petImages.length > 0) ? petImages[0].image_path : (pet.avatar_image || pet.image_url || 'https://via.placeholder.com/400x600?text=No+Image');
+
+                // Build dots HTML from actual images
+                var dotsHTML = '';
+                if (petImages.length > 1) {
+                    dotsHTML = '<div class="image-dots">';
+                    for (var d = 0; d < petImages.length; d++) {
+                        dotsHTML += '<div class="image-dot' + (d === 0 ? ' active' : '') + '" data-index="' + d + '"></div>';
+                    }
+                    dotsHTML += '</div>';
+                } else {
+                    dotsHTML = '<div class="image-dots"><div class="image-dot active"></div></div>';
+                }
+
                 el.innerHTML =
                     '<div class="card-image-container">' +
-                    '<img src="' + (pet.image_url || 'https://via.placeholder.com/400x600?text=No+Image') + '" class="card-image" draggable="false" alt="' + (pet.name || '') + '">' +
-                    '<div class="image-dots"><div class="image-dot active"></div><div class="image-dot"></div><div class="image-dot"></div></div>' +
+                    '<img src="' + avatarSrc + '" class="card-image" draggable="false" alt="' + (pet.name || '') + '">' +
+                    dotsHTML +
                     '<div class="swipe-overlay overlay-like-full"><div class="overlay-icon"><img src="/images/btn-like.png" class="overlay-img" alt="Like"></div></div>' +
                     '<div class="swipe-overlay overlay-nope-full"><div class="overlay-icon"><img src="/images/btn-nope.png" class="overlay-img" alt="Nope"></div></div>' +
                     '</div>' +
@@ -911,6 +981,47 @@
             // Drag handlers
             currentCard.addEventListener('mousedown', onDragStart);
             currentCard.addEventListener('touchstart', onDragStart, { passive: true });
+
+            // === DOT CLICK-TO-SWITCH ===
+            setupDotInteractions(currentCard, currentPet);
+        }
+
+        // Click on dot to switch image
+        function setupDotInteractions(card, pet) {
+            var petImages = pet.images || [];
+            if (petImages.length <= 1) return;
+
+            var dots = card.querySelectorAll('.image-dot');
+            var cardImg = card.querySelector('.card-image');
+            if (!cardImg || dots.length === 0) return;
+
+            dots.forEach(function (dot, index) {
+                function onDotClick(e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    if (index < petImages.length) {
+                        cardImg.style.transition = 'opacity 0.15s ease';
+                        cardImg.style.opacity = '0.5';
+                        setTimeout(function () {
+                            cardImg.src = petImages[index].image_path;
+                            cardImg.style.opacity = '1';
+                        }, 100);
+                        // Update active dot
+                        dots.forEach(function (d) { d.classList.remove('active'); });
+                        dot.classList.add('active');
+                    }
+                }
+
+                dot.addEventListener('click', onDotClick);
+                dot.addEventListener('touchend', function (e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    onDotClick(e);
+                });
+                // Prevent drag from starting on dots
+                dot.addEventListener('mousedown', function (e) { e.stopPropagation(); });
+                dot.addEventListener('touchstart', function (e) { e.stopPropagation(); }, { passive: false });
+            });
         }
 
         // === DRAG LOGIC ===
@@ -1059,7 +1170,7 @@
             item.href = '/adopt/' + pet.id;
             item.className = 'match-item';
             item.innerHTML =
-                '<img src="' + (pet.image_url || 'https://via.placeholder.com/50') + '" class="match-avatar" alt="' + pet.name + '">' +
+                '<img src="' + (pet.avatar_image || pet.image_url || 'https://via.placeholder.com/50') + '" class="match-avatar" alt="' + pet.name + '">' +
                 '<span class="match-name">' + pet.name + '</span>';
             matchList.prepend(item);
 

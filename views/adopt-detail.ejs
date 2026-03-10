@@ -22,12 +22,32 @@
                 <div class="pet-detail-grid">
                     <!-- Pet Image -->
                     <div class="pet-image-section">
-                        <img src="<%= pet.image_url || 'https://via.placeholder.com/600x400?text=No+Image' %>"
-                            alt="<%= pet.name %>" class="pet-main-image">
-                        <div class="pet-status-badge <%= pet.status %>">
-                            <%= pet.status==='available' ? '🟢 Sẵn sàng nhận nuôi' : pet.status==='pending'
-                                ? '🟡 Đang xử lý' : '🔴 Đã được nhận nuôi' %>
-                        </div>
+                        <% // Determine main image: avatar from pet_images or fallback to image_url const
+                            mainImage=(typeof images !=='undefined' && images.length> 0)
+                            ? images[0].image_path
+                            : (pet.avatar_image || pet.image_url ||
+                            'https://via.placeholder.com/600x400?text=No+Image');
+                            const galleryImages = (typeof images !== 'undefined' && images.length > 1)
+                            ? images.slice(1)
+                            : [];
+                            %>
+                            <img src="<%= mainImage %>" alt="<%= pet.name %>" class="pet-main-image" id="mainImage">
+                            <div class="pet-status-badge <%= pet.status %>">
+                                <%= pet.status==='available' ? '🟢 Sẵn sàng nhận nuôi' : pet.status==='pending'
+                                    ? '🟡 Đang xử lý' : '🔴 Đã được nhận nuôi' %>
+                            </div>
+
+                            <% if (typeof images !=='undefined' && images.length> 1) { %>
+                                <div class="pet-gallery">
+                                    <% images.forEach(function(img, index) { %>
+                                        <div class="gallery-thumb <%= index === 0 ? 'active' : '' %>"
+                                            onclick="changeMainImage('<%= img.image_path %>', this)">
+                                            <img src="<%= img.image_path %>"
+                                                alt="<%= pet.name %> - Ảnh <%= index + 1 %>">
+                                        </div>
+                                        <% }); %>
+                                </div>
+                                <% } %>
                     </div>
 
                     <!-- Pet Info -->
@@ -221,6 +241,25 @@
                 }
             </script>
 
+            <script>
+                // Gallery image switching
+                function changeMainImage(src, thumbEl) {
+                    const mainImg = document.getElementById('mainImage');
+                    if (mainImg) {
+                        mainImg.style.opacity = '0.3';
+                        setTimeout(() => {
+                            mainImg.src = src;
+                            mainImg.onload = () => {
+                                mainImg.style.opacity = '1';
+                            };
+                        }, 150);
+                    }
+                    // Update active state
+                    document.querySelectorAll('.gallery-thumb').forEach(t => t.classList.remove('active'));
+                    if (thumbEl) thumbEl.classList.add('active');
+                }
+            </script>
+
             <style>
                 .pet-detail-page {
                     padding: 40px 0 80px;
@@ -252,6 +291,44 @@
                     width: 100%;
                     border-radius: 20px;
                     box-shadow: var(--shadow-lg);
+                    transition: opacity 0.3s ease;
+                }
+
+                .pet-gallery {
+                    display: flex;
+                    gap: 10px;
+                    margin-top: 15px;
+                    overflow-x: auto;
+                    padding-bottom: 5px;
+                }
+
+                .gallery-thumb {
+                    flex-shrink: 0;
+                    width: 80px;
+                    height: 80px;
+                    border-radius: 12px;
+                    overflow: hidden;
+                    cursor: pointer;
+                    border: 3px solid transparent;
+                    transition: all 0.3s ease;
+                    opacity: 0.6;
+                }
+
+                .gallery-thumb:hover {
+                    opacity: 0.9;
+                    transform: scale(1.05);
+                }
+
+                .gallery-thumb.active {
+                    border-color: var(--primary, #2d6a4f);
+                    opacity: 1;
+                    box-shadow: 0 2px 8px rgba(45, 106, 79, 0.3);
+                }
+
+                .gallery-thumb img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
                 }
 
                 .pet-status-badge {

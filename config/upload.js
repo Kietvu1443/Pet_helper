@@ -2,22 +2,38 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 
-// Ensure upload directory exists
-const uploadDir = path.join(__dirname, "../public/images/pets");
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
+// Base upload directory
+const baseUploadDir = path.join(__dirname, "../public/images/pets");
+if (!fs.existsSync(baseUploadDir)) {
+  fs.mkdirSync(baseUploadDir, { recursive: true });
 }
 
-// Configure storage
+// Configure storage (legacy - saves to flat /images/pets/)
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, uploadDir);
+    cb(null, baseUploadDir);
   },
   filename: (req, file, cb) => {
-    // Generate unique filename: pet_timestamp_originalname
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
     const ext = path.extname(file.originalname);
     cb(null, `pet_${uniqueSuffix}${ext}`);
+  },
+});
+
+// Per-pet folder storage - saves to /images/pets/{petId}/
+const petStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const petId = req.params.id || req.petId;
+    const petDir = path.join(baseUploadDir, String(petId));
+    if (!fs.existsSync(petDir)) {
+      fs.mkdirSync(petDir, { recursive: true });
+    }
+    cb(null, petDir);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    const ext = path.extname(file.originalname);
+    cb(null, `${uniqueSuffix}${ext}`);
   },
 });
 
@@ -36,7 +52,7 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-// Create multer instance
+// Legacy upload instance (flat folder)
 const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
@@ -45,9 +61,49 @@ const upload = multer({
   },
 });
 
-// Helper function to get the URL path from uploaded file
+// Per-pet upload instance (per-pet folder)
+const petUpload = multer({
+  storage: petStorage,
+  fileFilter: fileFilter,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // Max 5MB
+  },
+});
+
+// Helper function to get the URL path from uploaded file (legacy)
 const getImageUrl = (filename) => {
   return `/images/pets/${filename}`;
+};
+
+// Helper function to get the URL path for per-pet folder
+const getImageUrlForPet = (petId, filename) => {
+  return `/images/pets/${petId}/${filename}`;
+};
+
+// Helper function to ensure pet folder exists
+const ensurePetFolder = (petId) => {
+  const petDir = path.join(baseUploadDir, String(petId));
+  if (!fs.existsSync(petDir)) {
+    fs.mkdirSync(petDir, { recursive: true });
+  }
+  return petDir;
+};
+
+// Helper function to save uploaded file to pet folder
+const saveFileToPetFolder = (file, petId) => {
+  const petDir = ensurePetFolder(petId);
+  const filename = file.filename || file.originalname;
+  const sourcePath = file.path;
+  const destPath = path.join(petDir, filename);
+
+  // If file is already in the right place, just return
+  if (sourcePath === destPath) {
+    return getImageUrlForPet(petId, filename);
+  }
+
+  // Move file from temp location to pet folder
+  fs.renameSync(sourcePath, destPath);
+  return getImageUrlForPet(petId, filename);
 };
 
 // Helper function to delete old image
@@ -62,6 +118,10 @@ const deleteImage = (imageUrl) => {
 
 module.exports = {
   upload,
+  petUpload,
   getImageUrl,
+  getImageUrlForPet,
+  ensurePetFolder,
+  saveFileToPetFolder,
   deleteImage,
 };

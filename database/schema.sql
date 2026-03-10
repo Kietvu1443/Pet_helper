@@ -53,6 +53,17 @@ CREATE TABLE IF NOT EXISTS pet_likes (
     UNIQUE KEY unique_interaction (user_id, pet_id)
 );
 
+-- Bảng lưu ảnh thú cưng (quản lý thứ tự và logic hiển thị)
+CREATE TABLE IF NOT EXISTS pet_images (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    pet_id INT NOT NULL,
+    image_path VARCHAR(500) NOT NULL,
+    display_order INT DEFAULT 0 COMMENT '0 = ảnh đại diện, 1+ = ảnh gallery',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (pet_id) REFERENCES pets(id) ON DELETE CASCADE,
+    INDEX idx_pet_display (pet_id, display_order)
+);
+
 -- Tài khoản admin mặc định (mật khẩu: admin123)
 INSERT INTO users (display_name, name, email, password, role) VALUES
 ('Admin', 'Administrator', 'admin@pethelper.vn', '$2b$10$nFNIfeHOuxNCv2pLT9pueepurMfH1exUieBvdu0Z6kXy70ph6vp', 0)

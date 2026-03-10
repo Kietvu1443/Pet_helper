@@ -1,5 +1,6 @@
 const PetLike = require("../models/PetLike");
 const Pet = require("../models/Pet");
+const PetImage = require("../models/PetImage");
 
 const tinderController = {
   // Render the Tinder-style swipe page
@@ -11,8 +12,12 @@ const tinderController = {
 
       // Initial batch of pets
       console.log("[Tinder] Loading pets for user:", req.session.user.id);
-      const pets = await PetLike.findRandomPets(req.session.user.id, 10);
-      const likedPets = await PetLike.findLikedPets(req.session.user.id);
+      let pets = await PetLike.findRandomPets(req.session.user.id, 10);
+      let likedPets = await PetLike.findLikedPets(req.session.user.id);
+
+      // Attach full images array to each pet
+      await PetImage.attachImagesToPets(pets);
+      await PetImage.attachImagesToPets(likedPets);
       console.log(
         "[Tinder] Found",
         pets.length,
@@ -48,6 +53,8 @@ const tinderController = {
         req.session.user.id,
       );
       const pets = await PetLike.findRandomPets(req.session.user.id, 5);
+      // Attach full images array to each pet
+      await PetImage.attachImagesToPets(pets);
       console.log("[Tinder API] Returning", pets.length, "pets");
       res.json(pets);
     } catch (error) {
@@ -86,6 +93,7 @@ const tinderController = {
       }
 
       const likedPets = await PetLike.findLikedPets(req.session.user.id);
+      await PetImage.attachImagesToPets(likedPets);
       res.json(likedPets);
     } catch (error) {
       console.error("[Tinder API] Error fetching liked pets:", error);

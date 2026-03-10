@@ -18,14 +18,12 @@ const PetLike = {
   // Get random pets that the user hasn't interacted with yet
   async findRandomPets(userId, limit = 10) {
     try {
-      // IMPORTANT: Use pool.query() instead of pool.execute() because
-      // mysql2 prepared statements (execute) don't handle LIMIT ? correctly
-      // (they stringify the parameter, causing SQL errors).
       const safeLimit = parseInt(limit, 10) || 10;
       const query = `
-        SELECT p.* 
-        FROM pets p 
+        SELECT p.*, pi.image_path as avatar_image
+        FROM pets p
         LEFT JOIN pet_likes pl ON p.id = pl.pet_id AND pl.user_id = ?
+        LEFT JOIN pet_images pi ON p.id = pi.pet_id AND pi.display_order = 0
         WHERE pl.id IS NULL AND p.status = 'available'
         ORDER BY RAND() 
         LIMIT ${safeLimit}
@@ -42,9 +40,10 @@ const PetLike = {
   async findLikedPets(userId) {
     try {
       const query = `
-        SELECT p.*, pl.created_at as liked_at
+        SELECT p.*, pl.created_at as liked_at, pi.image_path as avatar_image
         FROM pets p
         JOIN pet_likes pl ON p.id = pl.pet_id
+        LEFT JOIN pet_images pi ON p.id = pi.pet_id AND pi.display_order = 0
         WHERE pl.user_id = ? AND pl.status = 'liked'
         ORDER BY pl.created_at DESC
       `;

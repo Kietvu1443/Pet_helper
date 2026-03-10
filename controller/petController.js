@@ -1,8 +1,17 @@
 const Pet = require("../models/Pet");
-const { getImageUrl, deleteImage } = require("../config/upload");
+const PetImage = require("../models/PetImage");
+const {
+  upload,
+  getImageUrl,
+  getImageUrlForPet,
+  ensurePetFolder,
+  deleteImage,
+} = require("../config/upload");
+const path = require("path");
+const fs = require("fs");
 
 const petController = {
-  // Get adopt page with all available pets
+  // Hiện ra trang nhận nuôi với tất cả các pet
   getAdoptPage: async (req, res) => {
     try {
       const pets = await Pet.findAll("available");
@@ -21,21 +30,25 @@ const petController = {
     }
   },
 
-  // Get pet detail page
+  // Hiện ra thông tin chi tiết cho pet
   getPetDetail: async (req, res) => {
     try {
       const pet = await Pet.findById(req.params.id);
 
       if (!pet) {
         return res.status(404).render("error", {
-          message: "Không tìm thấy thú cưng",
+          message: "Thú cưng không tồn tại",
           error: { status: 404 },
         });
       }
 
+      // Gắp tất cả ảnh của pet từ bảng pet_images
+      const images = await PetImage.findByPetId(req.params.id);
+
       res.render("adopt-detail", {
         title: `${pet.name} - Pet Helper`,
         pet: pet,
+        images: images,
       });
     } catch (error) {
       console.error("Error loading pet detail:", error);
@@ -46,7 +59,7 @@ const petController = {
     }
   },
 
-  // Show add pet form (Admin only)
+  // Hiện ra giao diện thêm thú cưng (yêu cầu quyền cao)
   showAddPetForm: (req, res) => {
     res.render("admin/add-pet", {
       title: "Thêm Thú Cưng - Pet Helper",
@@ -73,7 +86,7 @@ const petController = {
         description,
       } = req.body;
 
-      // Get image URL from uploaded file
+      // Lấy url ảnh từ lúc upload 
       let image_url = null;
       if (req.file) {
         image_url = getImageUrl(req.file.filename);
@@ -95,6 +108,22 @@ const petController = {
         description: description || null,
       });
 
+      // nếu ảnh đã được lưu thì cũng sẽ được tạo path trong pet_images và lưu ảnh vật lí trong pets_images
+      if (req.file) {
+        const petId = newPet.id;
+        const petDir = ensurePetFolder(petId);
+        const filename = req.file.filename;
+        const sourcePath = req.file.path;
+        const destPath = path.join(petDir, filename);
+
+        // Sao chép file vào thư mục pets
+        fs.copyFileSync(sourcePath, destPath);
+
+        // Tạo pet_images ghi chú với display_order = 0 (ảnh đại diện)
+        const imagePath = getImageUrlForPet(petId, filename);
+        await PetImage.create(petId, imagePath, 0);
+      }
+
       res.redirect("/adopt/" + newPet.id);
     } catch (error) {
       console.error("Error creating pet:", error);
@@ -106,7 +135,7 @@ const petController = {
     }
   },
 
-  // Show edit pet form (Admin only)
+  // Hiện edit thông tin pet(yêu cầu quyền cao)
   showEditPetForm: async (req, res) => {
     try {
       const pet = await Pet.findById(req.params.id);
@@ -118,9 +147,13 @@ const petController = {
         });
       }
 
+      // Lấy ảnh đã tồn tại
+      const images = await PetImage.findByPetId(req.params.id);
+
       res.render("admin/add-pet", {
         title: "Sửa Thú Cưng - Pet Helper",
         pet: pet,
+        images: images,
         error: null,
       });
     } catch (error) {
@@ -166,6 +199,20 @@ const petController = {
         // Delete old image if it's a local file
         deleteImage(oldPet.image_url);
         image_url = getImageUrl(req.file.filename);
+
+        // Also save to per-pet folder and create pet_images record
+        const petDir = ensurePetFolder(petId);
+        const filename = req.file.filename;
+        const sourcePath = req.file.path;
+        const destPath = path.join(petDir, filename);
+
+        // Copy file to pet folder
+        fs.copyFileSync(sourcePath, destPath);
+
+        // Get next display_order
+        const nextOrder = await PetImage.getNextDisplayOrder(petId);
+        const imagePath = getImageUrlForPet(petId, filename);
+        await PetImage.create(petId, imagePath, nextOrder);
       }
 
       await Pet.update(petId, {
@@ -201,8 +248,26 @@ const petController = {
       const pet = await Pet.findById(req.params.id);
 
       if (pet) {
-        // Delete image file
+        // Delete all images from pet_images table
+        const images = await PetImage.findByPetId(req.params.id);
+        for (const img of images) {
+          deleteImage(img.image_path);
+        }
+        await PetImage.deleteByPetId(req.params.id);
+
+        // Delete legacy image
         deleteImage(pet.image_url);
+
+        // Delete pet folder if exists
+        const petDir = path.join(
+          __dirname,
+          "../public/images/pets",
+          String(req.params.id),
+        );
+        if (fs.existsSync(petDir)) {
+          fs.rmSync(petDir, { recursive: true, force: true });
+        }
+
         await Pet.delete(req.params.id);
       }
 

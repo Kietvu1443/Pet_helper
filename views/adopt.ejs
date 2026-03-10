@@ -208,7 +208,7 @@
                                 <% pets.forEach(function(pet) { %>
                                     <div class="pet-card" data-species="<%= pet.pet_type || '' %>"
                                         data-name="<%= (pet.name || '').toLowerCase() %>">
-                                        <img src="<%= pet.image_url || 'https://via.placeholder.com/400x220?text=No+Image' %>"
+                                        <img src="<%= pet.avatar_image || pet.image_url || 'https://via.placeholder.com/400x220?text=No+Image' %>"
                                             alt="<%= pet.name %>" class="card-image">
                                         <div class="card-body">
                                             <span class="card-tag">

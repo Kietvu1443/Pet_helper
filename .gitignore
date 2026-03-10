@@ -1,5 +1,17 @@
 node_modules/
 .env
+.env.local
+
+# uploads
 pets/
-docker-compose.yml
-Dockerfile
+
+# backups
+backups/
+
+# logs
+logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db

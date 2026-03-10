@@ -1,41 +1,19 @@
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const cloudinary = require("cloudinary").v2;
 
-// Base upload directory
-const baseUploadDir = path.join(__dirname, "../public/images/pets");
-if (!fs.existsSync(baseUploadDir)) {
-  fs.mkdirSync(baseUploadDir, { recursive: true });
-}
-
-// Configure storage (legacy - saves to flat /images/pets/)
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, baseUploadDir);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    const ext = path.extname(file.originalname);
-    cb(null, `pet_${uniqueSuffix}${ext}`);
-  },
+// ========== Cấu hình Cloudinary ==========
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// Per-pet folder storage - saves to /images/pets/{petId}/
-const petStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const petId = req.params.id || req.petId;
-    const petDir = path.join(baseUploadDir, String(petId));
-    if (!fs.existsSync(petDir)) {
-      fs.mkdirSync(petDir, { recursive: true });
-    }
-    cb(null, petDir);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    const ext = path.extname(file.originalname);
-    cb(null, `${uniqueSuffix}${ext}`);
-  },
-});
+// ========== Cấu hình chung ==========
+const isProduction = process.env.NODE_ENV === "production";
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 // File filter - only allow images
 const fileFilter = (req, file, cb) => {
@@ -52,35 +30,129 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-// Legacy upload instance (flat folder)
-const upload = multer({
-  storage: storage,
-  fileFilter: fileFilter,
-  limits: {
-    fileSize: 5 * 1024 * 1024, // Max 5MB
+// ========== LOCAL STORAGE (Development) ==========
+const baseUploadDir = path.join(__dirname, "../public/images/pets");
+if (!fs.existsSync(baseUploadDir)) {
+  fs.mkdirSync(baseUploadDir, { recursive: true });
+}
+
+// Legacy storage (flat folder)
+const localStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, baseUploadDir);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    const ext = path.extname(file.originalname);
+    cb(null, `pet_${uniqueSuffix}${ext}`);
   },
 });
 
-// Per-pet upload instance (per-pet folder)
-const petUpload = multer({
-  storage: petStorage,
-  fileFilter: fileFilter,
-  limits: {
-    fileSize: 5 * 1024 * 1024, // Max 5MB
+// Per-pet folder storage
+const localPetStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const petId = req.params.id || req.petId;
+    const petDir = path.join(baseUploadDir, String(petId));
+    if (!fs.existsSync(petDir)) {
+      fs.mkdirSync(petDir, { recursive: true });
+    }
+    cb(null, petDir);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    const ext = path.extname(file.originalname);
+    cb(null, `${uniqueSuffix}${ext}`);
   },
 });
 
-// Helper function to get the URL path from uploaded file (legacy)
-const getImageUrl = (filename) => {
-  return `/images/pets/${filename}`;
+// ========== CLOUDINARY STORAGE (Production) ==========
+const cloudStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "pets",
+    allowed_formats: ["jpg", "png", "webp", "jpeg"],
+    transformation: [{ quality: "auto" }],
+  },
+});
+
+const cloudPetStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: async (req, file) => {
+    const petId = req.params.id || req.petId;
+    return {
+      folder: `pets/${petId}`,
+      allowed_formats: ["jpg", "png", "webp", "jpeg"],
+      transformation: [{ quality: "auto" }],
+    };
+  },
+});
+
+// ========== Tạo Multer Instances dựa theo NODE_ENV ==========
+let upload, petUpload;
+
+if (isProduction) {
+  // PRODUCTION: Upload lên Cloudinary
+  console.log("📷 Upload mode: CLOUDINARY (Production)");
+  upload = multer({
+    storage: cloudStorage,
+    fileFilter: fileFilter,
+    limits: { fileSize: MAX_FILE_SIZE },
+  });
+  petUpload = multer({
+    storage: cloudPetStorage,
+    fileFilter: fileFilter,
+    limits: { fileSize: MAX_FILE_SIZE },
+  });
+} else {
+  // DEVELOPMENT: Lưu xuống ổ cứng
+  console.log("📷 Upload mode: LOCAL DISK (Development)");
+  upload = multer({
+    storage: localStorage,
+    fileFilter: fileFilter,
+    limits: { fileSize: MAX_FILE_SIZE },
+  });
+  petUpload = multer({
+    storage: localPetStorage,
+    fileFilter: fileFilter,
+    limits: { fileSize: MAX_FILE_SIZE },
+  });
+}
+
+// ========== Helper Functions ==========
+
+// Lấy URL ảnh từ file đã upload (legacy flat folder)
+const getImageUrl = (file) => {
+  if (isProduction) {
+    return file.path; // Cloudinary trả về URL đầy đủ
+  }
+  return `/images/pets/${file.filename}`; // Local path
 };
 
-// Helper function to get the URL path for per-pet folder
-const getImageUrlForPet = (petId, filename) => {
-  return `/images/pets/${petId}/${filename}`;
+// Lấy URL ảnh cho thư mục theo pet
+const getImageUrlForPet = (file, petId) => {
+  if (isProduction) {
+    return file.path; // Cloudinary trả về URL đầy đủ
+  }
+  return `/images/pets/${petId}/${file.filename}`; // Local path
 };
 
-// Helper function to ensure pet folder exists
+// Lấy cloudinary_id từ file (chỉ có khi Production)
+const getCloudinaryId = (file) => {
+  if (!isProduction) return null;
+
+  // multer-storage-cloudinary thường trả public_id trong file.filename
+  // Log ra để xác nhận chính xác (theo khuyến cáo)
+  console.log("☁️ Cloudinary upload result - req.file:", {
+    filename: file.filename,
+    path: file.path,
+    public_id: file.public_id,
+  });
+
+  // Ưu tiên public_id nếu có, fallback sang filename
+  return file.public_id || file.filename || null;
+};
+
+// Đảm bảo thư mục pet tồn tại (chỉ dùng cho Local)
 const ensurePetFolder = (petId) => {
   const petDir = path.join(baseUploadDir, String(petId));
   if (!fs.existsSync(petDir)) {
@@ -89,26 +161,41 @@ const ensurePetFolder = (petId) => {
   return petDir;
 };
 
-// Helper function to save uploaded file to pet folder
+// Lưu file vào thư mục pet (chỉ dùng cho Local)
 const saveFileToPetFolder = (file, petId) => {
+  if (isProduction) {
+    // Cloudinary đã lưu sẵn, chỉ cần trả URL
+    return file.path;
+  }
+
   const petDir = ensurePetFolder(petId);
   const filename = file.filename || file.originalname;
   const sourcePath = file.path;
   const destPath = path.join(petDir, filename);
 
-  // If file is already in the right place, just return
   if (sourcePath === destPath) {
-    return getImageUrlForPet(petId, filename);
+    return `/images/pets/${petId}/${filename}`;
   }
 
-  // Move file from temp location to pet folder
   fs.renameSync(sourcePath, destPath);
-  return getImageUrlForPet(petId, filename);
+  return `/images/pets/${petId}/${filename}`;
 };
 
-// Helper function to delete old image
-const deleteImage = (imageUrl) => {
-  if (!imageUrl || imageUrl.startsWith("http")) return; // Skip external URLs
+// Xóa ảnh (hỗ trợ cả Local và Cloudinary)
+const deleteImage = async (imageUrl, cloudinaryId) => {
+  // Nếu có cloudinary_id thì xóa trên Cloudinary
+  if (cloudinaryId) {
+    try {
+      const result = await cloudinary.uploader.destroy(cloudinaryId);
+      console.log("☁️ Cloudinary delete result:", result);
+      return;
+    } catch (error) {
+      console.error("❌ Cloudinary delete error:", error);
+    }
+  }
+
+  // Xóa file local (nếu là đường dẫn nội bộ)
+  if (!imageUrl || imageUrl.startsWith("http")) return;
 
   const imagePath = path.join(__dirname, "../public", imageUrl);
   if (fs.existsSync(imagePath)) {
@@ -119,8 +206,11 @@ const deleteImage = (imageUrl) => {
 module.exports = {
   upload,
   petUpload,
+  cloudinary,
+  isProduction,
   getImageUrl,
   getImageUrlForPet,
+  getCloudinaryId,
   ensurePetFolder,
   saveFileToPetFolder,
   deleteImage,

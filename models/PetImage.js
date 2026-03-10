@@ -30,17 +30,18 @@ const PetImage = {
   },
 
   // Create a new image record
-  async create(petId, imagePath, displayOrder = 0) {
+  async create(petId, imagePath, displayOrder = 0, cloudinaryId = null) {
     try {
       const [result] = await pool.execute(
-        "INSERT INTO pet_images (pet_id, image_path, display_order) VALUES (?, ?, ?)",
-        [petId, imagePath, displayOrder],
+        "INSERT INTO pet_images (pet_id, image_path, display_order, cloudinary_id) VALUES (?, ?, ?, ?)",
+        [petId, imagePath, displayOrder, cloudinaryId],
       );
       return {
         id: result.insertId,
         pet_id: petId,
         image_path: imagePath,
         display_order: displayOrder,
+        cloudinary_id: cloudinaryId,
       };
     } catch (error) {
       console.error("Error creating pet image:", error);

@@ -45,3 +45,18 @@
         <p>© 2026 Pet Helper Green Project. All rights reserved.</p>
     </div>
 </footer>
+
+<script>
+/**
+ * Fallback ảnh pet khi Cloudinary/remote bị lỗi (mất mạng, URL hỏng…)
+ * Bước 1: Thử lấy ảnh qua API local /api/pets/{id}/local-avatar
+ * Bước 2: Nếu API trả về 404 (do thư mục trống/chưa tạo) -> fallback sang ảnh mặc định
+ */
+function fallbackPetImage(img, id) {
+    img.onerror = function () {
+        img.onerror = null;
+        img.src = "/images/logo.svg";
+    };
+    img.src = "/api/pets/" + id + "/local-avatar";
+}
+</script>

@@ -229,3 +229,6 @@ UPDATE users SET role = 1 WHERE display_name = 'TênTàiKhoản';
 - **Mật khẩu:** `admin123`
 
 ⚠️ Nhắc nhở: Mã hoá mật khẩu đang TẮT. Khi deploy, hãy uncomment 3 dòng bcrypt trong models/User.js.
+
+NODE_ENV=production
+NODE_ENV=development

@@ -31,7 +31,8 @@
                             ? images.slice(1)
                             : [];
                             %>
-                            <img src="<%= mainImage %>" alt="<%= pet.name %>" class="pet-main-image" id="mainImage">
+                            <img src="<%= mainImage %>" alt="<%= pet.name %>" class="pet-main-image" id="mainImage"
+                                onerror="fallbackPetImage(this, '<%= pet.id %>')">
                             <div class="pet-status-badge <%= pet.status %>">
                                 <%= pet.status==='available' ? '🟢 Sẵn sàng nhận nuôi' : pet.status==='pending'
                                     ? '🟡 Đang xử lý' : '🔴 Đã được nhận nuôi' %>
@@ -43,7 +44,8 @@
                                         <div class="gallery-thumb <%= index === 0 ? 'active' : '' %>"
                                             onclick="changeMainImage('<%= img.image_path %>', this)">
                                             <img src="<%= img.image_path %>"
-                                                alt="<%= pet.name %> - Ảnh <%= index + 1 %>">
+                                                alt="<%= pet.name %> - Ảnh <%= index + 1 %>"
+                                                onerror="fallbackPetImage(this, '<%= pet.id %>')">
                                         </div>
                                         <% }); %>
                                 </div>

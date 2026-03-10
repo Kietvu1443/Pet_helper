@@ -40,15 +40,26 @@
                     <a href="/auth/login"><span>Tài khoản</span></a>
                     <% } %>
                         <span>Giỏ hàng <span id="cart-count-display">(0)</span></span>
-                        <span>VN / EN</span>
+                        <span class="lang-switch">VN / EN</span>
         </div>
+        <!-- Hamburger Button (mobile only) -->
+        <button class="hamburger-btn" id="hamburgerBtn" aria-label="Mở menu">
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+        </button>
     </div>
 
+    <!-- Mobile Nav Overlay -->
+    <div class="mobile-nav-overlay" id="mobileNavOverlay"></div>
+
     <!-- Main Navigation -->
-    <nav class="main-nav">
+    <nav class="main-nav" id="mainNav">
+        <!-- Mobile close button -->
+        <button class="mobile-nav-close" id="mobileNavClose" aria-label="Đóng menu">✕</button>
         <ul>
             <li>
-                <a href="#">Nhận nuôi <span class="nav-arrow">▼</span></a>
+                <a href="#" class="has-dropdown">Nhận nuôi <span class="nav-arrow">▼</span></a>
                 <ul class="nav-dropdown">
                     <li><a href="/adopt">Xem vật nuôi có thể nhận nuôi</a></li>
                     <li><a href="/adopt/petsnap" style="color: #ea580c; font-weight: bold;">PetSnap(Tìm kiếm thú cưng
@@ -59,7 +70,7 @@
                 </ul>
             </li>
             <li>
-                <a href="#">Thất lạc <span class="nav-arrow">▼</span></a>
+                <a href="#" class="has-dropdown">Thất lạc <span class="nav-arrow">▼</span></a>
                 <ul class="nav-dropdown">
                     <li><a href="/reports">Báo mất thú cưng</a></li>
                     <li><a href="/reports">Báo tin nhặt được</a></li>
@@ -67,7 +78,7 @@
                 </ul>
             </li>
             <li>
-                <a href="#">Dịch vụ <span class="nav-arrow">▼</span></a>
+                <a href="#" class="has-dropdown">Dịch vụ <span class="nav-arrow">▼</span></a>
                 <ul class="nav-dropdown">
                     <li><a href="/booking">Đặt lịch tiêm phòng</a></li>
                     <li><a href="/shop">Danh mục đồ ăn/ đồ dùng</a></li>
@@ -75,7 +86,7 @@
             </li>
             <li><a href="/news">Tin tức</a></li>
             <li>
-                <a href="#">Về chúng tôi <span class="nav-arrow">▼</span></a>
+                <a href="#" class="has-dropdown">Về chúng tôi <span class="nav-arrow">▼</span></a>
                 <ul class="nav-dropdown">
                     <li><a href="/about">Thông tin về chúng tôi</a></li>
                     <li><a href="#contact-section">Liên hệ với chúng tôi</a></li>
@@ -130,6 +141,52 @@
         background-color: #f1f8f5;
         color: #2d6a4f !important;
         padding-left: 25px;
+    }
+
+    /* Hamburger Button */
+    .hamburger-btn {
+        display: none;
+        flex-direction: column;
+        gap: 5px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 8px;
+        z-index: 1001;
+    }
+
+    .hamburger-line {
+        display: block;
+        width: 26px;
+        height: 3px;
+        background: #fff;
+        border-radius: 3px;
+        transition: all 0.3s ease;
+    }
+
+    /* Mobile Nav Close */
+    .mobile-nav-close {
+        display: none;
+        background: none;
+        border: none;
+        color: #fff;
+        font-size: 1.8rem;
+        cursor: pointer;
+        padding: 10px 15px;
+        align-self: flex-end;
+    }
+
+    /* Mobile Nav Overlay */
+    .mobile-nav-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 998;
+    }
+
+    .mobile-nav-overlay.active {
+        display: block;
     }
 
     /* User dropdown menu */
@@ -196,6 +253,110 @@
     .dropdown-item.logout:hover {
         background: #FEE2E2;
     }
+
+    /* ===================================
+       Mobile Header Responsive
+       =================================== */
+    @media (max-width: 768px) {
+        .top-bar {
+            padding: 10px 15px;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            display: none;
+        }
+
+        .user-actions {
+            display: none;
+        }
+
+        .lang-switch {
+            display: none;
+        }
+
+        .hamburger-btn {
+            display: flex;
+        }
+
+        /* Mobile Nav as Sidebar */
+        .main-nav {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100vh;
+            background: var(--primary-color);
+            z-index: 999;
+            transition: left 0.3s ease;
+            overflow-y: auto;
+            padding-top: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-nav.mobile-open {
+            left: 0;
+        }
+
+        .main-nav.mobile-open ~ .mobile-nav-overlay {
+            display: block;
+        }
+
+        .mobile-nav-close {
+            display: block;
+        }
+
+        .main-nav>ul {
+            flex-direction: column;
+            gap: 0;
+            padding: 0;
+            background: none;
+        }
+
+        .main-nav>ul>li {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0;
+        }
+
+        .main-nav>ul>li>a {
+            display: block;
+            padding: 16px 20px;
+            font-size: 1rem;
+        }
+
+        /* Mobile dropdown: tap to toggle */
+        .main-nav li:hover>.nav-dropdown {
+            display: none;
+        }
+
+        .nav-dropdown {
+            position: static;
+            background: rgba(0, 0, 0, 0.15);
+            box-shadow: none;
+            border-radius: 0;
+            min-width: 100%;
+            padding: 0;
+        }
+
+        .nav-dropdown.mobile-show {
+            display: block !important;
+        }
+
+        .nav-dropdown a {
+            color: #fff !important;
+            padding: 14px 20px 14px 35px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            white-space: normal;
+            font-size: 0.9rem;
+        }
+
+        .nav-dropdown a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #b7e4c7 !important;
+            padding-left: 40px;
+        }
+    }
 </style>
 
 <script>
@@ -226,4 +387,45 @@
         localStorage.removeItem('user');
         window.location.href = '/';
     }
+
+    // Mobile Hamburger Menu Toggle
+    (function () {
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        const mainNav = document.getElementById('mainNav');
+        const overlay = document.getElementById('mobileNavOverlay');
+        const closeBtn = document.getElementById('mobileNavClose');
+
+        function openMenu() {
+            mainNav.classList.add('mobile-open');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMenu() {
+            mainNav.classList.remove('mobile-open');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        if (hamburgerBtn) hamburgerBtn.addEventListener('click', openMenu);
+        if (overlay) overlay.addEventListener('click', closeMenu);
+        if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+
+        // Mobile dropdown toggle (tap instead of hover)
+        document.querySelectorAll('.main-nav .has-dropdown').forEach(function (link) {
+            link.addEventListener('click', function (e) {
+                if (window.innerWidth <= 768) {
+                    e.preventDefault();
+                    const dropdown = this.nextElementSibling;
+                    if (dropdown && dropdown.classList.contains('nav-dropdown')) {
+                        dropdown.classList.toggle('mobile-show');
+                        // Close other dropdowns
+                        document.querySelectorAll('.nav-dropdown.mobile-show').forEach(function (d) {
+                            if (d !== dropdown) d.classList.remove('mobile-show');
+                        });
+                    }
+                }
+            });
+        });
+    })();
 </script>

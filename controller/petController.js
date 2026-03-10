@@ -1,9 +1,11 @@
 const Pet = require("../models/Pet");
 const PetImage = require("../models/PetImage");
 const {
-  upload,
+  cloudinary,
+  isProduction,
   getImageUrl,
   getImageUrlForPet,
+  getCloudinaryId,
   ensurePetFolder,
   deleteImage,
 } = require("../config/upload");
@@ -86,10 +88,10 @@ const petController = {
         description,
       } = req.body;
 
-      // Lấy url ảnh từ lúc upload 
+      // Lấy url ảnh từ lúc upload
       let image_url = null;
       if (req.file) {
-        image_url = getImageUrl(req.file.filename);
+        image_url = getImageUrl(req.file);
       }
 
       const newPet = await Pet.create({
@@ -108,20 +110,27 @@ const petController = {
         description: description || null,
       });
 
-      // nếu ảnh đã được lưu thì cũng sẽ được tạo path trong pet_images và lưu ảnh vật lí trong pets_images
+      // Lưu ảnh vào bảng pet_images
       if (req.file) {
         const petId = newPet.id;
-        const petDir = ensurePetFolder(petId);
-        const filename = req.file.filename;
-        const sourcePath = req.file.path;
-        const destPath = path.join(petDir, filename);
+        const cloudinaryId = getCloudinaryId(req.file);
 
-        // Sao chép file vào thư mục pets
-        fs.copyFileSync(sourcePath, destPath);
+        if (isProduction) {
+          // PRODUCTION: Ảnh đã nằm trên Cloudinary, chỉ cần lưu URL và public_id vào DB
+          const imagePath = req.file.path;
+          await PetImage.create(petId, imagePath, 0, cloudinaryId);
+        } else {
+          // DEVELOPMENT: Sao chép file vào thư mục pets/{petId}/
+          const petDir = ensurePetFolder(petId);
+          const filename = req.file.filename;
+          const sourcePath = req.file.path;
+          const destPath = path.join(petDir, filename);
 
-        // Tạo pet_images ghi chú với display_order = 0 (ảnh đại diện)
-        const imagePath = getImageUrlForPet(petId, filename);
-        await PetImage.create(petId, imagePath, 0);
+          fs.copyFileSync(sourcePath, destPath);
+
+          const imagePath = `/images/pets/${petId}/${filename}`;
+          await PetImage.create(petId, imagePath, 0, null);
+        }
       }
 
       res.redirect("/adopt/" + newPet.id);
@@ -196,23 +205,30 @@ const petController = {
       // Handle image update
       let image_url = oldPet.image_url;
       if (req.file) {
-        // Delete old image if it's a local file
-        deleteImage(oldPet.image_url);
-        image_url = getImageUrl(req.file.filename);
+        // Xóa ảnh cũ (hỗ trợ cả Local và Cloudinary)
+        await deleteImage(oldPet.image_url, null);
 
-        // Also save to per-pet folder and create pet_images record
-        const petDir = ensurePetFolder(petId);
-        const filename = req.file.filename;
-        const sourcePath = req.file.path;
-        const destPath = path.join(petDir, filename);
+        // Lấy URL mới
+        image_url = getImageUrl(req.file);
+        const cloudinaryId = getCloudinaryId(req.file);
 
-        // Copy file to pet folder
-        fs.copyFileSync(sourcePath, destPath);
+        if (isProduction) {
+          // PRODUCTION: Lưu URL Cloudinary vào pet_images
+          const nextOrder = await PetImage.getNextDisplayOrder(petId);
+          await PetImage.create(petId, req.file.path, nextOrder, cloudinaryId);
+        } else {
+          // DEVELOPMENT: Copy file vào thư mục pet
+          const petDir = ensurePetFolder(petId);
+          const filename = req.file.filename;
+          const sourcePath = req.file.path;
+          const destPath = path.join(petDir, filename);
 
-        // Get next display_order
-        const nextOrder = await PetImage.getNextDisplayOrder(petId);
-        const imagePath = getImageUrlForPet(petId, filename);
-        await PetImage.create(petId, imagePath, nextOrder);
+          fs.copyFileSync(sourcePath, destPath);
+
+          const nextOrder = await PetImage.getNextDisplayOrder(petId);
+          const imagePath = `/images/pets/${petId}/${filename}`;
+          await PetImage.create(petId, imagePath, nextOrder, null);
+        }
       }
 
       await Pet.update(petId, {
@@ -248,24 +264,26 @@ const petController = {
       const pet = await Pet.findById(req.params.id);
 
       if (pet) {
-        // Delete all images from pet_images table
+        // Delete all images (cả Cloudinary và Local)
         const images = await PetImage.findByPetId(req.params.id);
         for (const img of images) {
-          deleteImage(img.image_path);
+          await deleteImage(img.image_path, img.cloudinary_id);
         }
         await PetImage.deleteByPetId(req.params.id);
 
-        // Delete legacy image
-        deleteImage(pet.image_url);
+        // Xóa ảnh đại diện cũ (legacy)
+        await deleteImage(pet.image_url, null);
 
-        // Delete pet folder if exists
-        const petDir = path.join(
-          __dirname,
-          "../public/images/pets",
-          String(req.params.id),
-        );
-        if (fs.existsSync(petDir)) {
-          fs.rmSync(petDir, { recursive: true, force: true });
+        // Xóa thư mục pet local nếu tồn tại (chỉ Development)
+        if (!isProduction) {
+          const petDir = path.join(
+            __dirname,
+            "../public/images/pets",
+            String(req.params.id),
+          );
+          if (fs.existsSync(petDir)) {
+            fs.rmSync(petDir, { recursive: true, force: true });
+          }
         }
 
         await Pet.delete(req.params.id);

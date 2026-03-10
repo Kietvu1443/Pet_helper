@@ -33,7 +33,7 @@
                                     <a href="/admin" class="dropdown-item">⚙️ Quản trị</a>
                                     <% } %>
                                         <div class="dropdown-divider"></div>
-                                        <a href="/auth/logout" class="dropdown-item logout">🚪 Đăng xuất</a>
+                                        <a href="#" class="dropdown-item logout" id="logoutBtn" onclick="handleLogout(event)">🚪 Đăng xuất</a>
                     </div>
                 </div>
                 <% } else { %>
@@ -212,5 +212,18 @@
         document.addEventListener('click', () => {
             userDropdown.classList.remove('active');
         });
+    }
+
+    // Logout handler (JWT-based)
+    async function handleLogout(e) {
+        e.preventDefault();
+        try {
+            await fetch('/auth/logout', { method: 'GET' });
+        } catch (err) {
+            // ignore network errors
+        }
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = '/';
     }
 </script>

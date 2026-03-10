@@ -6,14 +6,14 @@ const tinderController = {
   // Render the Tinder-style swipe page
   getTinderPage: async (req, res) => {
     try {
-      if (!req.session.user) {
+      if (!req.user) {
         return res.redirect("/auth/login");
       }
 
       // Initial batch of pets
-      console.log("[Tinder] Loading pets for user:", req.session.user.id);
-      let pets = await PetLike.findRandomPets(req.session.user.id, 10);
-      let likedPets = await PetLike.findLikedPets(req.session.user.id);
+      console.log("[Tinder] Loading pets for user:", req.user.id);
+      let pets = await PetLike.findRandomPets(req.user.id, 10);
+      let likedPets = await PetLike.findLikedPets(req.user.id);
 
       // Attach full images array to each pet
       await PetImage.attachImagesToPets(pets);
@@ -30,7 +30,7 @@ const tinderController = {
         title: "PetSnap - Tìm Bạn Bốn Chân",
         pets: pets,
         likedPets: likedPets,
-        user: req.session.user,
+        user: req.user,
       });
     } catch (error) {
       console.error("[Tinder] Error loading tinder page:", error);
@@ -44,15 +44,15 @@ const tinderController = {
   // API to get more random pets
   getRandomPets: async (req, res) => {
     try {
-      if (!req.session.user) {
+      if (!req.user) {
         return res.status(401).json({ error: "Unauthorized" });
       }
 
       console.log(
         "[Tinder API] Fetching random pets for user:",
-        req.session.user.id,
+        req.user.id,
       );
-      const pets = await PetLike.findRandomPets(req.session.user.id, 5);
+      const pets = await PetLike.findRandomPets(req.user.id, 5);
       // Attach full images array to each pet
       await PetImage.attachImagesToPets(pets);
       console.log("[Tinder API] Returning", pets.length, "pets");
@@ -66,7 +66,7 @@ const tinderController = {
   // API to record interaction (like/pass)
   recordInteraction: async (req, res) => {
     try {
-      if (!req.session.user) {
+      if (!req.user) {
         return res.status(401).json({ error: "Unauthorized" });
       }
 
@@ -76,7 +76,7 @@ const tinderController = {
         return res.status(400).json({ error: "Invalid data" });
       }
 
-      await PetLike.create(req.session.user.id, petId, status);
+      await PetLike.create(req.user.id, petId, status);
 
       res.json({ success: true });
     } catch (error) {
@@ -88,11 +88,11 @@ const tinderController = {
   // API to get liked pets
   getLikedPets: async (req, res) => {
     try {
-      if (!req.session.user) {
+      if (!req.user) {
         return res.status(401).json({ error: "Unauthorized" });
       }
 
-      const likedPets = await PetLike.findLikedPets(req.session.user.id);
+      const likedPets = await PetLike.findLikedPets(req.user.id);
       await PetImage.attachImagesToPets(likedPets);
       res.json(likedPets);
     } catch (error) {

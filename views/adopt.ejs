@@ -209,7 +209,8 @@
                                     <div class="pet-card" data-species="<%= pet.pet_type || '' %>"
                                         data-name="<%= (pet.name || '').toLowerCase() %>">
                                         <img src="<%= pet.avatar_image || pet.image_url || 'https://via.placeholder.com/400x220?text=No+Image' %>"
-                                            alt="<%= pet.name %>" class="card-image">
+                                            alt="<%= pet.name %>" class="card-image"
+                                            onerror="fallbackPetImage(this, '<%= pet.id %>')">
                                         <div class="card-body">
                                             <span class="card-tag">
                                                 <%= pet.pet_type==='Chó' ? '🐕 Chó' : pet.pet_type==='Mèo' ? '🐱 Mèo'

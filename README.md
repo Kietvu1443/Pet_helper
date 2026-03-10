@@ -41,6 +41,7 @@ docker compose down -v
 ```
 
 Ghi chú:
+
 - DB chạy trong service `db` (MySQL 8), app chạy trong service `app`.
 - UI DB chạy trong service `phpmyadmin` (cổng `8080`).
 - MySQL Docker map ra máy host cổng `3307` (để không trùng XAMPP `3306`).
@@ -48,6 +49,7 @@ Ghi chú:
 - Thông tin DB đã được cấu hình sẵn trong `docker-compose.yml`.
 
 Đăng nhập phpMyAdmin:
+
 - Server: `db`
 - Username: `root`
 - Password: `root123`
@@ -73,10 +75,12 @@ powershell -ExecutionPolicy Bypass -File .\scripts\restore-docker.ps1 -SqlFile .
 ```
 
 Tùy chọn:
+
 - Nếu muốn import đè mà không reset DB trước: thêm `-NoReset`
 - Nếu XAMPP có mật khẩu root: thêm `-Password your_password` khi chạy backup
 
 Lưu ý encoding tiếng Việt:
+
 - Script đã được cấu hình để dump/import theo `utf8mb4` an toàn trên Windows.
 - Nếu bạn từng thấy dữ liệu dạng `M??o T??y`, hãy **backup lại từ XAMPP bằng script mới** rồi restore lại Docker.
 - File dump cũ đã lỗi encoding thường không phục hồi chính xác, nên ưu tiên tạo dump mới.
@@ -223,3 +227,5 @@ UPDATE users SET role = 1 WHERE display_name = 'TênTàiKhoản';
 
 - **Tên đăng nhập:** `Admin`
 - **Mật khẩu:** `admin123`
+
+⚠️ Nhắc nhở: Mã hoá mật khẩu đang TẮT. Khi deploy, hãy uncomment 3 dòng bcrypt trong models/User.js.

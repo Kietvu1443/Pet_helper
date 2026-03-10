@@ -1,35 +1,62 @@
-// Authentication Middleware
+// Authentication Middleware - JWT-based
+const jwt = require("jsonwebtoken");
 
-// Check if user is authenticated
+const JWT_SECRET = process.env.JWT_SECRET || "pet-helper-jwt-secret-2026";
+
+// Trích xuất và xác thực JWT từ header Authorization hoặc cookie
+const extractUser = (req) => {
+  let token = null;
+
+  // 1. Ưu tiên đọc từ header Authorization: Bearer <token>
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith("Bearer ")) {
+    token = authHeader.split(" ")[1];
+  }
+
+  // 2. Nếu không có header thì thử đọc từ cookie
+  if (!token && req.cookies && req.cookies.token) {
+    token = req.cookies.token;
+  }
+
+  if (!token) return null;
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    return decoded;
+  } catch (error) {
+    return null;
+  }
+};
+
+// Check if user is authenticated (dùng cho API)
 const isAuthenticated = (req, res, next) => {
-  if (req.session && req.session.user) {
+  const user = extractUser(req);
+  if (user) {
+    req.user = user;
     return next();
   }
-  // Store the original URL for redirect after login
-  req.session.returnTo = req.originalUrl;
-  res.redirect("/auth/login");
+  return res.status(401).json({ error: "Vui lòng đăng nhập" });
 };
 
 // Check if user has required role
 // Roles: 0 = admin, 1 = staff, 2 = user
 const hasRole = (allowedRoles) => {
   return (req, res, next) => {
-    if (!req.session || !req.session.user) {
-      req.session.returnTo = req.originalUrl;
-      return res.redirect("/auth/login");
+    const user = extractUser(req);
+    if (!user) {
+      return res.status(401).json({ error: "Vui lòng đăng nhập" });
     }
 
-    const userRole = req.session.user.role;
+    req.user = user;
 
-    if (allowedRoles.includes(userRole)) {
+    if (allowedRoles.includes(user.role)) {
       return next();
     }
 
     // User doesn't have permission
-    res.status(403).render("error", {
-      message: "Bạn không có quyền truy cập trang này",
-      error: { status: 403 },
-    });
+    return res
+      .status(403)
+      .json({ error: "Bạn không có quyền truy cập tài nguyên này" });
   };
 };
 
@@ -39,14 +66,14 @@ const isAdmin = hasRole([0]);
 // Check if user is staff or admin
 const isStaff = hasRole([0, 1]);
 
-// Make user available in all views
+// Make user available in all views (hỗ trợ cả EJS render lẫn API)
 const setUserLocals = (req, res, next) => {
-  res.locals.user = req.session ? req.session.user : null;
-  res.locals.isAuthenticated = !!(req.session && req.session.user);
-  res.locals.isAdmin =
-    req.session && req.session.user && req.session.user.role === 0;
-  res.locals.isStaff =
-    req.session && req.session.user && req.session.user.role <= 1;
+  const user = extractUser(req);
+  req.user = user || null;
+  res.locals.user = user || null;
+  res.locals.isAuthenticated = !!user;
+  res.locals.isAdmin = user && user.role === 0;
+  res.locals.isStaff = user && user.role <= 1;
   next();
 };
 
@@ -56,4 +83,5 @@ module.exports = {
   isAdmin,
   isStaff,
   setUserLocals,
+  JWT_SECRET,
 };

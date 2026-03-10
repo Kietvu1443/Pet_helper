@@ -4,7 +4,6 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var cors = require("cors");
-var session = require("express-session");
 
 // Middleware
 var { setUserLocals } = require("./middleware/authMiddleware");
@@ -28,20 +27,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-// Session configuration
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET || "pet-helper-secret-key-2026",
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours
-    },
-  }),
-);
-
-// Make user available in all views
+// Make user available in all views (JWT-based)
 app.use(setUserLocals);
 
 // Route handlers

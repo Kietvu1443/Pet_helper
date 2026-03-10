@@ -13,8 +13,8 @@
     "debug": "~2.6.9",
     "ejs": "~2.6.1",
     "express": "~4.16.1",
-    "express-session": "^1.19.0",
     "http-errors": "~1.6.3",
+    "jsonwebtoken": "^9.0.3",
     "morgan": "~1.9.1",
     "multer": "^2.0.2",
     "mysql2": "^3.16.2"

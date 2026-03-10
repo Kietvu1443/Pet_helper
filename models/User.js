@@ -1,5 +1,5 @@
 const { pool } = require("../config/db");
-const bcrypt = require("bcryptjs");
+// const bcrypt = require("bcryptjs"); // TẠM VÔ HIỆU HOÁ - Bật lại khi deploy
 
 const User = {
   // Find user by email
@@ -49,9 +49,10 @@ const User = {
       const { display_name, name, email, password, birthday, address } =
         userData;
 
-      // Hash password
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(password, salt);
+      // TẠM VÔ HIỆU HOÁ MÃ HOÁ MẬT KHẨU - Bật lại khi deploy
+      // const salt = await bcrypt.genSalt(10);
+      // const hashedPassword = await bcrypt.hash(password, salt);
+      const hashedPassword = password; // Lưu plain text tạm thời
 
       const [result] = await pool.execute(
         `INSERT INTO users (display_name, name, email, password, role, birthday, address) 
@@ -74,8 +75,10 @@ const User = {
   },
 
   // Compare password
-  async comparePassword(inputPassword, hashedPassword) {
-    return bcrypt.compare(inputPassword, hashedPassword);
+  async comparePassword(inputPassword, storedPassword) {
+    // TẠM VÔ HIỆU HOÁ - Bật lại khi deploy
+    // return bcrypt.compare(inputPassword, storedPassword);
+    return inputPassword === storedPassword; // So sánh plain text tạm thời
   },
 
   // Update user role (admin only)

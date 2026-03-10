@@ -1,3 +1,5 @@
 node_modules/
 .env
 pets/
+docker-compose.yml
+Dockerfile

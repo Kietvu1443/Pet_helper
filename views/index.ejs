@@ -32,68 +32,66 @@
   <main class="container">
     <!-- About Section - Card Box Style -->
     <section class="card-box">
-      <div style="text-align: center; max-width: 800px; margin: 0 auto 30px;">
-        <div class="section-header" style="margin-bottom: 20px;">
+      <div class="about-header">
+        <div class="section-header">
           <h2>Về Pet Helper</h2>
         </div>
-        <p style="font-size: 1.1rem; color: #333; line-height: 1.6; font-weight: 500;">
+        <p class="about-subtitle">
           Hành trình kết nối những tâm hồn yêu động vật và xây dựng một cộng đồng bền vững.
         </p>
       </div>
 
-      <div style="display: flex; gap: 40px; align-items: center; margin-bottom: 30px;">
-        <div style="flex: 1.1;">
-          <p style="color: #222; line-height: 1.8; margin-bottom: 18px; font-size: 1.1rem; font-weight: 500;">
+      <div class="about-content">
+        <div class="about-text">
+          <p class="about-text-main">
             Được thành lập tại <strong>BDU UNIS Campus</strong>, Pet Helper là hệ sinh thái toàn diện dành cho những
             người bạn bốn chân.
           </p>
-          <p style="color: #444; line-height: 1.8; margin-bottom: 18px; font-size: 1rem;">
+          <p class="about-text-sub">
             Chúng tôi tập trung giảm thiểu số lượng thú cưng bị bỏ rơi và hỗ trợ cộng đồng tìm kiếm thú lạc nhanh chóng,
             hiệu quả nhất.
           </p>
-          <p style="color: #444; line-height: 1.8; font-size: 1rem;">
+          <p class="about-text-sub">
             Mọi hoạt động thuộc dự án <strong>Green Project</strong> đều hướng tới môi trường sống nhân văn và tràn đầy
             tình thương.
           </p>
         </div>
 
-        <div style="flex: 0.9; display: flex; flex-direction: column; gap: 12px;">
-          <div style="display: flex; gap: 12px;">
-            <div
-              style="flex: 1; aspect-ratio: 1/1; overflow: hidden; border-radius: 10px; box-shadow: var(--shadow);">
+        <div class="about-images">
+          <div class="about-images-row">
+            <div class="about-img-square">
               <img src="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=400&q=80"
-                style="width: 100%; height: 100%; object-fit: cover;" alt="Chó 1">
+                alt="Chó 1">
             </div>
-            <div
-              style="flex: 1; aspect-ratio: 1/1; overflow: hidden; border-radius: 10px; box-shadow: var(--shadow);">
+            <div class="about-img-square">
               <img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=400&q=80"
-                style="width: 100%; height: 100%; object-fit: cover;" alt="Chó 2">
+                alt="Chó 2">
             </div>
           </div>
-          <div style="width: 100%; aspect-ratio: 1.5/1; overflow: hidden; border-radius: 10px; box-shadow: var(--shadow);">
+          <div class="about-img-wide">
             <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=600&q=80"
-              style="width: 100%; height: 100%; object-fit: cover;" alt="Mèo">
+              alt="Mèo">
           </div>
         </div>
       </div>
 
       <!-- Feature Icons -->
-      <div style="display: flex; gap: 15px; border-top: 1px solid #eee; padding-top: 20px;">
-        <div style="flex: 1; text-align: center; padding: 10px; background: #fdfdfd; border-radius: 10px; border: 1px solid #f0f0f0;">
-          <div style="font-size: 1.3rem; margin-bottom: 3px;">🏠</div>
-          <h4 style="color: var(--primary-color); font-size: 0.85rem;">Nhận Nuôi</h4>
+      <div class="feature-icons-bar">
+        <div class="feature-icon-item">
+          <div class="feature-icon-emoji">🏠</div>
+          <h4>Nhận Nuôi</h4>
         </div>
-        <div style="flex: 1; text-align: center; padding: 10px; background: #fdfdfd; border-radius: 10px; border: 1px solid #f0f0f0;">
-          <div style="font-size: 1.3rem; margin-bottom: 3px;">🔍</div>
-          <h4 style="color: var(--primary-color); font-size: 0.85rem;">Tìm Kiếm</h4>
+        <div class="feature-icon-item">
+          <div class="feature-icon-emoji">🔍</div>
+          <h4>Tìm Kiếm</h4>
         </div>
-        <div style="flex: 1; text-align: center; padding: 10px; background: #fdfdfd; border-radius: 10px; border: 1px solid #f0f0f0;">
-          <div style="font-size: 1.3rem; margin-bottom: 3px;">🩺</div>
-          <h4 style="color: var(--primary-color); font-size: 0.85rem;">Y Tế</h4>
+        <div class="feature-icon-item">
+          <div class="feature-icon-emoji">🩺</div>
+          <h4>Y Tế</h4>
         </div>
-        <div style="flex: 1; text-align: center; padding: 10px; background: #fdfdfd; border-radius: 10px; border: 1px solid #f0f0f0;">
-          <div style="font-size: 1.3rem; margin-bottom: 3px;">🛒</div>
-          <h4 style="color: var(--primary-color); font-size: 0.85rem;">Cửa Hàng</h4>
+        <div class="feature-icon-item">
+          <div class="feature-icon-emoji">🛒</div>
+          <h4>Cửa Hàng</h4>
         </div>
       </div>
     </section>
@@ -144,7 +142,7 @@
     </section>
 
     <!-- News Section -->
-    <section class="section" style="background: white; border-radius: var(--radius); margin-top: 40px;">
+    <section class="section news-section">
       <div class="section-header">
         <h2>Tin Tức & Sự Kiện</h2>
         <p>Cập nhật những thông tin mới nhất về thế giới thú cưng</p>
@@ -179,31 +177,28 @@
         </article>
       </div>
 
-      <div style="text-align: center; margin-top: 40px;">
+      <div class="news-more">
         <a href="/news" class="btn btn-green">Xem thêm tin tức →</a>
       </div>
     </section>
 
     <!-- Contact Section -->
-    <section class="contact-section" id="contact-section" style="display: flex; gap: 40px; margin-top: 40px;">
-      <div style="flex: 1;">
-        <h2 style="font-size: 1.8rem; margin-bottom: 20px;">LIÊN HỆ HỖ TRỢ</h2>
-        <div style="display: flex; gap: 15px; margin: 25px 0;">
-          <span
-            style="display: inline-block; width: 45px; height: 45px; background: rgba(255,255,255,0.2); border-radius: 50%; text-align: center; line-height: 45px; cursor: pointer; transition: 0.3s;">FB</span>
-          <span
-            style="display: inline-block; width: 45px; height: 45px; background: rgba(255,255,255,0.2); border-radius: 50%; text-align: center; line-height: 45px; cursor: pointer; transition: 0.3s;">YT</span>
-          <span
-            style="display: inline-block; width: 45px; height: 45px; background: rgba(255,255,255,0.2); border-radius: 50%; text-align: center; line-height: 45px; cursor: pointer; transition: 0.3s;">IG</span>
+    <section class="contact-section" id="contact-section">
+      <div class="contact-info">
+        <h2>LIÊN HỆ HỖ TRỢ</h2>
+        <div class="contact-socials">
+          <span class="social-icon">FB</span>
+          <span class="social-icon">YT</span>
+          <span class="social-icon">IG</span>
         </div>
-        <div style="line-height: 1.8;">
+        <div class="contact-details">
           📍 Trụ sở: BDU UNIS Campus<br>
           📧 Email: support@pethelper.vn<br>
           📞 Hotline: 1900-XXXX
         </div>
       </div>
-      <div class="form-area" style="flex: 1;">
-        <h3 style="margin-bottom: 20px; color: var(--primary-color);">Gửi tin nhắn</h3>
+      <div class="form-area">
+        <h3 class="form-title">Gửi tin nhắn</h3>
         <input class="form-input" placeholder="Họ tên của bạn">
         <input class="form-input" placeholder="Email / SĐT">
         <textarea class="form-input" rows="3" placeholder="Lời nhắn..."></textarea>
@@ -212,7 +207,7 @@
     </section>
 
     <!-- Footer Bottom -->
-    <div style="margin-top: 40px; text-align: center; color: #52b788; padding-bottom: 20px;">
+    <div class="page-bottom-note">
       © 2026 Pet Helper Green Project.
     </div>
   </main>

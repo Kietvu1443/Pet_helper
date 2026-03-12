@@ -4,7 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %></title>
+    <title>
+        <%= title %>
+    </title>
     <!-- Dùng Phosphor Icons cho đẹp -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -575,7 +577,8 @@
     <!-- Navbar -->
     <nav class="navbar">
         <div class="nav-left">
-            <a href="/" style="display: flex; align-items: center; gap: 8px; cursor: pointer; text-decoration: none; color: inherit;">
+            <a href="/"
+                style="display: flex; align-items: center; gap: 8px; cursor: pointer; text-decoration: none; color: inherit;">
                 <div class="logo-btn">PET</div>
                 <div class="logo-text">PET HELPER</div>
             </a>
@@ -585,16 +588,18 @@
             </div>
         </div>
         <div class="nav-right">
-            <div style="cursor: pointer; display: flex; align-items: center; gap: 4px;"><%= user.display_name %> <i
-                    class="ph-fill ph-caret-down" style="font-size: 12px;"></i></div>
+            <div style="cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                <%= user.display_name %> <i class="ph-fill ph-caret-down" style="font-size: 12px;"></i>
+            </div>
             <div style="cursor: pointer; display: flex; align-items: center;">Giỏ hàng <span class="cart-badge">0</span>
             </div>
             <div style="cursor: pointer;">VN / EN</div>
         </div>
     </nav>
     <div class="sub-navbar">
-        <a href="/adopt" style="display: flex; align-items: center; gap: 4px; color: inherit; text-decoration: none;">NHẬN NUÔI <i class="ph-fill ph-caret-down"
-                style="font-size: 12px;"></i></a>
+        <a href="/adopt"
+            style="display: flex; align-items: center; gap: 4px; color: inherit; text-decoration: none;">NHẬN NUÔI <i
+                class="ph-fill ph-caret-down" style="font-size: 12px;"></i></a>
         <div style="display: flex; align-items: center; gap: 4px;">THẤT LẠC <i class="ph-fill ph-caret-down"
                 style="font-size: 12px;"></i></div>
         <div style="display: flex; align-items: center; gap: 4px;">DỊCH VỤ <i class="ph-fill ph-caret-down"
@@ -629,7 +634,7 @@
                 </div>
                 <div class="menu-item">
                     <i class="ph ph-users"></i>
-                    <span>Gia đình (Bầy đàn)</span>
+                    <span>Gia đình</span>
                 </div>
             </div>
 
@@ -660,90 +665,99 @@
                 <h2 style="font-size: 24px; margin-bottom: 24px;">Hồ sơ nhận nuôi</h2>
 
                 <!-- Banner cảnh báo chưa xác thực -->
-                <% if (user.verify !== 1) { %>
-                <div class="alert alert-warning">
-                    <i class="ph-fill ph-warning-circle"
-                        style="font-size: 28px; flex-shrink: 0; color: var(--accent);"></i>
-                    <div>
-                        <h4 style="font-size: 16px; margin-bottom: 4px;">Tài khoản chưa đủ điều kiện nhận nuôi</h4>
-                        <p style="font-size: 14px; opacity: 0.9;">Để đảm bảo an toàn và tìm được mái ấm tốt nhất cho các
-                            bé thú cưng, bạn cần cập nhật đầy đủ thông tin cá nhân và <b> xác thực tài khoản thông qua
-                                OTP</b> trước
-                            khi gửi yêu cầu nhận nuôi. <a href="#"
-                                style="color: inherit; font-weight: bold; text-decoration: underline;">Tìm hiểu thêm quy
-                                trình</a></p>
-                    </div>
-                </div>
-                <% } %>
-
-                <div class="card">
-                    <div class="profile-header">
-                        <div class="profile-avatar">👤</div>
+                <% if (user.verify !==1) { %>
+                    <div class="alert alert-warning">
+                        <i class="ph-fill ph-warning-circle"
+                            style="font-size: 28px; flex-shrink: 0; color: var(--accent);"></i>
                         <div>
-                            <h3 style="font-size: 20px; margin-bottom: 4px;"><%= user.name %></h3>
-                            <% if (user.verify === 1) { %>
-                                <div class="status-badge status-verified">
-                                    <i class="ph-bold ph-check"></i> Đã xác thực
+                            <h4 style="font-size: 16px; margin-bottom: 4px;">Tài khoản chưa đủ điều kiện nhận nuôi</h4>
+                            <p style="font-size: 14px; opacity: 0.9;">Để đảm bảo an toàn và tìm được mái ấm tốt nhất cho
+                                các
+                                bé thú cưng, bạn cần cập nhật đầy đủ thông tin cá nhân và <b> xác thực tài khoản thông
+                                    qua
+                                    OTP</b> trước
+                                khi gửi yêu cầu nhận nuôi. <a href="#"
+                                    style="color: inherit; font-weight: bold; text-decoration: underline;">Tìm hiểu thêm
+                                    quy
+                                    trình</a></p>
+                        </div>
+                    </div>
+                    <% } %>
+
+                        <div class="card">
+                            <div class="profile-header">
+                                <div class="profile-avatar">👤</div>
+                                <div>
+                                    <h3 style="font-size: 20px; margin-bottom: 4px;">
+                                        <%= user.name %>
+                                    </h3>
+                                    <% if (user.verify===1) { %>
+                                        <div class="status-badge status-verified">
+                                            <i class="ph-bold ph-check"></i> Đã xác thực
+                                        </div>
+                                        <% } else { %>
+                                            <div class="status-badge status-unverified">
+                                                <i class="ph-bold ph-x"></i> Chưa xác thực
+                                            </div>
+                                            <br>
+                                            <button class="btn-verify" id="sendOtpBtn" onclick="handleSendOtp()">
+                                                <i class="ph ph-envelope-simple"></i> Xác minh email
+                                            </button>
+                                            <% } %>
                                 </div>
-                            <% } else { %>
-                                <div class="status-badge status-unverified">
-                                    <i class="ph-bold ph-x"></i> Chưa xác thực
+                                <div style="margin-left: auto;">
+                                    <button class="btn btn-outline"><i class="ph ph-upload-simple"></i> Đổi ảnh đại
+                                        diện</button>
                                 </div>
-                                <br>
-                                <button class="btn-verify" id="sendOtpBtn" onclick="handleSendOtp()">
-                                    <i class="ph ph-envelope-simple"></i> Xác minh email
-                                </button>
-                            <% } %>
+                            </div>
+
+                            <hr style="border: none; border-top: 1px solid var(--border-color); margin: 24px 0;">
+
+                            <h3 style="font-size: 18px; margin-bottom: 20px;">Thông tin cá nhân</h3>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                                <div class="form-group">
+                                    <label class="form-label">Họ và tên đầy đủ <span
+                                            style="color: #DC2626;">*</span></label>
+                                    <input type="text" class="form-control" value="<%= user.name %>"
+                                        placeholder="Ví dụ: Nguyễn Văn A">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Ngày tháng năm sinh <span
+                                            style="color: #DC2626;">*</span></label>
+                                    <input type="date" class="form-control"
+                                        value="<%= user.birthday ? new Date(user.birthday).toISOString().split('T')[0] : '' %>">
+                                </div>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                                <div class="form-group">
+                                    <label class="form-label">Số điện thoại liên hệ <span
+                                            style="color: #DC2626;">*</span></label>
+                                    <input type="tel" class="form-control" placeholder="09xx xxx xxx">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" value="<%= user.email %>" readonly
+                                        style="opacity: 0.7; cursor: not-allowed;">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Địa chỉ nơi bạn sẽ nuôi pet <span
+                                        style="color: #DC2626;">*</span></label>
+                                <input type="text" class="form-control" value="<%= user.address || '' %>"
+                                    placeholder="Ví dụ: Khu Đô Thị Mỹ Phước, Phường Thới Hòa, Bến Cát, Bình Dương">
+                            </div>
+
+                            <div class="form-group"
+                                style="margin-top: 32px; display: flex; justify-content: flex-end; gap: 12px;">
+                                <button class="btn btn-outline">Hủy thay đổi</button>
+                                <button class="btn btn-primary"><i class="ph ph-floppy-disk"></i> Lưu thay đổi</button>
+                            </div>
                         </div>
-                        <div style="margin-left: auto;">
-                            <button class="btn btn-outline"><i class="ph ph-upload-simple"></i> Đổi ảnh đại
-                                diện</button>
-                        </div>
-                    </div>
 
-                    <hr style="border: none; border-top: 1px solid var(--border-color); margin: 24px 0;">
-
-                    <h3 style="font-size: 18px; margin-bottom: 20px;">Thông tin cá nhân</h3>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                        <div class="form-group">
-                            <label class="form-label">Họ và tên đầy đủ <span style="color: #DC2626;">*</span></label>
-                            <input type="text" class="form-control" value="<%= user.name %>" placeholder="Ví dụ: Nguyễn Văn A">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Ngày tháng năm sinh <span style="color: #DC2626;">*</span></label>
-                            <input type="date" class="form-control" value="<%= user.birthday ? new Date(user.birthday).toISOString().split('T')[0] : '' %>">
-                        </div>
-                    </div>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                        <div class="form-group">
-                            <label class="form-label">Số điện thoại liên hệ <span
-                                    style="color: #DC2626;">*</span></label>
-                            <input type="tel" class="form-control" placeholder="09xx xxx xxx">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Email</label>
-                            <input type="email" class="form-control" value="<%= user.email %>" readonly
-                                style="opacity: 0.7; cursor: not-allowed;">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Địa chỉ nơi bạn sẽ nuôi pet <span
-                                style="color: #DC2626;">*</span></label>
-                        <input type="text" class="form-control" value="<%= user.address || '' %>"
-                            placeholder="Ví dụ: Khu Đô Thị Mỹ Phước, Phường Thới Hòa, Bến Cát, Bình Dương">
-                    </div>
-
-                    <div class="form-group"
-                        style="margin-top: 32px; display: flex; justify-content: flex-end; gap: 12px;">
-                        <button class="btn btn-outline">Hủy thay đổi</button>
-                        <button class="btn btn-primary"><i class="ph ph-floppy-disk"></i> Lưu thay đổi</button>
-                    </div>
-                </div>
-
-                <div style="height: 40px;"></div>
+                        <div style="height: 40px;"></div>
             </div>
         </main>
     </div>

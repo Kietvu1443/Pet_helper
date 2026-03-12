@@ -3,10 +3,32 @@ var router = express.Router();
 
 const fs = require('fs');
 const path = require('path');
+const User = require("../models/User");
+const { isAuthenticated } = require("../middleware/authMiddleware");
 
 // GET home page
 router.get("/", function (req, res) {
   res.render("index", { title: "Hỗ Trợ & Bảo Vệ Vật Nuôi" });
+});
+
+// GET profile/settings page
+router.get("/profile", isAuthenticated, async function (req, res) {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.redirect("/auth/login");
+    }
+    res.render("setting", {
+      title: "Cài đặt tài khoản - Pet Helper",
+      user: user,
+    });
+  } catch (error) {
+    console.error("Error loading profile:", error);
+    res.status(500).render("error", {
+      message: "Đã xảy ra lỗi",
+      error: { status: 500 },
+    });
+  }
 });
 
 // API: Lấy ảnh local đầu tiên của Pet (dùng cho Fallback khi rớt mạng)

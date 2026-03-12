@@ -22,15 +22,15 @@
                 <div class="pet-detail-grid">
                     <!-- Pet Image -->
                     <div class="pet-image-section">
-                        <% // Determine main image: avatar from pet_images or fallback to image_url const
-                            mainImage=(typeof images !=='undefined' && images.length> 0)
-                            ? images[0].image_path
-                            : (pet.avatar_image || pet.image_url ||
-                            'https://via.placeholder.com/600x400?text=No+Image');
+                        <% 
+                            // Determine main image: avatar from pet_images or fallback to image_url 
+                            const mainImage = (typeof images !== 'undefined' && images.length > 0)
+                                ? images[0].image_path
+                                : (pet.avatar_image || pet.image_url || 'https://via.placeholder.com/600x400?text=No+Image');
                             const galleryImages = (typeof images !== 'undefined' && images.length > 1)
-                            ? images.slice(1)
-                            : [];
-                            %>
+                                ? images.slice(1)
+                                : [];
+                        %>
                             <img src="<%= mainImage %>" alt="<%= pet.name %>" class="pet-main-image" id="mainImage"
                                 onerror="fallbackPetImage(this, '<%= pet.id %>')">
                             <div class="pet-status-badge <%= pet.status %>">
@@ -196,25 +196,46 @@
                 const adoptBtn = document.getElementById('adoptBtn');
                 if (adoptBtn) {
                     adoptBtn.addEventListener('click', () => {
-                        Swal.fire({
-                            title: 'Đăng ký nhận nuôi',
-                            text: 'Bạn muốn đăng ký nhận nuôi <%= pet.name %>?',
-                            icon: 'question',
-                            showCancelButton: true,
-                            confirmButtonColor: '#10B981',
-                            cancelButtonColor: '#64748B',
-                            confirmButtonText: 'Xác nhận',
-                            cancelButtonText: 'Hủy'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                Swal.fire({
-                                    title: 'Đã đăng ký!',
-                                    text: 'Chúng tôi sẽ liên hệ với bạn sớm nhất.',
-                                    icon: 'success',
-                                    confirmButtonColor: '#10B981'
-                                });
-                            }
-                        });
+                        const isUnverified = "<%= (typeof user !== 'undefined' && user && user.verify !== 1) ? 'true' : 'false' %>" === "true";
+
+                        if (isUnverified) {
+                            // User chưa xác thực email
+                            Swal.fire({
+                                title: 'Chưa xác minh email',
+                                text: 'Bạn cần xác minh email trước khi nhận nuôi thú cưng.',
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonColor: '#2b663e',
+                                cancelButtonColor: '#64748B',
+                                confirmButtonText: 'Đi xác minh',
+                                cancelButtonText: 'Đóng'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.href = '/profile';
+                                }
+                            });
+                        } else {
+                            // User đã xác thực → cho phép nhận nuôi
+                            Swal.fire({
+                                title: 'Đăng ký nhận nuôi',
+                                text: 'Bạn muốn đăng ký nhận nuôi <%= pet.name %>?',
+                                icon: 'question',
+                                showCancelButton: true,
+                                confirmButtonColor: '#10B981',
+                                cancelButtonColor: '#64748B',
+                                confirmButtonText: 'Xác nhận',
+                                cancelButtonText: 'Hủy'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    Swal.fire({
+                                        title: 'Đã đăng ký!',
+                                        text: 'Chúng tôi sẽ liên hệ với bạn sớm nhất.',
+                                        icon: 'success',
+                                        confirmButtonColor: '#10B981'
+                                    });
+                                }
+                            });
+                        }
                     });
                 }
 

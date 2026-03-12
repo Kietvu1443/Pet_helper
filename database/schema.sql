@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     role INT DEFAULT 2 COMMENT '0: admin, 1: staff, 2: user',
+    verify TINYINT DEFAULT 0 COMMENT '0: chưa xác thực, 1: đã xác thực email',
     birthday DATE NULL,
     address TEXT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -62,6 +63,17 @@ CREATE TABLE IF NOT EXISTS pet_images (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (pet_id) REFERENCES pets(id) ON DELETE CASCADE,
     INDEX idx_pet_display (pet_id, display_order)
+);
+
+-- Bảng lưu OTP xác thực email
+CREATE TABLE IF NOT EXISTS email_verifications (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    otp VARCHAR(6) NOT NULL,
+    attempts INT DEFAULT 0,
+    expires_at DATETIME NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX(user_id)
 );
 
 -- Tài khoản admin mặc định (mật khẩu: admin123)

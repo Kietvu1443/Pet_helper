@@ -77,11 +77,27 @@ const setUserLocals = (req, res, next) => {
   next();
 };
 
+// Kiểm tra email đã xác thực chưa (dùng cho adoption guard)
+const requireVerified = (req, res, next) => {
+  const user = extractUser(req);
+  if (!user) {
+    return res.status(401).json({ error: "Vui lòng đăng nhập" });
+  }
+  req.user = user;
+  if (user.verify !== 1) {
+    return res.status(403).json({
+      message: "Email chưa xác minh. Vui lòng xác minh email trước khi thực hiện hành động này.",
+    });
+  }
+  next();
+};
+
 module.exports = {
   isAuthenticated,
   hasRole,
   isAdmin,
   isStaff,
+  requireVerified,
   setUserLocals,
   JWT_SECRET,
 };

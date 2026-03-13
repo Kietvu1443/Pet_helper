@@ -218,21 +218,51 @@
                             // User đã xác thực → cho phép nhận nuôi
                             Swal.fire({
                                 title: 'Đăng ký nhận nuôi',
-                                text: 'Bạn muốn đăng ký nhận nuôi <%= pet.name %>?',
+                                html: '<p>Bạn muốn đăng ký nhận nuôi <strong><%= pet.name %></strong>?</p>' +
+                                      '<textarea id="adoptMessage" placeholder="Lời nhắn (không bắt buộc)..." style="width:100%;margin-top:10px;padding:8px;border:1px solid #e5e7eb;border-radius:6px;font-size:0.9rem;resize:vertical;min-height:80px;"></textarea>',
                                 icon: 'question',
                                 showCancelButton: true,
                                 confirmButtonColor: '#10B981',
                                 cancelButtonColor: '#64748B',
                                 confirmButtonText: 'Xác nhận',
                                 cancelButtonText: 'Hủy'
-                            }).then((result) => {
+                            }).then(async (result) => {
                                 if (result.isConfirmed) {
-                                    Swal.fire({
-                                        title: 'Đã đăng ký!',
-                                        text: 'Chúng tôi sẽ liên hệ với bạn sớm nhất.',
-                                        icon: 'success',
-                                        confirmButtonColor: '#10B981'
-                                    });
+                                    const message = document.getElementById('adoptMessage').value;
+                                    const token = localStorage.getItem('token') || '';
+                                    try {
+                                        const res = await fetch('/api/adoption-requests', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                ...(token ? { 'Authorization': 'Bearer ' + token } : {})
+                                            },
+                                            body: JSON.stringify({ petId: <%= pet.id %>, message })
+                                        });
+                                        const data = await res.json();
+                                        if (res.ok) {
+                                            Swal.fire({
+                                                title: 'Đã đăng ký!',
+                                                text: 'Chúng tôi sẽ xem xét và liên hệ với bạn sớm nhất.',
+                                                icon: 'success',
+                                                confirmButtonColor: '#10B981'
+                                            });
+                                        } else {
+                                            Swal.fire({
+                                                title: 'Không thể đăng ký',
+                                                text: data.message || 'Đã xảy ra lỗi, vui lòng thử lại.',
+                                                icon: 'error',
+                                                confirmButtonColor: '#10B981'
+                                            });
+                                        }
+                                    } catch (err) {
+                                        Swal.fire({
+                                            title: 'Lỗi kết nối',
+                                            text: 'Vui lòng thử lại sau.',
+                                            icon: 'error',
+                                            confirmButtonColor: '#10B981'
+                                        });
+                                    }
                                 }
                             });
                         }

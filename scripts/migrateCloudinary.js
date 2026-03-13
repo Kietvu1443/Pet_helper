@@ -7,7 +7,6 @@
  * 1. Quét bảng pet_images tìm những ảnh có cloudinary_id = NULL (ảnh local cũ)
  * 2. Upload từng ảnh lên Cloudinary
  * 3. Cập nhật lại image_path và cloudinary_id trong DB
- * 4. Cập nhật cả bảng pets.image_url nếu cần
  */
 
 require("dotenv").config({ path: require("path").join(__dirname, "../.env") });
@@ -106,32 +105,7 @@ async function migrateImages() {
     }
   }
 
-  // 4. Cập nhật bảng pets.image_url cho các pet có ảnh local
-  console.log("\n📝 Đang cập nhật bảng pets.image_url...");
-  const [pets] = await pool.execute(
-    "SELECT id, image_url FROM pets WHERE image_url IS NOT NULL AND image_url LIKE '/images/%'",
-  );
-
-  let petUpdateCount = 0;
-  for (const pet of pets) {
-    // Tìm ảnh đầu tiên (display_order = 0) đã migrate của pet này
-    const [migrated] = await pool.execute(
-      "SELECT image_path FROM pet_images WHERE pet_id = ? AND cloudinary_id IS NOT NULL ORDER BY display_order ASC LIMIT 1",
-      [pet.id],
-    );
-
-    if (migrated.length > 0) {
-      await pool.execute("UPDATE pets SET image_url = ? WHERE id = ?", [
-        migrated[0].image_path,
-        pet.id,
-      ]);
-      petUpdateCount++;
-    }
-  }
-
-  console.log(`   ✅ Đã cập nhật ${petUpdateCount} pet.\n`);
-
-  // 5. Tổng kết
+  // 4. Tổng kết
   console.log("═══════════════════════════════════════");
   console.log("📊 KẾT QUẢ MIGRATE:");
   console.log(`   ✅ Thành công: ${successCount}`);

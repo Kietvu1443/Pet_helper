@@ -57,14 +57,13 @@ const Pet = {
         pet_code,
         vaccination,
         description,
-        image_url,
         contact_info,
         source_url,
       } = petData;
 
       const [result] = await pool.execute(
-        `INSERT INTO pets (name, pet_type, breed, age, gender, color, weight, pet_code, vaccination, description, image_url, contact_info, source_url) 
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO pets (name, pet_type, breed, age, gender, color, weight, pet_code, vaccination, description, contact_info, source_url) 
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           name,
           pet_type || "Chó",
@@ -76,7 +75,6 @@ const Pet = {
           pet_code || null,
           vaccination || null,
           description || null,
-          image_url || null,
           contact_info || null,
           source_url || null,
         ],
@@ -103,7 +101,6 @@ const Pet = {
         pet_code,
         vaccination,
         description,
-        image_url,
         contact_info,
         source_url,
       } = petData;
@@ -112,7 +109,7 @@ const Pet = {
         `UPDATE pets SET 
           name = ?, pet_type = ?, breed = ?, age = ?, gender = ?,
           color = ?, weight = ?, pet_code = ?, vaccination = ?,
-          description = ?, image_url = ?, contact_info = ?, source_url = ?
+          description = ?, contact_info = ?, source_url = ?
          WHERE id = ?`,
         [
           name,
@@ -125,7 +122,6 @@ const Pet = {
           pet_code || null,
           vaccination || null,
           description || null,
-          image_url || null,
           contact_info || null,
           source_url || null,
           id,

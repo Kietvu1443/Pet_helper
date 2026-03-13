@@ -34,12 +34,12 @@ CREATE TABLE IF NOT EXISTS pets (
     pet_code VARCHAR(50),          -- Mã HPA (VD: O5184)
     vaccination VARCHAR(50),       -- Tiêm phòng
     description TEXT,              -- Mô tả
-    image_url TEXT,                -- Link ảnh
     contact_info TEXT,             -- TNV liên hệ
     source_url VARCHAR(500) UNIQUE,-- URL gốc (unique key)
     status VARCHAR(20) DEFAULT 'available',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_pets_status_created (status, created_at)
 );
 
 -- Bảng khi thích các bé thú cưng
@@ -60,9 +60,30 @@ CREATE TABLE IF NOT EXISTS pet_images (
     pet_id INT NOT NULL,
     image_path VARCHAR(500) NOT NULL,
     display_order INT DEFAULT 0 COMMENT '0 = ảnh đại diện, 1+ = ảnh gallery',
+    cloudinary_id VARCHAR(255) NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (pet_id) REFERENCES pets(id) ON DELETE CASCADE,
-    INDEX idx_pet_display (pet_id, display_order)
+    INDEX idx_pet_display (pet_id, display_order),
+    INDEX idx_pet_images_pet_created (pet_id, created_at),
+    INDEX idx_pet_images_cloudinary (cloudinary_id)
+);
+
+-- Bảng yêu cầu nhận nuôi
+CREATE TABLE IF NOT EXISTS adoption_requests (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    pet_id INT NOT NULL,
+    message TEXT,
+    status ENUM('pending', 'approved', 'rejected', 'cancelled') NOT NULL DEFAULT 'pending',
+    reviewed_by INT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    reviewed_at DATETIME NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (pet_id) REFERENCES pets(id) ON DELETE CASCADE,
+    FOREIGN KEY (reviewed_by) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_adoption_requests_user_created (user_id, created_at),
+    INDEX idx_adoption_requests_pet_status (pet_id, status),
+    INDEX idx_adoption_requests_reviewer (reviewed_by)
 );
 
 -- Bảng lưu OTP xác thực email

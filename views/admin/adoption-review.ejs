@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        .admin-layout {
+            display: flex;
+            min-height: calc(100vh - 120px);
+            background: #f8faf9;
+        }
+
+        /* Sidebar */
+        .admin-sidebar {
+            width: 240px;
+            background: #1b4332;
+            color: #fff;
+            padding: 24px 0;
+            flex-shrink: 0;
+        }
+
+        .sidebar-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #b7e4c7;
+            padding: 0 20px 12px;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            color: #d8f3dc;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: background 0.2s;
+            cursor: pointer;
+        }
+
+        .sidebar-item:hover,
+        .sidebar-item.active {
+            background: rgba(255, 255, 255, 0.12);
+            color: #fff;
+        }
+
+        .sidebar-item i {
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Main content */
+        .admin-main {
+            flex: 1;
+            padding: 32px;
+            overflow-x: auto;
+        }
+
+        .page-header {
+            margin-bottom: 28px;
+        }
+
+        .page-header h1 {
+            font-size: 1.6rem;
+            color: #1b4332;
+            margin-bottom: 6px;
+        }
+
+        .page-header p {
+            color: #64748b;
+            font-size: 0.95rem;
+        }
+
+        /* Tab navigation */
+        .tab-nav {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 24px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #64748b;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            color: #1b4332;
+            border-bottom-color: #1b4332;
+        }
+
+        .tab-btn:hover:not(.active) {
+            color: #2d6a4f;
+        }
+
+        .tab-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #e5e7eb;
+            color: #374151;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: 999px;
+            padding: 1px 7px;
+            margin-left: 6px;
+        }
+
+        .tab-btn.active .tab-badge {
+            background: #d8f3dc;
+            color: #1b4332;
+        }
+
+        /* Table */
+        .table-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .requests-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .requests-table thead {
+            background: #f1f5f2;
+        }
+
+        .requests-table th {
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            white-space: nowrap;
+        }
+
+        .requests-table td {
+            padding: 12px 16px;
+            border-top: 1px solid #f3f4f6;
+            color: #374151;
+            vertical-align: middle;
+        }
+
+        .requests-table tr:hover td {
+            background: #f8faf9;
+        }
+
+        .pet-thumb {
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            object-fit: cover;
+            background: #e5e7eb;
+        }
+
+        .pet-cell {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pet-cell-info strong {
+            display: block;
+            color: #1b4332;
+        }
+
+        .pet-cell-info small {
+            color: #9ca3af;
+        }
+
+        /* Status badge */
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .badge-pending {
+            background: #fef9c3;
+            color: #854d0e;
+        }
+
+        .badge-approved {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-rejected {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Action buttons */
+        .btn-action {
+            padding: 5px 12px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.82rem;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+
+        .btn-action:hover {
+            opacity: 0.85;
+        }
+
+        .btn-approve {
+            background: #10b981;
+            color: #fff;
+            margin-right: 4px;
+        }
+
+        .btn-reject {
+            background: #ef4444;
+            color: #fff;
+        }
+
+        .btn-detail {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #9ca3af;
+        }
+
+        .empty-state .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 12px;
+        }
+
+        .empty-state p {
+            font-size: 1rem;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: #fff;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 520px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .modal-header {
+            padding: 20px 24px 16px;
+            border-bottom: 1px solid #f3f4f6;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-header h2 {
+            font-size: 1.1rem;
+            color: #1b4332;
+            margin: 0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.4rem;
+            cursor: pointer;
+            color: #9ca3af;
+            line-height: 1;
+        }
+
+        .modal-body {
+            padding: 20px 24px;
+        }
+
+        .modal-pet-info {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .modal-pet-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            object-fit: cover;
+            background: #e5e7eb;
+            flex-shrink: 0;
+        }
+
+        .modal-pet-details h3 {
+            font-size: 1.1rem;
+            color: #1b4332;
+            margin: 0 0 6px;
+        }
+
+        .modal-field {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .modal-field label {
+            font-weight: 600;
+            color: #374151;
+            min-width: 110px;
+        }
+
+        .modal-field span {
+            color: #64748b;
+        }
+
+        .modal-message {
+            background: #f8faf9;
+            border-radius: 8px;
+            padding: 14px;
+            font-size: 0.9rem;
+            color: #374151;
+            margin-bottom: 20px;
+            border-left: 3px solid #2d6a4f;
+            white-space: pre-line;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .btn-modal {
+            padding: 9px 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+
+        .btn-modal:hover {
+            opacity: 0.85;
+        }
+
+        .btn-modal-approve {
+            background: #10b981;
+            color: #fff;
+        }
+
+        .btn-modal-reject {
+            background: #ef4444;
+            color: #fff;
+        }
+
+        .btn-modal-close {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        /* Loading spinner */
+        .spinner {
+            text-align: center;
+            padding: 40px;
+            color: #9ca3af;
+        }
+
+        @media (max-width: 768px) {
+            .admin-layout {
+                flex-direction: column;
+            }
+
+            .admin-sidebar {
+                width: 100%;
+                padding: 12px 0;
+            }
+
+            .admin-main {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('../partials/header') %>
+
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-title">Quản trị</div>
+            <a href="/adopt/admin/add" class="sidebar-item">
+                <i>🐾</i> Thêm thú cưng
+            </a>
+            <a href="/admin/adoption-review" class="sidebar-item active">
+                <i>📋</i> Xét duyệt thú cưng
+            </a>
+        </aside>
+
+        <!-- Main content -->
+        <main class="admin-main">
+            <div class="page-header">
+                <h1>Xét duyệt yêu cầu nhận nuôi</h1>
+                <p>Quản lý và xét duyệt các yêu cầu nhận nuôi thú cưng từ người dùng</p>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tab-nav">
+                <button class="tab-btn active" data-tab="pending">
+                    Chờ duyệt <span class="tab-badge" id="badge-pending">0</span>
+                </button>
+                <button class="tab-btn" data-tab="approved">
+                    Đã duyệt <span class="tab-badge" id="badge-approved">0</span>
+                </button>
+                <button class="tab-btn" data-tab="rejected">
+                    Đã từ chối <span class="tab-badge" id="badge-rejected">0</span>
+                </button>
+            </div>
+
+            <!-- Table -->
+            <div class="table-card">
+                <div id="tableContainer">
+                    <div class="spinner">⏳ Đang tải dữ liệu...</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Detail Modal -->
+    <div class="modal-overlay" id="detailModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Chi tiết yêu cầu nhận nuôi</h2>
+                <button class="modal-close" id="closeModal">✕</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Filled by JS -->
+            </div>
+        </div>
+    </div>
+
+    <%- include('../partials/footer') %>
+
+    <script>
+        // ============================================================
+        //  State
+        // ============================================================
+        let allRequests = [];
+        let currentTab = 'pending';
+        let selectedRequest = null;
+
+        // ============================================================
+        //  Helpers
+        // ============================================================
+        function getToken() {
+            return localStorage.getItem('token') || '';
+        }
+
+        function authHeaders() {
+            const t = getToken();
+            return t ? { 'Authorization': 'Bearer ' + t, 'Content-Type': 'application/json' } : { 'Content-Type': 'application/json' };
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '—';
+            return new Date(dateStr).toLocaleDateString('vi-VN');
+        }
+
+        function escHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function statusBadge(status) {
+            const map = {
+                pending: '<span class="badge badge-pending">⏳ Chờ duyệt</span>',
+                approved: '<span class="badge badge-approved">✅ Đã duyệt</span>',
+                rejected: '<span class="badge badge-rejected">❌ Từ chối</span>',
+            };
+            return map[status] || escHtml(status);
+        }
+
+        // ============================================================
+        //  Fetch data
+        // ============================================================
+        async function loadRequests() {
+            try {
+                const res = await fetch('/api/admin/adoption-requests', { headers: authHeaders() });
+                if (!res.ok) {
+                    if (res.status === 403) {
+                        document.getElementById('tableContainer').innerHTML =
+                            '<div class="empty-state"><div class="empty-icon">🚫</div><p>Bạn không có quyền truy cập trang này.</p></div>';
+                        return;
+                    }
+                    throw new Error('HTTP ' + res.status);
+                }
+                allRequests = await res.json();
+                updateBadges();
+                renderTable(currentTab);
+            } catch (err) {
+                console.error('Error loading requests:', err);
+                document.getElementById('tableContainer').innerHTML =
+                    '<div class="empty-state"><div class="empty-icon">❌</div><p>Không thể tải dữ liệu. Vui lòng thử lại.</p></div>';
+            }
+        }
+
+        // ============================================================
+        //  Update tab badges
+        // ============================================================
+        function updateBadges() {
+            ['pending', 'approved', 'rejected'].forEach(function (s) {
+                const count = allRequests.filter(function (r) { return r.status === s; }).length;
+                const el = document.getElementById('badge-' + s);
+                if (el) el.textContent = count;
+            });
+        }
+
+        // ============================================================
+        //  Render table
+        // ============================================================
+        function renderTable(tab) {
+            const filtered = allRequests.filter(function (r) { return r.status === tab; });
+            const container = document.getElementById('tableContainer');
+
+            if (filtered.length === 0) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div><p>Không có yêu cầu nào.</p></div>';
+                return;
+            }
+
+            let rows = filtered.map(function (r) {
+                const imgSrc = escHtml(r.petImage || '/images/logo.svg');
+                const img = '<img src="' + imgSrc + '" class="pet-thumb" onerror="this.src=\'/images/logo.svg\'">';
+
+                const actions = tab === 'pending'
+                    ? '<button class="btn-action btn-approve" onclick="handleApprove(' + r.id + ')">✅ Duyệt</button>'
+                    + '<button class="btn-action btn-reject" onclick="handleReject(' + r.id + ')">❌ Từ chối</button>'
+                    : '';
+
+                return '<tr>' +
+                    '<td>#' + r.id + '</td>' +
+                    '<td><div class="pet-cell">' + img + '<div class="pet-cell-info"><strong>' + escHtml(r.petName) + '</strong><small>#' + r.petId + '</small></div></div></td>' +
+                    '<td>' + escHtml(r.adopter) + '<br><small style="color:#9ca3af">' + escHtml(r.adopterEmail) + '</small></td>' +
+                    '<td>' + formatDate(r.date) + '</td>' +
+                    '<td>' + statusBadge(r.status) + '</td>' +
+                    '<td><button class="btn-action btn-detail" onclick="showDetail(' + r.id + ')">🔍 Chi tiết</button> ' + actions + '</td>' +
+                    '</tr>';
+            }).join('');
+
+            container.innerHTML =
+                '<table class="requests-table">' +
+                '<thead><tr>' +
+                '<th>ID</th>' +
+                '<th>Thú cưng</th>' +
+                '<th>Người đăng ký</th>' +
+                '<th>Ngày gửi</th>' +
+                '<th>Trạng thái</th>' +
+                '<th>Thao tác</th>' +
+                '</tr></thead>' +
+                '<tbody>' + rows + '</tbody>' +
+                '</table>';
+        }
+
+        // ============================================================
+        //  Show detail modal
+        // ============================================================
+        function showDetail(id) {
+            selectedRequest = allRequests.find(function (r) { return r.id === id; });
+            if (!selectedRequest) return;
+
+            const r = selectedRequest;
+            const imgSrc = escHtml(r.petImage || '/images/logo.svg');
+            const img = '<img src="' + imgSrc + '" class="modal-pet-img" onerror="this.src=\'/images/logo.svg\'">';
+
+            const actionBtns = r.status === 'pending'
+                ? '<button class="btn-modal btn-modal-approve" onclick="handleApprove(' + r.id + ', true)">✅ Duyệt</button>' +
+                  '<button class="btn-modal btn-modal-reject" onclick="handleReject(' + r.id + ', true)">❌ Từ chối</button>'
+                : '';
+
+            document.getElementById('modalBody').innerHTML =
+                '<div class="modal-pet-info">' +
+                img +
+                '<div class="modal-pet-details"><h3>' + escHtml(r.petName) + '</h3>' +
+                '<div class="modal-field"><label>Mã thú cưng:</label><span>#' + r.petId + '</span></div>' +
+                '</div></div>' +
+                '<div class="modal-field"><label>Người đăng ký:</label><span>' + escHtml(r.adopter) + '</span></div>' +
+                '<div class="modal-field"><label>Email:</label><span>' + escHtml(r.adopterEmail) + '</span></div>' +
+                '<div class="modal-field"><label>Ngày gửi:</label><span>' + formatDate(r.date) + '</span></div>' +
+                '<div class="modal-field"><label>Trạng thái:</label><span>' + statusBadge(r.status) + '</span></div>' +
+                (r.message ? '<p style="font-weight:600;color:#374151;margin:16px 0 6px">Lời nhắn:</p><div class="modal-message">' + escHtml(r.message) + '</div>' : '') +
+                '<div class="modal-actions">' +
+                '<button class="btn-modal btn-modal-close" onclick="closeModal()">Đóng</button>' +
+                actionBtns +
+                '</div>';
+
+            document.getElementById('detailModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('detailModal').classList.remove('active');
+            selectedRequest = null;
+        }
+
+        // ============================================================
+        //  Approve / Reject
+        // ============================================================
+        async function handleApprove(id, fromModal) {
+            const result = await Swal.fire({
+                title: 'Duyệt yêu cầu?',
+                text: 'Bạn xác nhận duyệt yêu cầu nhận nuôi này? Các yêu cầu khác cho thú cưng này sẽ bị từ chối tự động.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#10B981',
+                cancelButtonColor: '#64748B',
+                confirmButtonText: 'Xác nhận duyệt',
+                cancelButtonText: 'Hủy'
+            });
+
+            if (!result.isConfirmed) return;
+
+            try {
+                const res = await fetch('/api/admin/adoption-requests/' + id + '/status', {
+                    method: 'PATCH',
+                    headers: authHeaders(),
+                    body: JSON.stringify({ status: 'approved' })
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    Swal.fire({ icon: 'success', title: 'Đã duyệt!', text: data.message, confirmButtonColor: '#10B981' });
+                    if (fromModal) closeModal();
+                    await loadRequests();
+                } else {
+                    Swal.fire({ icon: 'error', title: 'Lỗi', text: data.message || 'Không thể duyệt yêu cầu' });
+                }
+            } catch (err) {
+                Swal.fire({ icon: 'error', title: 'Lỗi kết nối', text: 'Vui lòng thử lại' });
+            }
+        }
+
+        async function handleReject(id, fromModal) {
+            const result = await Swal.fire({
+                title: 'Từ chối yêu cầu?',
+                text: 'Bạn xác nhận từ chối yêu cầu nhận nuôi này?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#EF4444',
+                cancelButtonColor: '#64748B',
+                confirmButtonText: 'Xác nhận từ chối',
+                cancelButtonText: 'Hủy'
+            });
+
+            if (!result.isConfirmed) return;
+
+            try {
+                const res = await fetch('/api/admin/adoption-requests/' + id + '/status', {
+                    method: 'PATCH',
+                    headers: authHeaders(),
+                    body: JSON.stringify({ status: 'rejected' })
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    Swal.fire({ icon: 'success', title: 'Đã từ chối!', text: data.message, confirmButtonColor: '#10B981' });
+                    if (fromModal) closeModal();
+                    await loadRequests();
+                } else {
+                    Swal.fire({ icon: 'error', title: 'Lỗi', text: data.message || 'Không thể từ chối yêu cầu' });
+                }
+            } catch (err) {
+                Swal.fire({ icon: 'error', title: 'Lỗi kết nối', text: 'Vui lòng thử lại' });
+            }
+        }
+
+        // ============================================================
+        //  Tab switching
+        // ============================================================
+        document.querySelectorAll('.tab-btn').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                document.querySelectorAll('.tab-btn').forEach(function (b) { b.classList.remove('active'); });
+                btn.classList.add('active');
+                currentTab = btn.dataset.tab;
+                renderTable(currentTab);
+            });
+        });
+
+        // Close modal on overlay click
+        document.getElementById('detailModal').addEventListener('click', function (e) {
+            if (e.target === this) closeModal();
+        });
+
+        document.getElementById('closeModal').addEventListener('click', closeModal);
+
+        // ============================================================
+        //  Init
+        // ============================================================
+        loadRequests();
+    </script>
+</body>
+
+</html>

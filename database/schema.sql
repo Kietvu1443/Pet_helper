@@ -76,6 +76,24 @@ CREATE TABLE IF NOT EXISTS email_verifications (
     INDEX(user_id)
 );
 
+-- Bảng yêu cầu nhận nuôi
+CREATE TABLE IF NOT EXISTS adoption_requests (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    pet_id INT NOT NULL,
+    message TEXT NULL,
+    status ENUM('pending','approved','rejected','cancelled') DEFAULT 'pending',
+    reviewed_by INT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    reviewed_at TIMESTAMP NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (pet_id) REFERENCES pets(id) ON DELETE CASCADE,
+    FOREIGN KEY (reviewed_by) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_status (status),
+    INDEX idx_pet_id (pet_id),
+    INDEX idx_user_id (user_id)
+);
+
 -- Tài khoản admin mặc định (mật khẩu: admin123)
 INSERT INTO users (display_name, name, email, password, role) VALUES
 ('Admin', 'Administrator', 'admin@pethelper.vn', '$2b$10$nFNIfeHOuxNCv2pLT9pueepurMfH1exUieBvdu0Z6kXy70ph6vp', 0)

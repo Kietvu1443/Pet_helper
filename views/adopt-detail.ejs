@@ -218,20 +218,64 @@
                             // User đã xác thực → cho phép nhận nuôi
                             Swal.fire({
                                 title: 'Đăng ký nhận nuôi',
-                                text: 'Bạn muốn đăng ký nhận nuôi <%= pet.name %>?',
-                                icon: 'question',
+                                html: `
+                                    <p style="margin-bottom: 12px;">Vui lòng cho biết lý do bạn muốn nhận nuôi <b><%= pet.name %></b>:</p>
+                                    <textarea id="adoptionMessage" class="swal2-textarea" placeholder="Ví dụ: Tôi có kinh nghiệm nuôi thú cưng và môi trường phù hợp..."></textarea>
+                                `,
+                                icon: 'info',
                                 showCancelButton: true,
                                 confirmButtonColor: '#10B981',
                                 cancelButtonColor: '#64748B',
-                                confirmButtonText: 'Xác nhận',
-                                cancelButtonText: 'Hủy'
-                            }).then((result) => {
-                                if (result.isConfirmed) {
+                                confirmButtonText: 'Gửi đăng ký',
+                                cancelButtonText: 'Hủy',
+                                preConfirm: () => {
+                                    const message = document.getElementById('adoptionMessage').value.trim();
+                                    if (!message) {
+                                        Swal.showValidationMessage('Vui lòng nhập lý do nhận nuôi');
+                                        return false;
+                                    }
+                                    return message;
+                                }
+                            }).then(async (result) => {
+                                if (result.isConfirmed && result.value) {
+                                    const message = result.value;
+                                    try {
+                                        const response = await fetch('/api/adoption-requests', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json'
+                                            },
+                                            body: JSON.stringify({
+                                                petId: <%= pet.id %>,
+                                                message
+                                            })
+                                        });
+
+                                        const data = await response.json();
+                                        if (!response.ok) {
+                                            throw new Error(data.message || 'Không thể gửi yêu cầu nhận nuôi');
+                                        }
+
+                                        Swal.fire({
+                                            title: 'Đăng ký thành công!',
+                                            text: 'Hồ sơ của bạn đã được gửi và đang chờ xét duyệt.',
+                                            icon: 'success',
+                                            confirmButtonColor: '#10B981'
+                                        });
+                                    } catch (error) {
+                                        Swal.fire({
+                                            title: 'Không thể gửi yêu cầu',
+                                            text: error.message || 'Đã xảy ra lỗi, vui lòng thử lại.',
+                                            icon: 'error',
+                                            confirmButtonColor: '#EF4444'
+                                        });
+                                    }
+                                } else if (result.isConfirmed) {
                                     Swal.fire({
-                                        title: 'Đã đăng ký!',
-                                        text: 'Chúng tôi sẽ liên hệ với bạn sớm nhất.',
-                                        icon: 'success',
-                                        confirmButtonColor: '#10B981'
+                                        title: 'Thiếu thông tin',
+                                        text: 'Vui lòng nhập lý do nhận nuôi trước khi gửi.',
+                                        icon: 'warning',
+                                        confirmButtonColor: '#F59E0B'
                                     });
                                 }
                             });

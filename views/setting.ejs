@@ -629,7 +629,7 @@
                 </div>
                 <div class="menu-item">
                     <i class="ph ph-users"></i>
-                    <span>Gia đình (Bầy đàn)</span>
+                    <span>Gia đình</span>
                 </div>
             </div>
 
@@ -650,6 +650,12 @@
                     <i class="ph ph-globe"></i>
                     <span>Ngôn ngữ (VN)</span>
                 </div>
+                <% if(user && (user.role === 0 || user.role === 1)) { %>
+                    <a class="menu-item" href="/admin/adoption-requests" style="text-decoration: none; color: inherit;">
+                        <i class="ph ph-clipboard-text"></i>
+                        <span>Xét duyệt thú cưng</span>
+                    </a>
+                <% } %>
             </div>
         </aside>
 

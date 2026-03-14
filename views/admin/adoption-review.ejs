@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root {
+            --primary: #2b663e;
+            --primary-light: #d8f3dc;
+            --bg-body: #F4F7F6;
+            --bg-surface: #FFFFFF;
+            --text-main: #1A202C;
+            --text-muted: #718096;
+            --border-color: #E2E8F0;
+            --sidebar-width: 240px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+        body { background: var(--bg-body); color: var(--text-main); display: flex; flex-direction: column; min-height: 100vh; }
+
+        /* ---- Layout ---- */
+        .admin-layout { display: flex; flex: 1; }
+
+        /* ---- Sidebar ---- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--primary);
+            color: #fff;
+            padding: 24px 0;
+            min-height: calc(100vh - 60px);
+            flex-shrink: 0;
+        }
+
+        .sidebar-logo {
+            padding: 0 20px 24px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+            margin-bottom: 12px;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: background 0.2s;
+        }
+
+        .sidebar-item:hover, .sidebar-item.active {
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+        }
+
+        .sidebar-item i { font-size: 1.2rem; }
+
+        /* ---- Main Content ---- */
+        .admin-main {
+            flex: 1;
+            padding: 28px 32px;
+            overflow-x: auto;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        /* ---- Tabs ---- */
+        .tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+
+        .tab-btn {
+            padding: 8px 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background: #fff;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+        .tab-count {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.25);
+            border-radius: 12px;
+            padding: 1px 7px;
+            font-size: 0.75rem;
+            margin-left: 6px;
+        }
+
+        .tab-btn:not(.active) .tab-count { background: #e5e7eb; color: #555; }
+
+        /* ---- Table ---- */
+        .table-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 1px 8px rgba(0,0,0,0.07);
+            overflow: hidden;
+        }
+
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: #f8fafc; }
+        th { padding: 12px 16px; text-align: left; font-size: 0.82rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border-color); }
+        td { padding: 14px 16px; font-size: 0.9rem; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #f9fafb; }
+
+        .pet-thumb {
+            width: 48px;
+            height: 48px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+
+        .status-pending  { background: #FEF9C3; color: #854D0E; }
+        .status-approved { background: #DCFCE7; color: #166534; }
+        .status-rejected { background: #FEE2E2; color: #991B1B; }
+
+        .btn-action {
+            padding: 5px 12px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.82rem;
+            font-weight: 500;
+            transition: opacity 0.2s;
+        }
+
+        .btn-action:hover { opacity: 0.85; }
+        .btn-detail { background: #e0f2fe; color: #0369a1; }
+
+        .empty-state { text-align: center; padding: 48px; color: var(--text-muted); }
+        .empty-state i { font-size: 3rem; margin-bottom: 12px; display: block; }
+
+        /* ---- Modal ---- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.open { display: flex; }
+
+        .modal-box {
+            background: #fff;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 560px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 28px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: none;
+            border: none;
+            font-size: 1.4rem;
+            cursor: pointer;
+            color: var(--text-muted);
+            line-height: 1;
+        }
+
+        .modal-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 20px; color: var(--primary); }
+
+        .modal-pet-info {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+            background: var(--bg-body);
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .modal-pet-img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            flex-shrink: 0;
+        }
+
+        .modal-pet-name { font-weight: 700; font-size: 1rem; margin-bottom: 4px; }
+        .modal-pet-type { font-size: 0.85rem; color: var(--text-muted); }
+
+        .modal-section { margin-bottom: 14px; }
+        .modal-section-title { font-size: 0.78rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+
+        .modal-info-row { display: flex; gap: 8px; margin-bottom: 6px; font-size: 0.9rem; }
+        .modal-info-label { color: var(--text-muted); min-width: 100px; }
+        .modal-info-value { font-weight: 500; }
+
+        .modal-message {
+            background: var(--bg-body);
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--text-main);
+        }
+
+        .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+
+        .btn-approve { background: #16a34a; color: #fff; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9rem; flex: 1; }
+        .btn-reject  { background: #dc2626; color: #fff; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9rem; flex: 1; }
+        .btn-approve:hover { background: #15803d; }
+        .btn-reject:hover  { background: #b91c1c; }
+        .btn-approve:disabled, .btn-reject:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* Top bar */
+        .top-bar-admin {
+            background: var(--primary);
+            color: #fff;
+            padding: 0 24px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .top-bar-admin .logo { font-weight: 700; font-size: 1.1rem; text-decoration: none; color: #fff; }
+        .top-bar-admin .back-link { color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.9rem; }
+        .top-bar-admin .back-link:hover { color: #fff; }
+    </style>
+</head>
+
+<body>
+    <!-- Top Bar -->
+    <div class="top-bar-admin">
+        <a href="/" class="logo">🐾 PET HELPER</a>
+        <a href="/adopt" class="back-link">← Quay lại trang nhận nuôi</a>
+    </div>
+
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">⚙️ Quản trị</div>
+            <a href="/adopt/admin/add" class="sidebar-item">
+                <i class="ph ph-plus-circle"></i>
+                Thêm thú cưng
+            </a>
+            <a href="/admin/adoption-requests" class="sidebar-item active">
+                <i class="ph ph-clipboard-text"></i>
+                Xét duyệt thú cưng
+            </a>
+        </aside>
+
+        <!-- Main content -->
+        <main class="admin-main">
+            <div class="page-title">Xét duyệt yêu cầu nhận nuôi</div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="pending">
+                    Chờ duyệt <span class="tab-count" id="count-pending">0</span>
+                </button>
+                <button class="tab-btn" data-tab="approved">
+                    Đã duyệt <span class="tab-count" id="count-approved">0</span>
+                </button>
+                <button class="tab-btn" data-tab="rejected">
+                    Từ chối <span class="tab-count" id="count-rejected">0</span>
+                </button>
+            </div>
+
+            <!-- Table -->
+            <div class="table-card">
+                <table id="requestsTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Thú cưng</th>
+                            <th>Người đăng ký</th>
+                            <th>Ngày gửi</th>
+                            <th>Trạng thái</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="requestsBody">
+                        <tr>
+                            <td colspan="6">
+                                <div class="empty-state">
+                                    <i class="ph ph-circle-notch"></i>
+                                    Đang tải dữ liệu...
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- Detail Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-box">
+            <button class="modal-close" id="modalClose" title="Đóng">✕</button>
+            <div class="modal-title">Chi tiết yêu cầu nhận nuôi</div>
+
+            <!-- Pet info -->
+            <div class="modal-pet-info">
+                <img id="modalPetImg" src="" alt="" class="modal-pet-img">
+                <div>
+                    <div class="modal-pet-name" id="modalPetName">—</div>
+                    <div class="modal-pet-type" id="modalPetType">—</div>
+                </div>
+            </div>
+
+            <!-- Adopter info -->
+            <div class="modal-section">
+                <div class="modal-section-title">Thông tin người đăng ký</div>
+                <div class="modal-info-row">
+                    <span class="modal-info-label">Họ tên:</span>
+                    <span class="modal-info-value" id="modalAdopter">—</span>
+                </div>
+                <div class="modal-info-row">
+                    <span class="modal-info-label">Tên tài khoản:</span>
+                    <span class="modal-info-value" id="modalDisplayName">—</span>
+                </div>
+                <div class="modal-info-row">
+                    <span class="modal-info-label">Email:</span>
+                    <span class="modal-info-value" id="modalEmail">—</span>
+                </div>
+                <div class="modal-info-row">
+                    <span class="modal-info-label">Địa chỉ:</span>
+                    <span class="modal-info-value" id="modalAddress">—</span>
+                </div>
+            </div>
+
+            <!-- Message -->
+            <div class="modal-section">
+                <div class="modal-section-title">Lời nhắn</div>
+                <div class="modal-message" id="modalMessage">—</div>
+            </div>
+
+            <!-- Actions (only shown for pending requests) -->
+            <div class="modal-actions" id="modalActions">
+                <button class="btn-approve" id="btnApprove">✅ Duyệt</button>
+                <button class="btn-reject"  id="btnReject">❌ Từ chối</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allRequests = [];
+        let currentTab = 'pending';
+        let currentRequestId = null;
+
+        // ─── Fetch data from API ─────────────────────────
+        async function loadRequests() {
+            try {
+                const res = await fetch('/admin/api/adoption-requests', {
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                if (!res.ok) {
+                    throw new Error('HTTP ' + res.status);
+                }
+
+                allRequests = await res.json();
+                renderTab(currentTab);
+                updateCounts();
+            } catch (err) {
+                console.error('Error loading requests:', err);
+                document.getElementById('requestsBody').innerHTML = `
+                    <tr><td colspan="6">
+                        <div class="empty-state">
+                            <i class="ph ph-warning"></i>
+                            Không thể tải dữ liệu. Vui lòng thử lại.
+                        </div>
+                    </td></tr>`;
+            }
+        }
+
+        // ─── Update tab counters ─────────────────────────
+        function updateCounts() {
+            ['pending', 'approved', 'rejected'].forEach(function(status) {
+                const count = allRequests.filter(function(r) { return r.status === status; }).length;
+                document.getElementById('count-' + status).textContent = count;
+            });
+        }
+
+        // ─── Render table for current tab ───────────────
+        function renderTab(tab) {
+            currentTab = tab;
+            const filtered = allRequests.filter(function(r) { return r.status === tab; });
+            const tbody = document.getElementById('requestsBody');
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+                    <tr><td colspan="6">
+                        <div class="empty-state">
+                            <i class="ph ph-clipboard-text"></i>
+                            Không có yêu cầu nào
+                        </div>
+                    </td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(function(r, idx) {
+                const img = r.petImage
+                    ? '<img src="' + escHtml(r.petImage) + '" class="pet-thumb" alt="" onerror="this.src=\'/images/logo.svg\'">'
+                    : '<div style="width:48px;height:48px;background:#e5e7eb;border-radius:8px;display:flex;align-items:center;justify-content:center;">🐾</div>';
+
+                const badge = '<span class="status-badge status-' + r.status + '">' + statusLabel(r.status) + '</span>';
+
+                return '<tr>' +
+                    '<td>' + (idx + 1) + '</td>' +
+                    '<td style="display:flex;align-items:center;gap:10px;">' + img + '<span>' + escHtml(r.petName) + '</span></td>' +
+                    '<td>' + escHtml(r.adopter) + '</td>' +
+                    '<td>' + escHtml(r.date) + '</td>' +
+                    '<td>' + badge + '</td>' +
+                    '<td><button class="btn-action btn-detail" onclick="openModal(' + r.id + ')">🔍 Chi tiết</button></td>' +
+                    '</tr>';
+            }).join('');
+        }
+
+        function statusLabel(status) {
+            if (status === 'pending')  return '⏳ Chờ duyệt';
+            if (status === 'approved') return '✅ Đã duyệt';
+            if (status === 'rejected') return '❌ Từ chối';
+            return status;
+        }
+
+        function escHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        // ─── Tab click ───────────────────────────────────
+        document.querySelectorAll('.tab-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+                btn.classList.add('active');
+                renderTab(btn.dataset.tab);
+            });
+        });
+
+        // ─── Modal ───────────────────────────────────────
+        function openModal(id) {
+            const r = allRequests.find(function(x) { return x.id === id; });
+            if (!r) return;
+
+            currentRequestId = id;
+
+            document.getElementById('modalPetImg').src = r.petImage || '/images/logo.svg';
+            document.getElementById('modalPetImg').alt = r.petName;
+            document.getElementById('modalPetName').textContent = r.petName || '—';
+            document.getElementById('modalPetType').textContent = r.petType || '—';
+            document.getElementById('modalAdopter').textContent = r.adopter || '—';
+            document.getElementById('modalDisplayName').textContent = r.adopterDisplayName || '—';
+            document.getElementById('modalEmail').textContent = r.adopterEmail || '—';
+            document.getElementById('modalAddress').textContent = r.adopterAddress || 'Chưa cập nhật';
+            document.getElementById('modalMessage').textContent = r.message || '(Không có lời nhắn)';
+
+            // Show action buttons only for pending requests
+            const actions = document.getElementById('modalActions');
+            actions.style.display = r.status === 'pending' ? 'flex' : 'none';
+
+            document.getElementById('modalOverlay').classList.add('open');
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('open');
+            currentRequestId = null;
+        }
+
+        document.getElementById('modalClose').addEventListener('click', closeModal);
+        document.getElementById('modalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // ─── Approve / Reject ────────────────────────────
+        async function updateStatus(status) {
+            if (!currentRequestId) return;
+
+            const btnApprove = document.getElementById('btnApprove');
+            const btnReject  = document.getElementById('btnReject');
+            btnApprove.disabled = true;
+            btnReject.disabled  = true;
+
+            const label = status === 'approved' ? 'duyệt' : 'từ chối';
+
+            const confirm = await Swal.fire({
+                title: 'Xác nhận',
+                text: 'Bạn có chắc muốn ' + label + ' yêu cầu này?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: status === 'approved' ? '#16a34a' : '#dc2626',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Đồng ý',
+                cancelButtonText: 'Hủy'
+            });
+
+            if (!confirm.isConfirmed) {
+                btnApprove.disabled = false;
+                btnReject.disabled  = false;
+                return;
+            }
+
+            try {
+                const res = await fetch('/admin/api/adoption-requests/' + currentRequestId + '/status', {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: status })
+                });
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                    Swal.fire('Thất bại', data.message || 'Đã xảy ra lỗi', 'error');
+                    btnApprove.disabled = false;
+                    btnReject.disabled  = false;
+                    return;
+                }
+
+                Swal.fire({
+                    title: 'Thành công',
+                    text: data.message,
+                    icon: 'success',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+
+                closeModal();
+                await loadRequests();
+            } catch (err) {
+                Swal.fire('Lỗi', 'Không thể kết nối đến máy chủ', 'error');
+                btnApprove.disabled = false;
+                btnReject.disabled  = false;
+            }
+        }
+
+        document.getElementById('btnApprove').addEventListener('click', function() { updateStatus('approved'); });
+        document.getElementById('btnReject').addEventListener('click',  function() { updateStatus('rejected'); });
+
+        // ─── Init ─────────────────────────────────────────
+        loadRequests();
+    </script>
+</body>
+
+</html>

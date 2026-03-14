@@ -155,16 +155,16 @@
         .user-dropdown { position: relative; }
         .user-dropdown-menu {
             position: absolute; top: calc(100% + 10px); right: 0;
-            background: white; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            background: #399c70; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             min-width: 200px; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.3s ease; z-index: 1000;
         }
         .user-dropdown.active .user-dropdown-menu { opacity: 1; visibility: visible; transform: translateY(0); }
         .dropdown-header { padding: 15px; text-align: center; }
-        .dropdown-header strong { display: block; color: #1b4332; margin-bottom: 4px; }
-        .user-role { font-size: 0.8rem; color: #64748B; }
+        .dropdown-header strong { display: block; color: #333; margin-bottom: 4px; }
+        .user-role { font-size: 0.8rem; color: #666; }
         .dropdown-divider { height: 1px; background: #E5E7EB; margin: 0; }
-        .dropdown-item { display: block; padding: 12px 15px; color: #1b4332; transition: all 0.2s; text-decoration: none; }
-        .dropdown-item:hover { background: #d8f3dc; color: #2d6a4f; }
+        .dropdown-item { display: block; padding: 12px 15px; color: #333; transition: all 0.2s; text-decoration: none; }
+        .dropdown-item:hover { background: #f5f5f5; color: #222; }
         .dropdown-item.logout { color: #d90429; }
         .dropdown-item.logout:hover { background: #FEE2E2; }
 
@@ -372,9 +372,7 @@
                             <% if (typeof isStaff !== 'undefined' && isStaff) { %>
                                 <a href="/adopt/admin/add" class="dropdown-item">🐾 Thêm thú cưng</a>
                             <% } %>
-                            <% if (typeof isAdmin !== 'undefined' && isAdmin) { %>
-                                <a href="/admin" class="dropdown-item">⚙️ Quản trị</a>
-                            <% } %>
+                        
                             <div class="dropdown-divider"></div>
                             <a href="#" class="dropdown-item logout" id="logoutBtn" onclick="handleLogout(event)">🚪 Đăng xuất</a>
                         </div>

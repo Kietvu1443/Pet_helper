@@ -32,7 +32,7 @@
                                 : [];
                         %>
                             <img src="<%= mainImage %>" alt="<%= pet.name %>" class="pet-main-image" id="mainImage"
-                                onerror="fallbackPetImage(this, '<%= pet.id %>')">
+                                data-pet-id="<%= pet.id %>" onerror="fallbackPetImage(this, this.dataset.petId)">
                             <div class="pet-status-badge <%= pet.status %>">
                                 <%= pet.status==='available' ? '🟢 Sẵn sàng nhận nuôi' : pet.status==='pending'
                                     ? '🟡 Đang xử lý' : '🔴 Đã được nhận nuôi' %>
@@ -42,10 +42,12 @@
                                 <div class="pet-gallery">
                                     <% images.forEach(function(img, index) { %>
                                         <div class="gallery-thumb <%= index === 0 ? 'active' : '' %>"
-                                            onclick="changeMainImage('<%= img.image_path %>', this)">
+                                            data-image-path="<%= img.image_path %>"
+                                            onclick="changeMainImage(this.dataset.imagePath, this)">
                                             <img src="<%= img.image_path %>"
                                                 alt="<%= pet.name %> - Ảnh <%= index + 1 %>"
-                                                onerror="fallbackPetImage(this, '<%= pet.id %>')">
+                                                data-pet-id="<%= pet.id %>"
+                                                onerror="fallbackPetImage(this, this.dataset.petId)">
                                         </div>
                                         <% }); %>
                                 </div>
@@ -171,7 +173,8 @@
                                 <% if (pet.status==='available' ) { %>
                                     <div class="adopt-actions">
                                         <% if (typeof isAuthenticated !=='undefined' && isAuthenticated) { %>
-                                            <button class="btn btn-green btn-lg" id="adoptBtn">
+                                            <button class="btn btn-green btn-lg" id="adoptBtn"
+                                                data-pet-id="<%= pet.id %>">
                                                 ❤️ Đăng ký nhận nuôi
                                             </button>
                                             <% } else { %>
@@ -179,7 +182,9 @@
                                                     🔐 Đăng nhập để nhận nuôi
                                                 </a>
                                                 <% } %>
-                                                    <button class="btn btn-outline-gray" id="shareBtn">
+                                                    <button class="btn btn-outline-gray" id="shareBtn"
+                                                        data-share-title="<%= (pet.name || '') + ' - Pet Helper' %>"
+                                                        data-share-text="<%= pet.description || '' %>">
                                                         📤 Chia sẻ
                                                     </button>
                                     </div>
@@ -246,7 +251,7 @@
                                                 'Content-Type': 'application/json'
                                             },
                                             body: JSON.stringify({
-                                                petId: <%= pet.id %>,
+                                                petId: adoptBtn.dataset.petId,
                                                 message
                                             })
                                         });
@@ -289,8 +294,8 @@
                     shareBtn.addEventListener('click', () => {
                         if (navigator.share) {
                             navigator.share({
-                                title: '<%= pet.name %> - Pet Helper',
-                                text: '<%= pet.description || "" %>',
+                                title: shareBtn.dataset.shareTitle || 'Pet Helper',
+                                text: shareBtn.dataset.shareText || '',
                                 url: window.location.href
                             });
                         } else {

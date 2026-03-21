@@ -78,5 +78,5 @@ CREATE TABLE IF NOT EXISTS email_verifications (
 
 -- Tài khoản admin mặc định (mật khẩu: admin123)
 INSERT INTO users (display_name, name, email, password, role) VALUES
-('Admin', 'Administrator', 'admin@pethelper.vn', '$2b$10$nFNIfeHOuxNCv2pLT9pueepurMfH1exUieBvdu0Z6kXy70ph6vp', 0)
+('Admin', 'Administrator', 'admin@pethelper.vn', 'admin123', 0)
 ON DUPLICATE KEY UPDATE id=id;

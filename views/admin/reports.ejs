@@ -52,6 +52,8 @@
         .badge.pending { background: #fef3c7; color: #d97706; }
         .badge.approved { background: #dcfce7; color: #166534; }
         .badge.rejected { background: #fee2e2; color: #b91c1c; }
+        .badge.lost { background: #fee2e2; color: #b91c1c; }
+        .badge.found { background: #dcfce7; color: #166534; }
         .btn-view { background: #f1f5f9; color: #334155; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600; }
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 100; }
         .modal-content { background: white; width: 800px; max-width: 90%; border-radius: 8px; overflow: hidden; }
@@ -66,6 +68,7 @@
         .btn-approve { background: #16a34a; color: white; }
         .btn-reject { background: #dc2626; color: white; }
         .btn-revert { background: #0284c7; color: white; }
+        .btn-delete { background: #7f1d1d; color: white; }
         .btn-close { background: white; border: 1px solid #cbd5e1; color: #475569; }
     </style>
 </head>
@@ -108,13 +111,13 @@
                 <a class="menu-item" href="/profile"><i class="ph ph-palette"></i><span>Giao diện hiển thị</span></a>
                 <a class="menu-item" href="/profile"><i class="ph ph-globe"></i><span>Ngôn ngữ (VN)</span></a>
                 <% if(user && (user.role === 0 || user.role === 1)) { %>
-                    <a class="menu-item" href="/admin/adoption-requests" style="background-color: var(--blue-light); color: var(--primary);">
-                        <i class="ph ph-clipboard-text" style="color: var(--primary);"></i>
-                        <span style="font-weight: 600;">Xét duyệt thú cưng</span>
+                    <a class="menu-item" href="/admin/adoption-requests">
+                        <i class="ph ph-clipboard-text" style="color: var(--text-muted);"></i>
+                        <span>Xét duyệt thú cưng</span>
                     </a>
-                    <a class="menu-item" href="/admin/reports">
-                        <i class="ph ph-flag" style="color: var(--text-muted);"></i>
-                        <span>Quản lý báo cáo</span>
+                    <a class="menu-item" href="/admin/reports" style="background-color: var(--blue-light); color: var(--primary);">
+                        <i class="ph ph-flag" style="color: var(--primary);"></i>
+                        <span style="font-weight: 600;">Quản lý báo cáo</span>
                     </a>
                 <% } %>
             </div>
@@ -122,7 +125,7 @@
 
         <main class="content">
             <div class="content-inner">
-                <h2 style="font-size: 24px; margin-bottom: 24px;">Hồ sơ xét duyệt nhận nuôi</h2>
+                <h2 style="font-size: 24px; margin-bottom: 24px;">Quản lý báo cáo thất lạc & tìm thấy</h2>
 
                 <div class="card">
                     <div class="tabs">
@@ -134,10 +137,9 @@
                     <table>
                         <thead>
                             <tr>
-                                <th>Mã User</th>
-                                <th>Người xin nhận nuôi</th>
-                                <th>Mã thú cưng</th>
-                                <th>Thú cưng</th>
+                                <th>Người báo cáo</th>
+                                <th>Loại</th>
+                                <th>Vị trí</th>
                                 <th>Ngày gửi</th>
                                 <th>Trạng thái</th>
                                 <th>Hành động</th>
@@ -153,22 +155,23 @@
     <div id="detailModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 style="font-size: 1.2rem; color: #1e293b;">Chi tiết hồ sơ nhận nuôi</h2>
+                <h2 style="font-size: 1.2rem; color: #1e293b;">Chi tiết báo cáo</h2>
                 <button style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #64748b;" onclick="closeModal()">&times;</button>
             </div>
             <div class="modal-body">
                 <div>
-                    <img id="modal-pet-img" src="https://via.placeholder.com/400x300?text=No+Image" alt="Pet Image" class="pet-image">
+                    <img id="modal-report-img" src="https://via.placeholder.com/400x300?text=No+Image" alt="Report Image" class="pet-image">
                     <div style="margin-top: 15px;">
-                        <div class="info-label">Lý do muốn nhận nuôi</div>
-                        <div class="info-value" id="modal-reason" style="font-style: italic; font-size: 0.95rem;"></div>
+                        <div class="info-label">Mô tả</div>
+                        <div class="info-value" id="modal-description" style="font-style: italic; font-size: 0.95rem;"></div>
                     </div>
                 </div>
                 <div>
-                    <div class="info-group"><div class="info-label">Người xin nhận nuôi</div><div class="info-value" id="modal-adopter"></div></div>
-                    <div class="info-group"><div class="info-label">Email liên hệ</div><div class="info-value" id="modal-email"></div></div>
-                    <div class="info-group"><div class="info-label">Địa chỉ nuôi Pet</div><div class="info-value" id="modal-address"></div></div>
-                    <div class="info-group"><div class="info-label">Tên thú cưng</div><div class="info-value" id="modal-pet-name"></div></div>
+                    <div class="info-group"><div class="info-label">Người báo cáo</div><div class="info-value" id="modal-reporter"></div></div>
+                    <div class="info-group"><div class="info-label">Loại</div><div class="info-value" id="modal-type"></div></div>
+                    <div class="info-group"><div class="info-label">Số điện thoại</div><div class="info-value" id="modal-phone"></div></div>
+                    <div class="info-group"><div class="info-label">Email</div><div class="info-value" id="modal-email"></div></div>
+                    <div class="info-group"><div class="info-label">Vị trí</div><div class="info-value" id="modal-location"></div></div>
                     <div class="info-group"><div class="info-label">Trạng thái hiện tại</div><div class="info-value" id="modal-status-text"></div></div>
                 </div>
             </div>
@@ -177,7 +180,7 @@
     </div>
 
     <script>
-        let adoptionRequests = [];
+        let reports = [];
         let currentFilter = 'pending';
 
         function getStatusInfo(status) {
@@ -187,35 +190,42 @@
             return { text: 'Không rõ', class: '' };
         }
 
+        function getTypeInfo(type) {
+            if (type === 'lost') return { text: 'Thất lạc', class: 'lost' };
+            if (type === 'found') return { text: 'Tìm thấy', class: 'found' };
+            return { text: 'Không rõ', class: '' };
+        }
+
         function formatDate(input) {
             if (!input) return '-';
             return new Date(input).toLocaleDateString('vi-VN');
         }
 
-        async function fetchAdoptionRequests() {
-            const response = await fetch('/api/admin/adoption-requests');
+        async function fetchReports() {
+            const response = await fetch('/api/admin/reports?limit=200');
             const data = await response.json();
             if (!response.ok) throw new Error(data.message || 'Không thể tải dữ liệu');
-            adoptionRequests = data.requests || [];
+            reports = data.data || [];
         }
 
         function renderTable() {
-            const rows = adoptionRequests.filter(req => req.status === currentFilter);
+            const rows = reports.filter(r => r.status === currentFilter);
             const tableBody = document.getElementById('table-body');
             if (!rows.length) {
-                tableBody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:#64748b;">Không có hồ sơ nào.</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#64748b;">Không có báo cáo nào.</td></tr>';
                 return;
             }
-            tableBody.innerHTML = rows.map(req => {
-                const status = getStatusInfo(req.status);
+            tableBody.innerHTML = rows.map(r => {
+                const status = getStatusInfo(r.status);
+                const type = getTypeInfo(r.type);
+                const location = r.address || r.found_location || '-';
                 return `<tr>
-                    <td>${req.user_id}</td>
-                    <td>${req.display_name || req.user_name || '-'}</td>
-                    <td>${req.pet_id}</td>
-                    <td>${req.pet_name || '-'}</td>
-                    <td>${formatDate(req.created_at)}</td>
+                    <td>${r.reporter_name || '-'}</td>
+                    <td><span class="badge ${type.class}">${type.text}</span></td>
+                    <td>${location}</td>
+                    <td>${formatDate(r.created_at)}</td>
                     <td><span class="badge ${status.class}">${status.text}</span></td>
-                    <td><button class="btn-view" onclick="openModal(${req.id})"><i class="ph ph-eye"></i> Xem</button></td>
+                    <td><button class="btn-view" onclick="openModal(${r.id})"><i class="ph ph-eye"></i> Xem</button></td>
                 </tr>`;
             }).join('');
         }
@@ -228,24 +238,27 @@
         }
 
         function openModal(id) {
-            const req = adoptionRequests.find(item => Number(item.id) === Number(id));
-            if (!req) return;
-            document.getElementById('modal-pet-img').src = req.pet_image || 'https://via.placeholder.com/400x300?text=No+Image';
-            document.getElementById('modal-adopter').innerText = req.display_name || req.user_name || '-';
-            document.getElementById('modal-email').innerText = req.email || '-';
-            document.getElementById('modal-address').innerText = req.address || '-';
-            document.getElementById('modal-pet-name').innerText = req.pet_name || '-';
-            document.getElementById('modal-reason').innerText = req.message ? `"${req.message}"` : '-';
-            const status = getStatusInfo(req.status);
+            const r = reports.find(item => Number(item.id) === Number(id));
+            if (!r) return;
+            document.getElementById('modal-report-img').src = r.image || 'https://via.placeholder.com/400x300?text=No+Image';
+            document.getElementById('modal-reporter').innerText = r.reporter_name || '-';
+            document.getElementById('modal-type').innerHTML = `<span class="badge ${r.type === 'lost' ? 'lost' : 'found'}">${r.type === 'lost' ? 'Thất lạc' : 'Tìm thấy'}</span>`;
+            document.getElementById('modal-phone').innerText = r.phone || '-';
+            document.getElementById('modal-email').innerText = r.email || '-';
+            document.getElementById('modal-location').innerText = r.address || r.found_location || '-';
+            document.getElementById('modal-description').innerText = r.description ? `"${r.description}"` : '-';
+            const status = getStatusInfo(r.status);
             document.getElementById('modal-status-text').innerHTML = `<span class="badge ${status.class}">${status.text}</span>`;
 
             const footer = document.getElementById('modal-action-buttons');
             footer.innerHTML = '<button class="btn btn-close" onclick="closeModal()">Đóng</button>';
-            if (req.status === 'pending') {
-                footer.innerHTML += `<button class="btn btn-reject" onclick="updateStatus(${req.id}, 'rejected')"><i class="ph ph-x"></i> Từ chối</button>`;
-                footer.innerHTML += `<button class="btn btn-approve" onclick="updateStatus(${req.id}, 'approved')"><i class="ph ph-check"></i> Phê duyệt</button>`;
-            } else if (req.status === 'approved') {
-                footer.innerHTML += `<button class="btn btn-revert" onclick="revertApproval(${req.id})"><i class="ph ph-arrow-counter-clockwise"></i> Huỷ duyệt</button>`;
+            if (r.status === 'pending') {
+                footer.innerHTML += `<button class="btn btn-reject" onclick="updateStatus(${r.id}, 'rejected')"><i class="ph ph-x"></i> Từ chối</button>`;
+                footer.innerHTML += `<button class="btn btn-approve" onclick="updateStatus(${r.id}, 'approved')"><i class="ph ph-check"></i> Phê duyệt</button>`;
+            } else if (r.status === 'approved') {
+                footer.innerHTML += `<button class="btn btn-revert" onclick="revertReport(${r.id})"><i class="ph ph-arrow-counter-clockwise"></i> Huỷ duyệt</button>`;
+            } else if (r.status === 'rejected') {
+                footer.innerHTML += `<button class="btn btn-delete" onclick="deleteReport(${r.id})"><i class="ph ph-trash"></i> Xóa vĩnh viễn</button>`;
             }
 
             document.getElementById('detailModal').style.display = 'flex';
@@ -256,7 +269,7 @@
         }
 
         async function updateStatus(id, status) {
-            const response = await fetch(`/api/admin/adoption-requests/${id}/status`, {
+            const response = await fetch(`/api/admin/reports/${id}/status`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ status }),
@@ -270,8 +283,8 @@
             await loadData();
         }
 
-        async function revertApproval(id) {
-            const response = await fetch(`/api/admin/adoption-requests/${id}/revert`, { method: 'PATCH' });
+        async function revertReport(id) {
+            const response = await fetch(`/api/admin/reports/${id}/revert`, { method: 'PATCH' });
             const data = await response.json();
             if (!response.ok) {
                 alert(data.message || 'Không thể huỷ duyệt');
@@ -281,12 +294,24 @@
             await loadData();
         }
 
+        async function deleteReport(id) {
+            if (!confirm('Bạn có chắc muốn xóa vĩnh viễn báo cáo này? Ảnh trên Cloudinary cũng sẽ bị xóa.')) return;
+            const response = await fetch(`/api/admin/reports/${id}`, { method: 'DELETE' });
+            const data = await response.json();
+            if (!response.ok) {
+                alert(data.message || 'Không thể xóa báo cáo');
+                return;
+            }
+            closeModal();
+            await loadData();
+        }
+
         async function loadData() {
             try {
-                await fetchAdoptionRequests();
+                await fetchReports();
                 renderTable();
             } catch (error) {
-                document.getElementById('table-body').innerHTML = `<tr><td colspan="7" style="text-align:center; color:#b91c1c;">${error.message}</td></tr>`;
+                document.getElementById('table-body').innerHTML = `<tr><td colspan="6" style="text-align:center; color:#b91c1c;">${error.message}</td></tr>`;
             }
         }
 

@@ -35,7 +35,7 @@ const isAuthenticated = (req, res, next) => {
     req.user = user;
     return next();
   }
-  return res.status(401).json({ error: "Vui lòng đăng nhập" });
+  return res.status(401).json({ error: "Vui lòng đăng nhập tài khoản" });
 };
 
 // Check if user has required role

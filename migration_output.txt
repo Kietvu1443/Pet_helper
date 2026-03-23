@@ -1,0 +1,59 @@
+[dotenv@17.3.1] injecting env (5) from .env -- tip: ΓÜÖ∩╕Å  enable debug logging with { debug: true }
+Reading migration file...
+Executing migration...
+Γ¥î Migration failed: Error: Duplicate column name 'cloudinary_id'
+    at PromisePool.query (C:\Hope\Test\Pet_helper\node_modules\mysql2\lib\promise\pool.js:36:22)
+    at runMigration (C:\Hope\Test\Pet_helper\run_migration.js:25:16)
+    at Object.<anonymous> (C:\Hope\Test\Pet_helper\run_migration.js:35:1)
+    at Module._compile (node:internal/modules/cjs/loader:1761:14)
+    at Object..js (node:internal/modules/cjs/loader:1893:10)
+    at Module.load (node:internal/modules/cjs/loader:1481:32)
+    at Module._load (node:internal/modules/cjs/loader:1300:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5) {
+  code: 'ER_DUP_FIELDNAME',
+  errno: 1060,
+  sql: '-- ====================================================\n' +
+    '-- Migration: Lost & Found Pet Reporting System\n' +
+    '-- ====================================================\n' +
+    '\n' +
+    'USE pet_helper;\n' +
+    '\n' +
+    '-- 1. Tß║ío bß║úng reports\n' +
+    'CREATE TABLE IF NOT EXISTS reports (\n' +
+    '    id INT PRIMARY KEY AUTO_INCREMENT,\n' +
+    "    type ENUM('lost','found') NOT NULL,\n" +
+    '    reporter_name VARCHAR(255) NULL,\n' +
+    '    phone VARCHAR(20) NOT NULL,\n' +
+    '    email VARCHAR(255) NULL,\n' +
+    '    address TEXT NULL,\n' +
+    '    found_location TEXT NULL,\n' +
+    '    pet_code VARCHAR(50) NULL,\n' +
+    '    pet_type VARCHAR(50) NOT NULL,\n' +
+    '    species VARCHAR(255) NULL,\n' +
+    '    color VARCHAR(100) NULL,\n' +
+    "    gender ENUM('male','female','unknown') DEFAULT 'unknown',\n" +
+    '    description TEXT NULL,\n' +
+    "    status ENUM('pending','approved','rejected') DEFAULT 'pending',\n" +
+    '    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n' +
+    ');\n' +
+    '\n' +
+    '-- 2. Th├¬m cß╗Öt report_id v├áo pet_images, cho ph├⌐p pet_id nullable\n' +
+    'ALTER TABLE pet_images\n' +
+    '    ADD COLUMN report_id INT NULL,\n' +
+    '    ADD COLUMN cloudinary_id VARCHAR(255) NULL,\n' +
+    '    MODIFY COLUMN pet_id INT NULL;\n' +
+    '\n' +
+    '-- 3. Foreign Key cho report_id\n' +
+    'ALTER TABLE pet_images\n' +
+    '    ADD CONSTRAINT fk_petimages_report\n' +
+    '    FOREIGN KEY (report_id) REFERENCES reports(id) ON DELETE CASCADE;\n' +
+    '\n' +
+    '-- 4. Indexes cho hiß╗çu suß║Ñt\n' +
+    'CREATE INDEX idx_reports_status_type ON reports (status, type);\n' +
+    'CREATE INDEX idx_reports_created_desc ON reports (created_at DESC);\n' +
+    'CREATE INDEX idx_petimages_reportid ON pet_images (report_id);\n',
+  sqlState: '42S21',
+  sqlMessage: "Duplicate column name 'cloudinary_id'"
+}

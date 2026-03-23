@@ -49,6 +49,71 @@ const PetImage = {
     }
   },
 
+  // Create an image record for a report (using a shared connection for transactions)
+  async createForReport(reportId, imagePath, displayOrder = 0, cloudinaryId = null, connection = null) {
+    try {
+      const conn = connection || pool;
+      const [result] = await conn.execute(
+        "INSERT INTO pet_images (report_id, image_path, display_order, cloudinary_id) VALUES (?, ?, ?, ?)",
+        [reportId, imagePath, displayOrder, cloudinaryId],
+      );
+      return {
+        id: result.insertId,
+        report_id: reportId,
+        image_path: imagePath,
+        display_order: displayOrder,
+        cloudinary_id: cloudinaryId,
+      };
+    } catch (error) {
+      console.error("Error creating report image:", error);
+      throw error;
+    }
+  },
+
+  // Get all images for a report
+  async findByReportId(reportId) {
+    try {
+      const [rows] = await pool.execute(
+        "SELECT * FROM pet_images WHERE report_id = ? ORDER BY display_order ASC",
+        [reportId],
+      );
+      return rows;
+    } catch (error) {
+      console.error("Error finding images for report:", error);
+      throw error;
+    }
+  },
+
+  // Batch get all images for multiple reports
+  async findByReportIds(reportIds) {
+    if (!reportIds || reportIds.length === 0) return [];
+    try {
+      const placeholders = reportIds.map(() => "?").join(",");
+      const [rows] = await pool.execute(
+        `SELECT * FROM pet_images WHERE report_id IN (${placeholders}) ORDER BY report_id, display_order ASC`,
+        reportIds,
+      );
+      return rows;
+    } catch (error) {
+      console.error("Error batch finding report images:", error);
+      throw error;
+    }
+  },
+
+  // Delete all images for a report
+  async deleteByReportId(reportId) {
+    try {
+      const [result] = await pool.execute(
+        "DELETE FROM pet_images WHERE report_id = ?",
+        [reportId],
+      );
+      return result.affectedRows;
+    } catch (error) {
+      console.error("Error deleting images for report:", error);
+      throw error;
+    }
+  },
+
   // Delete an image record
   async delete(imageId) {
     try {

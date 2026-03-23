@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mẹo Tìm Kiếm Hiệu Quả</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Dùng Phosphor Icons cho giao diện hiện đại và mềm mại -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        /* Tùy chỉnh thanh cuộn cho mượt mà nữ tính xíu */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 h-screen flex items-center justify-center p-4 font-sans text-gray-800">
+
+    <!-- Modal Overlay -->
+    <div class="fixed inset-0 bg-gray-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+
+        <!-- Modal Container -->
+        <div
+            class="bg-white rounded-3xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden transform transition-all">
+
+            <!-- Header -->
+            <div class="bg-teal-600 px-6 py-4 flex justify-between items-center shrink-0">
+                <div class="flex items-center gap-2 text-white">
+                    <i class="ph-fill ph-lightbulb text-2xl text-yellow-300"></i>
+                    <h2 class="text-xl font-bold tracking-wide uppercase"><%= modalTitle %></h2>
+                </div>
+                <a href="/"
+                    class="text-white/80 hover:text-white hover:bg-white/20 p-2 rounded-full transition-colors duration-200">
+                    <i class="ph ph-x text-xl"></i>
+                </a>
+            </div>
+
+            <!-- Scrollable Content -->
+            <div class="overflow-y-auto p-6 space-y-6">
+
+                <!-- Subheader -->
+                <div class="text-center space-y-2">
+                    <h3 class="text-2xl font-extrabold text-teal-700"><%= subTitle %></h3>
+                    <p class="text-gray-500 text-sm">Hãy làm theo các bước sau để tăng cơ hội tìm thấy bé nhé.</p>
+                </div>
+
+                <!-- Tips List -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <% tips.forEach(function(tip, index) { %>
+                        <div
+                            class="flex gap-4 p-4 rounded-2xl bg-white border border-gray-100 shadow-sm hover:shadow-md hover:border-teal-100 hover:bg-teal-50/50 transition-all duration-300 group <%= tip.fullWidth ? 'md:col-span-2' : '' %>">
+                            <div
+                                class="flex-shrink-0 w-12 h-12 rounded-full <%= tip.colorClass %> flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <i class="ph-fill <%= tip.icon %> text-2xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800 mb-1"><%= tip.title %></h4>
+                                <p class="text-sm text-gray-600 leading-relaxed"><%= tip.desc %></p>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+
+                <!-- Warning Alert -->
+                <div class="mt-8 bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-2xl flex gap-3 items-start">
+                    <i class="ph-fill ph-warning-circle text-amber-500 text-2xl shrink-0 mt-0.5"></i>
+                    <div>
+                        <strong class="text-amber-900 block mb-1">Lưu ý quan trọng:</strong>
+                        <p class="text-amber-800 text-sm leading-relaxed">Luôn đề phòng các cuộc gọi lừa đảo đòi tiền
+                            chuộc mà không cho xem ảnh/video trực tiếp của bé.</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Footer Action (Optional, nhưng thường có sẽ tốt hơn) -->
+            <div class="p-4 bg-gray-50 border-t border-gray-100 flex justify-end shrink-0">
+                <button
+                    class="px-6 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-medium rounded-xl shadow-sm transition-colors duration-200">
+                    Đã hiểu
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+
+</html>

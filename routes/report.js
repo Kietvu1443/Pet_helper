@@ -35,6 +35,7 @@ if (rateLimit) {
 router.get("/lost", reportController.renderLostForm);
 router.get("/found", reportController.renderFoundForm);
 router.get("/tips", reportController.renderTips);
+router.get("/sheep", reportController.renderSheep);
 
 // Submit report (multipart, rate limited)
 router.post(

@@ -39,6 +39,12 @@ const reportController = {
       title: "Quản Lý Báo Cáo - Pet Helper",
     });
   },
+    renderSheep(req, res) {
+    res.render("Sheep", {
+      title: "Cute smool sheep",
+    });
+  },
+
 
   renderTips(req, res) {
     res.render("tips", {

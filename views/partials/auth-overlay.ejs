@@ -1,0 +1,762 @@
+<!-- ========== AUTH OVERLAY MODAL ========== -->
+<div class="auth-overlay" id="auth-overlay" role="dialog" aria-modal="true" aria-label="Đăng nhập / Đăng ký">
+    <div class="auth-overlay__backdrop" onclick="closeOverlay('auth-overlay')"></div>
+    <div class="auth-overlay__modal">
+        <!-- Close Button -->
+        <button class="auth-overlay__close" onclick="closeOverlay('auth-overlay')" aria-label="Đóng">&times;</button>
+
+        <!-- Logo -->
+        <div class="auth-overlay__logo">
+            <div class="auth-overlay__logo-circle">PET</div>
+            <h2>Pet Helper</h2>
+            <p>Cộng đồng yêu thú cưng</p>
+        </div>
+
+        <!-- Tabs -->
+        <div class="auth-overlay__tabs">
+            <button class="auth-overlay__tab active" id="overlay-tab-login" data-tab="login">Đăng nhập</button>
+            <button class="auth-overlay__tab" id="overlay-tab-register" data-tab="register">Đăng ký</button>
+        </div>
+
+        <!-- Alert Messages -->
+        <div class="auth-overlay__alert auth-overlay__alert--error" id="overlayErrorAlert" style="display: none;">
+            <span>⚠️</span>
+            <span id="overlayErrorMessage"></span>
+        </div>
+        <div class="auth-overlay__alert auth-overlay__alert--success" id="overlaySuccessAlert" style="display: none;">
+            <span>✅</span>
+            <span id="overlaySuccessMessage"></span>
+        </div>
+
+        <!-- ===== LOGIN FORM ===== -->
+        <form id="overlayLoginForm" class="auth-overlay__form auth-overlay__fade-in">
+            <div class="auth-overlay__field">
+                <label for="overlayLoginDisplayName">Tên đăng nhập</label>
+                <input type="text" id="overlayLoginDisplayName" name="display_name" placeholder="Nhập tên đăng nhập" required autocomplete="username">
+            </div>
+            <div class="auth-overlay__field">
+                <label for="overlayLoginPassword">Mật khẩu</label>
+                <div class="auth-overlay__password-wrap">
+                    <input type="password" id="overlayLoginPassword" name="password" placeholder="••••••••" required autocomplete="current-password">
+                    <span class="auth-overlay__toggle-pass" onclick="overlayTogglePassword('overlayLoginPassword', this)">👁️</span>
+                </div>
+            </div>
+            <div class="auth-overlay__options">
+                <label class="auth-overlay__checkbox">
+                    <input type="checkbox" name="remember"> Ghi nhớ đăng nhập
+                </label>
+                <a href="#" class="auth-overlay__forgot">Quên mật khẩu?</a>
+            </div>
+            <button type="submit" class="auth-overlay__btn">ĐĂNG NHẬP</button>
+        </form>
+
+        <!-- ===== REGISTER FORM ===== -->
+        <form id="overlayRegisterForm" class="auth-overlay__form auth-overlay__hidden">
+            <div class="auth-overlay__row">
+                <div class="auth-overlay__field">
+                    <label for="overlayDisplayName">Tên hiển thị</label>
+                    <input type="text" id="overlayDisplayName" name="display_name" placeholder="Ví dụ: Nguyễn Văn A" required>
+                </div>
+                <div class="auth-overlay__field">
+                    <label for="overlayFullName">Họ và tên</label>
+                    <input type="text" id="overlayFullName" name="name" placeholder="Họ và tên đầy đủ" required>
+                </div>
+            </div>
+            <div class="auth-overlay__field">
+                <label for="overlayRegisterEmail">Email</label>
+                <input type="email" id="overlayRegisterEmail" name="email" placeholder="email@example.com" required>
+            </div>
+            <div class="auth-overlay__row">
+                <div class="auth-overlay__field">
+                    <label for="overlayRegisterPassword">Mật khẩu</label>
+                    <div class="auth-overlay__password-wrap">
+                        <input type="password" id="overlayRegisterPassword" name="password" placeholder="Ít nhất 8 ký tự" required minlength="8">
+                        <span class="auth-overlay__toggle-pass" onclick="overlayTogglePassword('overlayRegisterPassword', this)">👁️</span>
+                    </div>
+                </div>
+                <div class="auth-overlay__field">
+                    <label for="overlayConfirmPassword">Xác nhận MK</label>
+                    <div class="auth-overlay__password-wrap">
+                        <input type="password" id="overlayConfirmPassword" name="confirmPassword" placeholder="Nhập lại mật khẩu" required>
+                        <span class="auth-overlay__toggle-pass" onclick="overlayTogglePassword('overlayConfirmPassword', this)">👁️</span>
+                    </div>
+                </div>
+            </div>
+            <div class="auth-overlay__field">
+                <label for="overlayBirthday">Ngày sinh (không bắt buộc)</label>
+                <input type="date" id="overlayBirthday" name="birthday">
+            </div>
+            <div class="auth-overlay__field">
+                <label for="overlayAddress">Địa chỉ (không bắt buộc)</label>
+                <input type="text" id="overlayAddress" name="address" placeholder="Địa chỉ của bạn">
+            </div>
+            <div class="auth-overlay__options">
+                <label class="auth-overlay__checkbox">
+                    <input type="checkbox" name="terms" required> Tôi đồng ý với <a href="#" class="auth-overlay__terms-link">điều khoản</a>
+                </label>
+            </div>
+            <button type="submit" class="auth-overlay__btn">TẠO TÀI KHOẢN</button>
+        </form>
+
+        <!-- Social Login -->
+        <div class="auth-overlay__social">
+            <p>Hoặc tiếp tục với</p>
+            <div class="auth-overlay__social-icons">
+                <div class="auth-overlay__social-icon" title="Google">G</div>
+                <div class="auth-overlay__social-icon" title="Facebook">F</div>
+                <div class="auth-overlay__social-icon" title="Apple ID">A</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========== AUTH OVERLAY STYLES ========== -->
+<style>
+    /* ---------- Overlay Backdrop ---------- */
+    .auth-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.35s ease, visibility 0.35s ease;
+    }
+
+    .auth-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .auth-overlay__backdrop {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.55);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+    }
+
+    /* ---------- Modal Card ---------- */
+    .auth-overlay__modal {
+        position: relative;
+        background: rgba(255, 255, 255, 0.92);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.45);
+        width: 95%;
+        max-width: 440px;
+        max-height: 90vh;
+        overflow-y: auto;
+        border-radius: 24px;
+        padding: 36px 32px 28px;
+        box-shadow:
+            0 25px 60px rgba(0, 0, 0, 0.18),
+            0 0 0 1px rgba(255, 255, 255, 0.3) inset;
+        transform: scale(0.88) translateY(30px);
+        transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .auth-overlay.active .auth-overlay__modal {
+        transform: scale(1) translateY(0);
+    }
+
+    /* Custom Scrollbar */
+    .auth-overlay__modal::-webkit-scrollbar {
+        width: 5px;
+    }
+    .auth-overlay__modal::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .auth-overlay__modal::-webkit-scrollbar-thumb {
+        background: rgba(45, 106, 79, 0.25);
+        border-radius: 10px;
+    }
+
+    /* ---------- Close Button ---------- */
+    .auth-overlay__close {
+        position: absolute;
+        top: 14px;
+        right: 18px;
+        background: rgba(0, 0, 0, 0.06);
+        border: none;
+        font-size: 1.5rem;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        cursor: pointer;
+        color: #555;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.25s ease;
+        line-height: 1;
+    }
+
+    .auth-overlay__close:hover {
+        background: rgba(217, 4, 41, 0.1);
+        color: #d90429;
+        transform: rotate(90deg);
+    }
+
+    /* ---------- Logo ---------- */
+    .auth-overlay__logo {
+        text-align: center;
+        margin-bottom: 24px;
+    }
+
+    .auth-overlay__logo-circle {
+        width: 56px;
+        height: 56px;
+        background: linear-gradient(135deg, #2d6a4f, #40916c);
+        color: #fff;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 900;
+        font-size: 1.05rem;
+        margin-bottom: 8px;
+        box-shadow: 0 4px 15px rgba(45, 106, 79, 0.35);
+    }
+
+    .auth-overlay__logo h2 {
+        color: #2d6a4f;
+        margin: 0;
+        font-size: 1.3rem;
+    }
+
+    .auth-overlay__logo p {
+        color: #888;
+        font-size: 0.85rem;
+        margin-top: 2px;
+    }
+
+    /* ---------- Tabs ---------- */
+    .auth-overlay__tabs {
+        display: flex;
+        margin-bottom: 24px;
+        background: #f1f5f2;
+        border-radius: 12px;
+        padding: 4px;
+        gap: 4px;
+    }
+
+    .auth-overlay__tab {
+        flex: 1;
+        text-align: center;
+        padding: 10px 8px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.95rem;
+        color: #888;
+        background: transparent;
+        border: none;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .auth-overlay__tab:hover {
+        color: #555;
+    }
+
+    .auth-overlay__tab.active {
+        color: #fff;
+        background: linear-gradient(135deg, #2d6a4f, #40916c);
+        box-shadow: 0 3px 12px rgba(45, 106, 79, 0.3);
+    }
+
+    /* ---------- Alerts ---------- */
+    .auth-overlay__alert {
+        padding: 11px 14px;
+        border-radius: 12px;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.88rem;
+        animation: overlayShake 0.4s ease;
+    }
+
+    .auth-overlay__alert--error {
+        background: #fff1f0;
+        color: #d90429;
+        border: 1px solid #ffa39e;
+    }
+
+    .auth-overlay__alert--success {
+        background: #f0fff4;
+        color: #2d6a4f;
+        border: 1px solid #b7e4c7;
+    }
+
+    @keyframes overlayShake {
+        0%, 100% { transform: translateX(0); }
+        20% { transform: translateX(-6px); }
+        40% { transform: translateX(6px); }
+        60% { transform: translateX(-4px); }
+        80% { transform: translateX(4px); }
+    }
+
+    /* ---------- Forms ---------- */
+    .auth-overlay__form {
+        display: block;
+    }
+
+    .auth-overlay__hidden {
+        display: none !important;
+    }
+
+    .auth-overlay__fade-in {
+        animation: overlayFadeIn 0.35s ease;
+    }
+
+    @keyframes overlayFadeIn {
+        from { opacity: 0; transform: translateY(8px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ---------- Fields ---------- */
+    .auth-overlay__field {
+        margin-bottom: 16px;
+    }
+
+    .auth-overlay__field label {
+        display: block;
+        font-size: 0.85rem;
+        margin-bottom: 6px;
+        color: #1b4332;
+        font-weight: 600;
+    }
+
+    .auth-overlay__field input {
+        width: 100%;
+        padding: 11px 14px;
+        border: 1.5px solid #e0e0e0;
+        border-radius: 12px;
+        outline: none;
+        font-size: 0.95rem;
+        background: rgba(255, 255, 255, 0.8);
+        transition: all 0.3s ease;
+        box-sizing: border-box;
+    }
+
+    .auth-overlay__field input:focus {
+        border-color: #2d6a4f;
+        box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.12);
+        background: #fff;
+    }
+
+    .auth-overlay__field input::placeholder {
+        color: #bbb;
+    }
+
+    /* ---------- Password Wrapper ---------- */
+    .auth-overlay__password-wrap {
+        position: relative;
+    }
+
+    .auth-overlay__password-wrap input {
+        padding-right: 42px;
+    }
+
+    .auth-overlay__toggle-pass {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        user-select: none;
+        font-size: 1rem;
+    }
+
+    /* ---------- Row (2 columns) ---------- */
+    .auth-overlay__row {
+        display: flex;
+        gap: 12px;
+    }
+
+    .auth-overlay__row .auth-overlay__field {
+        flex: 1;
+    }
+
+    /* ---------- Options (remember / forgot) ---------- */
+    .auth-overlay__options {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 14px;
+        font-size: 0.83rem;
+    }
+
+    .auth-overlay__checkbox {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        color: #555;
+        cursor: pointer;
+    }
+
+    .auth-overlay__checkbox input[type="checkbox"] {
+        accent-color: #2d6a4f;
+    }
+
+    .auth-overlay__forgot,
+    .auth-overlay__terms-link {
+        color: #2d6a4f;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .auth-overlay__forgot:hover,
+    .auth-overlay__terms-link:hover {
+        text-decoration: underline;
+    }
+
+    /* ---------- Submit Button ---------- */
+    .auth-overlay__btn {
+        width: 100%;
+        padding: 13px;
+        background: linear-gradient(135deg, #2d6a4f, #40916c);
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 6px;
+        letter-spacing: 0.5px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .auth-overlay__btn:hover {
+        background: linear-gradient(135deg, #1b4332, #2d6a4f);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(45, 106, 79, 0.35);
+    }
+
+    .auth-overlay__btn:active {
+        transform: translateY(0);
+    }
+
+    .auth-overlay__btn.loading {
+        pointer-events: none;
+        opacity: 0.75;
+    }
+
+    /* ---------- Social Login ---------- */
+    .auth-overlay__social {
+        margin-top: 20px;
+        text-align: center;
+        padding-top: 16px;
+        border-top: 1px solid #eee;
+    }
+
+    .auth-overlay__social p {
+        font-size: 0.8rem;
+        color: #999;
+        margin-bottom: 12px;
+    }
+
+    .auth-overlay__social-icons {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+    }
+
+    .auth-overlay__social-icon {
+        width: 40px;
+        height: 40px;
+        border: 1.5px solid #e0e0e0;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-weight: 700;
+        color: #666;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.6);
+    }
+
+    .auth-overlay__social-icon:hover {
+        background: #f0fdf4;
+        border-color: #2d6a4f;
+        color: #2d6a4f;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(45, 106, 79, 0.15);
+    }
+
+    /* ---------- Responsive ---------- */
+    @media (max-width: 480px) {
+        .auth-overlay__modal {
+            padding: 28px 20px 22px;
+            border-radius: 20px;
+            max-height: 95vh;
+        }
+
+        .auth-overlay__row {
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .auth-overlay__logo-circle {
+            width: 48px;
+            height: 48px;
+            font-size: 0.9rem;
+        }
+
+        .auth-overlay__logo h2 {
+            font-size: 1.15rem;
+        }
+
+        .auth-overlay__tab {
+            font-size: 0.88rem;
+            padding: 9px 6px;
+        }
+    }
+</style>
+
+<!-- ========== AUTH OVERLAY JAVASCRIPT ========== -->
+<script>
+    // ===== Overlay Open / Close =====
+    function openOverlay(id) {
+        const overlay = document.getElementById(id);
+        if (!overlay) return;
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeOverlay(id) {
+        const overlay = document.getElementById(id);
+        if (!overlay) return;
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+        // Reset alerts when closing
+        overlayHideAlerts();
+    }
+
+    // Close on ESC key
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+            const overlay = document.getElementById('auth-overlay');
+            if (overlay && overlay.classList.contains('active')) {
+                closeOverlay('auth-overlay');
+            }
+        }
+    });
+
+    // ===== Toggle Password Visibility =====
+    function overlayTogglePassword(inputId, iconEl) {
+        const input = document.getElementById(inputId);
+        if (!input) return;
+        if (input.type === 'password') {
+            input.type = 'text';
+            iconEl.textContent = '👁️‍🗨️';
+        } else {
+            input.type = 'password';
+            iconEl.textContent = '👁️';
+        }
+    }
+
+    // ===== Alert Helpers =====
+    function overlayShowError(message) {
+        const errAlert = document.getElementById('overlayErrorAlert');
+        const errMsg = document.getElementById('overlayErrorMessage');
+        const sucAlert = document.getElementById('overlaySuccessAlert');
+        if (sucAlert) sucAlert.style.display = 'none';
+        if (errMsg) errMsg.textContent = message;
+        if (errAlert) {
+            errAlert.style.display = 'flex';
+            errAlert.style.animation = 'none';
+            // Trigger reflow to restart animation
+            void errAlert.offsetWidth;
+            errAlert.style.animation = 'overlayShake 0.4s ease';
+        }
+    }
+
+    function overlayShowSuccess(message) {
+        const errAlert = document.getElementById('overlayErrorAlert');
+        const sucAlert = document.getElementById('overlaySuccessAlert');
+        const sucMsg = document.getElementById('overlaySuccessMessage');
+        if (errAlert) errAlert.style.display = 'none';
+        if (sucMsg) sucMsg.textContent = message;
+        if (sucAlert) sucAlert.style.display = 'flex';
+    }
+
+    function overlayHideAlerts() {
+        const errAlert = document.getElementById('overlayErrorAlert');
+        const sucAlert = document.getElementById('overlaySuccessAlert');
+        if (errAlert) errAlert.style.display = 'none';
+        if (sucAlert) sucAlert.style.display = 'none';
+    }
+
+    // ===== Tab Switching =====
+    (function () {
+        const tabs = document.querySelectorAll('.auth-overlay__tab');
+        const loginForm = document.getElementById('overlayLoginForm');
+        const registerForm = document.getElementById('overlayRegisterForm');
+
+        tabs.forEach(function (tab) {
+            tab.addEventListener('click', function () {
+                const target = this.dataset.tab;
+                overlayHideAlerts();
+
+                tabs.forEach(function (t) { t.classList.remove('active'); });
+                tab.classList.add('active');
+
+                if (target === 'login') {
+                    loginForm.classList.remove('auth-overlay__hidden');
+                    loginForm.classList.add('auth-overlay__fade-in');
+                    registerForm.classList.add('auth-overlay__hidden');
+                } else {
+                    loginForm.classList.add('auth-overlay__hidden');
+                    registerForm.classList.remove('auth-overlay__hidden');
+                    registerForm.classList.add('auth-overlay__fade-in');
+                }
+            });
+        });
+    })();
+
+    // ===== Helper: Switch to specific tab programmatically =====
+    function overlayActivateTab(tabName) {
+        const tabBtn = document.getElementById(tabName === 'register' ? 'overlay-tab-register' : 'overlay-tab-login');
+        if (tabBtn) tabBtn.click();
+    }
+
+    // ===== Login Form Submit (Fetch AJAX — inherited from login.ejs) =====
+    (function () {
+        const form = document.getElementById('overlayLoginForm');
+        if (!form) return;
+
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            overlayHideAlerts();
+
+            const btn = form.querySelector('.auth-overlay__btn');
+            const originalText = btn.textContent;
+            btn.textContent = 'Đang xử lý...';
+            btn.classList.add('loading');
+
+            const display_name = document.getElementById('overlayLoginDisplayName').value;
+            const password = document.getElementById('overlayLoginPassword').value;
+
+            try {
+                const response = await fetch('/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ display_name, password }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    overlayShowSuccess(data.message);
+                    setTimeout(function () { window.location.href = '/'; }, 600);
+                } else {
+                    overlayShowError(data.error);
+                    btn.textContent = originalText;
+                    btn.classList.remove('loading');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                overlayShowError('Đã xảy ra lỗi kết nối, vui lòng thử lại');
+                btn.textContent = originalText;
+                btn.classList.remove('loading');
+            }
+        });
+    })();
+
+    // ===== Register Form Submit (Fetch AJAX — inherited from login.ejs) =====
+    (function () {
+        const form = document.getElementById('overlayRegisterForm');
+        if (!form) return;
+
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            overlayHideAlerts();
+
+            const btn = form.querySelector('.auth-overlay__btn');
+            const originalText = btn.textContent;
+            btn.textContent = 'Đang xử lý...';
+            btn.classList.add('loading');
+
+            const formData = {
+                display_name: document.getElementById('overlayDisplayName').value,
+                name: document.getElementById('overlayFullName').value,
+                email: document.getElementById('overlayRegisterEmail').value,
+                password: document.getElementById('overlayRegisterPassword').value,
+                confirmPassword: document.getElementById('overlayConfirmPassword').value,
+                birthday: document.getElementById('overlayBirthday').value || null,
+                address: document.getElementById('overlayAddress').value || null,
+            };
+
+            if (formData.password !== formData.confirmPassword) {
+                overlayShowError('Mật khẩu xác nhận không khớp');
+                btn.textContent = originalText;
+                btn.classList.remove('loading');
+                return;
+            }
+
+            try {
+                const response = await fetch('/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    overlayShowSuccess(data.message);
+                    setTimeout(function () { window.location.href = '/'; }, 600);
+                } else {
+                    overlayShowError(data.error);
+                    btn.textContent = originalText;
+                    btn.classList.remove('loading');
+                }
+            } catch (error) {
+                console.error('Register error:', error);
+                overlayShowError('Đã xảy ra lỗi kết nối, vui lòng thử lại');
+                btn.textContent = originalText;
+                btn.classList.remove('loading');
+            }
+        });
+
+        // Password confirmation validation
+        const regPass = document.getElementById('overlayRegisterPassword');
+        const confirmPass = document.getElementById('overlayConfirmPassword');
+        if (confirmPass && regPass) {
+            confirmPass.addEventListener('input', function () {
+                if (regPass.value !== confirmPass.value) {
+                    confirmPass.setCustomValidity('Mật khẩu xác nhận không khớp');
+                } else {
+                    confirmPass.setCustomValidity('');
+                }
+            });
+        }
+    })();
+
+    // ===== Auto-open from URL query params =====
+    (function () {
+        const params = new URLSearchParams(window.location.search);
+        const authParam = params.get('auth');
+        if (authParam === 'login' || authParam === 'register') {
+            // Small delay to ensure DOM is ready
+            setTimeout(function () {
+                openOverlay('auth-overlay');
+                if (authParam === 'register') {
+                    overlayActivateTab('register');
+                }
+            }, 300);
+        }
+    })();
+</script>

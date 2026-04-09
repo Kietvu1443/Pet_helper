@@ -1233,6 +1233,26 @@
         </div>
     </div>
 
+    <!-- ============ LOGIN OVERLAY ============ -->
+    <div id="login-overlay" class="full-overlay">
+        <div class="overlay-header">
+            <div style="font-size: 1.5rem; font-weight: 900;">ĐĂNG NHẬP</div>
+            <div class="close-btn" onclick="closeOverlay('login-overlay')">✕</div>
+        </div>
+        <div class="login-container">
+            <h3 style="margin-bottom: 20px; color: var(--primary-color);">Chào mừng bạn quay lại</h3>
+            <form action="/auth/login" method="POST" class="login-form">
+                <input type="email" name="email" placeholder="Email" required>
+                <input type="password" name="password" placeholder="Mật khẩu" required>
+                <button type="submit" class="btn-primary">Đăng nhập</button>
+            </form>
+            <div class="login-options">
+                <a href="/auth/register">Đăng ký tài khoản mới</a>
+                <a href="/auth/forgot-password">Quên mật khẩu?</a>
+            </div>
+        </div>
+    </div>
+
     <!-- ============ SHOP OVERLAY ============ -->
     <div id="shop-overlay" class="full-overlay">
         <div class="overlay-header">
@@ -1384,11 +1404,11 @@
             </div>
             <div class="user-actions">
                 <% if (typeof isAuthenticated !=='undefined' && isAuthenticated) { %>
-                    <div class="user-dropdown" id="userDropdown">
+                    <div class="user-dropdown">
                         <span id="userDropdownBtn" style="cursor: pointer;">
                             <%= user.display_name %> ▼
                         </span>
-                        <div class="user-dropdown-menu">
+                        <div class="user-dropdown-menu" id="userDropdownMenu">
                             <div class="dropdown-header">
                                 <strong>
                                     <%= user.display_name %>
@@ -1402,16 +1422,18 @@
                             <% if (typeof isStaff !=='undefined' && isStaff) { %>
                                 <a href="/adopt/admin/add" class="dropdown-item">🐾 Thêm thú cưng</a>
                                 <% } %>
-
-                                    <div class="dropdown-divider"></div>
-                                    <a href="#" class="dropdown-item logout" id="logoutBtn"
-                                        onclick="handleLogout(event)">🚪 Đăng xuất</a>
+                                    <% if (typeof isAdmin !=='undefined' && isAdmin) { %>
+                                        <a href="/admin" class="dropdown-item">⚙️ Quản trị</a>
+                                        <% } %>
+                                            <div class="dropdown-divider"></div>
+                                            <a href="#" class="dropdown-item logout" id="logoutBtn"
+                                                onclick="handleLogout(event)">🚪 Đăng xuất</a>
                         </div>
                     </div>
                     <% } else { %>
-                        <a href="/auth/login">Tài khoản</a>
+                        <a href="#" onclick="openOverlay('auth-overlay'); return false;"><span>Tài khoản</span></a>
                         <% } %>
-                            <span onclick="toggleCart()">Giỏ hàng <span id="cart-count-display">(0)</span></span>
+                            <span>Giỏ hàng <span id="cart-count-display">(0)</span></span>
                             <span class="lang-switch">VN / EN</span>
             </div>
             <button class="hamburger-btn" id="hamburgerBtn" aria-label="Mở menu">
@@ -1671,8 +1693,8 @@
 
             // --- USER DROPDOWN ---
             const userDropdownBtn = document.getElementById('userDropdownBtn');
-            const userDropdown = document.getElementById('userDropdown');
-            if (userDropdownBtn) {
+            const userDropdown = document.querySelector('.user-dropdown') || document.getElementById('userDropdown');
+            if (userDropdownBtn && userDropdown) {
                 userDropdownBtn.addEventListener('click', (e) => { e.stopPropagation(); userDropdown.classList.toggle('active'); });
                 document.addEventListener('click', () => { userDropdown.classList.remove('active'); });
             }
@@ -1719,6 +1741,9 @@
                 document.querySelectorAll("section").forEach(s => observer.observe(s));
             });
         </script>
+
+<%- include('partials/auth-overlay') %>
+
 </body>
 
 </html>

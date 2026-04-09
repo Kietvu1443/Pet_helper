@@ -33,11 +33,12 @@
                                     <a href="/admin" class="dropdown-item">⚙️ Quản trị</a>
                                     <% } %>
                                         <div class="dropdown-divider"></div>
-                                        <a href="#" class="dropdown-item logout" id="logoutBtn" onclick="handleLogout(event)">🚪 Đăng xuất</a>
+                                        <a href="#" class="dropdown-item logout" id="logoutBtn"
+                                            onclick="handleLogout(event)">🚪 Đăng xuất</a>
                     </div>
                 </div>
                 <% } else { %>
-                    <a href="/auth/login"><span>Tài khoản</span></a>
+                    <a href="#" onclick="openOverlay('auth-overlay'); return false;"><span>Tài khoản</span></a>
                     <% } %>
                         <span>Giỏ hàng <span id="cart-count-display">(0)</span></span>
                         <span class="lang-switch">VN / EN</span>
@@ -95,6 +96,8 @@
         </ul>
     </nav>
 </header>
+
+<%- include('auth-overlay') %>
 
 <style>
     /* Navigation Dropdown - Inline Style to Override */
@@ -299,7 +302,7 @@
             left: 0;
         }
 
-        .main-nav.mobile-open ~ .mobile-nav-overlay {
+        .main-nav.mobile-open~.mobile-nav-overlay {
             display: block;
         }
 

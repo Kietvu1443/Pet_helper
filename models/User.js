@@ -1,5 +1,4 @@
 const { pool } = require("../config/db");
-// const bcrypt = require("bcryptjs"); // TẠM VÔ HIỆU HOÁ - Bật lại khi deploy
 
 const User = {
   // Find user by email
@@ -33,7 +32,7 @@ const User = {
   async findById(id) {
     try {
       const [rows] = await pool.execute(
-        "SELECT id, display_name, name, email, role, verify, birthday, address, created_at FROM users WHERE id = ?",
+        "SELECT id, display_name, name, email, role, birthday, address, created_at FROM users WHERE id = ?",
         [id],
       );
       return rows[0] || null;
@@ -49,11 +48,6 @@ const User = {
       const { display_name, name, email, password, birthday, address } =
         userData;
 
-      // TẠM VÔ HIỆU HOÁ MÃ HOÁ MẬT KHẨU - Bật lại khi deploy
-      // const salt = await bcrypt.genSalt(10);
-      // const hashedPassword = await bcrypt.hash(password, salt);
-      const hashedPassword = password; // Lưu plain text tạm thời
-
       const [result] = await pool.execute(
         `INSERT INTO users (display_name, name, email, password, role, birthday, address) 
          VALUES (?, ?, ?, ?, 2, ?, ?)`,
@@ -61,7 +55,7 @@ const User = {
           display_name,
           name,
           email,
-          hashedPassword,
+          password,
           birthday || null,
           address || null,
         ],
@@ -75,10 +69,8 @@ const User = {
   },
 
   // Compare password
-  async comparePassword(inputPassword, storedPassword) {
-    // TẠM VÔ HIỆU HOÁ - Bật lại khi deploy
-    // return bcrypt.compare(inputPassword, storedPassword);
-    return inputPassword === storedPassword; // So sánh plain text tạm thời
+  async comparePassword(inputPassword, hashedPassword) {
+    return inputPassword === hashedPassword;
   },
 
   // Update user role (admin only)
@@ -99,26 +91,11 @@ const User = {
   async findAll() {
     try {
       const [rows] = await pool.execute(
-        "SELECT id, display_name, name, email, role, verify, created_at FROM users ORDER BY created_at DESC",
+        "SELECT id, display_name, name, email, role, created_at FROM users ORDER BY created_at DESC",
       );
       return rows;
     } catch (error) {
       console.error("Error finding all users:", error);
-      throw error;
-    }
-    },
-
-  // Update email verification status
-  async updateVerifyStatus(userId, status) {
-    try {
-      const [result] = await pool.execute(
-        "UPDATE users SET verify = ? WHERE id = ?",
-        [status, userId],
-      );
-      return result.affectedRows > 0;
-    } catch (error) {
-      console.error("Error updating verify status:", error);
-      throw error;
     }
   },
 };

@@ -35,7 +35,7 @@ const isAuthenticated = (req, res, next) => {
     req.user = user;
     return next();
   }
-  return res.status(401).json({ error: "Vui lòng đăng nhập" });
+  return res.status(401).json({ error: "Vui lòng đăng nhập tài khoản" });
 };
 
 // Check if user has required role
@@ -65,6 +65,18 @@ const isAdmin = hasRole([0]);
 
 // Check if user is staff or admin
 const isStaff = hasRole([0, 1]);
+
+// Require one of many roles (for admin routes)
+const requireRole = (roles) => {
+  return (req, res, next) => {
+    const user = req.user || extractUser(req);
+    if (!user || !roles.includes(user.role)) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+    req.user = user;
+    next();
+  };
+};
 
 // Make user available in all views (hỗ trợ cả EJS render lẫn API)
 const setUserLocals = (req, res, next) => {
@@ -97,6 +109,7 @@ module.exports = {
   hasRole,
   isAdmin,
   isStaff,
+  requireRole,
   requireVerified,
   setUserLocals,
   JWT_SECRET,

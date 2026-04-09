@@ -1,13 +1,17 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Pet Helper - Nền tảng hỗ trợ và bảo vệ vật nuôi hàng đầu Việt Nam">
-    <title><%= title %></title>
+    <title>
+        <%= title %>
+    </title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/stylesheets/style.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
+
     <style>
         /* --- CẤU HÌNH MÀU SẮC --- */
         :root {
@@ -20,195 +24,1570 @@
             --radius: 15px;
             --shadow: 0 4px 15px rgba(45, 106, 79, 0.15);
             --btn-outline-border: #2d6a4f;
-            --btn-solid-bg: #2d6a4f; 
+            --btn-solid-bg: #2d6a4f;
         }
 
         /* --- CÀI ĐẶT CƠ BẢN --- */
-        html { scroll-behavior: smooth; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Roboto', sans-serif; }
-        body { background-color: var(--bg-color); color: var(--text-dark); padding-top: 155px; }
-        a { text-decoration: none; color: inherit; transition: 0.3s; }
-        ul { list-style: none; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        html {
+            scroll-behavior: smooth;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            padding-top: 155px;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: 0.3s;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
 
         /* --- HEADER CỐ ĐỊNH --- */
-        header { position: fixed; top: 0; left: 0; width: 100%; background: var(--primary-color); color: #fff; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 12px 40px; border-bottom: 1px solid rgba(255,255,255,0.15); }
-        .logo-group { display: flex; align-items: center; gap: 10px; cursor: pointer; text-decoration: none; }
-        .logo-circle { width: 40px; height: 40px; background: #fff; color: var(--primary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.8rem; }
-        .web-name { font-weight: 800; font-size: 1.1rem; letter-spacing: 1px; }
-        .search-box { background: rgba(255,255,255,0.2); padding: 8px 20px; border-radius: 30px; width: 400px; display: flex; align-items: center; border: 1px solid rgba(255,255,255,0.1); }
-        .search-text { opacity: 0.9; font-size: 0.95rem; color: #fff; }
-        .user-actions { font-size: 0.95rem; font-weight: 500; display: flex; gap: 20px; }
-        .user-actions span, .user-actions a { cursor: pointer; opacity: 0.9; color: #fff; text-decoration: none; } 
-        .user-actions span:hover, .user-actions a:hover { opacity: 1; text-decoration: underline; }
-        #cart-count-display { font-weight: bold; background: #ffb703; color: #000; padding: 2px 8px; border-radius: 10px; margin-left: 5px;}
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: var(--primary-color);
+            color: #fff;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 40px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .logo-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .logo-circle {
+            width: 40px;
+            height: 40px;
+            background: #fff;
+            color: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 0.8rem;
+        }
+
+        .web-name {
+            font-weight: 800;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
+
+        .search-box {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 20px;
+            border-radius: 30px;
+            width: 400px;
+            display: flex;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .search-text {
+            opacity: 0.9;
+            font-size: 0.95rem;
+            color: #fff;
+        }
+
+        .user-actions {
+            font-size: 0.95rem;
+            font-weight: 500;
+            display: flex;
+            gap: 20px;
+        }
+
+        .user-actions span,
+        .user-actions a {
+            cursor: pointer;
+            opacity: 0.9;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .user-actions span:hover,
+        .user-actions a:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+
+        #cart-count-display {
+            font-weight: bold;
+            background: #ffb703;
+            color: #000;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 5px;
+        }
 
         /* --- NAVIGATION --- */
-        .main-nav > ul { display: flex; justify-content: center; gap: 60px; padding: 12px 0; font-weight: 700; font-size: 1rem; text-transform: uppercase; background: rgba(0,0,0,0.05); }
-        .main-nav li { position: relative; padding: 10px 0; }
-        .main-nav > ul > li:hover > a { color: #b7e4c7; }
-        .nav-arrow { font-size: 0.7rem; margin-left: 5px; vertical-align: middle; }
-        .nav-dropdown { display: none; position: absolute; top: 100%; left: 0; background-color: #ffffff; min-width: 250px; box-shadow: 0 5px 20px rgba(0,0,0,0.15); border-radius: 8px; padding: 10px 0; z-index: 9999; text-align: left; list-style: none; margin: 0; }
-        .main-nav li:hover .nav-dropdown { display: block; }
-        .nav-dropdown li { display: block; padding: 0; width: 100%; }
-        .nav-dropdown a { display: block; padding: 12px 20px; color: #333 !important; text-transform: none; font-weight: 500; font-size: 0.95rem; border-bottom: 1px solid #f5f5f5; transition: 0.2s; white-space: nowrap; }
-        .nav-dropdown a:hover { background-color: #f1f8f5; color: var(--primary-color) !important; padding-left: 25px; }
+        .main-nav>ul {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            padding: 12px 0;
+            font-weight: 700;
+            font-size: 1rem;
+            text-transform: uppercase;
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .main-nav li {
+            position: relative;
+            padding: 10px 0;
+        }
+
+        .main-nav>ul>li:hover>a {
+            color: #b7e4c7;
+        }
+
+        .nav-arrow {
+            font-size: 0.7rem;
+            margin-left: 5px;
+            vertical-align: middle;
+        }
+
+        .nav-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: #ffffff;
+            min-width: 250px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+            border-radius: 8px;
+            padding: 10px 0;
+            z-index: 9999;
+            text-align: left;
+            list-style: none;
+            margin: 0;
+        }
+
+        .main-nav li:hover .nav-dropdown {
+            display: block;
+        }
+
+        .nav-dropdown li {
+            display: block;
+            padding: 0;
+            width: 100%;
+        }
+
+        .nav-dropdown a {
+            display: block;
+            padding: 12px 20px;
+            color: #333 !important;
+            text-transform: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            border-bottom: 1px solid #f5f5f5;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+
+        .nav-dropdown a:hover {
+            background-color: #f1f8f5;
+            color: var(--primary-color) !important;
+            padding-left: 25px;
+        }
 
         /* --- OVERLAY CHUNG --- */
         .full-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(244, 247, 246, 0.98); backdrop-filter: blur(5px);
-            z-index: 2000; overflow-y: auto; display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(244, 247, 246, 0.98);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            overflow-y: auto;
+            display: none;
             animation: popIn 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
         }
-        @keyframes popIn { 0% { opacity: 0; transform: scale(0.95) translateY(20px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
-        .overlay-header { background: var(--primary-color); color: #fff; padding: 15px 40px; position: sticky; top: 0; z-index: 2001; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .close-btn { font-size: 1.2rem; font-weight: bold; cursor: pointer; background: rgba(255,255,255,0.2); width: 35px; height: 35px; border-radius: 50%; text-align: center; line-height: 35px; transition: 0.2s; }
-        .close-btn:hover { background: #ff6b6b; color: #fff; transform: rotate(90deg); }
+
+        @keyframes popIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.95) translateY(20px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .overlay-header {
+            background: var(--primary-color);
+            color: #fff;
+            padding: 15px 40px;
+            position: sticky;
+            top: 0;
+            z-index: 2001;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .close-btn {
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.2);
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 35px;
+            transition: 0.2s;
+        }
+
+        .close-btn:hover {
+            background: #ff6b6b;
+            color: #fff;
+            transform: rotate(90deg);
+        }
 
         /* --- STYLE CHO SHOP --- */
-        .shop-container { max-width: 1000px; margin: 30px auto; padding: 0 20px; }
-        .shop-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-        .product-card { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: 1px solid #eee; display: flex; flex-direction: column; transition: 0.3s; height: 100%; }
-        .product-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-        .prod-img { height: 200px; width: 100%; object-fit: cover; }
-        .prod-info { padding: 15px; flex: 1; display: flex; flex-direction: column; justify-content: space-between;}
-        .prod-name { font-weight: bold; font-size: 1.1rem; margin-bottom: 5px; color: #333; }
-        .prod-price { color: #d90429; font-weight: bold; font-size: 1.2rem; margin-bottom: 15px; }
-        .prod-actions { display: flex; gap: 10px; }
-        .btn-add-cart-icon { flex: 1; padding: 8px; border: 1px solid var(--btn-outline-border); background: #fff; color: var(--primary-color); font-size: 1.2rem; border-radius: 5px; cursor: pointer; transition: 0.2s; display: flex; justify-content: center; align-items: center; }
-        .btn-add-cart-icon:hover { background: var(--accent-color); }
-        .btn-buy-now { flex: 2; padding: 8px; border: none; background: var(--btn-solid-bg); color: #fff; font-weight: bold; border-radius: 5px; cursor: pointer; transition: 0.2s; }
-        .btn-buy-now:hover { background: var(--secondary-color); }
+        .shop-container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .shop-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .product-card {
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            border: 1px solid #eee;
+            display: flex;
+            flex-direction: column;
+            transition: 0.3s;
+            height: 100%;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .prod-img {
+            height: 200px;
+            width: 100%;
+            object-fit: cover;
+        }
+
+        .prod-info {
+            padding: 15px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .prod-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .prod-price {
+            color: #d90429;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+
+        .prod-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-add-cart-icon {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid var(--btn-outline-border);
+            background: #fff;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .btn-add-cart-icon:hover {
+            background: var(--accent-color);
+        }
+
+        .btn-buy-now {
+            flex: 2;
+            padding: 8px;
+            border: none;
+            background: var(--btn-solid-bg);
+            color: #fff;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-buy-now:hover {
+            background: var(--secondary-color);
+        }
 
         /* --- STYLE CHO BOOKING --- */
-        .booking-container { max-width: 900px; margin: 40px auto; background: #fff; border-radius: 15px; display: flex; overflow: hidden; box-shadow: 0 5px 30px rgba(0,0,0,0.1); }
-        .booking-img { flex: 1; background: url('https://images.unsplash.com/photo-1628009368231-760335298025?auto=format&fit=crop&w=600&q=80') center/cover no-repeat; }
-        .booking-form { flex: 1; padding: 40px; }
-        .form-group { margin-bottom: 15px; }
-        .form-label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 0.9rem; }
-        .form-control { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; outline: none; }
-        .booking-submit { width: 100%; padding: 12px; background: var(--primary-color); color: #fff; border: none; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; margin-top: 10px; }
+        .booking-container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 15px;
+            display: flex;
+            overflow: hidden;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .booking-img {
+            flex: 1;
+            background: url('https://images.unsplash.com/photo-1628009368231-760335298025?auto=format&fit=crop&w=600&q=80') center/cover no-repeat;
+        }
+
+        .booking-form {
+            flex: 1;
+            padding: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        .booking-submit {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary-color);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 10px;
+        }
 
         /* --- STYLE CHO GIỎ HÀNG --- */
         .cart-overlay {
-            position: fixed; top: 0; right: -400px; width: 400px; height: 100%; background: #fff; z-index: 3000;
-            box-shadow: -5px 0 20px rgba(0,0,0,0.1); transition: 0.3s ease; display: flex; flex-direction: column;
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100%;
+            background: #fff;
+            z-index: 3000;
+            box-shadow: -5px 0 20px rgba(0, 0, 0, 0.1);
+            transition: 0.3s ease;
+            display: flex;
+            flex-direction: column;
         }
-        .cart-overlay.open { right: 0; }
-        .cart-header { padding: 20px; background: var(--primary-color); color: #fff; display: flex; justify-content: space-between; align-items: center; }
-        .cart-items { flex: 1; overflow-y: auto; padding: 20px; }
-        .cart-item-row { border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 15px; display: flex; flex-direction: column; gap: 8px; }
-        .cart-item-top { display: flex; justify-content: space-between; font-weight: bold; font-size: 1rem; color: #333; }
-        .cart-item-bottom { display: flex; justify-content: space-between; align-items: center; }
-        .qty-control { display: flex; align-items: center; gap: 8px; background: #f0f0f0; border-radius: 5px; padding: 2px 5px; }
-        .qty-btn { width: 25px; height: 25px; border: none; background: #fff; cursor: pointer; border-radius: 3px; font-weight: bold; display: flex; align-items: center; justify-content: center; }
-        .qty-btn:hover { background: #ddd; }
-        .cart-remove-btn { color: #d90429; font-size: 0.85rem; cursor: pointer; text-decoration: underline; }
-        .cart-remove-btn:hover { color: red; }
-        .cart-footer { padding: 20px; border-top: 1px solid #ddd; background: #f9f9f9; }
-        .total-price { font-size: 1.2rem; font-weight: bold; display: flex; justify-content: space-between; margin-bottom: 15px; }
-        .checkout-btn { width: 100%; padding: 12px; background: #d90429; color: #fff; border: none; font-weight: bold; cursor: pointer; border-radius: 8px; }
+
+        .cart-overlay.open {
+            right: 0;
+        }
+
+        .cart-header {
+            padding: 20px;
+            background: var(--primary-color);
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-items {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .cart-item-row {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .cart-item-top {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            font-size: 1rem;
+            color: #333;
+        }
+
+        .cart-item-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .qty-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f0f0f0;
+            border-radius: 5px;
+            padding: 2px 5px;
+        }
+
+        .qty-btn {
+            width: 25px;
+            height: 25px;
+            border: none;
+            background: #fff;
+            cursor: pointer;
+            border-radius: 3px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qty-btn:hover {
+            background: #ddd;
+        }
+
+        .cart-remove-btn {
+            color: #d90429;
+            font-size: 0.85rem;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .cart-remove-btn:hover {
+            color: red;
+        }
+
+        .cart-footer {
+            padding: 20px;
+            border-top: 1px solid #ddd;
+            background: #f9f9f9;
+        }
+
+        .total-price {
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            padding: 12px;
+            background: #d90429;
+            color: #fff;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 8px;
+        }
 
         /* --- CSS CHO SLIDER --- */
-        .adopt-slider-container { flex: 2; height: 420px; border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; position: relative; }
-        .slide-item { position: absolute; top:0; left:0; width:100%; height:100%; opacity: 0; transition: opacity 1s ease-in-out; }
-        .slide-item.active { opacity: 1; z-index: 1; }
-        .ken-burns-img { width: 100%; height: 100%; object-fit: cover; animation: zoomPan 15s infinite alternate ease-in-out; }
-        @keyframes zoomPan { 0% { transform: scale(1) translate(0, 0); } 100% { transform: scale(1.15) translate(-2%, -1%); } }
-        .slider-caption-box { position: absolute; bottom: 0; width: 100%; background: linear-gradient(to top, var(--primary-color), transparent); color: #fff; padding: 50px 25px 25px; }
-        .slider-caption-box h3 { font-size: 1.5rem; margin-bottom: 8px; } .slider-caption-box p { font-size: 1rem; opacity: 0.9; }
+        .adopt-slider-container {
+            flex: 2;
+            height: 420px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .slide-item {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .slide-item.active {
+            opacity: 1;
+            z-index: 1;
+        }
+
+        .ken-burns-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            animation: zoomPan 15s infinite alternate ease-in-out;
+        }
+
+        @keyframes zoomPan {
+            0% {
+                transform: scale(1) translate(0, 0);
+            }
+
+            100% {
+                transform: scale(1.15) translate(-2%, -1%);
+            }
+        }
+
+        .slider-caption-box {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: linear-gradient(to top, var(--primary-color), transparent);
+            color: #fff;
+            padding: 50px 25px 25px;
+        }
+
+        .slider-caption-box h3 {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+
+        .slider-caption-box p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
 
         /* --- CSS CHUNG --- */
-        .hero-news { display: block; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 30px; border: 1px solid #eee; text-decoration: none; }
-        .hero-news img { width: 100%; height: 400px; object-fit: cover; }
-        .hero-content-news { padding: 25px; }
-        .hero-title { font-size: 1.8rem; font-weight: 900; margin-bottom: 10px; color: var(--text-dark); }
-        .hero-news:hover .hero-title { color: var(--secondary-color); text-decoration: underline; }
-        .news-list-item { display: flex; gap: 20px; background: #fff; padding: 20px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); transition: 0.2s; cursor: pointer; border: 1px solid #f0f0f0; text-decoration: none; color: inherit; }
-        .news-list-item:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.08); border-color: var(--primary-color); }
-        .news-thumb { width: 220px; height: 140px; flex-shrink: 0; border-radius: 8px; overflow: hidden; }
-        .news-thumb img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; } .news-list-item:hover .news-thumb img { transform: scale(1.1); }
-        .news-info { flex: 1; display: flex; flex-direction: column; justify-content: center; }
-        .news-tag { font-size: 0.8rem; font-weight: 700; color: var(--primary-color); text-transform: uppercase; margin-bottom: 8px; }
-        .news-headline { font-size: 1.3rem; font-weight: 700; margin-bottom: 10px; line-height: 1.4; color: #333; }
-        .news-list-item:hover .news-headline { color: var(--secondary-color); text-decoration: underline; }
-        .news-meta { font-size: 0.9rem; color: #777; } .external-icon { font-size: 0.8rem; color: #999; margin-left: 5px; }
+        .hero-news {
+            display: block;
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            border: 1px solid #eee;
+            text-decoration: none;
+        }
 
-        section { padding: 50px 0; margin-bottom: 20px; opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; } section.visible { opacity: 1; transform: translateY(0); }
-        .card-box { background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); padding: 40px; border: 1px solid #e8f5e9; }
-        .news-title { text-align: center; font-weight: 800; font-size: 1.6rem; color: var(--primary-color); margin-bottom: 30px; }
-        .news-grid { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, 200px); gap: 15px; }
-        .grid-item { border-radius: var(--radius); overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); } .grid-item img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; } .grid-item:hover img { transform: scale(1.05); } .item-large { grid-column: span 2; }
-        .adopt-layout { display: flex; gap: 30px; margin-bottom: 20px; } .adopt-links { flex: 1; display: flex; flex-direction: column; gap: 15px; }
-        .link-btn { background: #fff; color: var(--primary-color); border: 2px solid #d8f3dc; padding: 20px; border-radius: var(--radius); font-weight: 700; display: flex; justify-content: space-between; align-items: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-decoration: none; } .link-btn:hover { border-color: var(--primary-color); background: var(--accent-color); transform: translateX(5px); }
-        .adopt-label-text { font-weight: 800; color: var(--primary-color); font-size: 1.2rem; margin-top: 30px; margin-bottom: 10px; display: flex; align-items: center; } .adopt-label-text::before { content: '🐾'; margin-right: 10px; }
-        .adopt-filter-bar { background: #fff; padding: 15px 40px; border-radius: 50px; box-shadow: var(--shadow); display: flex; justify-content: space-between; font-weight: 700; color: var(--primary-color); } .adopt-filter-bar a:hover { color: var(--secondary-color); cursor: pointer; text-decoration: underline; }
-        .section-header { text-align: center; font-size: 2rem; font-weight: 800; color: var(--primary-color); margin-bottom: 40px; } .section-header::after { content: ''; display: block; width: 80px; height: 5px; background: #ffb703; margin: 10px auto 0; border-radius: 5px; }
-        .contact-container { display: flex; justify-content: space-between; background: var(--primary-color); color: #fff; padding: 60px; border-radius: var(--radius); box-shadow: var(--shadow); }
-        .social-icons span { display: inline-block; width: 45px; height: 45px; background: rgba(255,255,255,0.2); border-radius: 50%; text-align: center; line-height: 45px; margin-right: 15px; cursor: pointer; } .social-icons span:hover { background: #fff; color: var(--primary-color); }
-        .form-area { flex: 1; background: #fff; padding: 30px; border-radius: var(--radius); color: #333; } .form-input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; outline: none; } .form-input:focus { border-color: var(--primary-color); background: #f0fff4; } .submit-btn { background: var(--primary-color); color: #fff; border: none; padding: 12px; width: 100%; border-radius: 30px; font-weight: bold; cursor: pointer; } .submit-btn:hover { background: var(--secondary-color); }
-        .footer-bottom { margin-top: 40px; text-align: center; color: #52b788; padding-bottom: 20px; }
+        .hero-news img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+        }
+
+        .hero-content-news {
+            padding: 25px;
+        }
+
+        .hero-title {
+            font-size: 1.8rem;
+            font-weight: 900;
+            margin-bottom: 10px;
+            color: var(--text-dark);
+        }
+
+        .hero-news:hover .hero-title {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
+
+        .news-list-item {
+            display: flex;
+            gap: 20px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+            transition: 0.2s;
+            cursor: pointer;
+            border: 1px solid #f0f0f0;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .news-list-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+            border-color: var(--primary-color);
+        }
+
+        .news-thumb {
+            width: 220px;
+            height: 140px;
+            flex-shrink: 0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .news-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.5s;
+        }
+
+        .news-list-item:hover .news-thumb img {
+            transform: scale(1.1);
+        }
+
+        .news-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .news-tag {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .news-headline {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            line-height: 1.4;
+            color: #333;
+        }
+
+        .news-list-item:hover .news-headline {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
+
+        .news-meta {
+            font-size: 0.9rem;
+            color: #777;
+        }
+
+        .external-icon {
+            font-size: 0.8rem;
+            color: #999;
+            margin-left: 5px;
+        }
+
+        section {
+            padding: 50px 0;
+            margin-bottom: 20px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+
+        section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .card-box {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 40px;
+            border: 1px solid #e8f5e9;
+        }
+
+        .news-title {
+            text-align: center;
+            font-weight: 800;
+            font-size: 1.6rem;
+            color: var(--primary-color);
+            margin-bottom: 30px;
+        }
+
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(2, 200px);
+            gap: 15px;
+        }
+
+        .grid-item {
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .grid-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.5s;
+        }
+
+        .grid-item:hover img {
+            transform: scale(1.05);
+        }
+
+        .item-large {
+            grid-column: span 2;
+        }
+
+        .adopt-layout {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .adopt-links {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .link-btn {
+            background: #fff;
+            color: var(--primary-color);
+            border: 2px solid #d8f3dc;
+            padding: 20px;
+            border-radius: var(--radius);
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            text-decoration: none;
+        }
+
+        .link-btn:hover {
+            border-color: var(--primary-color);
+            background: var(--accent-color);
+            transform: translateX(5px);
+        }
+
+        .adopt-label-text {
+            font-weight: 800;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            margin-top: 30px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .adopt-label-text::before {
+            content: '🐾';
+            margin-right: 10px;
+        }
+
+        .adopt-filter-bar {
+            background: #fff;
+            padding: 15px 40px;
+            border-radius: 50px;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .adopt-filter-bar a:hover {
+            color: var(--secondary-color);
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .section-header {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            margin-bottom: 40px;
+        }
+
+        .section-header::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 5px;
+            background: #ffb703;
+            margin: 10px auto 0;
+            border-radius: 5px;
+        }
+
+        .contact-container {
+            display: flex;
+            justify-content: space-between;
+            background: var(--primary-color);
+            color: #fff;
+            padding: 60px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .social-icons span {
+            display: inline-block;
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 45px;
+            margin-right: 15px;
+            cursor: pointer;
+        }
+
+        .social-icons span:hover {
+            background: #fff;
+            color: var(--primary-color);
+        }
+
+        .form-area {
+            flex: 1;
+            background: #fff;
+            padding: 30px;
+            border-radius: var(--radius);
+            color: #333;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary-color);
+            background: #f0fff4;
+        }
+
+        .submit-btn {
+            background: var(--primary-color);
+            color: #fff;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 30px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .submit-btn:hover {
+            background: var(--secondary-color);
+        }
+
+        .footer-bottom {
+            margin-top: 40px;
+            text-align: center;
+            color: #52b788;
+            padding-bottom: 20px;
+        }
 
         /* --- USER DROPDOWN --- */
-        .user-dropdown { position: relative; }
-        .user-dropdown-menu {
-            position: absolute; top: calc(100% + 10px); right: 0;
-            background: white; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-            min-width: 200px; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.3s ease; z-index: 1000;
+        .user-dropdown {
+            position: relative;
         }
-        .user-dropdown.active .user-dropdown-menu { opacity: 1; visibility: visible; transform: translateY(0); }
-        .dropdown-header { padding: 15px; text-align: center; }
-        .dropdown-header strong { display: block; color: #1b4332; margin-bottom: 4px; }
-        .user-role { font-size: 0.8rem; color: #64748B; }
-        .dropdown-divider { height: 1px; background: #E5E7EB; margin: 0; }
-        .dropdown-item { display: block; padding: 12px 15px; color: #1b4332; transition: all 0.2s; text-decoration: none; }
-        .dropdown-item:hover { background: #d8f3dc; color: #2d6a4f; }
-        .dropdown-item.logout { color: #d90429; }
-        .dropdown-item.logout:hover { background: #FEE2E2; }
+
+        .user-dropdown-menu {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            background: #399c70;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            min-width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .user-dropdown.active .user-dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-header {
+            padding: 15px;
+            text-align: center;
+        }
+
+        .dropdown-header strong {
+            display: block;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .user-role {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: #E5E7EB;
+            margin: 0;
+        }
+
+        .dropdown-item {
+            display: block;
+            padding: 12px 15px;
+            color: #333;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .dropdown-item:hover {
+            background: #f5f5f5;
+            color: #222;
+        }
+
+        .dropdown-item.logout {
+            color: #d90429;
+        }
+
+        .dropdown-item.logout:hover {
+            background: #FEE2E2;
+        }
 
         /* --- HAMBURGER (MOBILE) --- */
-        .hamburger-btn { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 8px; z-index: 1001; }
-        .hamburger-line { display: block; width: 26px; height: 3px; background: #fff; border-radius: 3px; transition: all 0.3s ease; }
-        .mobile-nav-close { display: none; background: none; border: none; color: #fff; font-size: 1.8rem; cursor: pointer; padding: 10px 15px; align-self: flex-end; }
-        .mobile-nav-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 998; }
-        .mobile-nav-overlay.active { display: block; }
+        .hamburger-btn {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            z-index: 1001;
+        }
+
+        .hamburger-line {
+            display: block;
+            width: 26px;
+            height: 3px;
+            background: #fff;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-nav-close {
+            display: none;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.8rem;
+            cursor: pointer;
+            padding: 10px 15px;
+            align-self: flex-end;
+        }
+
+        .mobile-nav-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 998;
+        }
+
+        .mobile-nav-overlay.active {
+            display: block;
+        }
 
         /* --- RESPONSIVE --- */
         @media (max-width: 768px) {
-            body { padding-top: 65px; }
-            .top-bar { padding: 10px 15px; flex-wrap: wrap; }
-            .search-box { display: none; }
-            .user-actions { display: none; }
-            .hamburger-btn { display: flex; }
-            .main-nav {
-                position: fixed; top: 0; left: -280px; width: 280px; height: 100vh;
-                background: var(--primary-color); z-index: 999; transition: left 0.3s ease;
-                overflow-y: auto; padding-top: 10px; display: flex; flex-direction: column;
+            body {
+                padding-top: 65px;
             }
-            .main-nav.mobile-open { left: 0; }
-            .mobile-nav-close { display: block; }
-            .main-nav > ul { flex-direction: column; gap: 0; padding: 0; background: none; }
-            .main-nav > ul > li { border-bottom: 1px solid rgba(255,255,255,0.1); padding: 0; }
-            .main-nav > ul > li > a { display: block; padding: 16px 20px; font-size: 1rem; }
-            .main-nav li:hover > .nav-dropdown { display: none; }
-            .nav-dropdown { position: static; background: rgba(0,0,0,0.15); box-shadow: none; border-radius: 0; min-width: 100%; padding: 0; }
-            .nav-dropdown.mobile-show { display: block !important; }
-            .nav-dropdown a { color: #fff !important; padding: 14px 20px 14px 35px; border-bottom: 1px solid rgba(255,255,255,0.05); white-space: normal; font-size: 0.9rem; }
-            .card-box { padding: 20px; }
-            .news-grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: auto; }
-            .item-large { grid-column: span 2; }
-            .adopt-layout { flex-direction: column; }
-            .adopt-slider-container { height: 280px; }
-            .contact-container { flex-direction: column; padding: 30px 20px; gap: 25px; }
-            .shop-grid { grid-template-columns: 1fr 1fr; }
-            .booking-container { flex-direction: column; }
-            .booking-img { height: 200px; }
-            .cart-overlay { width: 100%; right: -100%; }
+
+            .top-bar {
+                padding: 10px 15px;
+                flex-wrap: wrap;
+            }
+
+            .search-box {
+                display: none;
+            }
+
+            .user-actions {
+                display: none;
+            }
+
+            .hamburger-btn {
+                display: flex;
+            }
+
+            .main-nav {
+                position: fixed;
+                top: 0;
+                left: -280px;
+                width: 280px;
+                height: 100vh;
+                background: var(--primary-color);
+                z-index: 999;
+                transition: left 0.3s ease;
+                overflow-y: auto;
+                padding-top: 10px;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .main-nav.mobile-open {
+                left: 0;
+            }
+
+            .mobile-nav-close {
+                display: block;
+            }
+
+            .main-nav>ul {
+                flex-direction: column;
+                gap: 0;
+                padding: 0;
+                background: none;
+            }
+
+            .main-nav>ul>li {
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                padding: 0;
+            }
+
+            .main-nav>ul>li>a {
+                display: block;
+                padding: 16px 20px;
+                font-size: 1rem;
+            }
+
+            .main-nav li:hover>.nav-dropdown {
+                display: none;
+            }
+
+            .nav-dropdown {
+                position: static;
+                background: rgba(0, 0, 0, 0.15);
+                box-shadow: none;
+                border-radius: 0;
+                min-width: 100%;
+                padding: 0;
+            }
+
+            .nav-dropdown.mobile-show {
+                display: block !important;
+            }
+
+            .nav-dropdown a {
+                color: #fff !important;
+                padding: 14px 20px 14px 35px;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+                white-space: normal;
+                font-size: 0.9rem;
+            }
+
+            .card-box {
+                padding: 20px;
+            }
+
+            .news-grid {
+                grid-template-columns: repeat(2, 1fr);
+                grid-template-rows: auto;
+            }
+
+            .item-large {
+                grid-column: span 2;
+            }
+
+            .adopt-layout {
+                flex-direction: column;
+            }
+
+            .adopt-slider-container {
+                height: 280px;
+            }
+
+            .contact-container {
+                flex-direction: column;
+                padding: 30px 20px;
+                gap: 25px;
+            }
+
+            .shop-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .booking-container {
+                flex-direction: column;
+            }
+
+            .booking-img {
+                height: 200px;
+            }
+
+            .cart-overlay {
+                width: 100%;
+                right: -100%;
+            }
+        }
+
+        /* ============ REPORT OVERLAY STYLES ============ */
+        .report-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 5000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.35s ease, visibility 0.35s ease;
+        }
+
+        .report-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .report-overlay-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .report-overlay-modal {
+            position: relative;
+            background: #fff;
+            border-radius: 16px;
+            width: 95%;
+            max-width: 720px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+            transform: scale(0.9) translateY(20px);
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 1;
+        }
+
+        .report-overlay.active .report-overlay-modal {
+            transform: scale(1) translateY(0);
+        }
+
+        /* Scrollbar styling */
+        .report-overlay-modal::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .report-overlay-modal::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .report-overlay-modal::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 3px;
+        }
+
+        .report-overlay-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: #fff;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .report-overlay-close:hover {
+            background: #ff4757;
+            transform: rotate(90deg);
+        }
+
+        /* Form Header */
+        .report-form-header {
+            padding: 20px 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 16px 16px 0 0;
+        }
+
+        .report-form-header--lost {
+            background: linear-gradient(135deg, #2a6b47, #1e5038);
+        }
+
+        .report-form-header--found {
+            background: linear-gradient(135deg, #065f46, #047857);
+        }
+
+        .report-form-header__left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .report-form-header__title {
+            color: #fff;
+            font-size: 1.15rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 0;
+        }
+
+        .report-sos-badge {
+            background: #ff4757;
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 4px;
+            letter-spacing: 1px;
+            box-shadow: 0 2px 6px rgba(255, 71, 87, 0.4);
+        }
+
+        .report-found-badge {
+            font-size: 1.4rem;
+        }
+
+        /* Form Body */
+        .report-form-body {
+            padding: 28px;
+            background: #f8fafc;
+        }
+
+        .report-form-section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin: 0 0 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .report-form-section-title--lost {
+            color: #e11d48;
+        }
+
+        .report-form-section-title--found {
+            color: #065f46;
+        }
+
+        .report-form-section-subtitle {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin: -12px 0 20px;
+        }
+
+        /* Form Grid */
+        .report-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        @media (max-width: 520px) {
+            .report-form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .report-form-field {
+            margin-bottom: 16px;
+        }
+
+        .report-form-field--full {
+            grid-column: 1 / -1;
+        }
+
+        .report-form-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+
+        .report-required {
+            color: #ef4444;
+        }
+
+        .report-form-input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1.5px solid #d1d5db;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            background: #fff;
+            color: #1f2937;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .report-form-input:focus {
+            border-color: #2a6b47;
+            box-shadow: 0 0 0 3px rgba(42, 107, 71, 0.12);
+        }
+
+        .report-form-textarea {
+            resize: none;
+        }
+
+        .report-form-highlight-box {
+            background: #ecfdf5;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .report-form-highlight-box .report-form-grid {
+            margin-bottom: 0;
+        }
+
+        /* Radio group */
+        .report-radio-group {
+            display: flex;
+            gap: 18px;
+            padding-top: 4px;
+        }
+
+        .report-radio-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+            color: #374151;
+            cursor: pointer;
+        }
+
+        .report-radio-label input[type="radio"] {
+            accent-color: #047857;
+        }
+
+        /* File upload */
+        .report-file-upload {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .report-file-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: #fff;
+            border: 1.5px solid #d1d5db;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: #374151;
+            transition: all 0.2s;
+        }
+
+        .report-file-btn:hover {
+            background: #f9fafb;
+            border-color: #2a6b47;
+        }
+
+        .report-file-hidden {
+            display: none;
+        }
+
+        .report-file-name {
+            font-size: 0.85rem;
+            color: #9ca3af;
+            font-style: italic;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Dropzone style */
+        .report-file-upload--dropzone {
+            flex-direction: column;
+        }
+
+        .report-dropzone-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            min-height: 110px;
+            border: 2px dashed #d1d5db;
+            border-radius: 12px;
+            cursor: pointer;
+            background: #f9fafb;
+            transition: all 0.2s;
+            gap: 8px;
+            color: #9ca3af;
+            padding: 16px;
+        }
+
+        .report-dropzone-label:hover {
+            border-color: #047857;
+            background: #ecfdf5;
+        }
+
+        .report-dropzone-label p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+
+        /* Form Footer */
+        .report-form-footer {
+            padding: 20px 28px;
+            background: #fff;
+            border-top: 1px solid #f1f5f9;
+            border-radius: 0 0 16px 16px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .report-submit-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 32px;
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .report-submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .report-submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .report-submit-btn--lost {
+            background: linear-gradient(135deg, #e11d48, #be123c);
+        }
+
+        .report-submit-btn--found {
+            background: linear-gradient(135deg, #059669, #047857);
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+            padding: 14px;
+        }
+
+        .report-submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Success toast */
+        .report-toast {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            z-index: 6000;
+            background: #065f46;
+            color: #fff;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            transform: translateX(120%);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .report-toast.show {
+            transform: translateX(0);
+        }
+
+        .report-toast--error {
+            background: #991b1b;
         }
     </style>
 </head>
+
 <body>
 
     <!-- ============ NEWS OVERLAY ============ -->
@@ -219,29 +1598,57 @@
         </div>
         <div style="max-width: 900px; margin: 30px auto; padding: 0 20px;">
             <a href="/news" class="hero-news">
-                <img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=1000&q=80" alt="News">
+                <img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=1000&q=80"
+                    alt="News">
                 <div class="hero-content-news">
                     <div class="news-tag">NỔI BẬT</div>
-                    <div class="hero-title">Chiến dịch "Mùa Đông Ấm Áp" cứu trợ 500 chú chó mèo <span class="external-icon">↗</span></div>
+                    <div class="hero-title">Chiến dịch "Mùa Đông Ấm Áp" cứu trợ 500 chú chó mèo <span
+                            class="external-icon">↗</span></div>
                     <p style="color: #555;">Tổng kết chiến dịch tháng vừa qua...</p>
                 </div>
             </a>
             <a href="/news" class="news-list-item">
-                <div class="news-thumb"><img src="https://images.unsplash.com/photo-1574158622682-e40e69881006?auto=format&fit=crop&w=400&q=80" alt="News"></div>
+                <div class="news-thumb"><img
+                        src="https://images.unsplash.com/photo-1574158622682-e40e69881006?auto=format&fit=crop&w=400&q=80"
+                        alt="News"></div>
                 <div class="news-info">
                     <div class="news-tag">SỨC KHỎE</div>
-                    <div class="news-headline">Làm thế nào để bảo vệ thú cưng khỏi bệnh dại? <span class="external-icon">↗</span></div>
+                    <div class="news-headline">Làm thế nào để bảo vệ thú cưng khỏi bệnh dại? <span
+                            class="external-icon">↗</span></div>
                     <div class="news-meta">2 giờ trước</div>
                 </div>
             </a>
             <a href="/news" class="news-list-item">
-                <div class="news-thumb"><img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=400&q=80" alt="News"></div>
+                <div class="news-thumb"><img
+                        src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=400&q=80"
+                        alt="News"></div>
                 <div class="news-info">
                     <div class="news-tag">NHẬN NUÔI</div>
-                    <div class="news-headline">Bé Miu tìm được chủ nhân sau 3 tháng điều trị <span class="external-icon">↗</span></div>
+                    <div class="news-headline">Bé Miu tìm được chủ nhân sau 3 tháng điều trị <span
+                            class="external-icon">↗</span></div>
                     <div class="news-meta">1 ngày trước</div>
                 </div>
             </a>
+        </div>
+    </div>
+
+    <!-- ============ LOGIN OVERLAY ============ -->
+    <div id="login-overlay" class="full-overlay">
+        <div class="overlay-header">
+            <div style="font-size: 1.5rem; font-weight: 900;">ĐĂNG NHẬP</div>
+            <div class="close-btn" onclick="closeOverlay('login-overlay')">✕</div>
+        </div>
+        <div class="login-container">
+            <h3 style="margin-bottom: 20px; color: var(--primary-color);">Chào mừng bạn quay lại</h3>
+            <form action="/auth/login" method="POST" class="login-form">
+                <input type="email" name="email" placeholder="Email" required>
+                <input type="password" name="password" placeholder="Mật khẩu" required>
+                <button type="submit" class="btn-primary">Đăng nhập</button>
+            </form>
+            <div class="login-options">
+                <a href="/auth/register">Đăng ký tài khoản mới</a>
+                <a href="/auth/forgot-password">Quên mật khẩu?</a>
+            </div>
         </div>
     </div>
 
@@ -255,52 +1662,78 @@
             <h3 style="margin-bottom: 20px; color: var(--primary-color);">Sản phẩm nổi bật</h3>
             <div class="shop-grid">
                 <div class="product-card">
-                    <img src="https://images.unsplash.com/photo-1589924691195-41432c84c161?auto=format&fit=crop&w=400&q=80" class="prod-img">
+                    <img src="https://images.unsplash.com/photo-1589924691195-41432c84c161?auto=format&fit=crop&w=400&q=80"
+                        class="prod-img">
                     <div class="prod-info">
-                        <div><div class="prod-name">Hạt Royal Canin cho Chó (1kg)</div><div class="prod-price">150.000đ</div></div>
+                        <div>
+                            <div class="prod-name">Hạt Royal Canin cho Chó (1kg)</div>
+                            <div class="prod-price">150.000đ</div>
+                        </div>
                         <div class="prod-actions">
                             <button class="btn-add-cart-icon" onclick="addToCart('Hạt Royal Canin', 150000)">🛒</button>
-                            <button class="btn-buy-now" onclick="addToCart('Hạt Royal Canin', 150000); toggleCart();">Mua ngay</button>
+                            <button class="btn-buy-now"
+                                onclick="addToCart('Hạt Royal Canin', 150000); toggleCart();">Mua ngay</button>
                         </div>
                     </div>
                 </div>
                 <div class="product-card">
-                    <img src="https://images.unsplash.com/photo-1615266895738-11f1371cd7e5?auto=format&fit=crop&w=400&q=80" class="prod-img">
+                    <img src="https://images.unsplash.com/photo-1615266895738-11f1371cd7e5?auto=format&fit=crop&w=400&q=80"
+                        class="prod-img">
                     <div class="prod-info">
-                        <div><div class="prod-name">Pate Whiskas cho Mèo (85g)</div><div class="prod-price">25.000đ</div></div>
+                        <div>
+                            <div class="prod-name">Pate Whiskas cho Mèo (85g)</div>
+                            <div class="prod-price">25.000đ</div>
+                        </div>
                         <div class="prod-actions">
                             <button class="btn-add-cart-icon" onclick="addToCart('Pate Whiskas', 25000)">🛒</button>
-                            <button class="btn-buy-now" onclick="addToCart('Pate Whiskas', 25000); toggleCart();">Mua ngay</button>
+                            <button class="btn-buy-now" onclick="addToCart('Pate Whiskas', 25000); toggleCart();">Mua
+                                ngay</button>
                         </div>
                     </div>
                 </div>
                 <div class="product-card">
-                    <img src="https://images.unsplash.com/photo-1576201836106-db1758fd1c97?auto=format&fit=crop&w=400&q=80" class="prod-img">
+                    <img src="https://images.unsplash.com/photo-1576201836106-db1758fd1c97?auto=format&fit=crop&w=400&q=80"
+                        class="prod-img">
                     <div class="prod-info">
-                        <div><div class="prod-name">Chuồng gỗ cao cấp</div><div class="prod-price">1.200.000đ</div></div>
+                        <div>
+                            <div class="prod-name">Chuồng gỗ cao cấp</div>
+                            <div class="prod-price">1.200.000đ</div>
+                        </div>
                         <div class="prod-actions">
-                            <button class="btn-add-cart-icon" onclick="addToCart('Chuồng gỗ cao cấp', 1200000)">🛒</button>
-                            <button class="btn-buy-now" onclick="addToCart('Chuồng gỗ cao cấp', 1200000); toggleCart();">Mua ngay</button>
+                            <button class="btn-add-cart-icon"
+                                onclick="addToCart('Chuồng gỗ cao cấp', 1200000)">🛒</button>
+                            <button class="btn-buy-now"
+                                onclick="addToCart('Chuồng gỗ cao cấp', 1200000); toggleCart();">Mua ngay</button>
                         </div>
                     </div>
                 </div>
                 <div class="product-card">
-                    <img src="https://images.unsplash.com/photo-1597843786271-10a015702561?auto=format&fit=crop&w=400&q=80" class="prod-img">
+                    <img src="https://images.unsplash.com/photo-1597843786271-10a015702561?auto=format&fit=crop&w=400&q=80"
+                        class="prod-img">
                     <div class="prod-info">
-                        <div><div class="prod-name">Dây dắt chó đi dạo</div><div class="prod-price">80.000đ</div></div>
+                        <div>
+                            <div class="prod-name">Dây dắt chó đi dạo</div>
+                            <div class="prod-price">80.000đ</div>
+                        </div>
                         <div class="prod-actions">
                             <button class="btn-add-cart-icon" onclick="addToCart('Dây dắt chó', 80000)">🛒</button>
-                            <button class="btn-buy-now" onclick="addToCart('Dây dắt chó', 80000); toggleCart();">Mua ngay</button>
+                            <button class="btn-buy-now" onclick="addToCart('Dây dắt chó', 80000); toggleCart();">Mua
+                                ngay</button>
                         </div>
                     </div>
                 </div>
                 <div class="product-card">
-                    <img src="https://images.unsplash.com/photo-1545249390-6bdfa286032f?auto=format&fit=crop&w=400&q=80" class="prod-img">
+                    <img src="https://images.unsplash.com/photo-1545249390-6bdfa286032f?auto=format&fit=crop&w=400&q=80"
+                        class="prod-img">
                     <div class="prod-info">
-                        <div><div class="prod-name">Sữa tắm diệt ve rận</div><div class="prod-price">120.000đ</div></div>
+                        <div>
+                            <div class="prod-name">Sữa tắm diệt ve rận</div>
+                            <div class="prod-price">120.000đ</div>
+                        </div>
                         <div class="prod-actions">
                             <button class="btn-add-cart-icon" onclick="addToCart('Sữa tắm', 120000)">🛒</button>
-                            <button class="btn-buy-now" onclick="addToCart('Sữa tắm', 120000); toggleCart();">Mua ngay</button>
+                            <button class="btn-buy-now" onclick="addToCart('Sữa tắm', 120000); toggleCart();">Mua
+                                ngay</button>
                         </div>
                     </div>
                 </div>
@@ -318,18 +1751,27 @@
             <div class="booking-img"></div>
             <div class="booking-form">
                 <h2 style="color: var(--primary-color); margin-bottom: 20px;">Phiếu Đăng Ký Tiêm Phòng</h2>
-                <div class="form-group"><label class="form-label">Tên chủ nuôi</label><input type="text" class="form-control" placeholder="Nguyễn Văn A"></div>
-                <div class="form-group"><label class="form-label">Số điện thoại</label><input type="text" class="form-control" placeholder="0909..."></div>
-                <div class="form-group"><label class="form-label">Tên thú cưng & Loài</label><input type="text" class="form-control" placeholder="VD: Bé Miu (Mèo)"></div>
+                <div class="form-group"><label class="form-label">Tên chủ nuôi</label><input type="text"
+                        class="form-control" placeholder="Nguyễn Văn A"></div>
+                <div class="form-group"><label class="form-label">Số điện thoại</label><input type="text"
+                        class="form-control" placeholder="0909..."></div>
+                <div class="form-group"><label class="form-label">Tên thú cưng & Loài</label><input type="text"
+                        class="form-control" placeholder="VD: Bé Miu (Mèo)"></div>
                 <div style="display: flex; gap: 15px;">
-                    <div class="form-group" style="flex:1"><label class="form-label">Ngày hẹn</label><input type="date" class="form-control"></div>
+                    <div class="form-group" style="flex:1"><label class="form-label">Ngày hẹn</label><input type="date"
+                            class="form-control"></div>
                     <div class="form-group" style="flex:1"><label class="form-label">Dịch vụ</label>
                         <select class="form-control">
-                            <option>Tiêm phòng dại</option><option>Tiêm đa giá (5 bệnh)</option><option>Tẩy giun sán</option><option>Khám tổng quát</option>
+                            <option>Tiêm phòng dại</option>
+                            <option>Tiêm đa giá (5 bệnh)</option>
+                            <option>Tẩy giun sán</option>
+                            <option>Khám tổng quát</option>
                         </select>
                     </div>
                 </div>
-                <button class="booking-submit" onclick="Swal.fire('Đã gửi!', 'Chúng tôi sẽ gọi lại xác nhận.', 'success')">Xác nhận đặt lịch</button>
+                <button class="booking-submit"
+                    onclick="Swal.fire('Đã gửi!', 'Chúng tôi sẽ gọi lại xác nhận.', 'success')">Xác nhận đặt
+                    lịch</button>
             </div>
         </div>
     </div>
@@ -343,12 +1785,13 @@
         <div class="cart-items" id="cart-items-container"></div>
         <div class="cart-footer">
             <div class="total-price"><span>Tổng cộng:</span><span id="cart-total">0đ</span></div>
-            <button class="checkout-btn" onclick="Swal.fire('Thông báo', 'Chức năng thanh toán đang phát triển!', 'info')">THANH TOÁN</button>
+            <button class="checkout-btn"
+                onclick="Swal.fire('Thông báo', 'Chức năng thanh toán đang phát triển!', 'info')">THANH TOÁN</button>
         </div>
     </div>
 
     <!-- ============ HEADER ============ -->
-    <header>
+    <header class="header">
         <div class="top-bar">
             <a href="/" class="logo-group">
                 <div class="logo-circle">PET</div>
@@ -359,34 +1802,43 @@
                 <span class="search-text">Tìm thú cưng, bài viết...</span>
             </div>
             <div class="user-actions">
-                <% if (typeof isAuthenticated !== 'undefined' && isAuthenticated) { %>
-                    <div class="user-dropdown" id="userDropdown">
-                        <span id="userDropdownBtn" style="cursor: pointer;"><%= user.display_name %> ▼</span>
-                        <div class="user-dropdown-menu">
+                <% if (typeof isAuthenticated !=='undefined' && isAuthenticated) { %>
+                    <div class="user-dropdown">
+                        <span id="userDropdownBtn" style="cursor: pointer;">
+                            <%= user.display_name %> ▼
+                        </span>
+                        <div class="user-dropdown-menu" id="userDropdownMenu">
                             <div class="dropdown-header">
-                                <strong><%= user.display_name %></strong>
-                                <span class="user-role"><%= user.role === 0 ? '👑 Admin' : user.role === 1 ? '🛠️ Staff' : '👤 User' %></span>
+                                <strong>
+                                    <%= user.display_name %>
+                                </strong>
+                                <span class="user-role">
+                                    <%= user.role===0 ? '👑 Admin' : user.role===1 ? '🛠️ Staff' : '👤 User' %>
+                                </span>
                             </div>
                             <div class="dropdown-divider"></div>
                             <a href="/profile" class="dropdown-item">👤 Tài khoản</a>
-                            <% if (typeof isStaff !== 'undefined' && isStaff) { %>
+                            <a href="/my-reports" class="dropdown-item" onclick="return openMyReportsOverlay(event)">📋 Báo cáo của tôi</a>
+                            <% if (typeof isStaff !=='undefined' && isStaff) { %>
                                 <a href="/adopt/admin/add" class="dropdown-item">🐾 Thêm thú cưng</a>
-                            <% } %>
-                            <% if (typeof isAdmin !== 'undefined' && isAdmin) { %>
-                                <a href="/admin" class="dropdown-item">⚙️ Quản trị</a>
-                            <% } %>
-                            <div class="dropdown-divider"></div>
-                            <a href="#" class="dropdown-item logout" id="logoutBtn" onclick="handleLogout(event)">🚪 Đăng xuất</a>
+                                <% } %>
+                                    <% if (typeof isAdmin !=='undefined' && isAdmin) { %>
+                                        <a href="/admin" class="dropdown-item">⚙️ Quản trị</a>
+                                        <% } %>
+                                            <div class="dropdown-divider"></div>
+                                            <a href="#" class="dropdown-item logout" id="logoutBtn"
+                                                onclick="handleLogout(event)">🚪 Đăng xuất</a>
                         </div>
                     </div>
-                <% } else { %>
-                    <a href="/auth/login">Tài khoản</a>
-                <% } %>
-                <span onclick="toggleCart()">Giỏ hàng <span id="cart-count-display">(0)</span></span>
-                <span class="lang-switch">VN / EN</span>
+                    <% } else { %>
+                        <a href="#" onclick="openOverlay('auth-overlay'); return false;"><span>Tài khoản</span></a>
+                        <% } %>
+                            <span>Giỏ hàng <span id="cart-count-display">(0)</span></span>
+                            <span class="lang-switch">VN / EN</span>
             </div>
             <button class="hamburger-btn" id="hamburgerBtn" aria-label="Mở menu">
-                <span class="hamburger-line"></span><span class="hamburger-line"></span><span class="hamburger-line"></span>
+                <span class="hamburger-line"></span><span class="hamburger-line"></span><span
+                    class="hamburger-line"></span>
             </button>
         </div>
         <div class="mobile-nav-overlay" id="mobileNavOverlay"></div>
@@ -397,7 +1849,8 @@
                     <a href="#" class="has-dropdown">Nhận nuôi <span class="nav-arrow">▼</span></a>
                     <ul class="nav-dropdown">
                         <li><a href="/adopt">Xem vật nuôi có thể nhận nuôi</a></li>
-                        <li><a href="/adopt/petsnap" style="color: #ea580c; font-weight: bold;">PetSnap (Tìm kiếm ngẫu hứng!)</a></li>
+                        <li><a href="/adopt/petsnap" style="color: #ea580c; font-weight: bold;">PetSnap (Tìm kiếm ngẫu
+                                hứng!)</a></li>
                         <li><a href="/about">Cách thức nhận nuôi</a></li>
                         <li><a href="/adopt">Nhận nuôi thú cưng</a></li>
                     </ul>
@@ -405,9 +1858,13 @@
                 <li>
                     <a href="#" class="has-dropdown">Thất lạc <span class="nav-arrow">▼</span></a>
                     <ul class="nav-dropdown">
-                        <li><a href="/reports">Báo mất thú cưng</a></li>
-                        <li><a href="/reports">Báo tin nhặt được</a></li>
-                        <li><a href="/about">Mẹo tìm kiếm hiệu quả</a></li>
+                        <li><a href="/lost" onclick="openOverlay('lost-overlay'); return false;">Báo mất thú cưng</a>
+                        </li>
+                        <li><a href="/found" onclick="openOverlay('found-overlay'); return false;">Báo tin nhặt được</a>
+                        </li>
+                        <li><a href="/tips" onclick="openOverlay('tips-overlay'); return false;">Mẹo chăm sóc thú
+                                cưng</a>
+                        </li>
                     </ul>
                 </li>
                 <li>
@@ -432,93 +1889,127 @@
     <!-- ============ MAIN CONTENT ============ -->
     <main class="container">
         <!-- About Section -->
-        <section class="card-box" style="margin-bottom: 40px; overflow: hidden;">
-            <div style="text-align: center; max-width: 800px; margin: 0 auto 30px;">
+        <section class="card-box section" style="overflow: hidden;">
+            <div class="about-header">
                 <h2 class="section-header">Về Pet Helper</h2>
-                <p style="font-size: 1.1rem; color: #333; line-height: 1.6; font-weight: 500;">
+                <p class="about-subtitle">
                     Hành trình kết nối những tâm hồn yêu động vật và xây dựng một cộng đồng bền vững.
                 </p>
             </div>
-            <div style="display: flex; gap: 40px; align-items: center; margin-bottom: 30px;">
-                <div style="flex: 1.1;">
-                    <p style="color: #222; line-height: 1.8; margin-bottom: 18px; font-size: 1.1rem; font-weight: 500;">
-                        Được thành lập tại <strong>BDU UNIS Campus</strong>, Pet Helper là hệ sinh thái toàn diện dành cho những người bạn bốn chân.
+            <div class="about-content">
+                <div class="about-text">
+                    <p class="about-text-main">
+                        Được thành lập tại <strong>BDU UNIS Campus</strong>, Pet Helper là hệ sinh thái toàn diện dành
+                        cho những người bạn bốn chân.
                     </p>
-                    <p style="color: #444; line-height: 1.8; margin-bottom: 18px; font-size: 1rem;">
-                        Chúng tôi tập trung giảm thiểu số lượng thú cưng bị bỏ rơi và hỗ trợ cộng đồng tìm kiếm thú lạc nhanh chóng, hiệu quả nhất.
+                    <p class="about-text-sub">
+                        Chúng tôi tập trung giảm thiểu số lượng thú cưng bị bỏ rơi và hỗ trợ cộng đồng tìm kiếm thú lạc
+                        nhanh chóng, hiệu quả nhất.
                     </p>
-                    <p style="color: #444; line-height: 1.8; font-size: 1rem;">
-                        Mọi hoạt động thuộc dự án <strong>Green Project</strong> đều hướng tới môi trường sống nhân văn và tràn đầy tình thương.
+                    <p class="about-text-sub">
+                        Mọi hoạt động thuộc dự án <strong>Green Project</strong> đều hướng tới môi trường sống nhân văn
+                        và tràn đầy tình thương.
                     </p>
                 </div>
-                <div style="flex: 0.9; display: flex; flex-direction: column; gap: 12px;">
-                    <div style="display: flex; gap: 12px;">
-                        <div style="flex: 1; aspect-ratio: 1/1; overflow: hidden; border-radius: 10px; box-shadow: var(--shadow);">
-                            <img src="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=400&q=80" style="width: 100%; height: 100%; object-fit: cover;" alt="Chó 1">
+                <div class="about-images">
+                    <div class="about-images-row">
+                        <div class="about-img-square">
+                            <img src="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=400&q=80"
+                                alt="Chó 1">
                         </div>
-                        <div style="flex: 1; aspect-ratio: 1/1; overflow: hidden; border-radius: 10px; box-shadow: var(--shadow);">
-                            <img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=400&q=80" style="width: 100%; height: 100%; object-fit: cover;" alt="Chó 2">
+                        <div class="about-img-square">
+                            <img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=400&q=80"
+                                alt="Chó 2">
                         </div>
                     </div>
-                    <div style="width: 100%; aspect-ratio: 1.5/1; overflow: hidden; border-radius: 10px; box-shadow: var(--shadow);">
-                        <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=600&q=80" style="width: 100%; height: 100%; object-fit: cover;" alt="Mèo">
+                    <div class="about-img-wide">
+                        <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=600&q=80"
+                            alt="Mèo">
                     </div>
                 </div>
             </div>
-            <div style="display: flex; gap: 15px; border-top: 1px solid #eee; padding-top: 20px;">
-                <div style="flex: 1; text-align: center; padding: 10px; background: #fdfdfd; border-radius: 10px; border: 1px solid #f0f0f0;">
-                    <div style="font-size: 1.3rem; margin-bottom: 3px;">🏠</div>
-                    <h4 style="color: var(--primary-color); font-size: 0.85rem;">Nhận Nuôi</h4>
+            <div class="feature-icons-bar">
+                <div class="feature-icon-item">
+                    <div class="feature-icon-emoji">🏠</div>
+                    <h4>Nhận Nuôi</h4>
                 </div>
-                <div style="flex: 1; text-align: center; padding: 10px; background: #fdfdfd; border-radius: 10px; border: 1px solid #f0f0f0;">
-                    <div style="font-size: 1.3rem; margin-bottom: 3px;">🔍</div>
-                    <h4 style="color: var(--primary-color); font-size: 0.85rem;">Tìm Kiếm</h4>
+                <div class="feature-icon-item">
+                    <div class="feature-icon-emoji">🔍</div>
+                    <h4>Tìm Kiếm</h4>
                 </div>
-                <div style="flex: 1; text-align: center; padding: 10px; background: #fdfdfd; border-radius: 10px; border: 1px solid #f0f0f0;">
-                    <div style="font-size: 1.3rem; margin-bottom: 3px;">🩺</div>
-                    <h4 style="color: var(--primary-color); font-size: 0.85rem;">Y Tế</h4>
+                <div class="feature-icon-item">
+                    <div class="feature-icon-emoji">🩺</div>
+                    <h4>Y Tế</h4>
                 </div>
-                <div style="flex: 1; text-align: center; padding: 10px; background: #fdfdfd; border-radius: 10px; border: 1px solid #f0f0f0;">
-                    <div style="font-size: 1.3rem; margin-bottom: 3px;">🛒</div>
-                    <h4 style="color: var(--primary-color); font-size: 0.85rem;">Cửa Hàng</h4>
+                <div class="feature-icon-item">
+                    <div class="feature-icon-emoji">🛒</div>
+                    <h4>Cửa Hàng</h4>
                 </div>
             </div>
         </section>
 
         <!-- News Grid Section -->
-        <section class="card-box">
-            <h2 class="news-title">🌿 Bảng Tin 🌿</h2>
+        <section class="card-box section news-section">
+            <div class="section-header">
+                <h2>🌿 Bảng Tin 🌿</h2>
+            </div>
             <div class="news-grid">
-                <div class="grid-item item-large"><img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=600&q=80" alt="Dog"></div>
-                <div class="grid-item"><img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=300&q=80" alt="Dog 2"></div>
-                <div class="grid-item"><img src="https://images.unsplash.com/photo-1533738363-b7f9aef128ce?auto=format&fit=crop&w=300&q=80" alt="Cat 2"></div>
-                <div class="grid-item"><img src="https://images.unsplash.com/photo-1592194996308-7b43878e84a6?auto=format&fit=crop&w=300&q=80" alt="Cat 3"></div>
-                <div class="grid-item item-large"><img src="https://images.unsplash.com/photo-1574158622682-e40e69881006?auto=format&fit=crop&w=600&q=80" alt="Cat Large"></div>
+                <div class="grid-item item-large"><img
+                        src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=600&q=80"
+                        alt="Dog"></div>
+                <div class="grid-item"><img
+                        src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=300&q=80"
+                        alt="Dog 2"></div>
+                <div class="grid-item"><img
+                        src="https://images.unsplash.com/photo-1533738363-b7f9aef128ce?auto=format&fit=crop&w=300&q=80"
+                        alt="Cat 2"></div>
+                <div class="grid-item"><img
+                        src="https://images.unsplash.com/photo-1592194996308-7b43878e84a6?auto=format&fit=crop&w=300&q=80"
+                        alt="Cat 3"></div>
+                <div class="grid-item item-large"><img
+                        src="https://images.unsplash.com/photo-1574158622682-e40e69881006?auto=format&fit=crop&w=600&q=80"
+                        alt="Cat Large"></div>
             </div>
         </section>
 
         <!-- Adopt Slider -->
-        <section>
+        <section class="section">
             <div class="adopt-layout">
                 <div class="adopt-slider-container">
                     <div class="slide-item active">
-                        <img src="https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=800&q=80" class="ken-burns-img" alt="Slide 1">
-                        <div class="slider-caption-box"><h3>🐶 Bé Golden - Đang tìm mái ấm</h3><p>3 tuổi, rất ngoan, thích chạy nhảy ngoài công viên.</p></div>
+                        <img src="https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=800&q=80"
+                            class="ken-burns-img" alt="Slide 1">
+                        <div class="slider-caption-box">
+                            <h3>🐶 Bé Golden - Đang tìm mái ấm</h3>
+                            <p>3 tuổi, rất ngoan, thích chạy nhảy ngoài công viên.</p>
+                        </div>
                     </div>
                     <div class="slide-item">
-                        <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=800&q=80" class="ken-burns-img" alt="Slide 2">
-                        <div class="slider-caption-box"><h3>🐱 Mèo Mướp - Cần người yêu thương</h3><p>Được cứu hộ từ bãi đất trống, hiện đã khỏe mạnh.</p></div>
+                        <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=800&q=80"
+                            class="ken-burns-img" alt="Slide 2">
+                        <div class="slider-caption-box">
+                            <h3>🐱 Mèo Mướp - Cần người yêu thương</h3>
+                            <p>Được cứu hộ từ bãi đất trống, hiện đã khỏe mạnh.</p>
+                        </div>
                     </div>
                     <div class="slide-item">
-                        <img src="https://images.unsplash.com/photo-1576201836106-db1758fd1c97?auto=format&fit=crop&w=800&q=80" class="ken-burns-img" style="animation-direction: alternate-reverse;" alt="Slide 3">
-                        <div class="slider-caption-box"><h3>🩺 Dịch vụ chăm sóc thú cưng tận tâm</h3><p>Đặt lịch khám, tiêm phòng và spa cho boss.</p></div>
+                        <img src="https://images.unsplash.com/photo-1576201836106-db1758fd1c97?auto=format&fit=crop&w=800&q=80"
+                            class="ken-burns-img" style="animation-direction: alternate-reverse;" alt="Slide 3">
+                        <div class="slider-caption-box">
+                            <h3>🩺 Dịch vụ chăm sóc thú cưng tận tâm</h3>
+                            <p>Đặt lịch khám, tiêm phòng và spa cho boss.</p>
+                        </div>
                     </div>
                 </div>
                 <div class="adopt-links">
-                    <a href="/reports" class="link-btn"><span>🔍 Bạn lạc thú cưng?</span><span>→</span></a>
-                    <a href="/reports" class="link-btn"><span>🏠 Bạn nhặt được thú cưng?</span><span>→</span></a>
-                    <a href="/about" class="link-btn"><span>🩺 Cách chăm sóc thú cưng?</span><span>→</span></a>
+                    <a href="/lost" class="link-btn" onclick="openOverlay('lost-overlay'); return false;"><span>🔍 Bạn
+                            lạc thú cưng?</span><span>→</span></a>
+                    <a href="/found" class="link-btn" onclick="openOverlay('found-overlay'); return false;"><span>🏠 Bạn
+                            nhặt được thú cưng?</span><span>→</span></a>
+                    <a href="/tips" class="link-btn" onclick="openOverlay('tips-overlay'); return false;"><span>🩺 Cách
+                            chăm sóc thú cưng?</span><span>→</span></a>
                     <a href="#contact-section" class="link-btn"><span>📞 Liên hệ hỗ trợ</span><span>→</span></a>
+                    <a href="/sheep" class="link-btn"><span>The sheep 🐏</span><span>→</span></a>
                 </div>
             </div>
             <div class="adopt-label-text">Xem thêm thú có thể nhận nuôi</div>
@@ -530,128 +2021,279 @@
         </section>
 
         <!-- Contact Section -->
-        <section class="contact-container" id="contact-section">
-            <div style="flex:1; padding-right:40px;">
+        <section class="contact-section section" id="contact-section">
+            <div class="contact-info">
                 <h2>LIÊN HỆ HỖ TRỢ</h2>
-                <div class="social-icons" style="margin:20px 0;"><span>FB</span><span>YT</span><span>IG</span></div>
-                <div style="line-height:1.6;">📍 Trụ sở: BDU UNIS Campus<br>📧 Email: support@pethelper.vn<br>📞 Hotline: 1900-XXXX</div>
+                <div class="contact-socials"><span class="social-icon">FB</span><span class="social-icon">YT</span><span
+                        class="social-icon">IG</span></div>
+                <div class="contact-details">📍 Trụ sở: BDU UNIS Campus<br>📧 Email: support@pethelper.vn<br>📞 Hotline:
+                    1900-XXXX</div>
             </div>
             <div class="form-area">
-                <h3 style="margin-bottom:20px; color:var(--primary-color);">Gửi tin nhắn</h3>
+                <h3 class="form-title">Gửi tin nhắn</h3>
                 <input class="form-input" placeholder="Họ tên của bạn">
                 <input class="form-input" placeholder="Email / SĐT">
                 <textarea class="form-input" rows="3" placeholder="Lời nhắn..."></textarea>
-                <button class="submit-btn" onclick="Swal.fire('Đã gửi!', 'Chúng tôi sẽ liên hệ lại sớm nhất.', 'success')">Gửi thông tin</button>
+                <button class="submit-btn"
+                    onclick="Swal.fire('Đã gửi!', 'Chúng tôi sẽ liên hệ lại sớm nhất.', 'success')">Gửi thông
+                    tin</button>
             </div>
         </section>
-        
+
         <div class="footer-bottom">&copy; 2026 Pet Helper Green Project.</div>
     </main>
 
     <%- include('partials/footer') %>
 
-    <script>
-        // --- SLIDER ---
-        let currentSlide = 0;
-        const slides = document.querySelectorAll('.slide-item');
-        function nextSlide() {
-            slides[currentSlide].classList.remove('active');
-            currentSlide = (currentSlide + 1) % slides.length;
-            slides[currentSlide].classList.add('active');
-        }
-        if (slides.length > 0) setInterval(nextSlide, 5000);
-
-        // --- OVERLAY LOGIC ---
-        function openOverlay(id) { document.getElementById(id).style.display = 'block'; document.body.style.overflow = 'hidden'; }
-        function closeOverlay(id) { document.getElementById(id).style.display = 'none'; document.body.style.overflow = 'auto'; }
-
-        // --- LOGIC GIỎ HÀNG ---
-        let cart = [];
-        function toggleCart() { document.getElementById('cart-sidebar').classList.toggle('open'); }
-        function addToCart(name, price) {
-            let existingItem = cart.find(item => item.name === name);
-            if (existingItem) { existingItem.quantity++; } else { cart.push({ name, price, quantity: 1 }); }
-            updateCartUI();
-        }
-        function removeItem(index) { cart.splice(index, 1); updateCartUI(); }
-        function changeQty(index, delta) {
-            cart[index].quantity += delta;
-            if (cart[index].quantity <= 0) cart.splice(index, 1);
-            updateCartUI();
-        }
-        function updateCartUI() {
-            const totalCount = cart.reduce((acc, item) => acc + item.quantity, 0);
-            document.getElementById('cart-count-display').innerText = `(${totalCount})`;
-            const container = document.getElementById('cart-items-container');
-            const totalDisplay = document.getElementById('cart-total');
-            if (cart.length === 0) {
-                container.innerHTML = '<div style="text-align: center; color: #777; margin-top: 20px;">Giỏ hàng trống</div>';
-                totalDisplay.innerText = '0đ'; return;
+        <script>
+            // --- SLIDER ---
+            let currentSlide = 0;
+            const slides = document.querySelectorAll('.slide-item');
+            function nextSlide() {
+                slides[currentSlide].classList.remove('active');
+                currentSlide = (currentSlide + 1) % slides.length;
+                slides[currentSlide].classList.add('active');
             }
-            let html = ''; let totalPrice = 0;
-            cart.forEach((item, index) => {
-                totalPrice += item.price * item.quantity;
-                html += `<div class="cart-item-row">
+            if (slides.length > 0) setInterval(nextSlide, 5000);
+
+            // --- OVERLAY LOGIC (backward-compatible) ---
+            function openOverlay(id) {
+                var el = document.getElementById(id);
+                if (!el) return;
+                // New report overlays use class 'report-overlay' with .active toggle
+                if (el.classList.contains('report-overlay')) {
+                    el.classList.add('active');
+                } else {
+                    // Legacy overlays (login, shop, booking, news) use display: block
+                    el.style.display = 'block';
+                }
+                document.body.style.overflow = 'hidden';
+            }
+            function closeOverlay(id) {
+                var el = document.getElementById(id);
+                if (!el) return;
+                if (el.classList.contains('report-overlay')) {
+                    el.classList.remove('active');
+                } else {
+                    el.style.display = 'none';
+                }
+                document.body.style.overflow = 'auto';
+            }
+
+            // --- ESC KEY TO CLOSE OVERLAYS ---
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') {
+                    // Close report overlays
+                    document.querySelectorAll('.report-overlay.active').forEach(function (overlay) {
+                        closeOverlay(overlay.id);
+                    });
+                    // Close legacy overlays
+                    document.querySelectorAll('.full-overlay').forEach(function (overlay) {
+                        if (overlay.style.display === 'block') {
+                            closeOverlay(overlay.id);
+                        }
+                    });
+                }
+            });
+
+            // --- AJAX FORM SUBMISSION FOR REPORT OVERLAYS ---
+            function showReportToast(message, isError) {
+                // Remove any existing toast
+                var existing = document.querySelector('.report-toast');
+                if (existing) existing.remove();
+                var toast = document.createElement('div');
+                toast.className = 'report-toast' + (isError ? ' report-toast--error' : '');
+                toast.textContent = message;
+                document.body.appendChild(toast);
+                // Trigger animation
+                requestAnimationFrame(function () {
+                    toast.classList.add('show');
+                });
+                setTimeout(function () {
+                    toast.classList.remove('show');
+                    setTimeout(function () { toast.remove(); }, 400);
+                }, 3500);
+            }
+
+            function setupReportForm(formId, overlayId) {
+                var form = document.getElementById(formId);
+                if (!form) return;
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    var fileInput = form.querySelector('input[name="images"]');
+                    var phoneInput = form.querySelector('input[name="phone"]');
+                    var phoneValue = phoneInput ? phoneInput.value.trim() : '';
+                    var phoneRegex = /^[0-9\-\+]{9,15}$/;
+
+                    if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+                        showReportToast('❌ Vui lòng tải lên ít nhất một ảnh.', true);
+                        return;
+                    }
+
+                    if (phoneValue && !phoneRegex.test(phoneValue)) {
+                        showReportToast('❌ Số điện thoại không hợp lệ (9-15 ký tự số).', true);
+                        return;
+                    }
+
+                    var submitBtn = form.querySelector('button[type="submit"]');
+                    var originalText = submitBtn.innerHTML;
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '⏳ Đang gửi...';
+
+                    var formData = new FormData(form);
+                    fetch('/reports', {
+                        method: 'POST',
+                        body: formData
+                    })
+                        .then(function (response) {
+                            if (!response.ok) {
+                                var contentType = response.headers.get('content-type') || '';
+                                if (contentType.indexOf('application/json') !== -1) {
+                                    return response.json()
+                                        .then(function (data) {
+                                            var message = (data && (data.message || data.error)) || ('Server trả về lỗi ' + response.status);
+                                            throw new Error(message);
+                                        })
+                                        .catch(function (err) {
+                                            if (err instanceof SyntaxError) {
+                                                throw new Error('Server trả về lỗi ' + response.status);
+                                            }
+                                            throw err;
+                                        });
+                                }
+
+                                return response.text().then(function (text) {
+                                    var message = text && text.trim() ? text.trim() : ('Server trả về lỗi ' + response.status);
+                                    throw new Error(message);
+                                });
+                            }
+                            return response;
+                        })
+                        .then(function () {
+                            // Success: close overlay, reset form, show toast
+                            closeOverlay(overlayId);
+                            form.reset();
+                            // Reset file name displays
+                            form.querySelectorAll('.report-file-name').forEach(function (el) {
+                                el.textContent = 'Chưa có file nào được chọn';
+                            });
+                            showReportToast('✅ Đăng tin thành công! Cảm ơn bạn.', false);
+                        })
+                        .catch(function (err) {
+                            // Error: do NOT close modal, show error toast
+                            showReportToast('❌ Gửi thất bại: ' + err.message, true);
+                        })
+                        .finally(function () {
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = originalText;
+                        });
+                });
+            }
+
+            // Initialize AJAX for both report forms
+            document.addEventListener('DOMContentLoaded', function () {
+                setupReportForm('lost-report-form', 'lost-overlay');
+                setupReportForm('found-report-form', 'found-overlay');
+            });
+
+            // --- LOGIC GIỎ HÀNG ---
+            let cart = [];
+            function toggleCart() { document.getElementById('cart-sidebar').classList.toggle('open'); }
+            function addToCart(name, price) {
+                let existingItem = cart.find(item => item.name === name);
+                if (existingItem) { existingItem.quantity++; } else { cart.push({ name, price, quantity: 1 }); }
+                updateCartUI();
+            }
+            function removeItem(index) { cart.splice(index, 1); updateCartUI(); }
+            function changeQty(index, delta) {
+                cart[index].quantity += delta;
+                if (cart[index].quantity <= 0) cart.splice(index, 1);
+                updateCartUI();
+            }
+            function updateCartUI() {
+                const totalCount = cart.reduce((acc, item) => acc + item.quantity, 0);
+                document.getElementById('cart-count-display').innerText = `(${totalCount})`;
+                const container = document.getElementById('cart-items-container');
+                const totalDisplay = document.getElementById('cart-total');
+                if (cart.length === 0) {
+                    container.innerHTML = '<div style="text-align: center; color: #777; margin-top: 20px;">Giỏ hàng trống</div>';
+                    totalDisplay.innerText = '0đ'; return;
+                }
+                let html = ''; let totalPrice = 0;
+                cart.forEach((item, index) => {
+                    totalPrice += item.price * item.quantity;
+                    html += `<div class="cart-item-row">
                     <div class="cart-item-top"><span>${item.name}</span><span class="cart-remove-btn" onclick="removeItem(${index})">Xóa</span></div>
                     <div class="cart-item-bottom">
                         <div class="qty-control"><button class="qty-btn" onclick="changeQty(${index}, -1)">-</button><span>${item.quantity}</span><button class="qty-btn" onclick="changeQty(${index}, 1)">+</button></div>
                         <div style="font-weight:bold;">${(item.price * item.quantity).toLocaleString()}đ</div>
                     </div>
                 </div>`;
-            });
-            container.innerHTML = html;
-            totalDisplay.innerText = totalPrice.toLocaleString() + 'đ';
-        }
-
-        // --- USER DROPDOWN ---
-        const userDropdownBtn = document.getElementById('userDropdownBtn');
-        const userDropdown = document.getElementById('userDropdown');
-        if (userDropdownBtn) {
-            userDropdownBtn.addEventListener('click', (e) => { e.stopPropagation(); userDropdown.classList.toggle('active'); });
-            document.addEventListener('click', () => { userDropdown.classList.remove('active'); });
-        }
-
-        // --- LOGOUT ---
-        async function handleLogout(e) {
-            e.preventDefault();
-            try { await fetch('/auth/logout', { method: 'GET' }); } catch (err) {}
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            window.location.href = '/';
-        }
-
-        // --- HAMBURGER MOBILE ---
-        (function () {
-            const hamburgerBtn = document.getElementById('hamburgerBtn');
-            const mainNav = document.getElementById('mainNav');
-            const overlay = document.getElementById('mobileNavOverlay');
-            const closeBtn = document.getElementById('mobileNavClose');
-            function openMenu() { mainNav.classList.add('mobile-open'); overlay.classList.add('active'); document.body.style.overflow = 'hidden'; }
-            function closeMenu() { mainNav.classList.remove('mobile-open'); overlay.classList.remove('active'); document.body.style.overflow = ''; }
-            if (hamburgerBtn) hamburgerBtn.addEventListener('click', openMenu);
-            if (overlay) overlay.addEventListener('click', closeMenu);
-            if (closeBtn) closeBtn.addEventListener('click', closeMenu);
-            document.querySelectorAll('.main-nav .has-dropdown').forEach(function (link) {
-                link.addEventListener('click', function (e) {
-                    if (window.innerWidth <= 768) {
-                        e.preventDefault();
-                        const dropdown = this.nextElementSibling;
-                        if (dropdown && dropdown.classList.contains('nav-dropdown')) {
-                            dropdown.classList.toggle('mobile-show');
-                            document.querySelectorAll('.nav-dropdown.mobile-show').forEach(function (d) { if (d !== dropdown) d.classList.remove('mobile-show'); });
-                        }
-                    }
                 });
-            });
-        })();
+                container.innerHTML = html;
+                totalDisplay.innerText = totalPrice.toLocaleString() + 'đ';
+            }
 
-        // --- ANIMATION ---
-        document.addEventListener("DOMContentLoaded", function() {
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add("visible"); });
-            }, { threshold: 0.15 });
-            document.querySelectorAll("section").forEach(s => observer.observe(s));
-        });
-    </script>
+            // --- USER DROPDOWN ---
+            const userDropdownBtn = document.getElementById('userDropdownBtn');
+            const userDropdown = document.querySelector('.user-dropdown') || document.getElementById('userDropdown');
+            if (userDropdownBtn && userDropdown) {
+                userDropdownBtn.addEventListener('click', (e) => { e.stopPropagation(); userDropdown.classList.toggle('active'); });
+                document.addEventListener('click', () => { userDropdown.classList.remove('active'); });
+            }
+
+            // --- LOGOUT ---
+            async function handleLogout(e) {
+                e.preventDefault();
+                try { await fetch('/auth/logout', { method: 'GET' }); } catch (err) { }
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = '/';
+            }
+
+            // --- HAMBURGER MOBILE ---
+            (function () {
+                const hamburgerBtn = document.getElementById('hamburgerBtn');
+                const mainNav = document.getElementById('mainNav');
+                const overlay = document.getElementById('mobileNavOverlay');
+                const closeBtn = document.getElementById('mobileNavClose');
+                function openMenu() { mainNav.classList.add('mobile-open'); overlay.classList.add('active'); document.body.style.overflow = 'hidden'; }
+                function closeMenu() { mainNav.classList.remove('mobile-open'); overlay.classList.remove('active'); document.body.style.overflow = ''; }
+                if (hamburgerBtn) hamburgerBtn.addEventListener('click', openMenu);
+                if (overlay) overlay.addEventListener('click', closeMenu);
+                if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+                document.querySelectorAll('.main-nav .has-dropdown').forEach(function (link) {
+                    link.addEventListener('click', function (e) {
+                        if (window.innerWidth <= 768) {
+                            e.preventDefault();
+                            const dropdown = this.nextElementSibling;
+                            if (dropdown && dropdown.classList.contains('nav-dropdown')) {
+                                dropdown.classList.toggle('mobile-show');
+                                document.querySelectorAll('.nav-dropdown.mobile-show').forEach(function (d) { if (d !== dropdown) d.classList.remove('mobile-show'); });
+                            }
+                        }
+                    });
+                });
+            })();
+
+            // --- ANIMATION ---
+            document.addEventListener("DOMContentLoaded", function () {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add("visible"); });
+                }, { threshold: 0.15 });
+                document.querySelectorAll("section").forEach(s => observer.observe(s));
+            });
+        </script>
+
+        <%- include('partials/auth-overlay') %>
+            <%- include('partials/lost-overlay') %>
+                <%- include('partials/found-overlay') %>
+                    <%- include('partials/tips-overlay') %>
+                        <%- include('partials/my-reports-overlay') %>
+
+                        <!-- Toast container for report notifications -->
+                        <div id="report-toast-container"></div>
+
 </body>
+
 </html>

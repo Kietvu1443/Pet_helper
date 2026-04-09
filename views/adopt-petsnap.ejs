@@ -631,8 +631,8 @@
     <header class="app-header">
         <button class="menu-btn" id="menuBtn"><i class="fa-solid fa-bars"></i></button>
         <div class="logo">
-            <img src="/images/bongocat.png" alt="PetSnap Cat" class="logo-icon"
-                style="height: 40px; width: auto; object-fit: contain;">
+            <a href="/"><img src="/images/bongocat.png" alt="PetSnap Cat" class="logo-icon"
+                    style="height: 70px; width: auto; object-fit: contain;"></a>
             PetSnap
         </div>
         <div style="width: 30px;"></div>
@@ -1251,15 +1251,15 @@
             });
         })();
     </script>
-<script>
-function fallbackPetImage(img, id) {
-    img.onerror = function () {
-        img.onerror = null;
-        img.src = "/images/logo.svg";
-    };
-    img.src = "/api/pets/" + id + "/local-avatar";
-}
-</script>
+    <script>
+        function fallbackPetImage(img, id) {
+            img.onerror = function () {
+                img.onerror = null;
+                img.src = "/images/logo.svg";
+            };
+            img.src = "/api/pets/" + id + "/local-avatar";
+        }
+    </script>
 </body>
 
 </html>

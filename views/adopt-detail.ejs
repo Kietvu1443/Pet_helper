@@ -32,7 +32,7 @@
                                 : [];
                         %>
                             <img src="<%= mainImage %>" alt="<%= pet.name %>" class="pet-main-image" id="mainImage"
-                                onerror="fallbackPetImage(this, '<%= pet.id %>')">
+                                data-pet-id="<%= pet.id %>" onerror="fallbackPetImage(this, this.dataset.petId)">
                             <div class="pet-status-badge <%= pet.status %>">
                                 <%= pet.status==='available' ? '🟢 Sẵn sàng nhận nuôi' : pet.status==='pending'
                                     ? '🟡 Đang xử lý' : '🔴 Đã được nhận nuôi' %>
@@ -42,10 +42,12 @@
                                 <div class="pet-gallery">
                                     <% images.forEach(function(img, index) { %>
                                         <div class="gallery-thumb <%= index === 0 ? 'active' : '' %>"
-                                            onclick="changeMainImage('<%= img.image_path %>', this)">
+                                            data-image-path="<%= img.image_path %>"
+                                            onclick="changeMainImage(this.dataset.imagePath, this)">
                                             <img src="<%= img.image_path %>"
                                                 alt="<%= pet.name %> - Ảnh <%= index + 1 %>"
-                                                onerror="fallbackPetImage(this, '<%= pet.id %>')">
+                                                data-pet-id="<%= pet.id %>"
+                                                onerror="fallbackPetImage(this, this.dataset.petId)">
                                         </div>
                                         <% }); %>
                                 </div>
@@ -171,7 +173,8 @@
                                 <% if (pet.status==='available' ) { %>
                                     <div class="adopt-actions">
                                         <% if (typeof isAuthenticated !=='undefined' && isAuthenticated) { %>
-                                            <button class="btn btn-green btn-lg" id="adoptBtn">
+                                            <button class="btn btn-green btn-lg" id="adoptBtn"
+                                                data-pet-id="<%= pet.id %>">
                                                 ❤️ Đăng ký nhận nuôi
                                             </button>
                                             <% } else { %>
@@ -179,7 +182,9 @@
                                                     🔐 Đăng nhập để nhận nuôi
                                                 </a>
                                                 <% } %>
-                                                    <button class="btn btn-outline-gray" id="shareBtn">
+                                                    <button class="btn btn-outline-gray" id="shareBtn"
+                                                        data-share-title="<%= (pet.name || '') + ' - Pet Helper' %>"
+                                                        data-share-text="<%= pet.description || '' %>">
                                                         📤 Chia sẻ
                                                     </button>
                                     </div>
@@ -218,20 +223,64 @@
                             // User đã xác thực → cho phép nhận nuôi
                             Swal.fire({
                                 title: 'Đăng ký nhận nuôi',
-                                text: 'Bạn muốn đăng ký nhận nuôi <%= pet.name %>?',
-                                icon: 'question',
+                                html: `
+                                    <p style="margin-bottom: 12px;">Vui lòng cho biết lý do bạn muốn nhận nuôi <b><%= pet.name %></b>:</p>
+                                    <textarea id="adoptionMessage" class="swal2-textarea" placeholder="Ví dụ: Tôi có kinh nghiệm nuôi thú cưng và môi trường phù hợp..."></textarea>
+                                `,
+                                icon: 'info',
                                 showCancelButton: true,
                                 confirmButtonColor: '#10B981',
                                 cancelButtonColor: '#64748B',
-                                confirmButtonText: 'Xác nhận',
-                                cancelButtonText: 'Hủy'
-                            }).then((result) => {
-                                if (result.isConfirmed) {
+                                confirmButtonText: 'Gửi đăng ký',
+                                cancelButtonText: 'Hủy',
+                                preConfirm: () => {
+                                    const message = document.getElementById('adoptionMessage').value.trim();
+                                    if (!message) {
+                                        Swal.showValidationMessage('Vui lòng nhập lý do nhận nuôi');
+                                        return false;
+                                    }
+                                    return message;
+                                }
+                            }).then(async (result) => {
+                                if (result.isConfirmed && result.value) {
+                                    const message = result.value;
+                                    try {
+                                        const response = await fetch('/api/adoption-requests', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json'
+                                            },
+                                            body: JSON.stringify({
+                                                petId: adoptBtn.dataset.petId,
+                                                message
+                                            })
+                                        });
+
+                                        const data = await response.json();
+                                        if (!response.ok) {
+                                            throw new Error(data.message || 'Không thể gửi yêu cầu nhận nuôi');
+                                        }
+
+                                        Swal.fire({
+                                            title: 'Đăng ký thành công!',
+                                            text: 'Hồ sơ của bạn đã được gửi và đang chờ xét duyệt.',
+                                            icon: 'success',
+                                            confirmButtonColor: '#10B981'
+                                        });
+                                    } catch (error) {
+                                        Swal.fire({
+                                            title: 'Không thể gửi yêu cầu',
+                                            text: error.message || 'Đã xảy ra lỗi, vui lòng thử lại.',
+                                            icon: 'error',
+                                            confirmButtonColor: '#EF4444'
+                                        });
+                                    }
+                                } else if (result.isConfirmed) {
                                     Swal.fire({
-                                        title: 'Đã đăng ký!',
-                                        text: 'Chúng tôi sẽ liên hệ với bạn sớm nhất.',
-                                        icon: 'success',
-                                        confirmButtonColor: '#10B981'
+                                        title: 'Thiếu thông tin',
+                                        text: 'Vui lòng nhập lý do nhận nuôi trước khi gửi.',
+                                        icon: 'warning',
+                                        confirmButtonColor: '#F59E0B'
                                     });
                                 }
                             });
@@ -245,8 +294,8 @@
                     shareBtn.addEventListener('click', () => {
                         if (navigator.share) {
                             navigator.share({
-                                title: '<%= pet.name %> - Pet Helper',
-                                text: '<%= pet.description || "" %>',
+                                title: shareBtn.dataset.shareTitle || 'Pet Helper',
+                                text: shareBtn.dataset.shareText || '',
                                 url: window.location.href
                             });
                         } else {

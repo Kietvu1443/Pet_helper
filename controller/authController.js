@@ -118,14 +118,14 @@ const authController = {
       const user = await User.findByDisplayName(display_name);
       if (!user) {
         return res.status(401).json({
-          error: "Tên đăng nhập hoặc mật khẩu không đúng",
+          error: "Tên đăng nhập hoặc mật khẩu bị sai",
         });
       }
 
       const isMatch = await User.comparePassword(password, user.password);
       if (!isMatch) {
         return res.status(401).json({
-          error: "Tên đăng nhập hoặc mật khẩu không đúng",
+          error: "Tên đăng nhập hoặc mật khẩu bị sai",
         });
       }
 

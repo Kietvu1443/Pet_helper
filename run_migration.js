@@ -16,6 +16,7 @@ async function runMigration() {
   const queries = [
     `CREATE TABLE IF NOT EXISTS reports (
         id INT PRIMARY KEY AUTO_INCREMENT,
+      user_id INT NULL,
         type ENUM('lost','found') NOT NULL,
         reporter_name VARCHAR(255) NULL,
         phone VARCHAR(20) NOT NULL,
@@ -35,8 +36,19 @@ async function runMigration() {
     `ALTER TABLE pet_images ADD COLUMN cloudinary_id VARCHAR(255) NULL`,
     `ALTER TABLE pet_images MODIFY COLUMN pet_id INT NULL`,
     `ALTER TABLE pet_images ADD CONSTRAINT fk_petimages_report FOREIGN KEY (report_id) REFERENCES reports(id) ON DELETE CASCADE`,
+    `ALTER TABLE reports ADD COLUMN user_id INT NULL`,
+    `ALTER TABLE reports ADD CONSTRAINT fk_reports_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL`,
+    `UPDATE reports r
+      JOIN users u
+        ON LOWER(TRIM(r.email)) COLLATE utf8mb4_unicode_ci
+         = LOWER(TRIM(u.email)) COLLATE utf8mb4_unicode_ci
+      SET r.user_id = u.id
+      WHERE r.user_id IS NULL
+        AND r.email IS NOT NULL
+        AND TRIM(r.email) <> ''`,
     `CREATE INDEX idx_reports_status_type ON reports (status, type)`,
     `CREATE INDEX idx_reports_created_desc ON reports (created_at DESC)`,
+    `CREATE INDEX idx_reports_user_created ON reports (user_id, created_at DESC)`,
     `CREATE INDEX idx_petimages_reportid ON pet_images (report_id)`
   ];
 

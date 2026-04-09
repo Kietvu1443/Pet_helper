@@ -1186,6 +1186,405 @@
                 right: -100%;
             }
         }
+
+        /* ============ REPORT OVERLAY STYLES ============ */
+        .report-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 5000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.35s ease, visibility 0.35s ease;
+        }
+
+        .report-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .report-overlay-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .report-overlay-modal {
+            position: relative;
+            background: #fff;
+            border-radius: 16px;
+            width: 95%;
+            max-width: 720px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+            transform: scale(0.9) translateY(20px);
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 1;
+        }
+
+        .report-overlay.active .report-overlay-modal {
+            transform: scale(1) translateY(0);
+        }
+
+        /* Scrollbar styling */
+        .report-overlay-modal::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .report-overlay-modal::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .report-overlay-modal::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 3px;
+        }
+
+        .report-overlay-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: #fff;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .report-overlay-close:hover {
+            background: #ff4757;
+            transform: rotate(90deg);
+        }
+
+        /* Form Header */
+        .report-form-header {
+            padding: 20px 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 16px 16px 0 0;
+        }
+
+        .report-form-header--lost {
+            background: linear-gradient(135deg, #2a6b47, #1e5038);
+        }
+
+        .report-form-header--found {
+            background: linear-gradient(135deg, #065f46, #047857);
+        }
+
+        .report-form-header__left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .report-form-header__title {
+            color: #fff;
+            font-size: 1.15rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 0;
+        }
+
+        .report-sos-badge {
+            background: #ff4757;
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 4px;
+            letter-spacing: 1px;
+            box-shadow: 0 2px 6px rgba(255, 71, 87, 0.4);
+        }
+
+        .report-found-badge {
+            font-size: 1.4rem;
+        }
+
+        /* Form Body */
+        .report-form-body {
+            padding: 28px;
+            background: #f8fafc;
+        }
+
+        .report-form-section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin: 0 0 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .report-form-section-title--lost {
+            color: #e11d48;
+        }
+
+        .report-form-section-title--found {
+            color: #065f46;
+        }
+
+        .report-form-section-subtitle {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin: -12px 0 20px;
+        }
+
+        /* Form Grid */
+        .report-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        @media (max-width: 520px) {
+            .report-form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .report-form-field {
+            margin-bottom: 16px;
+        }
+
+        .report-form-field--full {
+            grid-column: 1 / -1;
+        }
+
+        .report-form-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+
+        .report-required {
+            color: #ef4444;
+        }
+
+        .report-form-input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1.5px solid #d1d5db;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            background: #fff;
+            color: #1f2937;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .report-form-input:focus {
+            border-color: #2a6b47;
+            box-shadow: 0 0 0 3px rgba(42, 107, 71, 0.12);
+        }
+
+        .report-form-textarea {
+            resize: none;
+        }
+
+        .report-form-highlight-box {
+            background: #ecfdf5;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .report-form-highlight-box .report-form-grid {
+            margin-bottom: 0;
+        }
+
+        /* Radio group */
+        .report-radio-group {
+            display: flex;
+            gap: 18px;
+            padding-top: 4px;
+        }
+
+        .report-radio-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+            color: #374151;
+            cursor: pointer;
+        }
+
+        .report-radio-label input[type="radio"] {
+            accent-color: #047857;
+        }
+
+        /* File upload */
+        .report-file-upload {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .report-file-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: #fff;
+            border: 1.5px solid #d1d5db;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: #374151;
+            transition: all 0.2s;
+        }
+
+        .report-file-btn:hover {
+            background: #f9fafb;
+            border-color: #2a6b47;
+        }
+
+        .report-file-hidden {
+            display: none;
+        }
+
+        .report-file-name {
+            font-size: 0.85rem;
+            color: #9ca3af;
+            font-style: italic;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Dropzone style */
+        .report-file-upload--dropzone {
+            flex-direction: column;
+        }
+
+        .report-dropzone-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            min-height: 110px;
+            border: 2px dashed #d1d5db;
+            border-radius: 12px;
+            cursor: pointer;
+            background: #f9fafb;
+            transition: all 0.2s;
+            gap: 8px;
+            color: #9ca3af;
+            padding: 16px;
+        }
+
+        .report-dropzone-label:hover {
+            border-color: #047857;
+            background: #ecfdf5;
+        }
+
+        .report-dropzone-label p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+
+        /* Form Footer */
+        .report-form-footer {
+            padding: 20px 28px;
+            background: #fff;
+            border-top: 1px solid #f1f5f9;
+            border-radius: 0 0 16px 16px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .report-submit-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 32px;
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .report-submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .report-submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .report-submit-btn--lost {
+            background: linear-gradient(135deg, #e11d48, #be123c);
+        }
+
+        .report-submit-btn--found {
+            background: linear-gradient(135deg, #059669, #047857);
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+            padding: 14px;
+        }
+
+        .report-submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Success toast */
+        .report-toast {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            z-index: 6000;
+            background: #065f46;
+            color: #fff;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            transform: translateX(120%);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .report-toast.show {
+            transform: translateX(0);
+        }
+
+        .report-toast--error {
+            background: #991b1b;
+        }
     </style>
 </head>
 
@@ -1419,6 +1818,7 @@
                             </div>
                             <div class="dropdown-divider"></div>
                             <a href="/profile" class="dropdown-item">👤 Tài khoản</a>
+                            <a href="/my-reports" class="dropdown-item" onclick="return openMyReportsOverlay(event)">📋 Báo cáo của tôi</a>
                             <% if (typeof isStaff !=='undefined' && isStaff) { %>
                                 <a href="/adopt/admin/add" class="dropdown-item">🐾 Thêm thú cưng</a>
                                 <% } %>
@@ -1458,9 +1858,13 @@
                 <li>
                     <a href="#" class="has-dropdown">Thất lạc <span class="nav-arrow">▼</span></a>
                     <ul class="nav-dropdown">
-                        <li><a href="/lost">Báo mất thú cưng</a></li>
-                        <li><a href="/found">Báo tin nhặt được</a></li>
-                        <li><a href="/about">Mẹo tìm kiếm hiệu quả</a></li>
+                        <li><a href="/lost" onclick="openOverlay('lost-overlay'); return false;">Báo mất thú cưng</a>
+                        </li>
+                        <li><a href="/found" onclick="openOverlay('found-overlay'); return false;">Báo tin nhặt được</a>
+                        </li>
+                        <li><a href="/tips" onclick="openOverlay('tips-overlay'); return false;">Mẹo chăm sóc thú
+                                cưng</a>
+                        </li>
                     </ul>
                 </li>
                 <li>
@@ -1598,9 +2002,12 @@
                     </div>
                 </div>
                 <div class="adopt-links">
-                    <a href="/lost" class="link-btn"><span>🔍 Bạn lạc thú cưng?</span><span>→</span></a>
-                    <a href="/found" class="link-btn"><span>🏠 Bạn nhặt được thú cưng?</span><span>→</span></a>
-                    <a href="/tips" class="link-btn"><span>🩺 Cách chăm sóc thú cưng?</span><span>→</span></a>
+                    <a href="/lost" class="link-btn" onclick="openOverlay('lost-overlay'); return false;"><span>🔍 Bạn
+                            lạc thú cưng?</span><span>→</span></a>
+                    <a href="/found" class="link-btn" onclick="openOverlay('found-overlay'); return false;"><span>🏠 Bạn
+                            nhặt được thú cưng?</span><span>→</span></a>
+                    <a href="/tips" class="link-btn" onclick="openOverlay('tips-overlay'); return false;"><span>🩺 Cách
+                            chăm sóc thú cưng?</span><span>→</span></a>
                     <a href="#contact-section" class="link-btn"><span>📞 Liên hệ hỗ trợ</span><span>→</span></a>
                     <a href="/sheep" class="link-btn"><span>The sheep 🐏</span><span>→</span></a>
                 </div>
@@ -1649,9 +2056,145 @@
             }
             if (slides.length > 0) setInterval(nextSlide, 5000);
 
-            // --- OVERLAY LOGIC ---
-            function openOverlay(id) { document.getElementById(id).style.display = 'block'; document.body.style.overflow = 'hidden'; }
-            function closeOverlay(id) { document.getElementById(id).style.display = 'none'; document.body.style.overflow = 'auto'; }
+            // --- OVERLAY LOGIC (backward-compatible) ---
+            function openOverlay(id) {
+                var el = document.getElementById(id);
+                if (!el) return;
+                // New report overlays use class 'report-overlay' with .active toggle
+                if (el.classList.contains('report-overlay')) {
+                    el.classList.add('active');
+                } else {
+                    // Legacy overlays (login, shop, booking, news) use display: block
+                    el.style.display = 'block';
+                }
+                document.body.style.overflow = 'hidden';
+            }
+            function closeOverlay(id) {
+                var el = document.getElementById(id);
+                if (!el) return;
+                if (el.classList.contains('report-overlay')) {
+                    el.classList.remove('active');
+                } else {
+                    el.style.display = 'none';
+                }
+                document.body.style.overflow = 'auto';
+            }
+
+            // --- ESC KEY TO CLOSE OVERLAYS ---
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') {
+                    // Close report overlays
+                    document.querySelectorAll('.report-overlay.active').forEach(function (overlay) {
+                        closeOverlay(overlay.id);
+                    });
+                    // Close legacy overlays
+                    document.querySelectorAll('.full-overlay').forEach(function (overlay) {
+                        if (overlay.style.display === 'block') {
+                            closeOverlay(overlay.id);
+                        }
+                    });
+                }
+            });
+
+            // --- AJAX FORM SUBMISSION FOR REPORT OVERLAYS ---
+            function showReportToast(message, isError) {
+                // Remove any existing toast
+                var existing = document.querySelector('.report-toast');
+                if (existing) existing.remove();
+                var toast = document.createElement('div');
+                toast.className = 'report-toast' + (isError ? ' report-toast--error' : '');
+                toast.textContent = message;
+                document.body.appendChild(toast);
+                // Trigger animation
+                requestAnimationFrame(function () {
+                    toast.classList.add('show');
+                });
+                setTimeout(function () {
+                    toast.classList.remove('show');
+                    setTimeout(function () { toast.remove(); }, 400);
+                }, 3500);
+            }
+
+            function setupReportForm(formId, overlayId) {
+                var form = document.getElementById(formId);
+                if (!form) return;
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    var fileInput = form.querySelector('input[name="images"]');
+                    var phoneInput = form.querySelector('input[name="phone"]');
+                    var phoneValue = phoneInput ? phoneInput.value.trim() : '';
+                    var phoneRegex = /^[0-9\-\+]{9,15}$/;
+
+                    if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+                        showReportToast('❌ Vui lòng tải lên ít nhất một ảnh.', true);
+                        return;
+                    }
+
+                    if (phoneValue && !phoneRegex.test(phoneValue)) {
+                        showReportToast('❌ Số điện thoại không hợp lệ (9-15 ký tự số).', true);
+                        return;
+                    }
+
+                    var submitBtn = form.querySelector('button[type="submit"]');
+                    var originalText = submitBtn.innerHTML;
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '⏳ Đang gửi...';
+
+                    var formData = new FormData(form);
+                    fetch('/reports', {
+                        method: 'POST',
+                        body: formData
+                    })
+                        .then(function (response) {
+                            if (!response.ok) {
+                                var contentType = response.headers.get('content-type') || '';
+                                if (contentType.indexOf('application/json') !== -1) {
+                                    return response.json()
+                                        .then(function (data) {
+                                            var message = (data && (data.message || data.error)) || ('Server trả về lỗi ' + response.status);
+                                            throw new Error(message);
+                                        })
+                                        .catch(function (err) {
+                                            if (err instanceof SyntaxError) {
+                                                throw new Error('Server trả về lỗi ' + response.status);
+                                            }
+                                            throw err;
+                                        });
+                                }
+
+                                return response.text().then(function (text) {
+                                    var message = text && text.trim() ? text.trim() : ('Server trả về lỗi ' + response.status);
+                                    throw new Error(message);
+                                });
+                            }
+                            return response;
+                        })
+                        .then(function () {
+                            // Success: close overlay, reset form, show toast
+                            closeOverlay(overlayId);
+                            form.reset();
+                            // Reset file name displays
+                            form.querySelectorAll('.report-file-name').forEach(function (el) {
+                                el.textContent = 'Chưa có file nào được chọn';
+                            });
+                            showReportToast('✅ Đăng tin thành công! Cảm ơn bạn.', false);
+                        })
+                        .catch(function (err) {
+                            // Error: do NOT close modal, show error toast
+                            showReportToast('❌ Gửi thất bại: ' + err.message, true);
+                        })
+                        .finally(function () {
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = originalText;
+                        });
+                });
+            }
+
+            // Initialize AJAX for both report forms
+            document.addEventListener('DOMContentLoaded', function () {
+                setupReportForm('lost-report-form', 'lost-overlay');
+                setupReportForm('found-report-form', 'found-overlay');
+            });
 
             // --- LOGIC GIỎ HÀNG ---
             let cart = [];
@@ -1742,7 +2285,14 @@
             });
         </script>
 
-<%- include('partials/auth-overlay') %>
+        <%- include('partials/auth-overlay') %>
+            <%- include('partials/lost-overlay') %>
+                <%- include('partials/found-overlay') %>
+                    <%- include('partials/tips-overlay') %>
+                        <%- include('partials/my-reports-overlay') %>
+
+                        <!-- Toast container for report notifications -->
+                        <div id="report-toast-container"></div>
 
 </body>
 

@@ -26,6 +26,7 @@
                         </div>
                         <div class="dropdown-divider"></div>
                         <a href="/profile" class="dropdown-item">👤 Tài khoản</a>
+                        <a href="/my-reports" class="dropdown-item" onclick="return openMyReportsOverlay(event)">📋 Báo cáo của tôi</a>
                         <% if (typeof isStaff !=='undefined' && isStaff) { %>
                             <a href="/adopt/admin/add" class="dropdown-item">🐾 Thêm thú cưng</a>
                             <% } %>
@@ -73,8 +74,8 @@
             <li>
                 <a href="#" class="has-dropdown">Thất lạc <span class="nav-arrow">▼</span></a>
                 <ul class="nav-dropdown">
-                    <li><a href="/reports">Báo mất thú cưng</a></li>
-                    <li><a href="/reports">Báo tin nhặt được</a></li>
+                    <li><a href="/reports" onclick="openOverlay('lost-overlay'); return false;">Báo mất thú cưng</a></li>
+                    <li><a href="/reports" onclick="openOverlay('found-overlay'); return false;">Báo tin nhặt được</a></li>
                     <li><a href="/about">Mẹo tìm kiếm hiệu quả</a></li>
                 </ul>
             </li>
@@ -98,6 +99,7 @@
 </header>
 
 <%- include('auth-overlay') %>
+<%- include('my-reports-overlay') %>
 
 <style>
     /* Navigation Dropdown - Inline Style to Override */

@@ -527,14 +527,26 @@
     function openOverlay(id) {
         const overlay = document.getElementById(id);
         if (!overlay) return;
-        overlay.classList.add('active');
+
+        if (overlay.classList.contains('full-overlay')) {
+            overlay.style.display = 'block';
+        } else {
+            overlay.classList.add('active');
+        }
+
         document.body.style.overflow = 'hidden';
     }
 
     function closeOverlay(id) {
         const overlay = document.getElementById(id);
         if (!overlay) return;
-        overlay.classList.remove('active');
+
+        if (overlay.classList.contains('full-overlay')) {
+            overlay.style.display = 'none';
+        } else {
+            overlay.classList.remove('active');
+        }
+
         document.body.style.overflow = '';
         // Reset alerts when closing
         overlayHideAlerts();
@@ -542,12 +554,25 @@
 
     // Close on ESC key
     document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape') {
-            const overlay = document.getElementById('auth-overlay');
-            if (overlay && overlay.classList.contains('active')) {
-                closeOverlay('auth-overlay');
-            }
+        if (e.key !== 'Escape') return;
+
+        // Close all active report overlays
+        document.querySelectorAll('.report-overlay.active').forEach(function (overlay) {
+            closeOverlay(overlay.id);
+        });
+
+        // Close auth overlay
+        const authOverlay = document.getElementById('auth-overlay');
+        if (authOverlay && authOverlay.classList.contains('active')) {
+            closeOverlay('auth-overlay');
         }
+
+        // Close legacy display-based overlays if any
+        document.querySelectorAll('.full-overlay').forEach(function (overlay) {
+            if (overlay.style.display === 'block') {
+                closeOverlay(overlay.id);
+            }
+        });
     });
 
     // ===== Toggle Password Visibility =====

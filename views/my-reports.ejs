@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <style>
+        .my-reports-page {
+            background: #f4f7f6;
+            min-height: 100vh;
+            padding: 26px 16px 42px;
+        }
+
+        .my-reports-wrap {
+            max-width: 1180px;
+            margin: 0 auto;
+        }
+
+        .my-reports-head {
+            background: linear-gradient(145deg, #1f5d3d, #2d6a4f);
+            color: #fff;
+            border-radius: 16px;
+            padding: 22px;
+            box-shadow: 0 12px 26px rgba(20, 83, 45, 0.22);
+            margin-bottom: 18px;
+        }
+
+        .my-reports-head h1 {
+            margin: 0;
+            font-size: 1.45rem;
+        }
+
+        .my-reports-head p {
+            margin: 8px 0 0;
+            opacity: 0.9;
+            font-size: 0.94rem;
+        }
+
+        .my-reports-summary {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .my-reports-summary-card {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 14px;
+        }
+
+        .my-reports-summary-card small {
+            color: #64748b;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 700;
+        }
+
+        .my-reports-summary-card strong {
+            display: block;
+            margin-top: 6px;
+            color: #0f172a;
+            font-size: 1.55rem;
+            line-height: 1;
+        }
+
+        .my-reports-summary-card.pending strong {
+            color: #a16207;
+        }
+
+        .my-reports-summary-card.approved strong {
+            color: #166534;
+        }
+
+        .my-reports-summary-card.rejected strong {
+            color: #991b1b;
+        }
+
+        .my-reports-toolbar {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 14px;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .my-reports-toolbar select,
+        .my-reports-toolbar button {
+            height: 42px;
+            border-radius: 10px;
+            border: 1px solid #cbd5e1;
+            background: #fff;
+            font-size: 0.9rem;
+            padding: 0 12px;
+            color: #0f172a;
+        }
+
+        .my-reports-toolbar button {
+            border: none;
+            background: #2d6a4f;
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .my-reports-status {
+            min-height: 24px;
+            margin-bottom: 10px;
+            color: #475569;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .my-reports-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .my-report-card {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .my-report-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            background: #e2e8f0;
+        }
+
+        .my-report-body {
+            padding: 12px;
+        }
+
+        .my-report-top {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+
+        .my-report-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            border-radius: 999px;
+            padding: 2px 8px;
+            font-weight: 700;
+        }
+
+        .my-report-pill.type-lost {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .my-report-pill.type-found {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .my-report-pill.status-pending {
+            background: #fef3c7;
+            color: #a16207;
+        }
+
+        .my-report-pill.status-approved {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .my-report-pill.status-rejected {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .my-report-desc {
+            margin: 0;
+            color: #0f172a;
+            font-size: 0.9rem;
+            line-height: 1.45;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            min-height: 2.7em;
+        }
+
+        .my-report-meta {
+            margin-top: 8px;
+            color: #64748b;
+            font-size: 0.78rem;
+            line-height: 1.45;
+        }
+
+        .my-reports-pagination {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+
+        .my-reports-pagination button {
+            min-width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            background: #fff;
+            color: #0f172a;
+            font-weight: 700;
+            cursor: pointer;
+            padding: 0 8px;
+        }
+
+        .my-reports-pagination button.active {
+            background: #2d6a4f;
+            border-color: #2d6a4f;
+            color: #fff;
+        }
+
+        .my-reports-skeleton {
+            height: 300px;
+            border-radius: 14px;
+            background: linear-gradient(90deg, #edf2f7 25%, #e2e8f0 37%, #edf2f7 63%);
+            background-size: 400% 100%;
+            animation: myReportsPageShimmer 1.2s infinite;
+        }
+
+        @keyframes myReportsPageShimmer {
+            0% {
+                background-position: 100% 0;
+            }
+            100% {
+                background-position: 0 0;
+            }
+        }
+
+        @media (max-width: 980px) {
+            .my-reports-summary {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .my-reports-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 680px) {
+            .my-reports-page {
+                padding: 16px 12px 28px;
+            }
+
+            .my-reports-toolbar {
+                grid-template-columns: 1fr;
+            }
+
+            .my-reports-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .my-report-image {
+                height: 170px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('partials/header') %>
+
+    <main class="my-reports-page">
+        <div class="my-reports-wrap">
+            <section class="my-reports-head">
+                <h1>Báo cáo của tôi</h1>
+                <p>Theo dõi trạng thái tin thất lạc và tìm thấy của bạn trong một nơi.</p>
+            </section>
+
+            <section class="my-reports-summary" id="myReportsSummary">
+                <div class="my-reports-summary-card">
+                    <small>Tổng báo cáo</small>
+                    <strong id="sum-total">0</strong>
+                </div>
+                <div class="my-reports-summary-card pending">
+                    <small>Chờ duyệt</small>
+                    <strong id="sum-pending">0</strong>
+                </div>
+                <div class="my-reports-summary-card approved">
+                    <small>Đã duyệt</small>
+                    <strong id="sum-approved">0</strong>
+                </div>
+                <div class="my-reports-summary-card rejected">
+                    <small>Đã từ chối</small>
+                    <strong id="sum-rejected">0</strong>
+                </div>
+            </section>
+
+            <section class="my-reports-toolbar">
+                <select id="filterStatus">
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="pending">Chờ duyệt</option>
+                    <option value="approved">Đã duyệt</option>
+                    <option value="rejected">Đã từ chối</option>
+                </select>
+                <select id="filterType">
+                    <option value="">Tất cả loại báo cáo</option>
+                    <option value="lost">Thất lạc</option>
+                    <option value="found">Tìm thấy</option>
+                </select>
+                <button id="refreshMyReportsBtn" type="button">Làm mới danh sách</button>
+            </section>
+
+            <div class="my-reports-status" id="myReportsStatus"></div>
+            <section class="my-reports-grid" id="myReportsGrid"></section>
+            <div class="my-reports-pagination" id="myReportsPagination"></div>
+        </div>
+    </main>
+
+    <script>
+        (function () {
+            var state = {
+                page: 1,
+                limit: 12,
+                status: '',
+                type: '',
+            };
+
+            var gridEl = document.getElementById('myReportsGrid');
+            var paginationEl = document.getElementById('myReportsPagination');
+            var statusEl = document.getElementById('myReportsStatus');
+
+            function escapeHtml(str) {
+                return String(str || '')
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#39;');
+            }
+
+            function typeLabel(type) {
+                return type === 'found' ? 'Tìm thấy' : 'Thất lạc';
+            }
+
+            function statusLabel(status) {
+                if (status === 'pending') return 'Chờ duyệt';
+                if (status === 'approved') return 'Đã duyệt';
+                if (status === 'rejected') return 'Đã từ chối';
+                return 'Không rõ';
+            }
+
+            function renderLoading() {
+                statusEl.textContent = 'Đang tải báo cáo...';
+                gridEl.innerHTML = [
+                    '<div class="my-reports-skeleton"></div>',
+                    '<div class="my-reports-skeleton"></div>',
+                    '<div class="my-reports-skeleton"></div>'
+                ].join('');
+                paginationEl.innerHTML = '';
+            }
+
+            function renderSummary(summary) {
+                var data = summary || { total: 0, pending: 0, approved: 0, rejected: 0 };
+                document.getElementById('sum-total').textContent = data.total || 0;
+                document.getElementById('sum-pending').textContent = data.pending || 0;
+                document.getElementById('sum-approved').textContent = data.approved || 0;
+                document.getElementById('sum-rejected').textContent = data.rejected || 0;
+            }
+
+            function renderCards(data) {
+                if (!data || data.length === 0) {
+                    statusEl.textContent = 'Không có báo cáo nào phù hợp bộ lọc hiện tại.';
+                    gridEl.innerHTML = '';
+                    return;
+                }
+
+                statusEl.textContent = 'Đang hiển thị ' + data.length + ' báo cáo trên trang này.';
+
+                gridEl.innerHTML = data.map(function (report) {
+                    var safeImage = escapeHtml(report.image || '/images/logo.svg');
+                    var safeDesc = escapeHtml(report.description || 'Không có mô tả');
+                    var safeLocation = escapeHtml(report.location || 'Chưa rõ vị trí');
+                    var safeCreated = new Date(report.created_at).toLocaleString('vi-VN');
+                    var safeType = escapeHtml(report.type || 'lost');
+                    var safeStatus = escapeHtml(report.status || 'pending');
+
+                    return [
+                        '<article class="my-report-card">',
+                        '  <img class="my-report-image" src="' + safeImage + '" alt="Report" onerror="this.onerror=null;this.src=\'/images/logo.svg\'">',
+                        '  <div class="my-report-body">',
+                        '    <div class="my-report-top">',
+                        '      <span class="my-report-pill type-' + safeType + '">' + typeLabel(safeType) + '</span>',
+                        '      <span class="my-report-pill status-' + safeStatus + '">' + statusLabel(safeStatus) + '</span>',
+                        '    </div>',
+                        '    <p class="my-report-desc">' + safeDesc + '</p>',
+                        '    <div class="my-report-meta">📍 ' + safeLocation + '</div>',
+                        '    <div class="my-report-meta">🕒 ' + safeCreated + '</div>',
+                        '  </div>',
+                        '</article>'
+                    ].join('');
+                }).join('');
+            }
+
+            function renderPagination(currentPage, totalPages) {
+                if (!totalPages || totalPages <= 1) {
+                    paginationEl.innerHTML = '';
+                    return;
+                }
+
+                var html = [];
+                for (var i = 1; i <= totalPages; i++) {
+                    html.push('<button class="' + (i === currentPage ? 'active' : '') + '" data-page="' + i + '">' + i + '</button>');
+                }
+                paginationEl.innerHTML = html.join('');
+            }
+
+            async function loadReports() {
+                renderLoading();
+                try {
+                    var params = new URLSearchParams();
+                    params.set('view', 'full');
+                    params.set('page', String(state.page));
+                    params.set('limit', String(state.limit));
+                    if (state.status) params.set('status', state.status);
+                    if (state.type) params.set('type', state.type);
+
+                    var response = await fetch('/api/my-reports?' + params.toString());
+                    var json = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error((json && json.message) || 'Không thể tải báo cáo');
+                    }
+
+                    renderSummary(json.summary);
+                    renderCards(json.data || []);
+                    renderPagination(json.page || 1, json.totalPages || 0);
+                } catch (error) {
+                    statusEl.textContent = error.message || 'Có lỗi xảy ra khi tải dữ liệu.';
+                    statusEl.style.color = '#b91c1c';
+                    gridEl.innerHTML = '';
+                    paginationEl.innerHTML = '';
+                }
+            }
+
+            document.getElementById('filterStatus').addEventListener('change', function (e) {
+                state.status = e.target.value;
+                state.page = 1;
+                loadReports();
+            });
+
+            document.getElementById('filterType').addEventListener('change', function (e) {
+                state.type = e.target.value;
+                state.page = 1;
+                loadReports();
+            });
+
+            document.getElementById('refreshMyReportsBtn').addEventListener('click', function () {
+                loadReports();
+            });
+
+            paginationEl.addEventListener('click', function (e) {
+                var btn = e.target.closest('button[data-page]');
+                if (!btn) return;
+                state.page = Number(btn.getAttribute('data-page')) || 1;
+                loadReports();
+            });
+
+            loadReports();
+        })();
+    </script>
+</body>
+
+</html>

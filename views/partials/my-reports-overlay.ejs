@@ -1,0 +1,468 @@
+<!-- ============ MY REPORTS QUICK OVERLAY ============ -->
+<div id="my-reports-overlay" class="report-overlay my-reports-overlay">
+    <div class="report-overlay-backdrop" onclick="closeOverlay('my-reports-overlay')"></div>
+    <div class="report-overlay-modal my-reports-overlay__modal">
+        <button
+            type="button"
+            class="report-overlay-close my-reports-overlay__close"
+            onclick="closeOverlay('my-reports-overlay')"
+            aria-label="Đóng"
+        >
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+
+        <div class="my-reports-overlay__header">
+            <div>
+                <h3>Báo cáo của tôi</h3>
+                <p>Xem nhanh trạng thái tin gần đây</p>
+            </div>
+            <a href="/my-reports" class="my-reports-overlay__manage-link">Quản lý đầy đủ</a>
+        </div>
+
+        <div class="my-reports-overlay__body">
+            <div id="myReportsQuickState" class="my-reports-overlay__state"></div>
+            <div id="myReportsQuickList" class="my-reports-overlay__list"></div>
+        </div>
+
+        <div class="my-reports-overlay__footer">
+            <a href="/my-reports" class="my-reports-overlay__footer-btn">Mở trang Báo cáo của tôi</a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .my-reports-overlay.report-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 5200;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 0.35s ease, visibility 0.35s ease;
+    }
+
+    .my-reports-overlay.report-overlay.active {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    .my-reports-overlay .report-overlay-backdrop {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.52);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+    }
+
+    .my-reports-overlay .report-overlay-modal {
+        position: relative;
+        z-index: 1;
+        width: 95%;
+        max-width: 640px;
+        max-height: 86vh;
+        overflow-y: auto;
+        background: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 22px 56px rgba(0, 0, 0, 0.28);
+        transform: scale(0.94) translateY(16px);
+        transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .my-reports-overlay.report-overlay.active .report-overlay-modal {
+        transform: scale(1) translateY(0);
+    }
+
+    .my-reports-overlay__close {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        border: none;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.25);
+        color: #ffffff;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .my-reports-overlay__header {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: flex-start;
+        padding: 18px 18px 14px;
+        color: #ffffff;
+        background: linear-gradient(135deg, #1f5d3d, #2d6a4f);
+        border-radius: 16px 16px 0 0;
+    }
+
+    .my-reports-overlay__header h3 {
+        margin: 0;
+        font-size: 1.05rem;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+    }
+
+    .my-reports-overlay__header p {
+        margin: 6px 0 0;
+        font-size: 0.85rem;
+        opacity: 0.88;
+    }
+
+    .my-reports-overlay__manage-link {
+        text-decoration: none;
+        white-space: nowrap;
+        padding: 8px 12px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.18);
+        color: #ffffff;
+        font-size: 0.8rem;
+        font-weight: 700;
+    }
+
+    .my-reports-overlay__body {
+        background: #f8fafc;
+        padding: 14px 16px;
+    }
+
+    .my-reports-overlay__state {
+        margin-bottom: 12px;
+        font-size: 0.85rem;
+        color: #475569;
+        min-height: 22px;
+    }
+
+    .my-reports-overlay__list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .my-reports-overlay__item {
+        display: grid;
+        grid-template-columns: 56px 1fr;
+        gap: 12px;
+        align-items: center;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 10px;
+    }
+
+    .my-reports-overlay__thumb {
+        width: 56px;
+        height: 56px;
+        border-radius: 10px;
+        object-fit: cover;
+        background: #e2e8f0;
+    }
+
+    .my-reports-overlay__meta {
+        min-width: 0;
+    }
+
+    .my-reports-overlay__line {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 4px;
+        flex-wrap: wrap;
+    }
+
+    .my-reports-overlay__type {
+        font-size: 0.75rem;
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-weight: 700;
+    }
+
+    .my-reports-overlay__type.lost {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .my-reports-overlay__type.found {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .my-reports-overlay__status {
+        font-size: 0.75rem;
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-weight: 700;
+    }
+
+    .my-reports-overlay__status.pending {
+        background: #fef3c7;
+        color: #a16207;
+    }
+
+    .my-reports-overlay__status.approved {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .my-reports-overlay__status.rejected {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .my-reports-overlay__desc {
+        margin: 0;
+        font-size: 0.84rem;
+        color: #1f2937;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .my-reports-overlay__sub {
+        margin: 4px 0 0;
+        font-size: 0.76rem;
+        color: #64748b;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .my-reports-overlay__footer {
+        display: flex;
+        justify-content: flex-end;
+        padding: 12px 16px 16px;
+        border-top: 1px solid #e2e8f0;
+        background: #ffffff;
+        border-radius: 0 0 16px 16px;
+    }
+
+    .my-reports-overlay__footer-btn {
+        text-decoration: none;
+        background: #2d6a4f;
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 0.85rem;
+        padding: 9px 14px;
+        border-radius: 10px;
+    }
+
+    .my-reports-overlay__skeleton {
+        height: 74px;
+        border-radius: 12px;
+        background: linear-gradient(90deg, #edf2f7 25%, #e2e8f0 37%, #edf2f7 63%);
+        background-size: 400% 100%;
+        animation: myReportsShimmer 1.2s infinite;
+    }
+
+    @keyframes myReportsShimmer {
+        0% {
+            background-position: 100% 0;
+        }
+        100% {
+            background-position: 0 0;
+        }
+    }
+
+    @media (max-width: 520px) {
+        .my-reports-overlay .report-overlay-modal {
+            width: 96%;
+        }
+
+        .my-reports-overlay__header {
+            padding: 16px 14px 12px;
+            flex-direction: column;
+        }
+
+        .my-reports-overlay__body {
+            padding: 12px;
+        }
+
+        .my-reports-overlay__item {
+            grid-template-columns: 48px 1fr;
+            gap: 10px;
+            padding: 8px;
+        }
+
+        .my-reports-overlay__thumb {
+            width: 48px;
+            height: 48px;
+        }
+    }
+</style>
+
+<script>
+    (function () {
+        if (window.__myReportsOverlayInitialized) return;
+        window.__myReportsOverlayInitialized = true;
+
+        var OVERLAY_ID = 'my-reports-overlay';
+        var QUICK_LIMIT = 8;
+        var CACHE_TTL = 15000;
+        var cacheStore = {
+            data: null,
+            expiresAt: 0,
+        };
+        var inFlightRequest = null;
+
+        function escapeHtml(str) {
+            return String(str || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function formatDate(input) {
+            if (!input) return 'Không rõ thời gian';
+            return new Date(input).toLocaleString('vi-VN');
+        }
+
+        function statusText(status) {
+            if (status === 'pending') return 'Chờ duyệt';
+            if (status === 'approved') return 'Đã duyệt';
+            if (status === 'rejected') return 'Đã từ chối';
+            return 'Không rõ';
+        }
+
+        function typeText(type) {
+            if (type === 'lost') return 'Thất lạc';
+            if (type === 'found') return 'Tìm thấy';
+            return 'Khác';
+        }
+
+        function setState(message, isError) {
+            var stateEl = document.getElementById('myReportsQuickState');
+            if (!stateEl) return;
+            stateEl.textContent = message || '';
+            stateEl.style.color = isError ? '#b91c1c' : '#475569';
+        }
+
+        function renderLoading() {
+            var listEl = document.getElementById('myReportsQuickList');
+            if (!listEl) return;
+            setState('Đang tải danh sách gần đây...', false);
+            listEl.innerHTML = [
+                '<div class="my-reports-overlay__skeleton"></div>',
+                '<div class="my-reports-overlay__skeleton"></div>',
+                '<div class="my-reports-overlay__skeleton"></div>'
+            ].join('');
+        }
+
+        function renderItems(items) {
+            var listEl = document.getElementById('myReportsQuickList');
+            if (!listEl) return;
+
+            if (!items || items.length === 0) {
+                setState('Bạn chưa có báo cáo nào.', false);
+                listEl.innerHTML = '';
+                return;
+            }
+
+            setState('Hiển thị ' + items.length + ' báo cáo gần nhất.', false);
+
+            listEl.innerHTML = items.map(function (item) {
+                var safeImage = escapeHtml(item.image || '/images/logo.svg');
+                var safeDesc = escapeHtml(item.description || 'Không có mô tả');
+                var safeLocation = escapeHtml(item.location || 'Chưa rõ vị trí');
+                var status = escapeHtml(item.status || 'pending');
+                var type = escapeHtml(item.type || 'lost');
+                var typeLabel = typeText(type);
+                var statusLabel = statusText(status);
+
+                return [
+                    '<div class="my-reports-overlay__item">',
+                    '  <img class="my-reports-overlay__thumb" src="' + safeImage + '" alt="Report" onerror="this.onerror=null;this.src=\'/images/logo.svg\'">',
+                    '  <div class="my-reports-overlay__meta">',
+                    '    <div class="my-reports-overlay__line">',
+                    '      <span class="my-reports-overlay__type ' + type + '">' + typeLabel + '</span>',
+                    '      <span class="my-reports-overlay__status ' + status + '">' + statusLabel + '</span>',
+                    '    </div>',
+                    '    <p class="my-reports-overlay__desc">' + safeDesc + '</p>',
+                    '    <p class="my-reports-overlay__sub">📍 ' + safeLocation + ' - ' + formatDate(item.created_at) + '</p>',
+                    '  </div>',
+                    '</div>'
+                ].join('');
+            }).join('');
+        }
+
+        function shouldUseCache(force) {
+            return !force && cacheStore.data && Date.now() < cacheStore.expiresAt;
+        }
+
+        async function fetchRecentReports(force) {
+            if (shouldUseCache(force)) {
+                return cacheStore.data;
+            }
+
+            if (inFlightRequest) {
+                return inFlightRequest;
+            }
+
+            renderLoading();
+
+            inFlightRequest = fetch('/api/my-reports?view=recent&limit=' + QUICK_LIMIT)
+                .then(function (res) {
+                    if (!res.ok) {
+                        throw new Error('Không thể tải báo cáo gần đây');
+                    }
+                    return res.json();
+                })
+                .then(function (json) {
+                    var items = Array.isArray(json.data) ? json.data : [];
+                    cacheStore.data = items;
+                    cacheStore.expiresAt = Date.now() + CACHE_TTL;
+                    return items;
+                })
+                .finally(function () {
+                    inFlightRequest = null;
+                });
+
+            return inFlightRequest;
+        }
+
+        window.loadMyReportsOverlay = async function (force) {
+            try {
+                var items = await fetchRecentReports(!!force);
+                renderItems(items);
+            } catch (error) {
+                setState(error.message || 'Không thể tải báo cáo.', true);
+                var listEl = document.getElementById('myReportsQuickList');
+                if (listEl) listEl.innerHTML = '';
+            }
+        };
+
+        window.openMyReportsOverlay = function (event) {
+            if (event && typeof event.preventDefault === 'function') {
+                event.preventDefault();
+            }
+
+            var overlay = document.getElementById(OVERLAY_ID);
+            if (!overlay) {
+                window.location.href = '/my-reports';
+                return false;
+            }
+
+            if (typeof openOverlay === 'function') {
+                openOverlay(OVERLAY_ID);
+            } else {
+                overlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+
+            window.loadMyReportsOverlay(false);
+            return false;
+        };
+
+        window.refreshMyReportsOverlay = function () {
+            cacheStore.expiresAt = 0;
+            return window.loadMyReportsOverlay(true);
+        };
+    })();
+</script>

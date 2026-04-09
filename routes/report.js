@@ -31,6 +31,17 @@ if (rateLimit) {
 
 // ============ PUBLIC ROUTES ============
 
+const handleReportUpload = (req, res, next) => {
+  upload.array("images", 10)(req, res, (err) => {
+    if (err) {
+      return res.status(400).json({
+        message: err.message || "Upload ảnh thất bại. Vui lòng thử lại.",
+      });
+    }
+    return next();
+  });
+};
+
 // Render forms
 router.get("/lost", reportController.renderLostForm);
 router.get("/found", reportController.renderFoundForm);
@@ -41,15 +52,19 @@ router.get("/sheep", reportController.renderSheep);
 router.post(
   "/reports",
   reportSubmitLimiter,
-  upload.array("images", 10),
+  handleReportUpload,
   reportController.submitReport,
 );
 
 // Public feed page
 router.get("/reports/list", reportController.renderPublicList);
 
+// User's own reports
+router.get("/my-reports", isAuthenticated, reportController.renderMyReports);
+
 // Public API
 router.get("/api/reports", reportController.getPublicReports);
+router.get("/api/my-reports", isAuthenticated, reportController.getMyReports);
 
 // ============ ADMIN ROUTES (Staff + Admin only) ============
 

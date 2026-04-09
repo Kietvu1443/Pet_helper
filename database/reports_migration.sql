@@ -23,6 +23,25 @@ CREATE TABLE IF NOT EXISTS reports (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- 1.1 Bổ sung user_id cho hệ thống "Báo cáo của tôi" (idempotent nếu chạy qua script)
+ALTER TABLE reports
+    ADD COLUMN user_id INT NULL;
+
+-- 1.2 Foreign Key tới users, giữ report khi user bị xóa
+ALTER TABLE reports
+    ADD CONSTRAINT fk_reports_user
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL;
+
+-- 1.3 Backfill dữ liệu cũ theo email. Nếu không match thì giữ user_id = NULL.
+UPDATE reports r
+JOIN users u
+    ON LOWER(TRIM(r.email)) COLLATE utf8mb4_unicode_ci
+     = LOWER(TRIM(u.email)) COLLATE utf8mb4_unicode_ci
+SET r.user_id = u.id
+WHERE r.user_id IS NULL
+  AND r.email IS NOT NULL
+  AND TRIM(r.email) <> '';
+
 -- 2. Thêm cột report_id vào pet_images, cho phép pet_id nullable
 ALTER TABLE pet_images
     ADD COLUMN report_id INT NULL,
@@ -37,4 +56,5 @@ ALTER TABLE pet_images
 -- 4. Indexes cho hiệu suất
 CREATE INDEX idx_reports_status_type ON reports (status, type);
 CREATE INDEX idx_reports_created_desc ON reports (created_at DESC);
+CREATE INDEX idx_reports_user_created ON reports (user_id, created_at DESC);
 CREATE INDEX idx_petimages_reportid ON pet_images (report_id);

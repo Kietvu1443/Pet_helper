@@ -11,8 +11,11 @@
 <body>
     <main class="container">
         <h1>
-            Không tìm thấy trang
+            <%= error && error.status === 404 ? 'Không tìm thấy trang' : (message || 'Đã xảy ra lỗi') %>
         </h1>
+        <p>
+            Mã lỗi: <%= error && error.status ? error.status : 500 %>
+        </p>
         <pre><%= error.stack %></pre>
         <div class="error">
             <a href="/">Quay về trang chủ</a>

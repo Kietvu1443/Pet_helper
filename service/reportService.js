@@ -75,6 +75,39 @@ const reportService = {
   },
 
   /**
+   * Get current user's reports for full management page.
+   */
+  async getMyReports({ userId, status, type, page = 1, limit = 12 } = {}) {
+    const result = await Report.findByUser({ userId, status, type, page, limit });
+    const summary = await Report.getStatusSummaryByUser(userId);
+    const totalPages = Math.ceil(result.total / limit);
+    return {
+      data: result.data,
+      page,
+      limit,
+      total: result.total,
+      totalPages,
+      filters: {
+        status: status || null,
+        type: type || null,
+      },
+      summary,
+    };
+  },
+
+  /**
+   * Get current user's recent reports for quick overlay.
+   */
+  async getMyRecentReports({ userId, limit = 8 } = {}) {
+    const data = await Report.findRecentByUser({ userId, limit });
+    return {
+      data,
+      limit,
+      total: data.length,
+    };
+  },
+
+  /**
    * Update report status (approve / reject). No cloudinary cleanup on reject.
    */
   async updateReportStatus({ reportId, status }) {

@@ -38,8 +38,9 @@
         </div>
 
         <!-- Form Content -->
-        <form action="/reports" method="POST" enctype="multipart/form-data" class="p-8 space-y-6">
+        <form id="foundedForm" action="/reports" method="POST" enctype="multipart/form-data" class="p-8 space-y-6">
             <input type="hidden" name="type" value="found">
+            <div id="foundedAlert" class="hidden rounded-lg px-4 py-3 text-sm font-medium"></div>
             <div class="border-b border-gray-100 pb-4">
                 <h2 class="text-emerald-800 font-bold text-xl">Thông tin dành cho chủ nhân</h2>
                 <p class="text-gray-500 text-sm">Vui lòng cung cấp chi tiết để chủ nhân có thể nhận diện và liên hệ.</p>
@@ -146,10 +147,12 @@
                                 <p class="text-sm text-gray-500"><span class="font-semibold">Bấm để tải ảnh</span> hoặc
                                     kéo thả vào đây</p>
                             </div>
-                            <input type="file" name="images" class="hidden" accept="image/*" multiple />
+                            <input id="foundedImages" type="file" name="images" class="hidden" accept="image/*" multiple
+                                onchange="const count = this.files.length; document.getElementById('foundedFileName').textContent = count > 1 ? count + ' ảnh đã được chọn' : (count === 1 ? this.files[0].name : 'Chưa có file nào được chọn');" />
                         </label>
                     </div>
                 </div>
+                <p id="foundedFileName" class="text-sm text-gray-500 italic">Chưa có file nào được chọn</p>
             </div>
 
             <!-- Submit Button -->
@@ -159,6 +162,86 @@
             </button>
         </form>
     </div>
+
+    <script>
+        (function () {
+            var form = document.getElementById('foundedForm');
+            var alertBox = document.getElementById('foundedAlert');
+            var phoneRegex = /^[0-9\-\+]{9,15}$/;
+
+            if (!form || !alertBox) return;
+
+            function showMessage(message, isError) {
+                alertBox.textContent = message;
+                alertBox.classList.remove('hidden', 'bg-red-100', 'text-red-700', 'bg-emerald-100', 'text-emerald-700');
+                if (isError) {
+                    alertBox.classList.add('bg-red-100', 'text-red-700');
+                } else {
+                    alertBox.classList.add('bg-emerald-100', 'text-emerald-700');
+                }
+            }
+
+            function hideMessage() {
+                alertBox.classList.add('hidden');
+            }
+
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                hideMessage();
+
+                var fileInput = document.getElementById('foundedImages');
+                var phoneInput = form.querySelector('input[name="phone"]');
+                var submitBtn = form.querySelector('button[type="submit"]');
+                var originalText = submitBtn.innerHTML;
+                var phoneValue = phoneInput ? phoneInput.value.trim() : '';
+
+                if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+                    showMessage('Vui lòng tải lên ít nhất một ảnh.', true);
+                    return;
+                }
+
+                if (phoneValue && !phoneRegex.test(phoneValue)) {
+                    showMessage('Số điện thoại không hợp lệ (9-15 ký tự số).', true);
+                    return;
+                }
+
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Đang gửi...';
+
+                fetch('/reports', {
+                    method: 'POST',
+                    body: new FormData(form),
+                })
+                    .then(function (response) {
+                        if (!response.ok) {
+                            var contentType = response.headers.get('content-type') || '';
+                            if (contentType.indexOf('application/json') !== -1) {
+                                return response.json().then(function (data) {
+                                    throw new Error((data && (data.message || data.error)) || ('Server trả về lỗi ' + response.status));
+                                });
+                            }
+
+                            return response.text().then(function (text) {
+                                throw new Error(text && text.trim() ? text.trim() : ('Server trả về lỗi ' + response.status));
+                            });
+                        }
+
+                        showMessage('Đăng tin thành công. Đang chuyển trang...', false);
+                        setTimeout(function () {
+                            window.location.href = '/reports/list?submitted=1';
+                        }, 350);
+                        return null;
+                    })
+                    .catch(function (err) {
+                        showMessage(err.message || 'Gửi báo cáo thất bại. Vui lòng thử lại.', true);
+                    })
+                    .finally(function () {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalText;
+                    });
+            });
+        })();
+    </script>
 
 </body>
 

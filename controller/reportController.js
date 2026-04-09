@@ -34,6 +34,12 @@ const reportController = {
     });
   },
 
+  renderMyReports(req, res) {
+    res.render("my-reports", {
+      title: "Báo Cáo Của Tôi - Pet Helper",
+    });
+  },
+
   renderAdminPage(req, res) {
     res.render("admin/reports", {
       title: "Quản Lý Báo Cáo - Pet Helper",
@@ -153,6 +159,8 @@ const reportController = {
         };
       }
 
+      reportData.user_id = req.user && req.user.id ? Number(req.user.id) : null;
+
       // --- Process uploaded images ---
       const imageRecords = files.map((file) => ({
         imagePath: isProduction ? file.path : getImageUrl(file),
@@ -183,6 +191,43 @@ const reportController = {
     } catch (error) {
       console.error("Error fetching public reports:", error);
       return res.status(500).json({ message: "Không thể tải danh sách báo cáo" });
+    }
+  },
+
+  async getMyReports(req, res) {
+    try {
+      const userId = req.user && req.user.id ? Number(req.user.id) : 0;
+      if (!userId || Number.isNaN(userId)) {
+        return res.status(401).json({ message: "Vui lòng đăng nhập" });
+      }
+
+      const view = req.query.view === "recent" ? "recent" : "full";
+
+      if (view === "recent") {
+        const limit = Math.min(10, Math.max(5, parseInt(req.query.limit) || 8));
+        const result = await reportService.getMyRecentReports({ userId, limit });
+        return res.json({ view, ...result });
+      }
+
+      const status = ["pending", "approved", "rejected"].includes(req.query.status)
+        ? req.query.status
+        : null;
+      const type = ["lost", "found"].includes(req.query.type) ? req.query.type : null;
+      const page = Math.max(1, parseInt(req.query.page) || 1);
+      const limit = Math.min(24, Math.max(6, parseInt(req.query.limit) || 12));
+
+      const result = await reportService.getMyReports({
+        userId,
+        status,
+        type,
+        page,
+        limit,
+      });
+
+      return res.json({ view, ...result });
+    } catch (error) {
+      console.error("Error fetching my reports:", error);
+      return res.status(500).json({ message: "Không thể tải báo cáo của bạn" });
     }
   },
 

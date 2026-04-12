@@ -221,6 +221,19 @@ const adoptionRequestService = {
       connection.release();
     }
   },
+
+  async countPendingRequests(petId) {
+    try {
+      const [rows] = await pool.execute(
+        "SELECT COUNT(*) AS total FROM adoption_requests WHERE pet_id = ? AND status = 'pending'",
+        [petId],
+      );
+      return rows[0].total;
+    } catch (error) {
+      console.error("Error counting pending requests:", error);
+      throw error;
+    }
+  },
 };
 
 module.exports = adoptionRequestService;

@@ -1,5 +1,7 @@
 const Pet = require("../models/Pet");
 const PetImage = require("../models/PetImage");
+const PetLike = require("../models/PetLike");
+const adoptionRequestService = require("../service/adoptionRequestService");
 const {
   cloudinary,
   isProduction,
@@ -47,10 +49,19 @@ const petController = {
       // Gắp tất cả ảnh của pet từ bảng pet_images
       const images = await PetImage.findByPetId(req.params.id);
 
+      // Favorite & interest data
+      const userId = req.user ? req.user.id : null;
+      const isLiked = userId ? await PetLike.checkUserLike(userId, req.params.id) : false;
+      const likesCount = await PetLike.countLikes(req.params.id);
+      const pendingCount = await adoptionRequestService.countPendingRequests(req.params.id);
+
       res.render("adopt-detail", {
         title: `${pet.name} - Pet Helper`,
         pet: pet,
         images: images,
+        isLiked: isLiked,
+        likesCount: likesCount,
+        pendingCount: pendingCount,
       });
     } catch (error) {
       console.error("Error loading pet detail:", error);
@@ -293,6 +304,103 @@ const petController = {
     } catch (error) {
       console.error("Error deleting pet:", error);
       res.status(500).json({ error: "Không thể xóa thú cưng" });
+    }
+  },
+
+  // Like a pet (POST /adopt/:id/like)
+  likePet: async (req, res) => {
+    try {
+      const petId = Number(req.params.id);
+      if (!petId || Number.isNaN(petId)) {
+        return res.status(400).json({ message: "ID thú cưng không hợp lệ" });
+      }
+
+      await PetLike.create(req.user.id, petId, "liked");
+      const totalLikes = await PetLike.countLikes(petId);
+
+      return res.status(200).json({
+        success: true,
+        isLiked: true,
+        totalLikes: totalLikes,
+      });
+    } catch (error) {
+      console.error("Error liking pet:", error);
+      return res.status(500).json({ message: "Không thể thích thú cưng" });
+    }
+  },
+
+  // Unlike a pet (DELETE /adopt/:id/like)
+  unlikePet: async (req, res) => {
+    try {
+      const petId = Number(req.params.id);
+      if (!petId || Number.isNaN(petId)) {
+        return res.status(400).json({ message: "ID thú cưng không hợp lệ" });
+      }
+
+      await PetLike.delete(req.user.id, petId);
+      const totalLikes = await PetLike.countLikes(petId);
+
+      return res.status(200).json({
+        success: true,
+        isLiked: false,
+        totalLikes: totalLikes,
+      });
+    } catch (error) {
+      console.error("Error unliking pet:", error);
+      return res.status(500).json({ message: "Không thể bỏ thích thú cưng" });
+    }
+  },
+
+  // GET /favorites — User's favorite pet list
+  getFavoritePets: async (req, res) => {
+    try {
+      const pets = await PetLike.findLikedPets(req.user.id);
+
+      res.render("favorites", {
+        title: "Thú cưng yêu thích - Pet Helper",
+        pets: pets,
+      });
+    } catch (error) {
+      console.error("Error loading favorite pets:", error);
+      res.status(500).render("error", {
+        message: "Đã xảy ra lỗi",
+        error: { status: 500 },
+      });
+    }
+  },
+
+  // GET /api/favorites - Quick favorites overlay data
+  getFavoritePetsApi: async (req, res) => {
+    try {
+      const userId = req.user && req.user.id ? Number(req.user.id) : 0;
+      if (!userId || Number.isNaN(userId)) {
+        return res.status(401).json({ message: "Vui lòng đăng nhập" });
+      }
+
+      const limit = Math.min(10, Math.max(1, parseInt(req.query.limit, 10) || 8));
+      const rows = await PetLike.findRecentLikedPets(userId, limit);
+
+      const data = rows.map((pet) => ({
+        id: pet.id,
+        name: pet.name,
+        pet_type: pet.pet_type,
+        status: pet.status,
+        liked_at: pet.liked_at,
+        image: pet.avatar_image || pet.image_url || "/images/logo.svg",
+        description: pet.description
+          ? String(pet.description).slice(0, 120)
+          : "",
+      }));
+
+      return res.json({
+        view: "recent",
+        data,
+        total: data.length,
+        limit,
+      });
+    } catch (error) {
+      console.error("Error loading quick favorites:", error);
+      return res.status(500).json({ message: "Không thể tải danh sách yêu thích" });
     }
   },
 };

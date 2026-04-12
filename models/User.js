@@ -32,7 +32,7 @@ const User = {
   async findById(id) {
     try {
       const [rows] = await pool.execute(
-        "SELECT id, display_name, name, email, role, birthday, address, created_at FROM users WHERE id = ?",
+        "SELECT id, display_name, name, email, role, verify, birthday, address, created_at FROM users WHERE id = ?",
         [id],
       );
       return rows[0] || null;
@@ -83,6 +83,20 @@ const User = {
       return result.affectedRows > 0;
     } catch (error) {
       console.error("Error updating user role:", error);
+      throw error;
+    }
+  },
+
+  // Update user email verification status
+  async updateVerifyStatus(userId, verifyStatus) {
+    try {
+      const [result] = await pool.execute(
+        "UPDATE users SET verify = ? WHERE id = ?",
+        [verifyStatus, userId],
+      );
+      return result.affectedRows > 0;
+    } catch (error) {
+      console.error("Error updating user verify status:", error);
       throw error;
     }
   },

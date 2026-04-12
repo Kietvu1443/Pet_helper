@@ -57,6 +57,10 @@ router.get(
 );
 // ----------------------------------------------
 
+// Like/Unlike API routes (MUST be before /:id wildcard)
+router.post("/:id/like", isAuthenticated, petController.likePet);
+router.delete("/:id/like", isAuthenticated, petController.unlikePet);
+
 // GET - Pet detail page (wildcard :id MUST be last)
 router.get("/:id", petController.getPetDetail);
 

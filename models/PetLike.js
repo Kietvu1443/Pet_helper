@@ -54,6 +54,76 @@ const PetLike = {
       throw error;
     }
   },
+
+  // Get recent liked pets for quick overlays
+  async findRecentLikedPets(userId, limit = 8) {
+    try {
+      const safeLimit = Math.min(10, Math.max(1, parseInt(limit, 10) || 8));
+      const query = `
+        SELECT
+          p.id,
+          p.name,
+          p.pet_type,
+          p.status,
+          p.description,
+          pl.created_at as liked_at,
+          pi.image_path as avatar_image
+        FROM pets p
+        JOIN pet_likes pl ON p.id = pl.pet_id
+        LEFT JOIN pet_images pi ON p.id = pi.pet_id AND pi.display_order = 0
+        WHERE pl.user_id = ? AND pl.status = 'liked'
+        ORDER BY pl.created_at DESC
+        LIMIT ${safeLimit}
+      `;
+      const [rows] = await pool.execute(query, [userId]);
+      return rows;
+    } catch (error) {
+      console.error("Error finding recent liked pets:", error);
+      throw error;
+    }
+  },
+
+  // Check if a user has liked a specific pet
+  async checkUserLike(userId, petId) {
+    try {
+      const [rows] = await pool.execute(
+        "SELECT id FROM pet_likes WHERE user_id = ? AND pet_id = ? AND status = 'liked' LIMIT 1",
+        [userId, petId],
+      );
+      return rows.length > 0;
+    } catch (error) {
+      console.error("Error checking user like:", error);
+      throw error;
+    }
+  },
+
+  // Count total likes for a pet
+  async countLikes(petId) {
+    try {
+      const [rows] = await pool.execute(
+        "SELECT COUNT(*) AS total FROM pet_likes WHERE pet_id = ? AND status = 'liked'",
+        [petId],
+      );
+      return rows[0].total;
+    } catch (error) {
+      console.error("Error counting likes:", error);
+      throw error;
+    }
+  },
+
+  // Delete a like (idempotent — always returns success)
+  async delete(userId, petId) {
+    try {
+      await pool.execute(
+        "DELETE FROM pet_likes WHERE user_id = ? AND pet_id = ?",
+        [userId, petId],
+      );
+      return true;
+    } catch (error) {
+      console.error("Error deleting pet like:", error);
+      throw error;
+    }
+  },
 };
 
 module.exports = PetLike;

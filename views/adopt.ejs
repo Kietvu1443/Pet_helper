@@ -80,6 +80,7 @@
             height: 220px;
             object-fit: cover;
         }
+        
 
         .card-body {
             padding: 20px;
@@ -159,22 +160,6 @@
                 <h1>🐾 Nhận Nuôi Thú Cưng</h1>
                 <p>Tìm người bạn đồng hành mới từ danh sách thú cưng đang chờ được nhận nuôi</p>
 
-                <!-- PetSnap Banner -->
-                <div
-                    style="background: linear-gradient(135deg, #84cc16 0%, #4d7c0f 100%); border-radius: 15px; padding: 20px; margin-bottom: 30px; margin-top: 20px; color: white; display: flex; align-items: center; justify-content: space-between; position: relative; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
-                    <div style="z-index: 2; text-align: left;">
-                        <h2 style="margin: 0 0 5px 0; font-size: 1.5rem; color: #fff;"><i class="fa-solid fa-fire"
-                                style="color: #fcd34d;"></i> Trải nghiệm PetSnap!</h2>
-                        <p style="margin: 0 0 10px 0; opacity: 0.9; font-size: 0.9rem;">Tìm thú cưng theo phong cách
-                            vuốt chạm hiện đại.</p>
-                        <a href="/adopt/petsnap"
-                            style="background: white; color: #4d7c0f; padding: 8px 20px; border-radius: 20px; text-decoration: none; font-weight: bold; display: inline-block;">Thử
-                            ngay <i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-                    <i class="fa-solid fa-paw"
-                        style="font-size: 6rem; position: absolute; right: -10px; bottom: -20px; opacity: 0.2; color: white;"></i>
-                </div>
-
                 <!-- Search/Filter -->
                 <div class="adopt-filters">
                     <div class="filter-group">
@@ -225,7 +210,8 @@
                                                 </p>
                                                 <% } %>
                                                     <p class="card-text">
-                                                        <%= pet.description || '' %>
+                                                        <!-- để số lượng text là bao nhiêu đổ ra field -->
+                                                        <%= pet.description ? pet.description.substring(0,130) + (pet.description.length > 130 ? "..." : "") : "" %> 
                                                     </p>
 
                                                     <div class="pet-info">

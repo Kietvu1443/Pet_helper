@@ -434,6 +434,9 @@
             cursor: pointer;
             margin-top: 10px;
         }
+        #the_logo{
+            border-radius: 50px;
+        }
 
         /* --- STYLE CHO GIỎ HÀNG --- */
         .cart-overlay {
@@ -1794,13 +1797,15 @@
     <header class="header">
         <div class="top-bar">
             <a href="/" class="logo-group">
-                <div class="logo-circle">PET</div>
+                <div class="logo-circle">
+                    <img src="/images/the_logo.jpg" alt="logo" id="the_logo">
+                </div>
                 <div class="web-name">PET HELPER</div>
             </a>
-            <div class="search-box">
+            <!-- <div class="search-box">
                 <span style="margin-right: 10px;">🔍</span>
                 <span class="search-text">Tìm thú cưng, bài viết...</span>
-            </div>
+            </div> -->
             <div class="user-actions">
                 <% if (typeof isAuthenticated !=='undefined' && isAuthenticated) { %>
                     <div class="user-dropdown">
@@ -1818,7 +1823,10 @@
                             </div>
                             <div class="dropdown-divider"></div>
                             <a href="/profile" class="dropdown-item">👤 Tài khoản</a>
-                            <a href="/my-reports" class="dropdown-item" onclick="return openMyReportsOverlay(event)">📋 Báo cáo của tôi</a>
+                            <a href="/favorites" class="dropdown-item" onclick="return openFavoritesOverlay(event)">❤️
+                                Thú cưng đã yêu thích</a>
+                            <a href="/my-reports" class="dropdown-item" onclick="return openMyReportsOverlay(event)">📋
+                                Báo cáo của tôi</a>
                             <% if (typeof isStaff !=='undefined' && isStaff) { %>
                                 <a href="/adopt/admin/add" class="dropdown-item">🐾 Thêm thú cưng</a>
                                 <% } %>
@@ -1851,7 +1859,7 @@
                         <li><a href="/adopt">Xem vật nuôi có thể nhận nuôi</a></li>
                         <li><a href="/adopt/petsnap" style="color: #ea580c; font-weight: bold;">PetSnap (Tìm kiếm ngẫu
                                 hứng!)</a></li>
-                        <li><a href="/about">Cách thức nhận nuôi</a></li>
+                        <!-- <li><a href="/about">Cách thức nhận nuôi</a></li> -->
                         <li><a href="/adopt">Nhận nuôi thú cưng</a></li>
                     </ul>
                 </li>
@@ -1878,7 +1886,7 @@
                 <li>
                     <a href="#" class="has-dropdown">Về chúng tôi <span class="nav-arrow">▼</span></a>
                     <ul class="nav-dropdown">
-                        <li><a href="/about">Thông tin về chúng tôi</a></li>
+                        <!-- <li><a href="/about">Thông tin về chúng tôi</a></li> -->
                         <li><a href="#contact-section">Liên hệ với chúng tôi</a></li>
                     </ul>
                 </li>
@@ -2289,10 +2297,11 @@
             <%- include('partials/lost-overlay') %>
                 <%- include('partials/found-overlay') %>
                     <%- include('partials/tips-overlay') %>
-                        <%- include('partials/my-reports-overlay') %>
+                        <%- include('partials/favorite-overlay') %>
+                            <%- include('partials/my-reports-overlay') %>
 
-                        <!-- Toast container for report notifications -->
-                        <div id="report-toast-container"></div>
+                                <!-- Toast container for report notifications -->
+                                <div id="report-toast-container"></div>
 
 </body>
 

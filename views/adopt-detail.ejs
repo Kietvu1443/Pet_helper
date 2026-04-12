@@ -27,8 +27,8 @@
                             const mainImage = (typeof images !== 'undefined' && images.length > 0)
                                 ? images[0].image_path
                                 : (pet.avatar_image || pet.image_url || 'https://via.placeholder.com/600x400?text=No+Image');
-                            const galleryImages = (typeof images !== 'undefined' && images.length > 1)
-                                ? images.slice(1)
+                            const galleryImages = (typeof images !== 'undefined' && images.length > 0)
+                                ? images
                                 : [];
                         %>
                             <img src="<%= mainImage %>" alt="<%= pet.name %>" class="pet-main-image" id="mainImage"
@@ -38,9 +38,12 @@
                                     ? '🟡 Đang xử lý' : '🔴 Đã được nhận nuôi' %>
                             </div>
 
-                            <% if (typeof images !=='undefined' && images.length> 1) { %>
+                            <% if (galleryImages.length > 1) { 
+                                const previewGalleryImages = galleryImages.slice(0, 5);
+                                const extraGalleryImages = galleryImages.slice(5);
+                            %>
                                 <div class="pet-gallery">
-                                    <% images.forEach(function(img, index) { %>
+                                    <% previewGalleryImages.forEach(function(img, index) { %>
                                         <div class="gallery-thumb <%= index === 0 ? 'active' : '' %>"
                                             data-image-path="<%= img.image_path %>"
                                             onclick="changeMainImage(this.dataset.imagePath, this)">
@@ -51,6 +54,23 @@
                                         </div>
                                         <% }); %>
                                 </div>
+
+                                <% if (extraGalleryImages.length > 0) { %>
+                                    <details class="pet-gallery-dropdown">
+                                        <summary>Xem thêm <%= extraGalleryImages.length %> ảnh</summary>
+                                        <div class="pet-gallery pet-gallery-extra">
+                                            <% extraGalleryImages.forEach(function(img, index) { %>
+                                                <div class="gallery-thumb" data-image-path="<%= img.image_path %>"
+                                                    onclick="changeMainImage(this.dataset.imagePath, this)">
+                                                    <img src="<%= img.image_path %>"
+                                                        alt="<%= pet.name %> - Ảnh <%= index + previewGalleryImages.length + 1 %>"
+                                                        data-pet-id="<%= pet.id %>"
+                                                        onerror="fallbackPetImage(this, this.dataset.petId)">
+                                                </div>
+                                            <% }); %>
+                                        </div>
+                                    </details>
+                                <% } %>
                                 <% } %>
                     </div>
 
@@ -170,18 +190,41 @@
                                                                                         <% } %>
                                 </div>
 
+                                <!-- Pet Stats -->
+                                <div class="pet-stats">
+                                    <div class="stat-item">
+                                        <span class="stat-icon">❤️</span>
+                                        <span class="stat-value" id="likesCount"><%= typeof likesCount !== 'undefined' ? likesCount : 0 %></span>
+                                        <span class="stat-label">Lượt thích</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-icon">👤</span>
+                                        <span class="stat-value" id="pendingCount"><%= typeof pendingCount !== 'undefined' ? pendingCount : 0 %></span>
+                                        <span class="stat-label">Người quan tâm</span>
+                                    </div>
+                                </div>
+
                                 <% if (pet.status==='available' ) { %>
                                     <div class="adopt-actions">
                                         <% if (typeof isAuthenticated !=='undefined' && isAuthenticated) { %>
                                             <button class="btn btn-green btn-lg" id="adoptBtn"
                                                 data-pet-id="<%= pet.id %>">
-                                                ❤️ Đăng ký nhận nuôi
+                                                🐾 Đăng ký nhận nuôi
                                             </button>
                                             <% } else { %>
                                                 <a href="/auth/login" class="btn btn-green btn-lg">
                                                     🔐 Đăng nhập để nhận nuôi
                                                 </a>
                                                 <% } %>
+
+                                                    <!-- Like (Favorite) Button -->
+                                                    <% if (typeof isAuthenticated !=='undefined' && isAuthenticated) { %>
+                                                        <button class="btn-like <%= (typeof isLiked !== 'undefined' && isLiked) ? 'liked' : '' %>"
+                                                            id="likeBtn" data-pet-id="<%= pet.id %>" title="Yêu thích">
+                                                            <span class="like-heart"><%= (typeof isLiked !== 'undefined' && isLiked) ? '❤️' : '🤍' %></span>
+                                                        </button>
+                                                    <% } %>
+
                                                     <button class="btn btn-outline-gray" id="shareBtn"
                                                         data-share-title="<%= (pet.name || '') + ' - Pet Helper' %>"
                                                         data-share-text="<%= pet.description || '' %>">
@@ -332,6 +375,91 @@
                 }
             </script>
 
+            <script>
+                // Like / Unlike AJAX
+                const likeBtn = document.getElementById('likeBtn');
+                if (likeBtn) {
+                    let isProcessing = false;
+
+                    likeBtn.addEventListener('click', async () => {
+                        if (isProcessing) return; // Debounce / prevent spam
+                        isProcessing = true;
+                        likeBtn.disabled = true;
+                        likeBtn.style.opacity = '0.6';
+
+                        const petId = likeBtn.dataset.petId;
+                        const wasLiked = likeBtn.classList.contains('liked');
+                        const method = wasLiked ? 'DELETE' : 'POST';
+
+                        // Optimistic UI update
+                        const heartSpan = likeBtn.querySelector('.like-heart');
+                        const likesCountEl = document.getElementById('likesCount');
+                        const oldCount = parseInt(likesCountEl.textContent) || 0;
+
+                        if (wasLiked) {
+                            likeBtn.classList.remove('liked');
+                            heartSpan.textContent = '🤍';
+                            likesCountEl.textContent = Math.max(0, oldCount - 1);
+                        } else {
+                            likeBtn.classList.add('liked');
+                            heartSpan.textContent = '❤️';
+                            likesCountEl.textContent = oldCount + 1;
+                        }
+
+                        try {
+                            const response = await fetch(`/adopt/${petId}/like`, { method });
+                            const data = await response.json();
+
+                            if (!response.ok) {
+                                throw new Error(data.message || 'Lỗi');
+                            }
+
+                            // Sync with server truth
+                            likesCountEl.textContent = data.totalLikes;
+                            if (data.isLiked) {
+                                likeBtn.classList.add('liked');
+                                heartSpan.textContent = '❤️';
+                            } else {
+                                likeBtn.classList.remove('liked');
+                                heartSpan.textContent = '🤍';
+                            }
+
+                            // Show favorite overlay feedback
+                            if (typeof showFavoriteOverlay === 'function') {
+                                showFavoriteOverlay(data.isLiked);
+                            }
+
+                            if (typeof refreshFavoritesOverlay === 'function') {
+                                refreshFavoritesOverlay();
+                            }
+                        } catch (error) {
+                            // Rollback on failure
+                            if (wasLiked) {
+                                likeBtn.classList.add('liked');
+                                heartSpan.textContent = '❤️';
+                                likesCountEl.textContent = oldCount;
+                            } else {
+                                likeBtn.classList.remove('liked');
+                                heartSpan.textContent = '🤍';
+                                likesCountEl.textContent = oldCount;
+                            }
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'error',
+                                title: error.message || 'Không thể thực hiện',
+                                showConfirmButton: false,
+                                timer: 2000
+                            });
+                        } finally {
+                            isProcessing = false;
+                            likeBtn.disabled = false;
+                            likeBtn.style.opacity = '1';
+                        }
+                    });
+                }
+            </script>
+
             <style>
                 .pet-detail-page {
                     padding: 40px 0 80px;
@@ -350,20 +478,32 @@
 
                 .pet-detail-grid {
                     display: grid;
-                    grid-template-columns: 1fr 1fr;
+                    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
                     gap: 50px;
                     align-items: start;
                 }
 
                 .pet-image-section {
                     position: relative;
+                    width: 100%;
+                    max-width: 30rem;
+                }
+
+                .pet-info-section {
+                    min-width: 0;
                 }
 
                 .pet-main-image {
-                    width: 100%;
+                    width: 30rem;
+                    height: 30rem;
+                    max-width: 100%;
                     border-radius: 20px;
                     box-shadow: var(--shadow-lg);
                     transition: opacity 0.3s ease;
+                    object-fit: cover;
+                    object-position: center;
+                    aspect-ratio: 1 / 1;
+                    display: block;
                 }
 
                 .pet-gallery {
@@ -372,6 +512,39 @@
                     margin-top: 15px;
                     overflow-x: auto;
                     padding-bottom: 5px;
+                    width: 100%;
+                    max-width: 30rem;
+                }
+
+                .pet-gallery-dropdown {
+                    margin-top: 8px;
+                    width: 100%;
+                    max-width: 30rem;
+                }
+
+                .pet-gallery-dropdown summary {
+                    cursor: pointer;
+                    color: var(--primary);
+                    font-weight: 600;
+                    list-style: none;
+                    user-select: none;
+                }
+
+                .pet-gallery-dropdown summary::-webkit-details-marker {
+                    display: none;
+                }
+
+                .pet-gallery-dropdown summary::before {
+                    content: '▾ ';
+                    font-size: 0.9rem;
+                }
+
+                .pet-gallery-dropdown[open] summary::before {
+                    content: '▴ ';
+                }
+
+                .pet-gallery-extra {
+                    margin-top: 10px;
                 }
 
                 .gallery-thumb {
@@ -469,14 +642,79 @@
                     color: var(--text-primary);
                 }
 
+                .pet-stats {
+                    display: flex;
+                    gap: 25px;
+                    margin-bottom: 25px;
+                    padding: 16px 20px;
+                    background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+                    border-radius: 14px;
+                    border: 1px solid #d1fae5;
+                }
+
+                .stat-item {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                }
+
+                .stat-icon {
+                    font-size: 1.2rem;
+                }
+
+                .stat-value {
+                    font-weight: 700;
+                    font-size: 1.1rem;
+                    color: #1b4332;
+                }
+
+                .stat-label {
+                    font-size: 0.85rem;
+                    color: #64748B;
+                }
+
                 .adopt-actions {
                     display: flex;
                     gap: 15px;
+                    align-items: center;
                 }
 
                 .btn-lg {
                     padding: 16px 32px;
                     font-size: 1.1rem;
+                }
+
+                .btn-like {
+                    width: 56px;
+                    height: 56px;
+                    border-radius: 50%;
+                    border: 2px solid #e2e8f0;
+                    background: #fff;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 1.5rem;
+                    transition: all 0.3s ease;
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+                }
+
+                .btn-like:hover {
+                    transform: scale(1.15);
+                    border-color: #f87171;
+                    box-shadow: 0 4px 16px rgba(248, 113, 113, 0.3);
+                }
+
+                .btn-like.liked {
+                    border-color: #ef4444;
+                    background: #fef2f2;
+                    animation: heartPop 0.4s ease;
+                }
+
+                @keyframes heartPop {
+                    0% { transform: scale(1); }
+                    50% { transform: scale(1.3); }
+                    100% { transform: scale(1); }
                 }
 
                 .btn-outline-gray {
@@ -496,6 +734,16 @@
                         gap: 30px;
                     }
 
+                    .pet-image-section {
+                        max-width: 22rem;
+                    }
+
+                    .pet-main-image {
+                        width: 100%;
+                        max-width: 22rem;
+                        height: auto;
+                    }
+
                     .pet-name {
                         font-size: 2rem;
                     }
@@ -506,6 +754,11 @@
 
                     .adopt-actions {
                         flex-direction: column;
+                    }
+
+                    .pet-stats {
+                        flex-direction: column;
+                        gap: 12px;
                     }
                 }
             </style>

@@ -4,12 +4,19 @@ var router = express.Router();
 const fs = require('fs');
 const path = require('path');
 const User = require("../models/User");
+const petController = require("../controller/petController");
 const { isAuthenticated } = require("../middleware/authMiddleware");
 
 // GET home page
 router.get("/", function (req, res) {
   res.render("index", { title: "Hỗ Trợ & Bảo Vệ Vật Nuôi" });
 });
+
+// GET favorites page
+router.get("/favorites", isAuthenticated, petController.getFavoritePets);
+
+// GET quick favorites data for overlay
+router.get("/api/favorites", isAuthenticated, petController.getFavoritePetsApi);
 
 // GET profile/settings page
 router.get("/profile", isAuthenticated, async function (req, res) {

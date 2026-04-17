@@ -4,26 +4,34 @@ var router = express.Router();
 const fs = require('fs');
 const path = require('path');
 const User = require("../models/User");
-const petController = require("../controller/petController");
 const { isAuthenticated } = require("../middleware/authMiddleware");
+
+const staticPagesRoot = path.join(__dirname, "..", "public", "pages");
 
 // GET home page
 router.get("/", function (req, res) {
   res.render("index", { title: "Hỗ Trợ & Bảo Vệ Vật Nuôi" });
 });
 
-// GET favorites page
-router.get("/favorites", isAuthenticated, petController.getFavoritePets);
+// Favorites page shell (API-first static page)
+router.get("/favorites", (_req, res) => {
+  res.redirect(302, "/my-favorites");
+});
 
-// GET quick favorites data for overlay
-router.get("/api/favorites", isAuthenticated, petController.getFavoritePetsApi);
+router.get("/my-favorites", (_req, res) => {
+  res.sendFile(path.join(staticPagesRoot, "my-favorites.html"));
+});
+
+router.get("/snap", (_req, res) => {
+  res.sendFile(path.join(staticPagesRoot, "snap.html"));
+});
 
 // GET profile/settings page
 router.get("/profile", isAuthenticated, async function (req, res) {
   try {
     const user = await User.findById(req.user.id);
     if (!user) {
-      return res.redirect("/auth/login");
+      return res.redirect("/?auth=login");
     }
     res.render("setting", {
       title: "Cài đặt tài khoản - Pet Helper",

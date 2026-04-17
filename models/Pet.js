@@ -1,5 +1,17 @@
 const { pool } = require("../config/db");
 
+let supportsImageUrlColumn = null;
+
+const hasImageUrlColumn = async () => {
+  if (supportsImageUrlColumn !== null) {
+    return supportsImageUrlColumn;
+  }
+
+  const [rows] = await pool.execute("SHOW COLUMNS FROM pets LIKE 'image_url'");
+  supportsImageUrlColumn = rows.length > 0;
+  return supportsImageUrlColumn;
+};
+
 const Pet = {
   // Get all available pets
   async findAll(status = null) {
@@ -62,25 +74,46 @@ const Pet = {
         source_url,
       } = petData;
 
-      const [result] = await pool.execute(
-        `INSERT INTO pets (name, pet_type, breed, age, gender, color, weight, pet_code, vaccination, description, image_url, contact_info, source_url) 
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [
-          name,
-          pet_type || "Chó",
-          breed || null,
-          age || null,
-          gender || null,
-          color || null,
-          weight || null,
-          pet_code || null,
-          vaccination || null,
-          description || null,
-          image_url || null,
-          contact_info || null,
-          source_url || null,
-        ],
-      );
+      const canUseImageUrl = await hasImageUrlColumn();
+
+      const [result] = canUseImageUrl
+        ? await pool.execute(
+          `INSERT INTO pets (name, pet_type, breed, age, gender, color, weight, pet_code, vaccination, description, image_url, contact_info, source_url) 
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          [
+            name,
+            pet_type || "Chó",
+            breed || null,
+            age || null,
+            gender || null,
+            color || null,
+            weight || null,
+            pet_code || null,
+            vaccination || null,
+            description || null,
+            image_url || null,
+            contact_info || null,
+            source_url || null,
+          ],
+        )
+        : await pool.execute(
+          `INSERT INTO pets (name, pet_type, breed, age, gender, color, weight, pet_code, vaccination, description, contact_info, source_url) 
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          [
+            name,
+            pet_type || "Chó",
+            breed || null,
+            age || null,
+            gender || null,
+            color || null,
+            weight || null,
+            pet_code || null,
+            vaccination || null,
+            description || null,
+            contact_info || null,
+            source_url || null,
+          ],
+        );
 
       return { id: result.insertId, ...petData };
     } catch (error) {
@@ -108,29 +141,54 @@ const Pet = {
         source_url,
       } = petData;
 
-      const [result] = await pool.execute(
-        `UPDATE pets SET 
-          name = ?, pet_type = ?, breed = ?, age = ?, gender = ?,
-          color = ?, weight = ?, pet_code = ?, vaccination = ?,
-          description = ?, image_url = ?, contact_info = ?, source_url = ?
-         WHERE id = ?`,
-        [
-          name,
-          pet_type || "Chó",
-          breed || null,
-          age || null,
-          gender || null,
-          color || null,
-          weight || null,
-          pet_code || null,
-          vaccination || null,
-          description || null,
-          image_url || null,
-          contact_info || null,
-          source_url || null,
-          id,
-        ],
-      );
+      const canUseImageUrl = await hasImageUrlColumn();
+
+      const [result] = canUseImageUrl
+        ? await pool.execute(
+          `UPDATE pets SET 
+            name = ?, pet_type = ?, breed = ?, age = ?, gender = ?,
+            color = ?, weight = ?, pet_code = ?, vaccination = ?,
+            description = ?, image_url = ?, contact_info = ?, source_url = ?
+           WHERE id = ?`,
+          [
+            name,
+            pet_type || "Chó",
+            breed || null,
+            age || null,
+            gender || null,
+            color || null,
+            weight || null,
+            pet_code || null,
+            vaccination || null,
+            description || null,
+            image_url || null,
+            contact_info || null,
+            source_url || null,
+            id,
+          ],
+        )
+        : await pool.execute(
+          `UPDATE pets SET 
+            name = ?, pet_type = ?, breed = ?, age = ?, gender = ?,
+            color = ?, weight = ?, pet_code = ?, vaccination = ?,
+            description = ?, contact_info = ?, source_url = ?
+           WHERE id = ?`,
+          [
+            name,
+            pet_type || "Chó",
+            breed || null,
+            age || null,
+            gender || null,
+            color || null,
+            weight || null,
+            pet_code || null,
+            vaccination || null,
+            description || null,
+            contact_info || null,
+            source_url || null,
+            id,
+          ],
+        );
 
       return result.affectedRows > 0;
     } catch (error) {

@@ -7,18 +7,6 @@ const { Resend } = require("resend");
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 const authController = {
-  // Hiện trang đăng nhập
-  showLoginPage: (req, res) => {
-    if (req.user) {
-      return res.redirect("/");
-    }
-    res.render("auth/login", {
-      title: "Đăng nhập - Pet Helper",
-      error: null,
-      success: null,
-    });
-  },
-
   // Xử lí đăng kí
   register: async (req, res) => {
     try {

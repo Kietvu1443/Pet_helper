@@ -12,9 +12,15 @@ var { setUserLocals } = require("./middleware/authMiddleware");
 // Routes
 var indexRouter = require("./routes/index");
 var authRouter = require("./routes/auth");
+var authApiV1Router = require("./routes/api/v1/auth");
 var petRouter = require("./routes/pet");
+var petApiV1Router = require("./routes/api/v1/pets");
+var petSnapApiV1Router = require("./routes/api/v1/petSnap");
+var favoritesApiV1Router = require("./routes/api/v1/favorites");
+var adoptionRequestApiV1Router = require("./routes/api/v1/adoptionRequests");
 var adoptionRequestRouter = require("./routes/adoptionRequest");
 var reportRouter = require("./routes/report");
+var reportApiV1Router = require("./routes/api/v1/reports");
 
 var app = express();
 
@@ -34,6 +40,12 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(setUserLocals);
 
 // Route handlers
+app.use("/api/v1/auth", authApiV1Router);
+app.use("/api/v1", reportApiV1Router);
+app.use("/api/v1", petApiV1Router);
+app.use("/api/v1", petSnapApiV1Router);
+app.use("/api/v1", favoritesApiV1Router);
+app.use("/api/v1", adoptionRequestApiV1Router);
 app.use("/", indexRouter);
 app.use("/auth", authRouter);
 app.use("/adopt", petRouter);

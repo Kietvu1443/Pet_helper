@@ -1,67 +1,34 @@
 const express = require("express");
 const router = express.Router();
-const petController = require("../controller/petController");
-const tinderController = require("../controller/tinderController"); // New Controller
-const { upload } = require("../config/upload");
-const { isStaff, isAuthenticated } = require("../middleware/authMiddleware"); // Import isAuthenticated
+const path = require("path");
+
+const staticPagesRoot = path.join(__dirname, "..", "public", "pages");
 
 // Staff/Admin routes (MUST be defined BEFORE /:id route)
 // GET - Show add pet form
-router.get("/admin/add", isStaff, petController.showAddPetForm);
-
-// POST - Create new pet with image upload
-router.post(
-  "/admin/add",
-  isStaff,
-  upload.single("image"),
-  petController.createPet,
-);
+router.get("/admin/add", (_req, res) => {
+  res.sendFile(path.join(staticPagesRoot, "add-pet.html"));
+});
 
 // GET - Show edit pet form
-router.get("/admin/edit/:id", isStaff, petController.showEditPetForm);
-
-// POST - Update pet with optional image
-router.post(
-  "/admin/edit/:id",
-  isStaff,
-  upload.single("image"),
-  petController.updatePet,
-);
-
-// POST - Delete pet
-router.post("/admin/delete/:id", isStaff, petController.deletePet);
+router.get("/admin/edit/:id", (_req, res) => {
+  res.sendFile(path.join(staticPagesRoot, "add-pet.html"));
+});
 
 // Public routes (AFTER admin routes)
-// GET - Adopt page with all pets
-router.get("/", petController.getAdoptPage);
+// LEGACY_UI_SHELL: API-first list page shell
+router.get("/", (_req, res) => {
+  res.sendFile(path.join(staticPagesRoot, "adopt.html"));
+});
 
-// --- NEW PETSNAP ROUTES (Must be before /:id) ---
-// GET - PetSnap UI Page
-router.get("/petsnap", isAuthenticated, tinderController.getTinderPage);
+// Compatibility redirect for legacy PetSnap URL
+router.get("/petsnap", (_req, res) => {
+  res.redirect(302, "/snap");
+});
 
-// API Routes for PetSnap ( AJAX )
-router.get(
-  "/api/petsnap/random",
-  isAuthenticated,
-  tinderController.getRandomPets,
-);
-router.post(
-  "/api/petsnap/interaction",
-  isAuthenticated,
-  tinderController.recordInteraction,
-);
-router.get(
-  "/api/petsnap/likes",
-  isAuthenticated,
-  tinderController.getLikedPets,
-);
-// ----------------------------------------------
-
-// Like/Unlike API routes (MUST be before /:id wildcard)
-router.post("/:id/like", isAuthenticated, petController.likePet);
-router.delete("/:id/like", isAuthenticated, petController.unlikePet);
-
-// GET - Pet detail page (wildcard :id MUST be last)
-router.get("/:id", petController.getPetDetail);
+// LEGACY_UI_SHELL: API-first detail page shell (wildcard :id MUST be last)
+router.get("/:id", (_req, res) => {
+  res.sendFile(path.join(staticPagesRoot, "adopt-detail.html"));
+});
 
 module.exports = router;

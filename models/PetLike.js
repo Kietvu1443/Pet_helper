@@ -55,34 +55,6 @@ const PetLike = {
     }
   },
 
-  // Get recent liked pets for quick overlays
-  async findRecentLikedPets(userId, limit = 8) {
-    try {
-      const safeLimit = Math.min(10, Math.max(1, parseInt(limit, 10) || 8));
-      const query = `
-        SELECT
-          p.id,
-          p.name,
-          p.pet_type,
-          p.status,
-          p.description,
-          pl.created_at as liked_at,
-          pi.image_path as avatar_image
-        FROM pets p
-        JOIN pet_likes pl ON p.id = pl.pet_id
-        LEFT JOIN pet_images pi ON p.id = pi.pet_id AND pi.display_order = 0
-        WHERE pl.user_id = ? AND pl.status = 'liked'
-        ORDER BY pl.created_at DESC
-        LIMIT ${safeLimit}
-      `;
-      const [rows] = await pool.execute(query, [userId]);
-      return rows;
-    } catch (error) {
-      console.error("Error finding recent liked pets:", error);
-      throw error;
-    }
-  },
-
   // Check if a user has liked a specific pet
   async checkUserLike(userId, petId) {
     try {

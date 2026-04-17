@@ -3,8 +3,10 @@ const router = express.Router();
 const authController = require("../controller/authController");
 const { isAuthenticated } = require("../middleware/authMiddleware");
 
-// GET - Show login/register page
-router.get("/login", authController.showLoginPage);
+// GET - Compatibility redirect for legacy auth page
+router.get("/login", (req, res) => {
+	return res.redirect("/?auth=login");
+});
 
 // POST - Handle registration
 router.post("/register", authController.register);

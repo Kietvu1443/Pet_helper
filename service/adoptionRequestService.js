@@ -68,6 +68,30 @@ const adoptionRequestService = {
     return rows;
   },
 
+  async getUserAdoptionRequests({ userId }) {
+    const [rows] = await pool.execute(
+      `SELECT
+        ar.id,
+        ar.pet_id,
+        ar.message,
+        ar.status,
+        ar.created_at,
+        ar.reviewed_at,
+        p.name AS pet_name,
+        p.pet_type,
+        p.status AS pet_status,
+        pi.image_path AS pet_image
+      FROM adoption_requests ar
+      INNER JOIN pets p ON p.id = ar.pet_id
+      LEFT JOIN pet_images pi ON pi.pet_id = p.id AND pi.display_order = 0
+      WHERE ar.user_id = ?
+      ORDER BY ar.created_at DESC`,
+      [userId],
+    );
+
+    return rows;
+  },
+
   async updateAdoptionRequestStatus({ requestId, status, reviewerId }) {
     if (status === "approved") {
       return this.approveAdoptionRequest({ requestId, reviewerId });

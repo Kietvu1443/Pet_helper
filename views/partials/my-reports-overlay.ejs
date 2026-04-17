@@ -407,7 +407,7 @@
 
             renderLoading();
 
-            inFlightRequest = fetch('/api/my-reports?view=recent&limit=' + QUICK_LIMIT)
+            inFlightRequest = fetch('/api/v1/reports/my?view=recent&limit=' + QUICK_LIMIT)
                 .then(function (res) {
                     if (!res.ok) {
                         throw new Error('Không thể tải báo cáo gần đây');
@@ -415,7 +415,8 @@
                     return res.json();
                 })
                 .then(function (json) {
-                    var items = Array.isArray(json.data) ? json.data : [];
+                    var payload = json && json.data ? json.data : null;
+                    var items = payload && Array.isArray(payload.data) ? payload.data : [];
                     cacheStore.data = items;
                     cacheStore.expiresAt = Date.now() + CACHE_TTL;
                     return items;

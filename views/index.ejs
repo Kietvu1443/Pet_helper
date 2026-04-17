@@ -161,6 +161,24 @@
             margin-left: 0;
         }
 
+        .auth-user-actions,
+        .auth-guest-actions {
+            display: flex;
+            align-items: center;
+        }
+
+        .auth-guest-actions {
+            gap: 12px;
+        }
+
+        .is-auth-visible {
+            display: flex;
+        }
+
+        .is-auth-hidden {
+            display: none !important;
+        }
+
         .user-actions span,
         .user-actions a {
             cursor: pointer;
@@ -1704,26 +1722,6 @@
         </div>
     </div>
 
-    <!-- ============ LOGIN OVERLAY ============ -->
-    <div id="login-overlay" class="full-overlay">
-        <div class="overlay-header">
-            <div style="font-size: 1.5rem; font-weight: 900;">ĐĂNG NHẬP</div>
-            <div class="close-btn" onclick="closeOverlay('login-overlay')">✕</div>
-        </div>
-        <div class="login-container">
-            <h3 style="margin-bottom: 20px; color: var(--primary-color);">Chào mừng bạn quay lại</h3>
-            <form action="/auth/login" method="POST" class="login-form">
-                <input type="email" name="email" placeholder="Email" required>
-                <input type="password" name="password" placeholder="Mật khẩu" required>
-                <button type="submit" class="btn-primary">Đăng nhập</button>
-            </form>
-            <div class="login-options">
-                <a href="/auth/register">Đăng ký tài khoản mới</a>
-                <a href="/auth/forgot-password">Quên mật khẩu?</a>
-            </div>
-        </div>
-    </div>
-
     <!-- ============ SHOP OVERLAY ============ -->
     <div id="shop-overlay" class="full-overlay">
         <div class="overlay-header">
@@ -1876,42 +1874,42 @@
                 <span class="search-text">Tìm thú cưng, bài viết...</span>
             </div> -->
             <div class="user-actions">
-                <% if (typeof isAuthenticated !=='undefined' && isAuthenticated) { %>
-                    <div class="user-dropdown">
+                <div
+                    class="auth-user-actions is-auth-hidden"
+                    id="headerAuthUserState"
+                >
+                    <div class="user-dropdown" id="headerUserDropdown">
                         <span id="userDropdownBtn" style="cursor: pointer;">
-                            <%= user.display_name %> ▼
+                            <span id="headerDisplayNameText">Tài khoản</span> ▼
                         </span>
                         <div class="user-dropdown-menu" id="userDropdownMenu">
                             <div class="dropdown-header">
-                                <strong>
-                                    <%= user.display_name %>
-                                </strong>
-                                <span class="user-role">
-                                    <%= user.role===0 ? '👑 Admin' : user.role===1 ? '🛠️ Staff' : '👤 User' %>
-                                </span>
+                                <strong id="headerDropdownDisplayName">Tài khoản</strong>
+                                <span class="user-role" id="headerUserRole">👤 User</span>
                             </div>
                             <div class="dropdown-divider"></div>
                             <a href="/profile" class="dropdown-item">👤 Tài khoản</a>
-                            <a href="/favorites" class="dropdown-item" onclick="return openFavoritesOverlay(event)">❤️
+                            <a href="/my-favorites" class="dropdown-item">❤️
                                 Thú cưng đã yêu thích</a>
                             <a href="/my-reports" class="dropdown-item" onclick="return openMyReportsOverlay(event)">📋
                                 Báo cáo của tôi</a>
-                            <% if (typeof isStaff !=='undefined' && isStaff) { %>
-                                <a href="/adopt/admin/add" class="dropdown-item">🐾 Thêm thú cưng</a>
-                                <% } %>
-                                    <% if (typeof isAdmin !=='undefined' && isAdmin) { %>
-                                        <a href="/admin" class="dropdown-item">⚙️ Quản trị</a>
-                                        <% } %>
-                                            <div class="dropdown-divider"></div>
-                                            <a href="#" class="dropdown-item logout" id="logoutBtn"
-                                                onclick="handleLogout(event)">🚪 Đăng xuất</a>
+                            <a href="/adopt/admin/add" class="dropdown-item role-staff-only is-auth-hidden">🐾 Thêm thú cưng</a>
+                            <a href="/admin" class="dropdown-item role-admin-only is-auth-hidden">⚙️ Quản trị</a>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" class="dropdown-item logout" id="logoutBtn"
+                                onclick="handleLogout(event)">🚪 Đăng xuất</a>
                         </div>
                     </div>
-                    <% } else { %>
-                        <a href="#" onclick="openOverlay('auth-overlay'); return false;"><span>Tài khoản</span></a>
-                        <% } %>
-                            <span>Giỏ hàng <span id="cart-count-display">(0)</span></span>
-                            <span class="lang-switch">VN / EN</span>
+                </div>
+                <div
+                    class="auth-guest-actions is-auth-visible"
+                    id="headerAuthGuestState"
+                >
+                    <a href="#" onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('login'); } return false;"><span>Đăng nhập</span></a>
+                    <a href="#" onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('register'); } return false;"><span>Đăng ký</span></a>
+                </div>
+                <span>Giỏ hàng <span id="cart-count-display">(0)</span></span>
+                <span class="lang-switch">VN / EN</span>
             </div>
             <button class="hamburger-btn" id="hamburgerBtn" aria-label="Mở menu">
                 <span class="hamburger-line"></span><span class="hamburger-line"></span><span
@@ -1926,7 +1924,7 @@
                     <a href="#" class="has-dropdown nav-item">Nhận nuôi <span class="nav-arrow arrow">▼</span></a>
                     <ul class="nav-dropdown">
                         <li><a href="/adopt">Xem vật nuôi có thể nhận nuôi</a></li>
-                        <li><a href="/adopt/petsnap" style="color: #ea580c; font-weight: bold;">PetSnap (Tìm kiếm ngẫu
+                        <li><a href="/snap" style="color: #ea580c; font-weight: bold;">PetSnap (Tìm kiếm ngẫu
                                 hứng!)</a></li>
                         <!-- <li><a href="/about">Cách thức nhận nuôi</a></li> -->
                         <!-- <li><a href="/adopt">Nhận nuôi thú cưng</a></li> -->
@@ -2218,7 +2216,7 @@
                     submitBtn.innerHTML = '⏳ Đang gửi...';
 
                     var formData = new FormData(form);
-                    fetch('/reports', {
+                    fetch('/api/v1/reports', {
                         method: 'POST',
                         body: formData
                     })
@@ -2313,19 +2311,163 @@
 
             // --- USER DROPDOWN ---
             const userDropdownBtn = document.getElementById('userDropdownBtn');
-            const userDropdown = document.querySelector('.user-dropdown') || document.getElementById('userDropdown');
+            const userDropdown = document.getElementById('headerUserDropdown') || document.querySelector('.user-dropdown') || document.getElementById('userDropdown');
             if (userDropdownBtn && userDropdown) {
                 userDropdownBtn.addEventListener('click', (e) => { e.stopPropagation(); userDropdown.classList.toggle('active'); });
                 document.addEventListener('click', () => { userDropdown.classList.remove('active'); });
             }
 
+            // Progressive enhancement: sync auth state from /api/v1/auth/me
+            (function () {
+                const authUserState = document.getElementById('headerAuthUserState');
+                const authGuestState = document.getElementById('headerAuthGuestState');
+                const displayNameText = document.getElementById('headerDisplayNameText');
+                const dropdownDisplayName = document.getElementById('headerDropdownDisplayName');
+                const userRoleText = document.getElementById('headerUserRole');
+                const staffOnlyLinks = document.querySelectorAll('.role-staff-only');
+                const adminOnlyLinks = document.querySelectorAll('.role-admin-only');
+
+                if (!authUserState || !authGuestState) {
+                    return;
+                }
+
+                const roleLabel = (role) => {
+                    if (role === 0) return '👑 Admin';
+                    if (role === 1) return '🛠️ Staff';
+                    return '👤 User';
+                };
+
+                const hideRoleLinks = () => {
+                    staffOnlyLinks.forEach((link) => {
+                        link.classList.add('is-auth-hidden');
+                        link.classList.remove('is-auth-visible');
+                    });
+                    adminOnlyLinks.forEach((link) => {
+                        link.classList.add('is-auth-hidden');
+                        link.classList.remove('is-auth-visible');
+                    });
+                };
+
+                const showRoleLinksForRole = (role) => {
+                    hideRoleLinks();
+                    if (role === 0 || role === 1) {
+                        staffOnlyLinks.forEach((link) => {
+                            link.classList.remove('is-auth-hidden');
+                            link.classList.add('is-auth-visible');
+                        });
+                    }
+                    if (role === 0) {
+                        adminOnlyLinks.forEach((link) => {
+                            link.classList.remove('is-auth-hidden');
+                            link.classList.add('is-auth-visible');
+                        });
+                    }
+                };
+
+                const showGuest = () => {
+                    authUserState.classList.add('is-auth-hidden');
+                    authUserState.classList.remove('is-auth-visible');
+                    authGuestState.classList.remove('is-auth-hidden');
+                    authGuestState.classList.add('is-auth-visible');
+                    hideRoleLinks();
+                    if (userDropdown) {
+                        userDropdown.classList.remove('active');
+                    }
+                };
+
+                const showUser = (user) => {
+                    const safeName = (user && user.display_name) ? user.display_name : 'Tài khoản';
+                    const safeRoleValue = user && typeof user.role === 'number' ? user.role : 2;
+                    const safeRole = roleLabel(safeRoleValue);
+
+                    if (displayNameText) {
+                        displayNameText.textContent = safeName;
+                    }
+                    if (dropdownDisplayName) {
+                        dropdownDisplayName.textContent = safeName;
+                    }
+                    if (userRoleText) {
+                        userRoleText.textContent = safeRole;
+                    }
+
+                    authUserState.classList.remove('is-auth-hidden');
+                    authUserState.classList.add('is-auth-visible');
+                    authGuestState.classList.add('is-auth-hidden');
+                    authGuestState.classList.remove('is-auth-visible');
+                    showRoleLinksForRole(safeRoleValue);
+                };
+
+                fetch('/api/v1/auth/me', {
+                    method: 'GET',
+                    credentials: 'include',
+                })
+                    .then(async (response) => {
+                        let payload = null;
+                        try {
+                            payload = await response.json();
+                        } catch (error) {
+                            payload = null;
+                        }
+
+                        if (response.ok && payload && payload.success && payload.data && payload.data.user) {
+                            showUser(payload.data.user);
+                            return;
+                        }
+
+                        if (response.status === 401) {
+                            showGuest();
+                        }
+                    })
+                    .catch(() => {
+                        // Keep server-rendered fallback state on network error.
+                    });
+            })();
+
             // --- LOGOUT ---
             async function handleLogout(e) {
                 e.preventDefault();
-                try { await fetch('/auth/logout', { method: 'GET' }); } catch (err) { }
+
+                const authUserState = document.getElementById('headerAuthUserState');
+                const authGuestState = document.getElementById('headerAuthGuestState');
+                const applyLoggedOutUiState = () => {
+                    if (authUserState) {
+                        authUserState.classList.add('is-auth-hidden');
+                        authUserState.classList.remove('is-auth-visible');
+                    }
+                    if (authGuestState) {
+                        authGuestState.classList.remove('is-auth-hidden');
+                        authGuestState.classList.add('is-auth-visible');
+                    }
+                    if (userDropdown) {
+                        userDropdown.classList.remove('active');
+                    }
+                };
+
+                let logoutSucceeded = false;
+                try {
+                    const response = await fetch('/api/v1/auth/logout', {
+                        method: 'POST',
+                        credentials: 'include',
+                    });
+                    if (response.ok) {
+                        logoutSucceeded = true;
+                    }
+                } catch (apiError) {
+                    logoutSucceeded = false;
+                }
+
+                if (!logoutSucceeded) {
+                    alert('Không thể đăng xuất. Vui lòng thử lại.');
+                    return;
+                }
+
                 localStorage.removeItem('token');
                 localStorage.removeItem('user');
-                window.location.href = '/';
+                applyLoggedOutUiState();
+
+                if (window.location.pathname !== '/') {
+                    window.location.href = '/';
+                }
             }
 
             // --- HAMBURGER MOBILE ---
@@ -2378,11 +2520,11 @@
             });
         </script>
 
-        <%- include('partials/auth-overlay') %>
+        <div id="auth-overlay-mount"></div>
+        <script src="/javascripts/authOverlayLoader.js" defer></script>
             <%- include('partials/lost-overlay') %>
                 <%- include('partials/found-overlay') %>
                     <%- include('partials/tips-overlay') %>
-                        <%- include('partials/favorite-overlay') %>
                             <%- include('partials/my-reports-overlay') %>
 
                                 <!-- Toast container for report notifications -->

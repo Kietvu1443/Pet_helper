@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thong Tin Tai Khoan - Pet Helper</title>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <link rel="stylesheet" href="/stylesheets/auth.css">
+    <link rel="stylesheet" href="/stylesheets/staticHeader.css">
+    <style>
+        body {
+            margin: 0;
+        }
+
+        .profile-page {
+            min-height: calc(100vh - 140px);
+            background: linear-gradient(180deg, #f5fbf7 0%, #eef8f1 100%);
+            padding: 32px 16px;
+        }
+
+        .profile-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .profile-heading {
+            margin-bottom: 18px;
+        }
+
+        .profile-heading h1 {
+            margin: 0 0 8px;
+            color: #1f5133;
+            font-size: clamp(1.45rem, 2.6vw, 2rem);
+        }
+
+        .profile-heading p {
+            margin: 0;
+            color: #4b5563;
+        }
+
+        .status-note {
+            display: none;
+            padding: 12px 14px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            line-height: 1.45;
+        }
+
+        .status-note.warning {
+            display: block;
+            background: #fff7ed;
+            color: #9a3412;
+        }
+
+        .status-note.error {
+            display: block;
+            background: #fef2f2;
+            color: #991b1b;
+        }
+
+        .status-note.success {
+            display: block;
+            background: #ecfdf3;
+            color: #166534;
+        }
+
+        .loading-box {
+            display: none;
+            background: #e8f5ec;
+            color: #1f5133;
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+
+        .loading-box.show {
+            display: block;
+        }
+
+        .profile-card {
+            background: #ffffff;
+            border: 1px solid #dfeee4;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(31, 81, 51, 0.08);
+            overflow: hidden;
+        }
+
+        .profile-card-body {
+            padding: 24px;
+            display: grid;
+            gap: 22px;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .summary-item {
+            background: #f7fbf8;
+            border: 1px solid #e1efe7;
+            border-radius: 12px;
+            padding: 12px;
+        }
+
+        .summary-value.verify-state {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 999px;
+            padding: 4px 10px;
+            font-size: 0.86rem;
+            font-weight: 700;
+            width: fit-content;
+        }
+
+        .summary-value.verify-state.verified {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .summary-value.verify-state.unverified {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .summary-label {
+            margin: 0 0 6px;
+            color: #64748b;
+            font-size: 0.84rem;
+            font-weight: 700;
+            letter-spacing: 0.2px;
+            text-transform: uppercase;
+        }
+
+        .summary-value {
+            margin: 0;
+            color: #1f2937;
+            font-size: 1rem;
+            font-weight: 700;
+            word-break: break-word;
+        }
+
+        .profile-form {
+            display: grid;
+            gap: 14px;
+        }
+
+        .verify-panel {
+            border: 1px solid #dbece1;
+            border-radius: 12px;
+            background: #f9fcfa;
+            padding: 14px;
+            display: grid;
+            gap: 12px;
+        }
+
+        .verify-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .verify-title {
+            margin: 0 0 4px;
+            color: #1f5133;
+            font-size: 0.98rem;
+            font-weight: 800;
+        }
+
+        .verify-desc {
+            margin: 0;
+            color: #64748b;
+            font-size: 0.88rem;
+            line-height: 1.45;
+        }
+
+        .verify-badge {
+            border-radius: 999px;
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .verify-badge.verified {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .verify-badge.unverified {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .verify-actions {
+            display: grid;
+            gap: 10px;
+        }
+
+        .verify-actions.hidden {
+            display: none;
+        }
+
+        .verify-btn {
+            border: 0;
+            border-radius: 10px;
+            background: #2d6a4f;
+            color: #ffffff;
+            font-weight: 700;
+            padding: 9px 14px;
+            cursor: pointer;
+            width: fit-content;
+            transition: background 0.2s ease;
+        }
+
+        .verify-btn:hover {
+            background: #1b4332;
+        }
+
+        .verify-btn.secondary {
+            background: #334155;
+        }
+
+        .verify-btn.secondary:hover {
+            background: #1f2937;
+        }
+
+        .verify-btn:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        .otp-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .otp-input {
+            border: 1px solid #cfe2d7;
+            border-radius: 10px;
+            padding: 9px 12px;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            font-weight: 700;
+            width: 180px;
+            text-align: center;
+            outline: none;
+        }
+
+        .otp-input:focus {
+            border-color: #2d6a4f;
+            box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.16);
+        }
+
+        .otp-hint {
+            margin: 0;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #64748b;
+        }
+
+        .otp-hint.error {
+            color: #991b1b;
+        }
+
+        .otp-hint.success {
+            color: #166534;
+        }
+
+        .form-row {
+            display: grid;
+            gap: 7px;
+        }
+
+        .form-row label {
+            color: #1f5133;
+            font-weight: 700;
+            font-size: 0.92rem;
+        }
+
+        .form-row input {
+            border: 1px solid #cfe2d7;
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .form-row input:focus {
+            border-color: #2d6a4f;
+            box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.16);
+        }
+
+        .form-row input:disabled {
+            background: #f8fafc;
+            cursor: not-allowed;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 4px;
+        }
+
+        .save-btn {
+            border: 0;
+            border-radius: 999px;
+            background: #2d6a4f;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 0.95rem;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+
+        .save-btn:hover {
+            background: #1b4332;
+            transform: translateY(-1px);
+        }
+
+        .save-btn:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        @media (max-width: 768px) {
+            .profile-page {
+                padding: 24px 12px;
+            }
+
+            .profile-card-body {
+                padding: 18px;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-actions {
+                justify-content: stretch;
+            }
+
+            .save-btn {
+                width: 100%;
+            }
+
+            .verify-head {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .verify-btn {
+                width: 100%;
+            }
+
+            .otp-row {
+                width: 100%;
+            }
+
+            .otp-input {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="top-bar">
+            <a href="/" class="logo-group">
+                <div class="logo-circle">
+                    <img src="/images/logo.svg" alt="logo" id="the_logo">
+                </div>
+                <div class="web-name">PET HELPER</div>
+            </a>
+            <div class="user-actions">
+                <div class="auth-user-actions is-auth-hidden" id="headerAuthUserState">
+                    <div class="user-dropdown" id="headerUserDropdown">
+                        <span id="userDropdownBtn" style="cursor: pointer;">
+                            <span id="headerDisplayNameText">Tài khoản</span> ▼
+                        </span>
+                        <div class="user-dropdown-menu" id="userDropdownMenu">
+                            <div class="dropdown-header">
+                                <strong id="headerDropdownDisplayName">Tài khoản</strong>
+                                <span class="user-role" id="headerUserRole">👤 User</span>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <a href="/profile" class="dropdown-item">👤 Tài khoản</a>
+                            <a href="/my-favorites" class="dropdown-item">❤️ Thú cưng đã yêu thích</a>
+                            <a href="/my-reports" class="dropdown-item">📋 Báo cáo của tôi</a>
+                            <a href="/my-adoption-requests" class="dropdown-item">🏠 Yêu cầu nhận nuôi</a>
+                            <a href="/adopt/admin/add" class="dropdown-item role-staff-only is-auth-hidden">🐾 Thêm thú cưng</a>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" class="dropdown-item logout" id="logoutBtn" onclick="handleLogout(event)">🚪 Đăng xuất</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="auth-guest-actions is-auth-visible" id="headerAuthGuestState">
+                    <a href="#" onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('login'); } return false;"><span>Đăng nhập</span></a>
+                    <a href="#" onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('register'); } return false;"><span>Đăng ký</span></a>
+                </div>
+                <span>Giỏ hàng <span id="cart-count-display">(0)</span></span>
+                <span class="lang-switch">VN / EN</span>
+            </div>
+            <button class="hamburger-btn" id="hamburgerBtn" aria-label="Mở menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+        </div>
+
+        <div class="mobile-nav-overlay" id="mobileNavOverlay"></div>
+
+        <nav class="main-nav" id="mainNav">
+            <button class="mobile-nav-close" id="mobileNavClose" aria-label="Đóng menu">✕</button>
+            <ul>
+                <li>
+                    <a href="#" class="has-dropdown nav-item">Nhận nuôi <span class="nav-arrow arrow">▼</span></a>
+                    <ul class="nav-dropdown">
+                        <li><a href="/adopt">Xem vật nuôi có thể nhận nuôi</a></li>
+                        <li><a href="/snap" style="color: #ea580c; font-weight: bold;">PetSnap(Tìm kiếm thú cưng ngẫu hứng!)</a></li>
+                    </ul>
+                </li>
+                <li><a href="/reports">Thất lạc</a></li>
+                <li><a href="/about">Về chúng tôi</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div id="auth-overlay-mount"></div>
+    <script src="/javascripts/authOverlayLoader.js" defer></script>
+
+    <main class="profile-page">
+        <section class="profile-container">
+            <div class="profile-heading">
+                <h1>Thông Tin Tài Khoản</h1>
+                <p>Cập nhật các thông tin cơ bản của tài khoản của bạn.</p>
+            </div>
+
+            <div id="statusNote" class="status-note" aria-live="polite"></div>
+            <div id="loadingBox" class="loading-box show">Đang tải thông tin tài khoản...</div>
+
+            <article class="profile-card">
+                <div class="profile-card-body">
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <p class="summary-label">Tên đăng nhập</p>
+                            <p class="summary-value" id="summaryDisplayName">-</p>
+                        </div>
+                        <div class="summary-item">
+                            <p class="summary-label">Họ và tên</p>
+                            <p class="summary-value" id="summaryName">-</p>
+                        </div>
+                        <div class="summary-item">
+                            <p class="summary-label">Email</p>
+                            <p class="summary-value" id="summaryEmail">-</p>
+                        </div>
+                        <div class="summary-item">
+                            <p class="summary-label">Vai trò</p>
+                            <p class="summary-value" id="summaryRole">-</p>
+                        </div>
+                        <div class="summary-item">
+                            <p class="summary-label">Trạng thái xác thực</p>
+                            <p class="summary-value verify-state unverified" id="summaryVerify">Chưa xác thực</p>
+                        </div>
+                    </div>
+
+                    <section class="verify-panel">
+                        <div class="verify-head">
+                            <div>
+                                <p class="verify-title">Xác thực email tài khoản</p>
+                                <p class="verify-desc" id="verifyDescription">Xác thực email để mở đầy đủ tính năng nhận nuôi và tăng độ tin cậy tài khoản.</p>
+                            </div>
+                            <span class="verify-badge unverified" id="verifyBadge">Chưa xác thực</span>
+                        </div>
+
+                        <div class="verify-actions" id="verifyActions">
+                            <button type="button" class="verify-btn" id="sendOtpBtn">Gửi mã OTP</button>
+                            <div class="otp-row">
+                                <input type="text" id="otpInput" class="otp-input" maxlength="6" inputmode="numeric" placeholder="Nhập mã OTP">
+                                <button type="button" class="verify-btn secondary" id="verifyOtpBtn">Xác thực OTP</button>
+                            </div>
+                            <p class="otp-hint" id="otpHint">Mã OTP gồm 6 chữ số và có hiệu lực trong 5 phút.</p>
+                        </div>
+                    </section>
+
+                    <form id="profileForm" class="profile-form">
+                        <div class="form-row">
+                            <label for="inputDisplayName">Tên đăng nhập</label>
+                            <input id="inputDisplayName" name="display_name" type="text" maxlength="100" required>
+                        </div>
+
+                        <div class="form-row">
+                            <label for="inputName">Họ và tên</label>
+                            <input id="inputName" name="name" type="text" maxlength="100" required>
+                        </div>
+
+                        <div class="form-row">
+                            <label for="inputEmail">Email</label>
+                            <input id="inputEmail" name="email" type="email" maxlength="255" required>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" id="saveBtn" class="save-btn">Lưu thay đổi</button>
+                        </div>
+                    </form>
+                </div>
+            </article>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <a href="/" class="logo">
+                    <span style="font-size: 1.5rem;">🐾</span>
+                    <span>Pet Helper</span>
+                </a>
+                <p>Nền tảng hỗ trợ và bảo vệ vật nuôi hàng đầu Việt Nam. Cùng nhau xây dựng cộng đồng yêu thương động vật - Green Project 2026.</p>
+            </div>
+
+            <div class="footer-links">
+                <h4>Dịch vụ</h4>
+                <ul>
+                    <li><a href="/adopt">Nhận nuôi thú cưng</a></li>
+                    <li><a href="/reports">Báo cáo thất lạc</a></li>
+                    <li><a href="/shop">Cửa hàng</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-links">
+                <h4>Liên hệ</h4>
+                <ul>
+                    <li>📧 support@pethelper.vn</li>
+                    <li>📞 1900-XXXX</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 Pet Helper Green Project. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="/javascripts/staticHeader.js"></script>
+    <script src="/javascripts/staticFooter.js"></script>
+
+    <script>
+        const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const MAX_DISPLAY_NAME_LENGTH = 100;
+        const MAX_NAME_LENGTH = 100;
+        const MAX_EMAIL_LENGTH = 255;
+
+        const statusNote = document.getElementById('statusNote');
+        const loadingBox = document.getElementById('loadingBox');
+        const profileForm = document.getElementById('profileForm');
+        const saveBtn = document.getElementById('saveBtn');
+        const sendOtpBtn = document.getElementById('sendOtpBtn');
+        const verifyOtpBtn = document.getElementById('verifyOtpBtn');
+        const otpInput = document.getElementById('otpInput');
+        const otpHint = document.getElementById('otpHint');
+        const verifyBadge = document.getElementById('verifyBadge');
+        const verifyDescription = document.getElementById('verifyDescription');
+        const verifyActions = document.getElementById('verifyActions');
+
+        const summaryDisplayName = document.getElementById('summaryDisplayName');
+        const summaryName = document.getElementById('summaryName');
+        const summaryEmail = document.getElementById('summaryEmail');
+        const summaryRole = document.getElementById('summaryRole');
+        const summaryVerify = document.getElementById('summaryVerify');
+
+        const inputDisplayName = document.getElementById('inputDisplayName');
+        const inputName = document.getElementById('inputName');
+        const inputEmail = document.getElementById('inputEmail');
+
+        let otpCooldownTimer = null;
+        let otpCooldownSeconds = 0;
+
+        const roleLabel = (role) => {
+            if (role === 0) return 'Admin';
+            if (role === 1) return 'Staff';
+            return 'User';
+        };
+
+        const setNote = (type, message) => {
+            statusNote.className = 'status-note';
+            statusNote.textContent = '';
+            if (!message) return;
+            statusNote.classList.add(type);
+            statusNote.textContent = message;
+        };
+
+        const setLoading = (isLoading) => {
+            loadingBox.classList.toggle('show', Boolean(isLoading));
+        };
+
+        const setFormBusy = (isBusy) => {
+            const busy = Boolean(isBusy);
+            saveBtn.disabled = busy;
+            saveBtn.textContent = busy ? 'Đang lưu...' : 'Lưu thay đổi';
+            inputDisplayName.disabled = busy;
+            inputName.disabled = busy;
+            inputEmail.disabled = busy;
+        };
+
+        const setOtpHint = (type, message) => {
+            otpHint.className = 'otp-hint';
+            if (type === 'error' || type === 'success') {
+                otpHint.classList.add(type);
+            }
+            otpHint.textContent = message || 'Mã OTP gồm 6 chữ số và có hiệu lực trong 5 phút.';
+        };
+
+        const clearOtpCooldown = () => {
+            if (otpCooldownTimer) {
+                window.clearInterval(otpCooldownTimer);
+                otpCooldownTimer = null;
+            }
+            otpCooldownSeconds = 0;
+        };
+
+        const updateSendOtpButtonText = () => {
+            if (otpCooldownSeconds > 0) {
+                sendOtpBtn.textContent = `Gửi lại sau ${otpCooldownSeconds}s`;
+                return;
+            }
+            sendOtpBtn.textContent = 'Gửi mã OTP';
+        };
+
+        const startOtpCooldown = (seconds) => {
+            const duration = Number(seconds) || 60;
+            clearOtpCooldown();
+            otpCooldownSeconds = duration;
+            sendOtpBtn.disabled = true;
+            updateSendOtpButtonText();
+
+            otpCooldownTimer = window.setInterval(() => {
+                otpCooldownSeconds -= 1;
+                if (otpCooldownSeconds <= 0) {
+                    clearOtpCooldown();
+                    sendOtpBtn.disabled = false;
+                }
+                updateSendOtpButtonText();
+            }, 1000);
+        };
+
+        const setVerifiedUi = (isVerified) => {
+            const verified = Number(isVerified) === 1;
+
+            summaryVerify.className = `summary-value verify-state ${verified ? 'verified' : 'unverified'}`;
+            summaryVerify.textContent = verified ? 'Đã xác thực' : 'Chưa xác thực';
+
+            verifyBadge.className = `verify-badge ${verified ? 'verified' : 'unverified'}`;
+            verifyBadge.textContent = verified ? 'Đã xác thực' : 'Chưa xác thực';
+
+            verifyDescription.textContent = verified
+                ? 'Email của bạn đã được xác thực. Tài khoản đã đủ điều kiện thực hiện đầy đủ tính năng.'
+                : 'Xác thực email để mở đầy đủ tính năng nhận nuôi và tăng độ tin cậy tài khoản.';
+
+            if (verified) {
+                verifyActions.classList.add('hidden');
+                clearOtpCooldown();
+                otpInput.value = '';
+            } else {
+                verifyActions.classList.remove('hidden');
+                if (!otpCooldownTimer) {
+                    sendOtpBtn.disabled = false;
+                    updateSendOtpButtonText();
+                }
+            }
+        };
+
+        const openLoginOverlay = () => {
+            if (typeof window.openLoginOverlaySafely === 'function') {
+                window.openLoginOverlaySafely();
+                return;
+            }
+            if (typeof openOverlay === 'function') {
+                openOverlay('auth-overlay');
+            }
+            if (typeof overlayActivateTab === 'function') {
+                overlayActivateTab('login');
+            }
+        };
+
+        const parseJsonSafe = async (response) => {
+            try {
+                return await response.json();
+            } catch (error) {
+                return null;
+            }
+        };
+
+        const normalizeFormValues = () => {
+            return {
+                display_name: String(inputDisplayName.value || '').trim(),
+                name: String(inputName.value || '').trim(),
+                email: String(inputEmail.value || '').trim().toLowerCase(),
+            };
+        };
+
+        const validateProfileValues = (values) => {
+            if (!values.display_name || !values.name || !values.email) {
+                return 'Vui lòng điền đầy đủ thông tin';
+            }
+
+            if (!EMAIL_REGEX.test(values.email)) {
+                return 'Email không đúng định dạng';
+            }
+
+            if (values.display_name.length > MAX_DISPLAY_NAME_LENGTH) {
+                return `Tên đăng nhập không được vượt quá ${MAX_DISPLAY_NAME_LENGTH} ký tự`;
+            }
+
+            if (values.name.length > MAX_NAME_LENGTH) {
+                return `Tên hiển thị không được vượt quá ${MAX_NAME_LENGTH} ký tự`;
+            }
+
+            if (values.email.length > MAX_EMAIL_LENGTH) {
+                return `Email không được vượt quá ${MAX_EMAIL_LENGTH} ký tự`;
+            }
+
+            return '';
+        };
+
+        const renderUser = (user) => {
+            const displayName = user && user.display_name ? user.display_name : '-';
+            const name = user && user.name ? user.name : '-';
+            const email = user && user.email ? user.email : '-';
+            const role = user && typeof user.role === 'number' ? roleLabel(user.role) : '-';
+
+            summaryDisplayName.textContent = displayName;
+            summaryName.textContent = name;
+            summaryEmail.textContent = email;
+            summaryRole.textContent = role;
+
+            inputDisplayName.value = user && user.display_name ? user.display_name : '';
+            inputName.value = user && user.name ? user.name : '';
+            inputEmail.value = user && user.email ? user.email : '';
+
+            setVerifiedUi(user && Number(user.verify) === 1 ? 1 : 0);
+        };
+
+        async function sendOtp() {
+            if (sendOtpBtn.disabled) {
+                return;
+            }
+
+            sendOtpBtn.disabled = true;
+            sendOtpBtn.textContent = 'Đang gửi...';
+            setOtpHint('', 'Đang gửi mã OTP...');
+
+            try {
+                const response = await fetch('/auth/send-otp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                    },
+                    credentials: 'include',
+                });
+
+                const payload = await parseJsonSafe(response);
+
+                if (response.status === 401) {
+                    setOtpHint('error', 'Vui lòng đăng nhập để xác thực tài khoản');
+                    sendOtpBtn.disabled = false;
+                    updateSendOtpButtonText();
+                    openLoginOverlay();
+                    return;
+                }
+
+                if (!response.ok) {
+                    if (payload && payload.waitSeconds) {
+                        startOtpCooldown(payload.waitSeconds);
+                    } else {
+                        sendOtpBtn.disabled = false;
+                        updateSendOtpButtonText();
+                    }
+                    setOtpHint('error', (payload && payload.error) || 'Không thể gửi mã OTP');
+                    return;
+                }
+
+                startOtpCooldown(60);
+                setOtpHint('success', (payload && payload.message) || 'Mã OTP đã được gửi, vui lòng kiểm tra email');
+                otpInput.focus();
+            } catch (error) {
+                sendOtpBtn.disabled = false;
+                updateSendOtpButtonText();
+                setOtpHint('error', 'Đã xảy ra lỗi khi gửi OTP');
+            }
+        }
+
+        async function verifyOtp() {
+            const otp = String(otpInput.value || '').trim();
+            if (!/^\d{6}$/.test(otp)) {
+                setOtpHint('error', 'Vui lòng nhập đúng mã OTP gồm 6 chữ số');
+                return;
+            }
+
+            verifyOtpBtn.disabled = true;
+            verifyOtpBtn.textContent = 'Đang xác thực...';
+
+            try {
+                const response = await fetch('/auth/verify-otp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({ otp }),
+                });
+
+                const payload = await parseJsonSafe(response);
+
+                if (response.status === 401) {
+                    setOtpHint('error', 'Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại');
+                    openLoginOverlay();
+                    return;
+                }
+
+                if (!response.ok) {
+                    setOtpHint('error', (payload && payload.error) || 'Xác thực OTP thất bại');
+                    return;
+                }
+
+                setOtpHint('success', (payload && payload.message) || 'Xác thực email thành công');
+                setNote('success', 'Tài khoản đã được xác thực email thành công');
+                otpInput.value = '';
+                await loadProfile();
+            } catch (error) {
+                setOtpHint('error', 'Đã xảy ra lỗi khi xác thực OTP');
+            } finally {
+                verifyOtpBtn.disabled = false;
+                verifyOtpBtn.textContent = 'Xác thực OTP';
+            }
+        }
+
+        async function loadProfile() {
+            setLoading(true);
+
+            try {
+                const response = await fetch('/api/v1/auth/me', {
+                    method: 'GET',
+                    headers: { Accept: 'application/json' },
+                    credentials: 'include',
+                });
+
+                const payload = await parseJsonSafe(response);
+
+                if (response.status === 401) {
+                    setNote('warning', 'Vui lòng đăng nhập để xem thông tin tài khoản');
+                    openLoginOverlay();
+                    return;
+                }
+
+                if (!response.ok || !payload || !payload.success || !payload.data || !payload.data.user) {
+                    throw new Error((payload && payload.message) || 'Không thể tải thông tin tài khoản');
+                }
+
+                renderUser(payload.data.user);
+            } catch (error) {
+                setNote('error', error.message || 'Đã xảy ra lỗi, vui lòng thử lại');
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        async function submitProfile(event) {
+            event.preventDefault();
+            setNote('', '');
+
+            const values = normalizeFormValues();
+            const validationMessage = validateProfileValues(values);
+            if (validationMessage) {
+                setNote('error', validationMessage);
+                return;
+            }
+
+            setFormBusy(true);
+
+            try {
+                const response = await fetch('/api/v1/auth/profile', {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(values),
+                });
+
+                const payload = await parseJsonSafe(response);
+
+                if (response.status === 401) {
+                    setNote('warning', 'Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại');
+                    openLoginOverlay();
+                    return;
+                }
+
+                if (!response.ok || !payload || !payload.success) {
+                    throw new Error((payload && payload.message) || 'Không thể cập nhật thông tin tài khoản');
+                }
+
+                setNote('success', payload.message || 'Cập nhật thông tin tài khoản thành công');
+                await loadProfile();
+            } catch (error) {
+                setNote('error', error.message || 'Đã xảy ra lỗi, vui lòng thử lại');
+            } finally {
+                setFormBusy(false);
+            }
+        }
+
+        profileForm.addEventListener('submit', submitProfile);
+        sendOtpBtn.addEventListener('click', sendOtp);
+        verifyOtpBtn.addEventListener('click', verifyOtp);
+        otpInput.addEventListener('input', () => {
+            otpInput.value = otpInput.value.replace(/\D/g, '').slice(0, 6);
+        });
+        otpInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                verifyOtp();
+            }
+        });
+
+        loadProfile();
+    </script>
+</body>
+
+</html>

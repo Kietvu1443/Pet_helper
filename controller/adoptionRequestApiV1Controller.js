@@ -29,6 +29,7 @@ const adoptionRequestApiV1Controller = {
         userId: req.user.id,
         petId,
         message,
+        verify: req.user.verify,
       });
 
       return sendSuccess(res, 201, "Đăng ký nhận nuôi thành công", { request });

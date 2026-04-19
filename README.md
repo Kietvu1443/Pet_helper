@@ -1,6 +1,6 @@
 # Pet Support - Hỗ Trợ & Bảo Vệ Vật Nuôi
 
-Website hỗ trợ và bảo vệ vật nuôi - Node.js + Express (MVC)
+Website hỗ trợ và bảo vệ vật nuôi - Node.js + Express (Restful api)
 
 ## 🐳 Chạy bằng Docker (khuyên dùng)
 
@@ -223,10 +223,21 @@ UPDATE users SET role = 0 WHERE display_name = 'TênTàiKhoản';
 UPDATE users SET role = 1 WHERE display_name = 'TênTàiKhoản';
 ```
 
-### Tài khoản mặc định
+### Tài khoản mặc định của admin
 
-- **Tên đăng nhập:** `Admin`
-- **Mật khẩu:** `admin123`
+- **Tên đăng nhập:** `trueadmin`
+- **Mật khẩu:** `1234567`
+
+### Tài khoản mặc định của user
+
+- **Tên đăng nhập:** `trueuser`
+- **Mật khẩu:** `1234567`
+
+### Tài khoản mặc định của staff
+
+- **Tên đăng nhập:** `truestaff`
+- **Mật khẩu:** `1234567`
+
 
 ⚠️ Nhắc nhở: Mã hoá mật khẩu đang TẮT. Khi deploy, hãy uncomment 3 dòng bcrypt trong models/User.js.
 

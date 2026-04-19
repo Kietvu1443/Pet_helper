@@ -3,6 +3,11 @@ const User = require("../models/User");
 const { JWT_SECRET } = require("../middleware/authMiddleware");
 const { sendSuccess, sendError } = require("../utils/apiResponse");
 
+const MAX_DISPLAY_NAME_LENGTH = 100;
+const MAX_NAME_LENGTH = 100;
+const MAX_EMAIL_LENGTH = 255;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 const authApiV1Controller = {
   async register(req, res) {
     try {
@@ -172,6 +177,123 @@ const authApiV1Controller = {
       return sendSuccess(res, 200, "Đăng xuất thành công");
     } catch (error) {
       console.error("[Auth API v1] logout error:", error);
+      return sendError(res, 500, "Đã xảy ra lỗi, vui lòng thử lại");
+    }
+  },
+
+  async updateProfile(req, res) {
+    try {
+      if (!req.user || !req.user.id) {
+        return sendError(res, 401, "Vui lòng đăng nhập tài khoản");
+      }
+
+      const display_name = String(req.body?.display_name || "").trim();
+      const name = String(req.body?.name || "").trim();
+      const email = String(req.body?.email || "").trim().toLowerCase();
+
+      if (!display_name || !name || !email) {
+        return sendError(res, 400, "Vui lòng điền đầy đủ thông tin");
+      }
+
+      if (!EMAIL_REGEX.test(email)) {
+        return sendError(res, 400, "Email không đúng định dạng");
+      }
+
+      if (display_name.length > MAX_DISPLAY_NAME_LENGTH) {
+        return sendError(
+          res,
+          400,
+          `Tên đăng nhập không được vượt quá ${MAX_DISPLAY_NAME_LENGTH} ký tự`,
+        );
+      }
+
+      if (name.length > MAX_NAME_LENGTH) {
+        return sendError(
+          res,
+          400,
+          `Tên hiển thị không được vượt quá ${MAX_NAME_LENGTH} ký tự`,
+        );
+      }
+
+      if (email.length > MAX_EMAIL_LENGTH) {
+        return sendError(
+          res,
+          400,
+          `Email không được vượt quá ${MAX_EMAIL_LENGTH} ký tự`,
+        );
+      }
+
+      const currentUser = await User.findById(req.user.id);
+      if (!currentUser) {
+        return sendError(res, 404, "Không tìm thấy người dùng");
+      }
+
+      const [existingEmail, existingDisplayName] = await Promise.all([
+        User.findByEmail(email),
+        User.findByDisplayName(display_name),
+      ]);
+
+      if (existingEmail && Number(existingEmail.id) !== Number(req.user.id)) {
+        return sendError(res, 409, "Email này đã được đăng ký");
+      }
+
+      if (
+        existingDisplayName &&
+        Number(existingDisplayName.id) !== Number(req.user.id)
+      ) {
+        return sendError(res, 409, "Tên đăng nhập này đã được sử dụng");
+      }
+
+      const currentEmail = String(currentUser.email || "").trim().toLowerCase();
+      const isEmailChanged = currentEmail !== email;
+      const verify = isEmailChanged ? 0 : Number(currentUser.verify || 0);
+
+      const updatedUser = await User.updateProfile(req.user.id, {
+        display_name,
+        name,
+        email,
+        verify,
+      });
+
+      if (!updatedUser) {
+        return sendError(res, 500, "Không thể cập nhật thông tin tài khoản");
+      }
+
+      const token = jwt.sign(
+        {
+          id: updatedUser.id,
+          display_name: updatedUser.display_name,
+          name: updatedUser.name,
+          email: updatedUser.email,
+          role: updatedUser.role,
+          verify: updatedUser.verify || 0,
+        },
+        JWT_SECRET,
+        { expiresIn: "24h" },
+      );
+
+      res.cookie("token", token, {
+        httpOnly: false,
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 24 * 60 * 60 * 1000,
+      });
+
+      return sendSuccess(res, 200, "Cập nhật thông tin tài khoản thành công", {
+        user: {
+          id: updatedUser.id,
+          display_name: updatedUser.display_name,
+          name: updatedUser.name,
+          email: updatedUser.email,
+          role: updatedUser.role,
+          verify: updatedUser.verify || 0,
+        },
+      });
+    } catch (error) {
+      if (error && error.code === "ER_DUP_ENTRY") {
+        return sendError(res, 409, "Thông tin tài khoản đã tồn tại");
+      }
+
+      console.error("[Auth API v1] updateProfile error:", error);
       return sendError(res, 500, "Đã xảy ra lỗi, vui lòng thử lại");
     }
   },

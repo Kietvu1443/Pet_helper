@@ -528,10 +528,19 @@
         const overlay = document.getElementById(id);
         if (!overlay) return;
 
+        if (id === 'auth-overlay' && overlay.classList.contains('active')) {
+            return;
+        }
+
         if (overlay.classList.contains('full-overlay')) {
             overlay.style.display = 'block';
         } else {
             overlay.classList.add('active');
+        }
+
+        if (id === 'auth-overlay') {
+            window.__authOverlayOpenRequested = true;
+            window.__pendingAuthOverlayOpen = false;
         }
 
         document.body.style.overflow = 'hidden';
@@ -550,6 +559,10 @@
         document.body.style.overflow = '';
         // Reset alerts when closing
         overlayHideAlerts();
+
+        if (id === 'auth-overlay' && typeof window.resetLoginOverlayGuard === 'function') {
+            window.resetLoginOverlayGuard();
+        }
     }
 
     // Close on ESC key

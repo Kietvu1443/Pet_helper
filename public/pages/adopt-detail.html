@@ -506,6 +506,19 @@
             }
         }
 
+        const openLoginOverlay = () => {
+            if (typeof window.openLoginOverlaySafely === 'function') {
+                window.openLoginOverlaySafely();
+                return;
+            }
+            if (typeof openOverlay === 'function') {
+                openOverlay('auth-overlay');
+            }
+            if (typeof overlayActivateTab === 'function') {
+                overlayActivateTab('login');
+            }
+        };
+
         if (adoptBtnEl) {
             let isSubmittingAdoption = false;
 
@@ -523,12 +536,7 @@
                     : 'thú cưng này';
 
                 if (!currentAuthUser) {
-                    if (typeof openOverlay === 'function') {
-                        openOverlay('auth-overlay');
-                    }
-                    if (typeof overlayActivateTab === 'function') {
-                        overlayActivateTab('login');
-                    }
+                    openLoginOverlay();
                     return;
                 }
 
@@ -611,12 +619,7 @@
                         const data = await parseAdoptionJson(response);
 
                         if (response.status === 401) {
-                            if (typeof openOverlay === 'function') {
-                                openOverlay('auth-overlay');
-                            }
-                            if (typeof overlayActivateTab === 'function') {
-                                overlayActivateTab('login');
-                            }
+                            openLoginOverlay();
                             throw new Error('Vui lòng đăng nhập để gửi yêu cầu nhận nuôi.');
                         }
 
@@ -778,12 +781,7 @@
                     rollbackLikeUi(wasLiked, oldCount, heartSpan, likesElement);
 
                     if (error && error.code === 401) {
-                        if (typeof openOverlay === 'function') {
-                            openOverlay('auth-overlay');
-                        }
-                        if (typeof overlayActivateTab === 'function') {
-                            overlayActivateTab('login');
-                        }
+                        openLoginOverlay();
 
                         Swal.fire({
                             toast: true,

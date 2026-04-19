@@ -305,7 +305,7 @@
                 Đang tải danh sách thú cưng mới nhất...
             </div>
             <div id="petsApiError" style="display:none; text-align:center; padding:14px; margin-bottom:16px; background:#fff4e5; color:#9a3412; border-radius:10px;">
-                Không thể tải danh sách thú cưng từ API. Vui lòng thử lại sau.
+                Có lỗi trong quá trình xử lí danh sách web vui lòng thử lại sau.
             </div>
 
             <div id="petsListContainer">
@@ -485,6 +485,10 @@
         };
 
         const openLoginOverlay = () => {
+            if (typeof window.openLoginOverlaySafely === 'function') {
+                window.openLoginOverlaySafely();
+                return;
+            }
             if (typeof openOverlay === 'function') {
                 openOverlay('auth-overlay');
             }

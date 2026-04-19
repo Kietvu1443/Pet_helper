@@ -57,7 +57,28 @@ const requireApiRole = (allowedRoles) => {
   };
 };
 
+const requireApiVerified = (req, res, next) => {
+  const token = getTokenFromRequest(req);
+  const user = req.user || getUserFromToken(token);
+
+  if (!user) {
+    return sendError(res, 401, "Vui lòng đăng nhập tài khoản");
+  }
+
+  if (Number(user.verify) !== 1) {
+    return sendError(
+      res,
+      403,
+      "Please verify your account before creating adoption request",
+    );
+  }
+
+  req.user = user;
+  return next();
+};
+
 module.exports = {
   requireApiAuth,
   requireApiRole,
+  requireApiVerified,
 };

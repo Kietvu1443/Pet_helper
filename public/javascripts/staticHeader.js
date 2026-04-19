@@ -1,5 +1,10 @@
 const userDropdownBtn = document.getElementById('userDropdownBtn');
 const userDropdown = document.getElementById('headerUserDropdown') || document.querySelector('.user-dropdown');
+const nativeFetch = window.__petHelperNativeFetch || window.fetch.bind(window);
+
+if (!window.__petHelperNativeFetch) {
+    window.__petHelperNativeFetch = nativeFetch;
+}
 
 if (userDropdownBtn && userDropdown) {
     userDropdownBtn.addEventListener('click', (e) => {
@@ -69,6 +74,200 @@ if (userDropdownBtn && userDropdown) {
         }
     };
 
+    const normalizeAuthTab = (tab) => {
+        return tab === 'register' ? 'register' : 'login';
+    };
+
+    if (!window.__pendingAuthOverlayTab) {
+        window.__pendingAuthOverlayTab = 'login';
+    }
+
+    const openAuthOverlaySafely = (tab = 'login') => {
+        const targetTab = normalizeAuthTab(tab || window.__pendingAuthOverlayTab);
+        window.__pendingAuthOverlayTab = targetTab;
+
+        if (window.__authOverlayOpenRequested) {
+            if (typeof window.overlayActivateTab === 'function') {
+                window.overlayActivateTab(targetTab);
+            }
+            return;
+        }
+
+        const tryOpenOverlay = () => {
+            const overlay = document.getElementById('auth-overlay');
+            if (
+                !overlay
+                || typeof window.openOverlay !== 'function'
+                || window.openOverlay.__petHelperOverlayStub
+            ) {
+                return false;
+            }
+
+            if (!overlay.classList.contains('active')) {
+                window.openOverlay('auth-overlay');
+            }
+            if (typeof window.overlayActivateTab === 'function') {
+                window.overlayActivateTab(targetTab);
+            }
+
+            window.__authOverlayOpenRequested = true;
+            return true;
+        };
+
+        if (!tryOpenOverlay()) {
+            window.__pendingAuthOverlayOpen = true;
+        }
+    };
+
+    const openLoginOverlaySafely = () => {
+        openAuthOverlaySafely('login');
+    };
+
+    const resetOverlayOpenGuard = () => {
+        window.__authOverlayOpenRequested = false;
+    };
+
+    const handleOverlayReady = () => {
+        if (!window.__pendingAuthOverlayOpen) {
+            return;
+        }
+
+        window.__pendingAuthOverlayOpen = false;
+        openAuthOverlaySafely(window.__pendingAuthOverlayTab || 'login');
+    };
+
+    if (!window.__authOverlayReadyListenerAttached) {
+        window.__authOverlayReadyListenerAttached = true;
+        window.addEventListener('auth-overlay:ready', handleOverlayReady);
+        document.addEventListener('auth-overlay:ready', handleOverlayReady);
+    }
+
+    if (!window.__petHelperUnauthorizedErrorClass) {
+        window.__petHelperUnauthorizedErrorClass = class UnauthorizedApiError extends Error {
+            constructor(message) {
+                super(message || 'Vui lòng đăng nhập tài khoản');
+                this.name = 'UnauthorizedApiError';
+                this.code = 401;
+            }
+        };
+    }
+
+    const getRequestPath = (input) => {
+        try {
+            if (typeof input === 'string') {
+                return new URL(input, window.location.origin).pathname;
+            }
+            if (input && typeof input.url === 'string') {
+                return new URL(input.url, window.location.origin).pathname;
+            }
+        } catch (error) {
+            return '';
+        }
+        return '';
+    };
+
+    const shouldHandleUnauthorized = (input, init) => {
+        if (init && init.__skipUnauthorizedHandler) {
+            return false;
+        }
+
+        const requestPath = getRequestPath(input);
+        if (!requestPath.startsWith('/api/v1/')) {
+            return false;
+        }
+
+        if (
+            requestPath === '/api/v1/auth/login'
+            || requestPath === '/api/v1/auth/register'
+            || requestPath === '/api/v1/auth/me'
+            || requestPath === '/api/v1/auth/logout'
+        ) {
+            return false;
+        }
+
+        return true;
+    };
+
+    const rejectUnauthorized = async (response, fallbackMessage) => {
+        let message = fallbackMessage || 'Vui lòng đăng nhập tài khoản';
+
+        try {
+            const payload = await response.clone().json();
+            if (payload && (payload.message || payload.error)) {
+                message = payload.message || payload.error;
+            }
+        } catch (error) {
+            // Keep fallback message when payload cannot be parsed.
+        }
+
+        showGuest();
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        openLoginOverlaySafely();
+
+        throw new window.__petHelperUnauthorizedErrorClass(message);
+    };
+
+    if (!window.__petHelperUnauthorizedHandler) {
+        window.__petHelperUnauthorizedHandler = rejectUnauthorized;
+    }
+
+    if (!window.openLoginOverlaySafely) {
+        window.openLoginOverlaySafely = openLoginOverlaySafely;
+    }
+
+    if (!window.openAuthOverlaySafely) {
+        window.openAuthOverlaySafely = openAuthOverlaySafely;
+    }
+
+    if (typeof window.openOverlay !== 'function') {
+        const openOverlayStub = (id) => {
+            if (id === 'auth-overlay') {
+                window.__pendingAuthOverlayOpen = true;
+            }
+        };
+        openOverlayStub.__petHelperOverlayStub = true;
+        window.openOverlay = openOverlayStub;
+    }
+
+    if (typeof window.overlayActivateTab !== 'function') {
+        window.overlayActivateTab = (tabName) => {
+            window.__pendingAuthOverlayTab = normalizeAuthTab(tabName);
+        };
+    }
+
+    if (!window.resetLoginOverlayGuard) {
+        window.resetLoginOverlayGuard = resetOverlayOpenGuard;
+    }
+
+    if (!window.apiFetch) {
+        window.apiFetch = async (input, init = {}) => {
+            const fetchOptions = {
+                credentials: 'include',
+                ...init,
+            };
+
+            const response = await nativeFetch(input, fetchOptions);
+            if (response.status === 401 && shouldHandleUnauthorized(input, fetchOptions)) {
+                await rejectUnauthorized(response);
+            }
+
+            return response;
+        };
+    }
+
+    if (!window.__authFetchInterceptorInitialized) {
+        window.__authFetchInterceptorInitialized = true;
+        window.fetch = async (input, init = {}) => {
+            const response = await nativeFetch(input, init);
+            if (response.status === 401 && shouldHandleUnauthorized(input, init)) {
+                await rejectUnauthorized(response);
+            }
+
+            return response;
+        };
+    }
+
     const showUser = (user) => {
         const safeName = (user && user.display_name) ? user.display_name : 'Tài khoản';
         const safeRoleValue = user && typeof user.role === 'number' ? user.role : 2;
@@ -91,7 +290,10 @@ if (userDropdownBtn && userDropdown) {
         showRoleLinksForRole(safeRoleValue);
     };
 
-    fetch('/api/v1/auth/me', {
+    window.applyHeaderGuestState = showGuest;
+    window.applyHeaderUserState = showUser;
+
+    nativeFetch('/api/v1/auth/me', {
         method: 'GET',
         credentials: 'include',
     })
@@ -120,6 +322,11 @@ if (userDropdownBtn && userDropdown) {
 async function handleLogout(e) {
     e.preventDefault();
 
+    if (window.__logoutInFlight) {
+        return;
+    }
+    window.__logoutInFlight = true;
+
     const authUserState = document.getElementById('headerAuthUserState');
     const authGuestState = document.getElementById('headerAuthGuestState');
     const applyLoggedOutUiState = () => {
@@ -136,31 +343,26 @@ async function handleLogout(e) {
         }
     };
 
-    let logoutSucceeded = false;
-    try {
-        const response = await fetch('/api/v1/auth/logout', {
-            method: 'POST',
-            credentials: 'include',
-        });
-        if (response.ok) {
-            logoutSucceeded = true;
-        }
-    } catch (apiError) {
-        logoutSucceeded = false;
-    }
-
-    if (!logoutSucceeded) {
-        alert('Không thể đăng xuất. Vui lòng thử lại.');
-        return;
-    }
-
+    applyLoggedOutUiState();
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    applyLoggedOutUiState();
+
+    try {
+        await nativeFetch('/api/v1/auth/logout', {
+            method: 'POST',
+            credentials: 'include',
+            __skipUnauthorizedHandler: true,
+        });
+    } catch (apiError) {
+        // Always continue logout flow for UI consistency.
+    }
 
     if (window.location.pathname !== '/') {
         window.location.href = '/';
+        return;
     }
+
+    window.location.reload();
 }
 
 (function () {

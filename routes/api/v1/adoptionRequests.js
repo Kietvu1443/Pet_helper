@@ -4,11 +4,13 @@ const adoptionRequestApiV1Controller = require("../../../controller/adoptionRequ
 const {
   requireApiAuth,
   requireApiRole,
+  requireApiVerified,
 } = require("../../../middleware/apiAuthV1");
 
 router.post(
   "/adoption-requests",
   requireApiAuth,
+  requireApiVerified,
   adoptionRequestApiV1Controller.createRequest,
 );
 

@@ -45,6 +45,11 @@
         }
         document.body.appendChild(script);
       });
+
+      window.__authOverlayLoaded = true;
+      var readyEvent = new Event("auth-overlay:ready");
+      window.dispatchEvent(readyEvent);
+      document.dispatchEvent(readyEvent);
     } catch (error) {
       console.error("[Auth Overlay Loader] Failed to load overlay:", error);
     }

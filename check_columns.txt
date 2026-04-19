@@ -1,1 +1,0 @@
-id, pet_id, image_path, display_order, created_at, cloudinary_id, report_id

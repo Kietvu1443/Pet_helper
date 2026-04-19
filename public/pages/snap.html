@@ -947,6 +947,10 @@
             }
 
             function openLoginOverlay() {
+                if (typeof window.openLoginOverlaySafely === "function") {
+                    window.openLoginOverlaySafely();
+                    return;
+                }
                 if (typeof openOverlay === "function") {
                     openOverlay("auth-overlay");
                 }

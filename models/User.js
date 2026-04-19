@@ -101,6 +101,27 @@ const User = {
     }
   },
 
+  // Update profile fields for current user
+  async updateProfile(userId, profileData) {
+    try {
+      const { display_name, name, email, verify } = profileData;
+
+      const [result] = await pool.execute(
+        "UPDATE users SET display_name = ?, name = ?, email = ?, verify = ? WHERE id = ?",
+        [display_name, name, email, verify, userId],
+      );
+
+      if (result.affectedRows === 0) {
+        return null;
+      }
+
+      return this.findById(userId);
+    } catch (error) {
+      console.error("Error updating user profile:", error);
+      throw error;
+    }
+  },
+
   // Get all users (admin only)
   async findAll() {
     try {

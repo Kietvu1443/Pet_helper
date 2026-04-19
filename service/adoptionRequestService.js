@@ -7,7 +7,14 @@ function createError(status, message) {
 }
 
 const adoptionRequestService = {
-  async createAdoptionRequest({ userId, petId, message }) {
+  async createAdoptionRequest({ userId, petId, message, verify }) {
+    if (Number(verify) !== 1) {
+      throw createError(
+        403,
+        "Please verify your account before creating adoption request",
+      );
+    }
+
     const [petRows] = await pool.execute(
       "SELECT id, status FROM pets WHERE id = ? LIMIT 1",
       [petId],

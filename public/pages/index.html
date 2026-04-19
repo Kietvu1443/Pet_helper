@@ -5,9 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Pet Helper - Nền tảng hỗ trợ và bảo vệ vật nuôi hàng đầu Việt Nam">
-    <title>
-        <%= title %>
-    </title>
+    <title>Hỗ Trợ & Bảo Vệ Vật Nuôi</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/stylesheets/style.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -1891,7 +1889,7 @@
                             <a href="/profile" class="dropdown-item">👤 Tài khoản</a>
                             <a href="/my-favorites" class="dropdown-item">❤️
                                 Thú cưng đã yêu thích</a>
-                            <a href="/my-reports" class="dropdown-item" onclick="return openMyReportsOverlay(event)">📋
+                            <a href="/my-reports" class="dropdown-item">📋
                                 Báo cáo của tôi</a>
                             <a href="/adopt/admin/add" class="dropdown-item role-staff-only is-auth-hidden">🐾 Thêm thú cưng</a>
                             <a href="/admin" class="dropdown-item role-admin-only is-auth-hidden">⚙️ Quản trị</a>
@@ -1933,11 +1931,11 @@
                 <li>
                     <a href="#" class="has-dropdown nav-item">Thất lạc <span class="nav-arrow arrow">▼</span></a>
                     <ul class="nav-dropdown">
-                        <li><a href="/lost" onclick="openOverlay('lost-overlay'); return false;">Báo mất thú cưng</a>
+                        <li><a href="/lost" onclick="window.location.href='/lost'; return false;">Báo mất thú cưng</a>
                         </li>
-                        <li><a href="/found" onclick="openOverlay('found-overlay'); return false;">Báo tin nhặt được</a>
+                        <li><a href="/found" onclick="window.location.href='/found'; return false;">Báo tin nhặt được</a>
                         </li>
-                        <li><a href="/tips" onclick="openOverlay('tips-overlay'); return false;">Mẹo chăm sóc thú
+                        <li><a href="/tips" onclick="window.location.href='/tips'; return false;">Mẹo chăm sóc thú
                                 cưng</a>
                         </li>
                     </ul>
@@ -2077,11 +2075,11 @@
                     </div>
                 </div>
                 <div class="adopt-links">
-                    <a href="/lost" class="link-btn" onclick="openOverlay('lost-overlay'); return false;"><span>🔍 Bạn
+                        <a href="/lost" class="link-btn" onclick="window.location.href='/lost'; return false;"><span>🔍 Bạn
                             lạc thú cưng?</span><span>→</span></a>
-                    <a href="/found" class="link-btn" onclick="openOverlay('found-overlay'); return false;"><span>🏠 Bạn
+                        <a href="/found" class="link-btn" onclick="window.location.href='/found'; return false;"><span>🏠 Bạn
                             nhặt được thú cưng?</span><span>→</span></a>
-                    <a href="/tips" class="link-btn" onclick="openOverlay('tips-overlay'); return false;"><span>🩺 Cách
+                        <a href="/tips" class="link-btn" onclick="window.location.href='/tips'; return false;"><span>🩺 Cách
                             chăm sóc thú cưng?</span><span>→</span></a>
                     <a href="#contact-section" class="link-btn"><span>📞 Liên hệ hỗ trợ</span><span>→</span></a>
                     <a href="/sheep" class="link-btn"><span>The sheep 🐏</span><span>→</span></a>
@@ -2115,10 +2113,70 @@
             </div>
         </section>
 
-        <div class="footer-bottom">&copy; 2026 Pet Helper Green Project.</div>
     </main>
 
-    <%- include('partials/footer') %>
+    <footer class="footer">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <a href="/" class="logo">
+                    <span style="font-size: 1.5rem;">🐾</span>
+                    <span>Pet Helper</span>
+                </a>
+                <p>Nền tảng hỗ trợ và bảo vệ vật nuôi hàng đầu Việt Nam. Cùng nhau xây dựng cộng đồng yêu thương động vật -
+                    Green Project 2026.
+                </p>
+            </div>
+
+            <div class="footer-links">
+                <h4>Dịch vụ</h4>
+                <ul>
+                    <li><a href="/adopt">Nhận nuôi thú cưng</a></li>
+                    <li><a href="/reports">Báo cáo thất lạc</a></li>
+                    <li><a href="/shop">Cửa hàng</a></li>
+                    <li><a href="/tracking">Theo dõi vật nuôi</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-links">
+                <h4>Hỗ trợ</h4>
+                <ul>
+                    <li><a href="#">Hướng dẫn</a></li>
+                    <li><a href="#">Câu hỏi thường gặp</a></li>
+                    <li><a href="#contact-section">Liên hệ</a></li>
+                    <li><a href="#">Chính sách</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-links">
+                <h4>Liên hệ</h4>
+                <ul>
+                    <li>📧 support@pethelper.vn</li>
+                    <li>📞 1900-XXXX</li>
+                    <li>📍 BDU UNIS Campus</li>
+                    <li>🕐 8:00 - 18:00</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>© 2026 Pet Helper Green Project. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+    /**
+     * Fallback ảnh pet khi Cloudinary/remote bị lỗi (mất mạng, URL hỏng…)
+     * Bước 1: Thử lấy ảnh qua API local /api/pets/{id}/local-avatar
+     * Bước 2: Nếu API trả về 404 (do thư mục trống/chưa tạo) -> fallback sang ảnh mặc định
+     */
+    function fallbackPetImage(img, id) {
+        img.onerror = function () {
+            img.onerror = null;
+            img.src = "/images/logo.svg";
+        };
+        img.src = "/api/pets/" + id + "/local-avatar";
+    }
+    </script>
 
         <script>
             // --- SLIDER ---
@@ -2169,106 +2227,6 @@
                         }
                     });
                 }
-            });
-
-            // --- AJAX FORM SUBMISSION FOR REPORT OVERLAYS ---
-            function showReportToast(message, isError) {
-                // Remove any existing toast
-                var existing = document.querySelector('.report-toast');
-                if (existing) existing.remove();
-                var toast = document.createElement('div');
-                toast.className = 'report-toast' + (isError ? ' report-toast--error' : '');
-                toast.textContent = message;
-                document.body.appendChild(toast);
-                // Trigger animation
-                requestAnimationFrame(function () {
-                    toast.classList.add('show');
-                });
-                setTimeout(function () {
-                    toast.classList.remove('show');
-                    setTimeout(function () { toast.remove(); }, 400);
-                }, 3500);
-            }
-
-            function setupReportForm(formId, overlayId) {
-                var form = document.getElementById(formId);
-                if (!form) return;
-                form.addEventListener('submit', function (e) {
-                    e.preventDefault();
-                    var fileInput = form.querySelector('input[name="images"]');
-                    var phoneInput = form.querySelector('input[name="phone"]');
-                    var phoneValue = phoneInput ? phoneInput.value.trim() : '';
-                    var phoneRegex = /^[0-9\-\+]{9,15}$/;
-
-                    if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
-                        showReportToast('❌ Vui lòng tải lên ít nhất một ảnh.', true);
-                        return;
-                    }
-
-                    if (phoneValue && !phoneRegex.test(phoneValue)) {
-                        showReportToast('❌ Số điện thoại không hợp lệ (9-15 ký tự số).', true);
-                        return;
-                    }
-
-                    var submitBtn = form.querySelector('button[type="submit"]');
-                    var originalText = submitBtn.innerHTML;
-                    submitBtn.disabled = true;
-                    submitBtn.innerHTML = '⏳ Đang gửi...';
-
-                    var formData = new FormData(form);
-                    fetch('/api/v1/reports', {
-                        method: 'POST',
-                        body: formData
-                    })
-                        .then(function (response) {
-                            if (!response.ok) {
-                                var contentType = response.headers.get('content-type') || '';
-                                if (contentType.indexOf('application/json') !== -1) {
-                                    return response.json()
-                                        .then(function (data) {
-                                            var message = (data && (data.message || data.error)) || ('Server trả về lỗi ' + response.status);
-                                            throw new Error(message);
-                                        })
-                                        .catch(function (err) {
-                                            if (err instanceof SyntaxError) {
-                                                throw new Error('Server trả về lỗi ' + response.status);
-                                            }
-                                            throw err;
-                                        });
-                                }
-
-                                return response.text().then(function (text) {
-                                    var message = text && text.trim() ? text.trim() : ('Server trả về lỗi ' + response.status);
-                                    throw new Error(message);
-                                });
-                            }
-                            return response;
-                        })
-                        .then(function () {
-                            // Success: close overlay, reset form, show toast
-                            closeOverlay(overlayId);
-                            form.reset();
-                            // Reset file name displays
-                            form.querySelectorAll('.report-file-name').forEach(function (el) {
-                                el.textContent = 'Chưa có file nào được chọn';
-                            });
-                            showReportToast('✅ Đăng tin thành công! Cảm ơn bạn.', false);
-                        })
-                        .catch(function (err) {
-                            // Error: do NOT close modal, show error toast
-                            showReportToast('❌ Gửi thất bại: ' + err.message, true);
-                        })
-                        .finally(function () {
-                            submitBtn.disabled = false;
-                            submitBtn.innerHTML = originalText;
-                        });
-                });
-            }
-
-            // Initialize AJAX for both report forms
-            document.addEventListener('DOMContentLoaded', function () {
-                setupReportForm('lost-report-form', 'lost-overlay');
-                setupReportForm('found-report-form', 'found-overlay');
             });
 
             // --- LOGIC GIỎ HÀNG ---
@@ -2522,13 +2480,8 @@
 
         <div id="auth-overlay-mount"></div>
         <script src="/javascripts/authOverlayLoader.js" defer></script>
-            <%- include('partials/lost-overlay') %>
-                <%- include('partials/found-overlay') %>
-                    <%- include('partials/tips-overlay') %>
-                            <%- include('partials/my-reports-overlay') %>
-
-                                <!-- Toast container for report notifications -->
-                                <div id="report-toast-container"></div>
+        <script src="/javascripts/staticHeader.js"></script>
+        <script src="/javascripts/staticFooter.js"></script>
 
 </body>
 

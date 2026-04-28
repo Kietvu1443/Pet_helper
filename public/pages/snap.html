@@ -742,10 +742,10 @@
             <div class="header-actions">
                 <button type="button" id="likedToggle" class="header-btn liked" aria-label="Mo danh sach da thich">
                     <i class="fa-solid fa-heart"></i>
-                    <span>Da thich</span>
+                    <span>Đã thích</span>
                     <span class="liked-badge" id="likedCount">0</span>
                 </button>
-                <a href="/adopt" class="header-btn ghost">Danh sach</a>
+                <a href="/adopt" class="header-btn ghost">Danh sách</a>
             </div>
         </header>
 
@@ -753,8 +753,8 @@
             <div class="stage">
                 <div id="loadingState" class="state-card show">
                     <div class="spinner"></div>
-                    <h2>Dang tim thu cung phu hop...</h2>
-                    <p>He thong dang nap danh sach cho ban.</p>
+                    <h2>Đang tìm thú cưng phù hợp...</h2>
+                    <p>Hệ thống đang tìm thú cưng cho bạn.</p>
                 </div>
 
                 <div id="emptyState" class="state-card">
@@ -764,9 +764,9 @@
                 </div>
 
                 <div id="errorState" class="state-card">
-                    <h2>Khong the tai PetSnap</h2>
+                    <h2>Không thể tải Pet Snap</h2>
                     <p id="errorText">Da xay ra loi khi goi API.</p>
-                    <button class="state-btn" id="retryErrorBtn" type="button">Thu lai</button>
+                    <button class="state-btn" id="retryErrorBtn" type="button">Thử lại</button>
                 </div>
 
                 <div id="cardStack" class="card-stack" aria-live="polite"></div>
@@ -778,15 +778,15 @@
         <footer class="bottom-controls">
             <button id="nopeBtn" class="ctrl-btn nope" type="button">
                 <i class="fa-solid fa-arrow-left"></i>
-                <span>Bo qua</span>
+                <span>Bỏ qua</span>
             </button>
             <button id="infoBtn" class="ctrl-btn" type="button">
                 <i class="fa-solid fa-arrow-up"></i>
-                <span>Thong tin</span>
+                <span>Thông tin</span>
             </button>
             <button id="likeBtn" class="ctrl-btn like" type="button">
                 <i class="fa-solid fa-arrow-right"></i>
-                <span>Thich</span>
+                <span>Thích</span>
             </button>
         </footer>
     </div>
@@ -794,13 +794,13 @@
     <div id="sidebarOverlay" class="sidebar-overlay"></div>
     <aside id="likedSidebar" class="liked-sidebar" aria-hidden="true">
         <div class="sidebar-head">
-            <h3>Thu cung da thich</h3>
+            <h3>Thú cưng đã thích</h3>
             <button id="sidebarClose" class="sidebar-close" type="button" aria-label="Dong sidebar">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
         <div id="likedList" class="sidebar-body">
-            <p class="liked-empty">Chua co thu cung duoc thich.</p>
+            <p class="liked-empty">Chưa có thú cưng được thích.</p>
         </div>
     </aside>
 
@@ -986,15 +986,15 @@
             function updateQueueStatus() {
                 if (!queue.length) {
                     if (hasMoreFromServer) {
-                        queueStatus.textContent = "Dang tim them thu cung moi...";
+                        queueStatus.textContent = "Đang tìm thêm thú cưng mới...";
                     } else {
-                        queueStatus.textContent = "Danh sach da het. Ban co the tai lai sau.";
+                        queueStatus.textContent = "Danh sách đã hết. Bạn có thể thử lại sau";
                     }
                     return;
                 }
 
-                var tailText = hasMoreFromServer ? "Con du lieu moi" : "Gan het du lieu";
-                queueStatus.textContent = "Hang cho: " + queue.length + " | " + tailText;
+                var tailText = hasMoreFromServer ? "-" : "-";
+                queueStatus.textContent = "Hàng chờ: " + queue.length + " | " + tailText;
             }
 
             function updateLikedBadge() {
@@ -1416,7 +1416,7 @@
                 updateLikedBadge();
 
                 if (!likedPets.length) {
-                    likedList.innerHTML = '<p class="liked-empty">Chua co thu cung duoc thich.</p>';
+                    likedList.innerHTML = '<p class="liked-empty">Chưa có thú cưng được thích.</p>';
                     return;
                 }
 

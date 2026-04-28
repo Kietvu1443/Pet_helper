@@ -356,6 +356,19 @@
             cursor: not-allowed;
         }
 
+        .row-action-note {
+            display: inline-flex;
+            align-items: center;
+            border: 1px solid #dbe9df;
+            background: #f8fcfa;
+            color: #4b5563;
+            border-radius: 999px;
+            padding: 5px 10px;
+            font-size: 0.76rem;
+            font-weight: 700;
+            letter-spacing: 0.01em;
+        }
+
         .reporter-cell,
         .pet-cell {
             display: grid;
@@ -1406,6 +1419,12 @@
                 const key = `adoption:${item.id}`;
                 const pending = isPending(key);
                 const canModerate = String(item.status || 'pending') === 'pending';
+                const moderationActions = canModerate
+                    ? `
+                                <button class="action-btn approve" data-action="approve-adoption" data-id="${escapeHtml(item.id)}" ${pending ? 'disabled' : ''}>Duyệt</button>
+                                <button class="action-btn reject" data-action="reject-adoption" data-id="${escapeHtml(item.id)}" ${pending ? 'disabled' : ''}>Từ chối</button>
+                    `
+                    : '<span class="row-action-note">Đã xử lý</span>';
 
                 return `
                     <tr>
@@ -1426,8 +1445,7 @@
                         <td>
                             <div class="row-actions">
                                 <button class="action-btn detail" data-action="detail-adoption" data-id="${escapeHtml(item.id)}">Chi tiết</button>
-                                <button class="action-btn approve" data-action="approve-adoption" data-id="${escapeHtml(item.id)}" ${(!canModerate || pending) ? 'disabled' : ''}>Duyệt</button>
-                                <button class="action-btn reject" data-action="reject-adoption" data-id="${escapeHtml(item.id)}" ${(!canModerate || pending) ? 'disabled' : ''}>Từ chối</button>
+                                ${moderationActions}
                             </div>
                         </td>
                     </tr>
@@ -1625,6 +1643,12 @@
                 const pending = isPending(key);
                 const canModerate = String(report.status || 'pending') === 'pending';
                 const reportType = String(report.type || 'lost');
+                const moderationActions = canModerate
+                    ? `
+                                <button class="action-btn approve" data-action="approve-report" data-id="${escapeHtml(report.id)}" ${pending ? 'disabled' : ''}>Duyệt</button>
+                                <button class="action-btn reject" data-action="reject-report" data-id="${escapeHtml(report.id)}" ${pending ? 'disabled' : ''}>Từ chối</button>
+                    `
+                    : '<span class="row-action-note">Đã xử lý</span>';
 
                 return `
                     <tr>
@@ -1641,8 +1665,7 @@
                         <td>
                             <div class="row-actions">
                                 <button class="action-btn detail" data-action="detail-report" data-id="${escapeHtml(report.id)}">Chi tiết</button>
-                                <button class="action-btn approve" data-action="approve-report" data-id="${escapeHtml(report.id)}" ${(!canModerate || pending) ? 'disabled' : ''}>Duyệt</button>
-                                <button class="action-btn reject" data-action="reject-report" data-id="${escapeHtml(report.id)}" ${(!canModerate || pending) ? 'disabled' : ''}>Từ chối</button>
+                                ${moderationActions}
                             </div>
                         </td>
                     </tr>

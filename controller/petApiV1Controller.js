@@ -24,6 +24,7 @@ const buildPetPayload = (payload, imageUrl) => {
   return {
     name: String(payload.name || "").trim(),
     pet_type: payload.pet_type || "Chó",
+    status: payload.status || null,
     breed: payload.breed || null,
     age: payload.age || null,
     gender: payload.gender || null,
@@ -92,6 +93,9 @@ const petApiV1Controller = {
     try {
       const imageUrl = req.file ? getImageUrl(req.file) : null;
       const petPayload = buildPetPayload(req.body, imageUrl);
+      petPayload.status = ["available", "adopted"].includes(petPayload.status)
+        ? petPayload.status
+        : "available";
 
       if (!petPayload.name) {
         return sendError(res, 400, "Tên thú cưng là bắt buộc");
@@ -170,6 +174,9 @@ const petApiV1Controller = {
       }
 
       const petPayload = buildPetPayload(req.body, imageUrl);
+      petPayload.status = ["available", "adopted"].includes(petPayload.status)
+        ? petPayload.status
+        : oldPet.status;
       if (!petPayload.name) {
         return sendError(res, 400, "Tên thú cưng là bắt buộc");
       }

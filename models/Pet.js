@@ -61,6 +61,7 @@ const Pet = {
       const {
         name,
         pet_type,
+        status,
         breed,
         age,
         gender,
@@ -78,11 +79,12 @@ const Pet = {
 
       const [result] = canUseImageUrl
         ? await pool.execute(
-          `INSERT INTO pets (name, pet_type, breed, age, gender, color, weight, pet_code, vaccination, description, image_url, contact_info, source_url) 
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          `INSERT INTO pets (name, pet_type, status, breed, age, gender, color, weight, pet_code, vaccination, description, image_url, contact_info, source_url) 
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
           [
             name,
             pet_type || "Chó",
+            status || "available",
             breed || null,
             age || null,
             gender || null,
@@ -97,11 +99,12 @@ const Pet = {
           ],
         )
         : await pool.execute(
-          `INSERT INTO pets (name, pet_type, breed, age, gender, color, weight, pet_code, vaccination, description, contact_info, source_url) 
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          `INSERT INTO pets (name, pet_type, status, breed, age, gender, color, weight, pet_code, vaccination, description, contact_info, source_url) 
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
           [
             name,
             pet_type || "Chó",
+            status || "available",
             breed || null,
             age || null,
             gender || null,
@@ -128,6 +131,7 @@ const Pet = {
       const {
         name,
         pet_type,
+        status,
         breed,
         age,
         gender,
@@ -146,13 +150,14 @@ const Pet = {
       const [result] = canUseImageUrl
         ? await pool.execute(
           `UPDATE pets SET 
-            name = ?, pet_type = ?, breed = ?, age = ?, gender = ?,
+            name = ?, pet_type = ?, status = ?, breed = ?, age = ?, gender = ?,
             color = ?, weight = ?, pet_code = ?, vaccination = ?,
             description = ?, image_url = ?, contact_info = ?, source_url = ?
            WHERE id = ?`,
           [
             name,
             pet_type || "Chó",
+            status || "available",
             breed || null,
             age || null,
             gender || null,
@@ -169,13 +174,14 @@ const Pet = {
         )
         : await pool.execute(
           `UPDATE pets SET 
-            name = ?, pet_type = ?, breed = ?, age = ?, gender = ?,
+            name = ?, pet_type = ?, status = ?, breed = ?, age = ?, gender = ?,
             color = ?, weight = ?, pet_code = ?, vaccination = ?,
             description = ?, contact_info = ?, source_url = ?
            WHERE id = ?`,
           [
             name,
             pet_type || "Chó",
+            status || "available",
             breed || null,
             age || null,
             gender || null,

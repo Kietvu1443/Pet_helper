@@ -138,6 +138,17 @@
                     </div>
                 </div>
 
+                <div class="form-group" id="petAdminStatusGroup" style="display: none;">
+                    <label for="status">Trạng thái</label>
+                    <select id="status" name="status">
+                        <option value="available">available - Sẵn sàng</option>
+                        <option value="adopted">adopted - Đã nhận nuôi</option>
+                    </select>
+                    <p style="font-size: 0.8rem; color: #64748B; margin-top: 5px;">
+                        Chỉ hiển thị khi sửa thú cưng để staff cập nhật nhanh trạng thái.
+                    </p>
+                </div>
+
                 <div class="form-row">
                     <div class="form-group">
                         <label for="breed">Giống</label>
@@ -261,6 +272,7 @@
         const petAdminDeleteBtn = document.getElementById('petAdminDeleteBtn');
         const petAdminApiMessage = document.getElementById('petAdminApiMessage');
         const petAdminCurrentImage = document.getElementById('petAdminCurrentImage');
+        const petAdminStatusGroup = document.getElementById('petAdminStatusGroup');
 
         function resolveModeFromPath() {
             const parts = window.location.pathname.split('/').filter(Boolean);
@@ -304,6 +316,10 @@
 
             if (petAdminDeleteBtn) {
                 petAdminDeleteBtn.style.display = (formMode === 'edit' && petId) ? '' : 'none';
+            }
+
+            if (petAdminStatusGroup) {
+                petAdminStatusGroup.style.display = (formMode === 'edit' && petId) ? 'block' : 'none';
             }
 
             const submitBtnDefaultHtml = petAdminSubmitBtn ? petAdminSubmitBtn.innerHTML : '';
@@ -435,6 +451,7 @@
                 setValue('#pet_code', pet.pet_code);
                 setValue('#pet_type', pet.pet_type || 'Chó');
                 setValue('#gender', pet.gender);
+                setValue('#status', pet.status || 'available');
                 setValue('#breed', pet.breed);
                 setValue('#age', pet.age);
                 setValue('#color', pet.color);

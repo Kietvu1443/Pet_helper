@@ -938,6 +938,7 @@
         </div>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="/javascripts/staticHeader.js"></script>
     <script src="/javascripts/staticFooter.js"></script>
 
@@ -1094,6 +1095,166 @@
             }
             globalNote.classList.add('show', type || 'info');
             globalNote.textContent = message;
+        };
+
+        const hasSwal = () => typeof window.Swal !== 'undefined' && window.Swal && typeof window.Swal.fire === 'function';
+
+        const makeEntityPendingKey = (entity, id) => `${entity}:${id}`;
+        const makeActionPendingKey = (entity, id, action) => `${entity}:${id}:${action}`;
+
+        const setButtonBusy = (buttonEl, busy, busyText) => {
+            if (!buttonEl) {
+                return;
+            }
+
+            if (busy) {
+                if (!buttonEl.dataset.originalLabel) {
+                    buttonEl.dataset.originalLabel = buttonEl.textContent;
+                }
+                buttonEl.disabled = true;
+                if (busyText) {
+                    buttonEl.textContent = busyText;
+                }
+                return;
+            }
+
+            buttonEl.disabled = false;
+            if (buttonEl.dataset.originalLabel) {
+                buttonEl.textContent = buttonEl.dataset.originalLabel;
+                delete buttonEl.dataset.originalLabel;
+            }
+        };
+
+        const showActionLoading = (title) => {
+            if (!hasSwal()) {
+                return;
+            }
+
+            window.Swal.fire({
+                title: title || 'Đang xử lý...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    window.Swal.showLoading();
+                },
+            });
+        };
+
+        const closeActionLoading = () => {
+            if (!hasSwal()) {
+                return;
+            }
+            if (!window.Swal.isVisible() || !window.Swal.isLoading()) {
+                return;
+            }
+            window.Swal.close();
+        };
+
+        const toastSuccess = (message) => {
+            if (!message) {
+                return;
+            }
+            if (!hasSwal()) {
+                return;
+            }
+
+            window.Swal.fire({
+                toast: true,
+                position: 'bottom-end',
+                icon: 'success',
+                title: message,
+                showCloseButton: true,
+                showConfirmButton: false,
+                timer: 5200,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', window.Swal.stopTimer);
+                    toast.addEventListener('mouseleave', window.Swal.resumeTimer);
+                },
+            });
+        };
+
+        const toastError = (message) => {
+            if (!message) {
+                return;
+            }
+            if (!hasSwal()) {
+                return;
+            }
+
+            window.Swal.fire({
+                toast: true,
+                position: 'bottom-end',
+                icon: 'error',
+                title: message,
+                showCloseButton: true,
+                showConfirmButton: false,
+                timer: 7000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', window.Swal.stopTimer);
+                    toast.addEventListener('mouseleave', window.Swal.resumeTimer);
+                },
+            });
+        };
+
+        const confirmDanger = async ({ title, text, confirmText }) => {
+            if (!hasSwal()) {
+                return window.confirm(text || title || 'Bạn có chắc muốn tiếp tục thao tác này?');
+            }
+
+            const result = await window.Swal.fire({
+                icon: 'warning',
+                title: title || 'Xác nhận thao tác',
+                text: text || '',
+                showCancelButton: true,
+                confirmButtonText: confirmText || 'Xác nhận',
+                cancelButtonText: 'Hủy',
+                reverseButtons: true,
+            });
+
+            return Boolean(result && result.isConfirmed);
+        };
+
+        const promptRequiredReason = async ({ title, inputLabel, placeholder, confirmText }) => {
+            if (!hasSwal()) {
+                while (true) {
+                    const fallback = window.prompt(placeholder || title || 'Nhập lý do:');
+                    if (fallback === null) {
+                        return null;
+                    }
+                    const normalizedFallback = String(fallback).trim();
+                    if (normalizedFallback) {
+                        return normalizedFallback;
+                    }
+                    window.alert('Vui lòng nhập lý do trước khi tiếp tục.');
+                }
+            }
+
+            const result = await window.Swal.fire({
+                icon: 'warning',
+                title: title || 'Nhập lý do',
+                input: 'textarea',
+                inputLabel: inputLabel || 'Lý do',
+                inputPlaceholder: placeholder || 'Vui lòng nhập lý do...',
+                showCancelButton: true,
+                confirmButtonText: confirmText || 'Xác nhận',
+                cancelButtonText: 'Hủy',
+                reverseButtons: true,
+                inputValidator: (value) => {
+                    if (!String(value || '').trim()) {
+                        return 'Lý do là bắt buộc.';
+                    }
+                    return undefined;
+                },
+            });
+
+            if (!result || !result.isConfirmed) {
+                return null;
+            }
+
+            return String(result.value || '').trim();
         };
 
         const setBlockedState = (message) => {
@@ -1533,51 +1694,85 @@
             }
         }
 
-        async function handleAdoptionStatus(id, nextStatus) {
+        async function handleAdoptionStatus(id, nextStatus, actionBtn) {
             const requestId = Number(id);
             const rowIndex = state.adoptionRows.findIndex((row) => Number(row.id) === requestId);
             if (rowIndex < 0) {
                 return;
             }
 
-            if (nextStatus === 'rejected') {
-                const confirmed = window.confirm('Bạn có chắc muốn từ chối hồ sơ nhận nuôi này?');
-                if (!confirmed) {
-                    return;
-                }
+            const actionName = nextStatus === 'rejected' ? 'reject' : 'approve';
+            const actionKey = makeActionPendingKey('adoption', requestId, actionName);
+            if (state.pendingActions.has(actionKey)) {
+                return;
             }
+            state.pendingActions.add(actionKey);
 
-            const key = `adoption:${requestId}`;
-            const previousRow = { ...state.adoptionRows[rowIndex] };
-            state.pendingActions.add(key);
-            state.adoptionRows[rowIndex] = {
-                ...state.adoptionRows[rowIndex],
-                status: nextStatus,
-            };
-            renderAdoptionRows();
+            let entityLocked = false;
 
             try {
-                const payload = await apiFetch(`/api/v1/adoption-requests/${requestId}/status`, {
-                    method: 'PATCH',
-                    body: { status: nextStatus },
-                });
-
-                const updated = payload && payload.data ? payload.data.request : null;
-                if (updated && updated.status) {
-                    state.adoptionRows[rowIndex] = {
-                        ...state.adoptionRows[rowIndex],
-                        status: updated.status,
-                    };
+                if (nextStatus === 'rejected') {
+                    const confirmed = await confirmDanger({
+                        title: 'Từ chối hồ sơ nhận nuôi?',
+                        text: 'Hành động này sẽ đánh dấu hồ sơ là đã từ chối.',
+                        confirmText: 'Từ chối',
+                    });
+                    if (!confirmed) {
+                        return;
+                    }
                 }
 
-                state.fetchedTabs.pets = false;
-                renderDashboardStats();
-                setGlobalMessage('success', payload.message || 'Cập nhật trạng thái hồ sơ thành công.');
-            } catch (error) {
-                state.adoptionRows[rowIndex] = previousRow;
-                setGlobalMessage('error', error.message || 'Không thể cập nhật trạng thái hồ sơ.');
+                const entityKey = makeEntityPendingKey('adoption', requestId);
+                if (state.pendingActions.has(entityKey)) {
+                    return;
+                }
+
+                const previousRow = { ...state.adoptionRows[rowIndex] };
+                state.pendingActions.add(entityKey);
+                entityLocked = true;
+                setButtonBusy(actionBtn, true, nextStatus === 'approved' ? 'Đang duyệt...' : 'Đang từ chối...');
+
+                state.adoptionRows[rowIndex] = {
+                    ...state.adoptionRows[rowIndex],
+                    status: nextStatus,
+                };
+                renderAdoptionRows();
+
+                showActionLoading('Đang cập nhật trạng thái hồ sơ...');
+                try {
+                    const payload = await apiFetch(`/api/v1/adoption-requests/${requestId}/status`, {
+                        method: 'PATCH',
+                        body: { status: nextStatus },
+                    });
+
+                    const updated = payload && payload.data ? payload.data.request : null;
+                    if (updated && updated.status) {
+                        state.adoptionRows[rowIndex] = {
+                            ...state.adoptionRows[rowIndex],
+                            status: updated.status,
+                        };
+                    }
+
+                    state.fetchedTabs.pets = false;
+                    renderDashboardStats();
+                    const successMessage = payload.message || 'Cập nhật trạng thái hồ sơ thành công.';
+                    setGlobalMessage('success', successMessage);
+                    toastSuccess(successMessage);
+                } catch (error) {
+                    state.adoptionRows[rowIndex] = previousRow;
+                    const errorMessage = error.message || 'Không thể cập nhật trạng thái hồ sơ.';
+                    setGlobalMessage('error', errorMessage);
+                    toastError(errorMessage);
+                } finally {
+                    closeActionLoading();
+                }
             } finally {
-                state.pendingActions.delete(key);
+                const entityKey = makeEntityPendingKey('adoption', requestId);
+                if (entityLocked) {
+                    state.pendingActions.delete(entityKey);
+                }
+                setButtonBusy(actionBtn, false);
+                state.pendingActions.delete(actionKey);
                 renderAdoptionRows();
             }
         }
@@ -1645,39 +1840,71 @@
             window.location.href = `/adopt/admin/edit/${id}`;
         };
 
-        async function handlePetDelete(id) {
+        async function handlePetDelete(id, actionBtn) {
             const petId = Number(id);
             if (!petId) return;
 
-            const confirmed = window.confirm('Bạn có chắc muốn xóa thú cưng này khỏi hệ thống?');
-            if (!confirmed) {
+            const actionKey = makeActionPendingKey('pet', petId, 'delete');
+            if (state.pendingActions.has(actionKey)) {
                 return;
             }
+            state.pendingActions.add(actionKey);
 
-            const key = `pet:${petId}`;
-            state.pendingActions.add(key);
-            renderPetRows();
+            let entityLocked = false;
 
             try {
-                const payload = await apiFetch(`/api/v1/pets/${petId}`, {
-                    method: 'DELETE',
+                const confirmed = await confirmDanger({
+                    title: 'Xóa thú cưng?',
+                    text: 'Hành động này không thể hoàn tác.',
+                    confirmText: 'Xóa',
                 });
-
-                state.petRows = state.petRows.filter((item) => Number(item.id) !== petId);
-                renderDashboardStats();
-
-                if (state.petRows.length === 0) {
-                    setSectionState('pets', 'empty', 'Hiện chưa còn thú cưng nào trong hệ thống.');
-                } else {
-                    renderPetRows();
-                    setSectionState('pets', 'ready');
+                if (!confirmed) {
+                    return;
                 }
 
-                setGlobalMessage('success', payload.message || 'Đã xóa thú cưng thành công.');
-            } catch (error) {
-                setGlobalMessage('error', error.message || 'Không thể xóa thú cưng.');
+                const entityKey = makeEntityPendingKey('pet', petId);
+                if (state.pendingActions.has(entityKey)) {
+                    return;
+                }
+
+                state.pendingActions.add(entityKey);
+                entityLocked = true;
+                setButtonBusy(actionBtn, true, 'Đang xóa...');
+                renderPetRows();
+
+                showActionLoading('Đang xóa thú cưng...');
+                try {
+                    const payload = await apiFetch(`/api/v1/pets/${petId}`, {
+                        method: 'DELETE',
+                    });
+
+                    state.petRows = state.petRows.filter((item) => Number(item.id) !== petId);
+                    renderDashboardStats();
+
+                    if (state.petRows.length === 0) {
+                        setSectionState('pets', 'empty', 'Hiện chưa còn thú cưng nào trong hệ thống.');
+                    } else {
+                        renderPetRows();
+                        setSectionState('pets', 'ready');
+                    }
+
+                    const successMessage = payload.message || 'Đã xóa thú cưng thành công.';
+                    setGlobalMessage('success', successMessage);
+                    toastSuccess(successMessage);
+                } catch (error) {
+                    const errorMessage = error.message || 'Không thể xóa thú cưng.';
+                    setGlobalMessage('error', errorMessage);
+                    toastError(errorMessage);
+                } finally {
+                    closeActionLoading();
+                }
             } finally {
-                state.pendingActions.delete(key);
+                const entityKey = makeEntityPendingKey('pet', petId);
+                if (entityLocked) {
+                    state.pendingActions.delete(entityKey);
+                }
+                setButtonBusy(actionBtn, false);
+                state.pendingActions.delete(actionKey);
                 renderPetRows();
             }
         }
@@ -1755,50 +1982,91 @@
             }
         }
 
-        async function handleReportAction(id, action) {
+        async function handleReportAction(id, action, actionBtn) {
             const reportId = Number(id);
             const rowIndex = state.reportRows.findIndex((row) => Number(row.id) === reportId);
             if (rowIndex < 0) return;
 
-            let reason = '';
-            if (action === 'ban') {
-                reason = window.prompt('Nhập lý do khóa tài khoản người dùng báo cáo (hoặc để trống):');
-                if (reason === null) return;
-            } else if (action === 'reject') {
-                const confirmed = window.confirm('Bạn có chắc muốn từ chối báo cáo này?');
-                if (!confirmed) return;
+            const actionKey = makeActionPendingKey('report', reportId, action);
+            if (state.pendingActions.has(actionKey)) {
+                return;
             }
+            state.pendingActions.add(actionKey);
 
-            const key = `report:${reportId}`;
-            const previousRow = { ...state.reportRows[rowIndex] };
-            state.pendingActions.add(key);
-            
-            const nextStatus = action === 'reject' ? 'rejected' : 'resolved';
-            state.reportRows[rowIndex] = {
-                ...state.reportRows[rowIndex],
-                status: nextStatus,
-            };
-            renderReportRows();
+            let entityLocked = false;
+            let reason = '';
 
             try {
-                const payload = await apiFetch(`/api/v1/admin/reports/${reportId}`, {
-                    method: 'PATCH',
-                    body: { action: action, reason: reason },
-                });
+                if (action === 'ban') {
+                    reason = await promptRequiredReason({
+                        title: 'Khóa tài khoản người dùng?',
+                        inputLabel: 'Lý do khóa',
+                        placeholder: 'Nhập lý do khóa tài khoản...',
+                        confirmText: 'Khóa tài khoản',
+                    });
+                    if (reason === null) {
+                        return;
+                    }
+                } else if (action === 'reject') {
+                    const confirmed = await confirmDanger({
+                        title: 'Từ chối báo cáo?',
+                        text: 'Báo cáo sẽ được đánh dấu là từ chối.',
+                        confirmText: 'Từ chối',
+                    });
+                    if (!confirmed) {
+                        return;
+                    }
+                }
 
-                const updatedStatus = payload && payload.data && payload.data.status ? payload.data.status : nextStatus;
+                const entityKey = makeEntityPendingKey('report', reportId);
+                if (state.pendingActions.has(entityKey)) {
+                    return;
+                }
+
+                const previousRow = { ...state.reportRows[rowIndex] };
+                const nextStatus = action === 'reject' ? 'rejected' : 'resolved';
+                state.pendingActions.add(entityKey);
+                entityLocked = true;
+                setButtonBusy(actionBtn, true, 'Đang xử lý...');
+
                 state.reportRows[rowIndex] = {
                     ...state.reportRows[rowIndex],
-                    status: updatedStatus,
+                    status: nextStatus,
                 };
+                renderReportRows();
 
-                renderDashboardStats();
-                setGlobalMessage('success', payload.message || 'Xử lý báo cáo thành công.');
-            } catch (error) {
-                state.reportRows[rowIndex] = previousRow;
-                setGlobalMessage('error', error.message || 'Không thể xử lý báo cáo.');
+                showActionLoading('Đang xử lý báo cáo...');
+                try {
+                    const payload = await apiFetch(`/api/v1/admin/reports/${reportId}`, {
+                        method: 'PATCH',
+                        body: { action: action, reason: reason },
+                    });
+
+                    const updatedStatus = payload && payload.data && payload.data.status ? payload.data.status : nextStatus;
+                    state.reportRows[rowIndex] = {
+                        ...state.reportRows[rowIndex],
+                        status: updatedStatus,
+                    };
+
+                    renderDashboardStats();
+                    const successMessage = payload.message || 'Xử lý báo cáo thành công.';
+                    setGlobalMessage('success', successMessage);
+                    toastSuccess(successMessage);
+                } catch (error) {
+                    state.reportRows[rowIndex] = previousRow;
+                    const errorMessage = error.message || 'Không thể xử lý báo cáo.';
+                    setGlobalMessage('error', errorMessage);
+                    toastError(errorMessage);
+                } finally {
+                    closeActionLoading();
+                }
             } finally {
-                state.pendingActions.delete(key);
+                const entityKey = makeEntityPendingKey('report', reportId);
+                if (entityLocked) {
+                    state.pendingActions.delete(entityKey);
+                }
+                setButtonBusy(actionBtn, false);
+                state.pendingActions.delete(actionKey);
                 renderReportRows();
             }
         }
@@ -1880,68 +2148,142 @@
             }
         }
 
-        async function handleUserRole(id, nextRole) {
+        async function handleUserRole(id, nextRole, actionBtn) {
             const userId = Number(id);
-            const confirmed = window.confirm('Bạn có chắc muốn thay đổi quyền của người dùng này?');
-            if (!confirmed) return;
+            const actionKey = makeActionPendingKey('user', userId, 'change-role');
+            if (state.pendingActions.has(actionKey)) {
+                return;
+            }
+            state.pendingActions.add(actionKey);
 
-            const key = `user:${userId}`;
-            state.pendingActions.add(key);
-            renderUserRows();
+            let entityLocked = false;
 
             try {
-                const payload = await apiFetch(`/api/v1/admin/users/${userId}/role`, {
-                    method: 'PATCH',
-                    body: { role: Number(nextRole) }
+                const confirmed = await confirmDanger({
+                    title: 'Thay đổi quyền người dùng?',
+                    text: 'Vai trò hiện tại của người dùng sẽ được cập nhật.',
+                    confirmText: 'Cập nhật quyền',
                 });
-
-                const rowIndex = state.userRows.findIndex((row) => Number(row.id) === userId);
-                if (rowIndex >= 0) {
-                    state.userRows[rowIndex].role = Number(nextRole);
+                if (!confirmed) {
+                    return;
                 }
 
-                setGlobalMessage('success', payload.message || 'Thay đổi quyền thành công.');
-            } catch (error) {
-                setGlobalMessage('error', error.message || 'Không thể thay đổi quyền.');
+                const entityKey = makeEntityPendingKey('user', userId);
+                if (state.pendingActions.has(entityKey)) {
+                    return;
+                }
+
+                state.pendingActions.add(entityKey);
+                entityLocked = true;
+                setButtonBusy(actionBtn, true, 'Đang cập nhật...');
+                renderUserRows();
+
+                showActionLoading('Đang thay đổi quyền người dùng...');
+                try {
+                    const payload = await apiFetch(`/api/v1/admin/users/${userId}/role`, {
+                        method: 'PATCH',
+                        body: { role: Number(nextRole) }
+                    });
+
+                    const rowIndex = state.userRows.findIndex((row) => Number(row.id) === userId);
+                    if (rowIndex >= 0) {
+                        state.userRows[rowIndex].role = Number(nextRole);
+                    }
+
+                    const successMessage = payload.message || 'Thay đổi quyền thành công.';
+                    setGlobalMessage('success', successMessage);
+                    toastSuccess(successMessage);
+                } catch (error) {
+                    const errorMessage = error.message || 'Không thể thay đổi quyền.';
+                    setGlobalMessage('error', errorMessage);
+                    toastError(errorMessage);
+                } finally {
+                    closeActionLoading();
+                }
             } finally {
-                state.pendingActions.delete(key);
+                const entityKey = makeEntityPendingKey('user', userId);
+                if (entityLocked) {
+                    state.pendingActions.delete(entityKey);
+                }
+                setButtonBusy(actionBtn, false);
+                state.pendingActions.delete(actionKey);
                 renderUserRows();
             }
         }
 
-        async function handleUserStatus(id, nextStatus) {
+        async function handleUserStatus(id, nextStatus, actionBtn) {
             const userId = Number(id);
             const actionText = nextStatus === 'banned' ? 'khóa' : 'mở khóa';
-            let reason = '';
-            
-            if (nextStatus === 'banned') {
-                reason = window.prompt(`Nhập lý do khóa tài khoản người dùng #${userId}:`);
-                if (reason === null) return;
-            } else {
-                const confirmed = window.confirm(`Bạn có chắc muốn ${actionText} người dùng này?`);
-                if (!confirmed) return;
+            const actionKey = makeActionPendingKey('user', userId, `change-status:${nextStatus}`);
+            if (state.pendingActions.has(actionKey)) {
+                return;
             }
+            state.pendingActions.add(actionKey);
 
-            const key = `user:${userId}`;
-            state.pendingActions.add(key);
-            renderUserRows();
+            let entityLocked = false;
+            let reason = '';
 
             try {
-                const payload = await apiFetch(`/api/v1/admin/users/${userId}/status`, {
-                    method: 'PATCH',
-                    body: { status: nextStatus, reason: reason }
-                });
-
-                const rowIndex = state.userRows.findIndex((row) => Number(row.id) === userId);
-                if (rowIndex >= 0) {
-                    state.userRows[rowIndex].status = nextStatus;
+                if (nextStatus === 'banned') {
+                    reason = await promptRequiredReason({
+                        title: 'Khóa tài khoản người dùng?',
+                        inputLabel: `Lý do khóa user #${userId}`,
+                        placeholder: 'Nhập lý do khóa tài khoản...',
+                        confirmText: 'Khóa tài khoản',
+                    });
+                    if (reason === null) {
+                        return;
+                    }
+                } else {
+                    const confirmed = await confirmDanger({
+                        title: 'Mở khóa tài khoản?',
+                        text: 'Người dùng sẽ có thể sử dụng lại hệ thống.',
+                        confirmText: 'Mở khóa',
+                    });
+                    if (!confirmed) {
+                        return;
+                    }
                 }
 
-                setGlobalMessage('success', payload.message || `Đã ${actionText} tài khoản.`);
-            } catch (error) {
-                setGlobalMessage('error', error.message || `Không thể ${actionText} tài khoản.`);
+                const entityKey = makeEntityPendingKey('user', userId);
+                if (state.pendingActions.has(entityKey)) {
+                    return;
+                }
+
+                state.pendingActions.add(entityKey);
+                entityLocked = true;
+                setButtonBusy(actionBtn, true, nextStatus === 'banned' ? 'Đang khóa...' : 'Đang mở khóa...');
+                renderUserRows();
+
+                showActionLoading(nextStatus === 'banned' ? 'Đang khóa tài khoản...' : 'Đang mở khóa tài khoản...');
+                try {
+                    const payload = await apiFetch(`/api/v1/admin/users/${userId}/status`, {
+                        method: 'PATCH',
+                        body: { status: nextStatus, reason: reason }
+                    });
+
+                    const rowIndex = state.userRows.findIndex((row) => Number(row.id) === userId);
+                    if (rowIndex >= 0) {
+                        state.userRows[rowIndex].status = nextStatus;
+                    }
+
+                    const successMessage = payload.message || `Đã ${actionText} tài khoản.`;
+                    setGlobalMessage('success', successMessage);
+                    toastSuccess(successMessage);
+                } catch (error) {
+                    const errorMessage = error.message || `Không thể ${actionText} tài khoản.`;
+                    setGlobalMessage('error', errorMessage);
+                    toastError(errorMessage);
+                } finally {
+                    closeActionLoading();
+                }
             } finally {
-                state.pendingActions.delete(key);
+                const entityKey = makeEntityPendingKey('user', userId);
+                if (entityLocked) {
+                    state.pendingActions.delete(entityKey);
+                }
+                setButtonBusy(actionBtn, false);
+                state.pendingActions.delete(actionKey);
                 renderUserRows();
             }
         }
@@ -2006,6 +2348,10 @@
                 return;
             }
 
+            if (actionBtn.disabled) {
+                return;
+            }
+
             const action = actionBtn.dataset.action;
             const id = actionBtn.dataset.id;
 
@@ -2025,12 +2371,12 @@
             }
 
             if (action === 'approve-adoption') {
-                await handleAdoptionStatus(id, 'approved');
+                await handleAdoptionStatus(id, 'approved', actionBtn);
                 return;
             }
 
             if (action === 'reject-adoption') {
-                await handleAdoptionStatus(id, 'rejected');
+                await handleAdoptionStatus(id, 'rejected', actionBtn);
                 return;
             }
 
@@ -2040,34 +2386,34 @@
             }
 
             if (action === 'delete-pet') {
-                await handlePetDelete(id);
+                await handlePetDelete(id, actionBtn);
                 return;
             }
 
             if (action === 'resolve-report') {
-                await handleReportAction(id, 'resolve');
+                await handleReportAction(id, 'resolve', actionBtn);
                 return;
             }
 
             if (action === 'ban-report') {
-                await handleReportAction(id, 'ban');
+                await handleReportAction(id, 'ban', actionBtn);
                 return;
             }
 
             if (action === 'reject-report') {
-                await handleReportAction(id, 'reject');
+                await handleReportAction(id, 'reject', actionBtn);
                 return;
             }
 
             if (action === 'change-role') {
                 const role = actionBtn.dataset.role;
-                await handleUserRole(id, role);
+                await handleUserRole(id, role, actionBtn);
                 return;
             }
 
             if (action === 'change-status') {
                 const status = actionBtn.dataset.status;
-                await handleUserStatus(id, status);
+                await handleUserStatus(id, status, actionBtn);
             }
         });
 

@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const { sendError } = require("../utils/apiResponse");
 const { JWT_SECRET } = require("./authMiddleware");
+const User = require("../models/User");
 
 const getTokenFromRequest = (req) => {
   const authHeader = req.headers.authorization;
@@ -27,15 +28,29 @@ const getUserFromToken = (token) => {
   }
 };
 
-const requireApiAuth = (req, res, next) => {
+const requireApiAuth = async (req, res, next) => {
   const token = getTokenFromRequest(req);
-  const user = getUserFromToken(token);
+  const decoded = getUserFromToken(token);
 
-  if (!user) {
+  if (!decoded) {
     return sendError(res, 401, "Vui lòng đăng nhập tài khoản");
   }
 
-  req.user = user;
+  // Check user status from DB on every request
+  try {
+    const freshUser = await User.findById(decoded.id);
+    if (!freshUser) {
+      return sendError(res, 401, "Tài khoản không tồn tại");
+    }
+    if (freshUser.status === "banned") {
+      return sendError(res, 403, "Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.");
+    }
+  } catch (error) {
+    console.error("[apiAuthV1] DB check error:", error);
+    return sendError(res, 500, "Đã xảy ra lỗi xác thực");
+  }
+
+  req.user = decoded;
   return next();
 };
 

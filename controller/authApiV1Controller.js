@@ -113,6 +113,11 @@ const authApiV1Controller = {
         return sendError(res, 401, "Tên đăng nhập hoặc mật khẩu bị sai");
       }
 
+      // Check if user is banned
+      if (user.status === "banned") {
+        return sendError(res, 403, "Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.");
+      }
+
       const token = jwt.sign(
         {
           id: user.id,

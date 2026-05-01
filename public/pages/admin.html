@@ -675,6 +675,7 @@
                     <button class="nav-btn" data-tab="adoption">Adoption Requests</button>
                     <button class="nav-btn" data-tab="pets">Pets</button>
                     <button class="nav-btn" data-tab="reports">Reports</button>
+                    <button class="nav-btn" data-tab="users">Users</button>
                 </nav>
             </aside>
 
@@ -706,12 +707,17 @@
                                 <p class="stat-label">Báo cáo thất lạc</p>
                                 <p class="stat-value" id="statReportsTotal">-</p>
                             </article>
+                            <article class="stat-card">
+                                <p class="stat-label">Người dùng</p>
+                                <p class="stat-value" id="statUsersTotal">-</p>
+                            </article>
                         </div>
                         <p class="dash-hint">Chọn một tab bên trái để quản trị chi tiết. Các hành động duyệt/từ chối sẽ cập nhật trực tiếp trên giao diện, không cần tải lại trang.</p>
                         <div>
                             <button class="mini-link-btn" type="button" data-jump-tab="adoption">Đi đến Adoption Requests</button>
                             <button class="mini-link-btn" type="button" data-jump-tab="pets">Đi đến Pets</button>
                             <button class="mini-link-btn" type="button" data-jump-tab="reports">Đi đến Reports</button>
+                            <button class="mini-link-btn" type="button" data-jump-tab="users">Đi đến Users</button>
                         </div>
                     </div>
                 </section>
@@ -800,6 +806,36 @@
                                     </tr>
                                 </thead>
                                 <tbody id="reportsBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="panel-users" class="tab-panel">
+                    <div class="panel-head">
+                        <div>
+                            <h2>Users Management</h2>
+                            <p class="panel-sub">Quản lý người dùng, phân quyền và khóa tài khoản.</p>
+                        </div>
+                        <div class="panel-tools">
+                            <button class="tool-btn" data-refresh-tab="users" type="button">Tải lại</button>
+                        </div>
+                    </div>
+                    <div class="panel-state" id="usersState"></div>
+                    <div class="panel-content is-hidden" id="usersContent">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Tài khoản</th>
+                                        <th>Phân quyền</th>
+                                        <th>Trạng thái</th>
+                                        <th>Ngày tham gia</th>
+                                        <th>Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersBody"></tbody>
                             </table>
                         </div>
                     </div>
@@ -907,7 +943,7 @@
 
     <script>
         const TAB_KEY = 'admin.dashboard.activeTab';
-        const TAB_LIST = ['dashboard', 'adoption', 'pets', 'reports'];
+        const TAB_LIST = ['dashboard', 'adoption', 'pets', 'reports', 'users'];
 
         class ApiFetchError extends Error {
             constructor(message, status, code) {
@@ -931,10 +967,12 @@
                 adoption: false,
                 pets: false,
                 reports: false,
+                users: false,
             },
             adoptionRows: [],
             petRows: [],
             reportRows: [],
+            userRows: [],
             pendingActions: new Set(),
         };
 
@@ -949,6 +987,7 @@
             adoption: document.getElementById('panel-adoption'),
             pets: document.getElementById('panel-pets'),
             reports: document.getElementById('panel-reports'),
+            users: document.getElementById('panel-users'),
         };
 
         const sectionRefs = {
@@ -967,11 +1006,17 @@
                 contentEl: document.getElementById('reportsContent'),
                 bodyEl: document.getElementById('reportsBody'),
             },
+            users: {
+                stateEl: document.getElementById('usersState'),
+                contentEl: document.getElementById('usersContent'),
+                bodyEl: document.getElementById('usersBody'),
+            },
         };
 
         const statAdoptionTotal = document.getElementById('statAdoptionTotal');
         const statPetsTotal = document.getElementById('statPetsTotal');
         const statReportsTotal = document.getElementById('statReportsTotal');
+        const statUsersTotal = document.getElementById('statUsersTotal');
 
         const detailModal = document.getElementById('detailModal');
         const detailModalTitle = document.getElementById('detailModalTitle');
@@ -1374,6 +1419,7 @@
             statAdoptionTotal.textContent = String(state.adoptionRows.length || 0);
             statPetsTotal.textContent = String(state.petRows.length || 0);
             statReportsTotal.textContent = String(state.reportRows.length || 0);
+            statUsersTotal.textContent = String(state.userRows.length || 0);
         };
 
         const getSafeArray = (candidate) => (Array.isArray(candidate) ? candidate : []);
@@ -1645,7 +1691,8 @@
                 const reportType = String(report.type || 'lost');
                 const moderationActions = canModerate
                     ? `
-                                <button class="action-btn approve" data-action="approve-report" data-id="${escapeHtml(report.id)}" ${pending ? 'disabled' : ''}>Duyệt</button>
+                                <button class="action-btn edit" data-action="resolve-report" data-id="${escapeHtml(report.id)}" ${pending ? 'disabled' : ''}>Xử lý</button>
+                                <button class="action-btn delete" data-action="ban-report" data-id="${escapeHtml(report.id)}" ${pending ? 'disabled' : ''}>Khóa user</button>
                                 <button class="action-btn reject" data-action="reject-report" data-id="${escapeHtml(report.id)}" ${pending ? 'disabled' : ''}>Từ chối</button>
                     `
                     : '<span class="row-action-note">Đã xử lý</span>';
@@ -1708,23 +1755,25 @@
             }
         }
 
-        async function handleReportStatus(id, nextStatus) {
+        async function handleReportAction(id, action) {
             const reportId = Number(id);
             const rowIndex = state.reportRows.findIndex((row) => Number(row.id) === reportId);
-            if (rowIndex < 0) {
-                return;
-            }
+            if (rowIndex < 0) return;
 
-            if (nextStatus === 'rejected') {
+            let reason = '';
+            if (action === 'ban') {
+                reason = window.prompt('Nhập lý do khóa tài khoản người dùng báo cáo (hoặc để trống):');
+                if (reason === null) return;
+            } else if (action === 'reject') {
                 const confirmed = window.confirm('Bạn có chắc muốn từ chối báo cáo này?');
-                if (!confirmed) {
-                    return;
-                }
+                if (!confirmed) return;
             }
 
             const key = `report:${reportId}`;
             const previousRow = { ...state.reportRows[rowIndex] };
             state.pendingActions.add(key);
+            
+            const nextStatus = action === 'reject' ? 'rejected' : 'resolved';
             state.reportRows[rowIndex] = {
                 ...state.reportRows[rowIndex],
                 status: nextStatus,
@@ -1732,27 +1781,168 @@
             renderReportRows();
 
             try {
-                const payload = await apiFetch(`/api/v1/admin/reports/${reportId}/status`, {
+                const payload = await apiFetch(`/api/v1/admin/reports/${reportId}`, {
                     method: 'PATCH',
-                    body: { status: nextStatus },
+                    body: { action: action, reason: reason },
                 });
 
-                const updated = payload && payload.data ? payload.data.report : null;
-                if (updated && updated.status) {
-                    state.reportRows[rowIndex] = {
-                        ...state.reportRows[rowIndex],
-                        status: updated.status,
-                    };
-                }
+                const updatedStatus = payload && payload.data && payload.data.status ? payload.data.status : nextStatus;
+                state.reportRows[rowIndex] = {
+                    ...state.reportRows[rowIndex],
+                    status: updatedStatus,
+                };
 
                 renderDashboardStats();
-                setGlobalMessage('success', payload.message || 'Cập nhật trạng thái báo cáo thành công.');
+                setGlobalMessage('success', payload.message || 'Xử lý báo cáo thành công.');
             } catch (error) {
                 state.reportRows[rowIndex] = previousRow;
-                setGlobalMessage('error', error.message || 'Không thể cập nhật trạng thái báo cáo.');
+                setGlobalMessage('error', error.message || 'Không thể xử lý báo cáo.');
             } finally {
                 state.pendingActions.delete(key);
                 renderReportRows();
+            }
+        }
+
+        const renderUserRows = () => {
+            const body = sectionRefs.users.bodyEl;
+            body.innerHTML = state.userRows.map((user) => {
+                const key = `user:${user.id}`;
+                const pending = isPending(key);
+                const roleText = user.role === 0 ? 'Admin' : (user.role === 1 ? 'Staff' : 'User');
+                
+                const canChangeRole = user.role !== 0 && state.currentUser && state.currentUser.id !== user.id;
+                const canBan = user.role !== 0 && state.currentUser && state.currentUser.id !== user.id;
+
+                const nextRole = user.role === 1 ? 2 : 1;
+                const roleActionText = user.role === 1 ? 'Hạ cấp User' : 'Thăng cấp Staff';
+                const roleActionClass = user.role === 1 ? 'reject' : 'edit';
+                const roleAction = canChangeRole ? `<button class="action-btn ${roleActionClass}" data-action="change-role" data-id="${user.id}" data-role="${nextRole}" ${pending ? 'disabled' : ''}>${roleActionText}</button>` : '';
+
+                const isBanned = user.status === 'banned';
+                const nextStatus = isBanned ? 'active' : 'banned';
+                const statusActionText = isBanned ? 'Mở khóa' : 'Khóa';
+                const statusActionClass = isBanned ? 'approve' : 'delete';
+                const statusAction = canBan ? `<button class="action-btn ${statusActionClass}" data-action="change-status" data-id="${user.id}" data-status="${nextStatus}" ${pending ? 'disabled' : ''}>${statusActionText}</button>` : '';
+
+                return `
+                    <tr>
+                        <td>#${escapeHtml(user.id)}</td>
+                        <td>
+                            <div class="reporter-cell">
+                                <span class="main-text">${escapeHtml(user.display_name || '-')}</span>
+                                <span class="sub-text">${escapeHtml(user.email || '-')}</span>
+                            </div>
+                        </td>
+                        <td><span class="status-pill ${user.role === 0 ? 'adopted' : (user.role === 1 ? 'available' : 'pending')}">${roleText}</span></td>
+                        <td>${renderStatusPill(user.status || 'active', 'active')}</td>
+                        <td>${escapeHtml(formatDate(user.created_at))}</td>
+                        <td>
+                            <div class="row-actions">
+                                ${roleAction}
+                                ${statusAction}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        };
+
+        async function loadUsers(force = false) {
+            if (!force && state.fetchedTabs.users) {
+                renderUserRows();
+                setSectionState('users', 'ready');
+                return true;
+            }
+
+            setSectionState('users', 'loading', 'Đang tải danh sách người dùng...');
+            try {
+                const payload = await apiFetch('/api/v1/admin/users?limit=100');
+                const userData = payload && payload.data ? payload.data.data : [];
+                state.userRows = getSafeArray(userData);
+                state.fetchedTabs.users = true;
+                renderDashboardStats();
+
+                if (state.userRows.length === 0) {
+                    setSectionState('users', 'empty', 'Không tìm thấy người dùng nào.');
+                    return true;
+                }
+
+                renderUserRows();
+                setSectionState('users', 'ready');
+                return true;
+            } catch (error) {
+                if (error.code === 'unauthorized') {
+                    setSectionState('users', 'unauthorized', 'Bạn cần đăng nhập lại để xem dữ liệu.');
+                    return false;
+                }
+                setSectionState('users', 'error', error.message || 'Không thể tải danh sách người dùng.');
+                return false;
+            }
+        }
+
+        async function handleUserRole(id, nextRole) {
+            const userId = Number(id);
+            const confirmed = window.confirm('Bạn có chắc muốn thay đổi quyền của người dùng này?');
+            if (!confirmed) return;
+
+            const key = `user:${userId}`;
+            state.pendingActions.add(key);
+            renderUserRows();
+
+            try {
+                const payload = await apiFetch(`/api/v1/admin/users/${userId}/role`, {
+                    method: 'PATCH',
+                    body: { role: Number(nextRole) }
+                });
+
+                const rowIndex = state.userRows.findIndex((row) => Number(row.id) === userId);
+                if (rowIndex >= 0) {
+                    state.userRows[rowIndex].role = Number(nextRole);
+                }
+
+                setGlobalMessage('success', payload.message || 'Thay đổi quyền thành công.');
+            } catch (error) {
+                setGlobalMessage('error', error.message || 'Không thể thay đổi quyền.');
+            } finally {
+                state.pendingActions.delete(key);
+                renderUserRows();
+            }
+        }
+
+        async function handleUserStatus(id, nextStatus) {
+            const userId = Number(id);
+            const actionText = nextStatus === 'banned' ? 'khóa' : 'mở khóa';
+            let reason = '';
+            
+            if (nextStatus === 'banned') {
+                reason = window.prompt(`Nhập lý do khóa tài khoản người dùng #${userId}:`);
+                if (reason === null) return;
+            } else {
+                const confirmed = window.confirm(`Bạn có chắc muốn ${actionText} người dùng này?`);
+                if (!confirmed) return;
+            }
+
+            const key = `user:${userId}`;
+            state.pendingActions.add(key);
+            renderUserRows();
+
+            try {
+                const payload = await apiFetch(`/api/v1/admin/users/${userId}/status`, {
+                    method: 'PATCH',
+                    body: { status: nextStatus, reason: reason }
+                });
+
+                const rowIndex = state.userRows.findIndex((row) => Number(row.id) === userId);
+                if (rowIndex >= 0) {
+                    state.userRows[rowIndex].status = nextStatus;
+                }
+
+                setGlobalMessage('success', payload.message || `Đã ${actionText} tài khoản.`);
+            } catch (error) {
+                setGlobalMessage('error', error.message || `Không thể ${actionText} tài khoản.`);
+            } finally {
+                state.pendingActions.delete(key);
+                renderUserRows();
             }
         }
 
@@ -1778,6 +1968,12 @@
 
             if (tab === 'reports') {
                 await loadReports(force);
+                return;
+            }
+            
+            if (tab === 'users') {
+                await loadUsers(force);
+                return;
             }
         }
 
@@ -1848,13 +2044,30 @@
                 return;
             }
 
-            if (action === 'approve-report') {
-                await handleReportStatus(id, 'approved');
+            if (action === 'resolve-report') {
+                await handleReportAction(id, 'resolve');
+                return;
+            }
+
+            if (action === 'ban-report') {
+                await handleReportAction(id, 'ban');
                 return;
             }
 
             if (action === 'reject-report') {
-                await handleReportStatus(id, 'rejected');
+                await handleReportAction(id, 'reject');
+                return;
+            }
+
+            if (action === 'change-role') {
+                const role = actionBtn.dataset.role;
+                await handleUserRole(id, role);
+                return;
+            }
+
+            if (action === 'change-status') {
+                const status = actionBtn.dataset.status;
+                await handleUserStatus(id, status);
             }
         });
 
@@ -1886,6 +2099,7 @@
                     loadAdoptionRequests(true),
                     loadPets(true),
                     loadReports(true),
+                    loadUsers(true),
                 ]);
                 renderDashboardStats();
                 if (results.every(Boolean)) {

@@ -46,7 +46,15 @@ const adoptionRequestService = {
     return { id: result.insertId, status: "pending" };
   },
 
-  async getAdminAdoptionRequests() {
+  async getAdminAdoptionRequests({ page = 1, limit = 20 } = {}) {
+    const offset = (page - 1) * limit;
+
+    const [countRows] = await pool.execute(
+      `SELECT COUNT(*) AS total FROM adoption_requests`,
+      [],
+    );
+    const total = countRows[0].total;
+
     const [rows] = await pool.execute(
       `SELECT
         ar.id,
@@ -69,10 +77,12 @@ const adoptionRequestService = {
       INNER JOIN users u ON u.id = ar.user_id
       INNER JOIN pets p ON p.id = ar.pet_id
       LEFT JOIN pet_images pi ON pi.pet_id = p.id AND pi.display_order = 0
-      ORDER BY ar.created_at DESC`,
+      ORDER BY ar.created_at DESC
+      LIMIT ? OFFSET ?`,
+      [String(limit), String(offset)],
     );
 
-    return rows;
+    return { data: rows, total };
   },
 
   async getUserAdoptionRequests({ userId }) {

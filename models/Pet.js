@@ -14,8 +14,20 @@ const hasImageUrlColumn = async () => {
 
 const Pet = {
   // Get all available pets
-  async findAll(status = null) {
+  async findAll(options = null) {
     try {
+      let status = null;
+      let page = 1;
+      let limit = null;
+
+      if (typeof options === 'string' || options === null) {
+        status = options;
+      } else if (typeof options === 'object') {
+        status = options.status || null;
+        page = Math.max(1, Number(options.page || 1));
+        limit = Math.min(50, Math.max(1, Number(options.limit || 20)));
+      }
+
       let query = `
         SELECT p.*, pi.image_path as avatar_image
         FROM pets p
@@ -29,6 +41,21 @@ const Pet = {
       }
 
       query += " ORDER BY p.created_at DESC";
+
+      if (limit !== null) {
+        const offset = (page - 1) * limit;
+        const [countRows] = await pool.execute(
+          `SELECT COUNT(*) AS total FROM pets p ${status ? "WHERE p.status = ?" : ""}`,
+          params,
+        );
+        const total = countRows[0].total;
+
+        query += " LIMIT ? OFFSET ?";
+        const queryParams = [...params, String(limit), String(offset)];
+
+        const [rows] = await pool.execute(query, queryParams);
+        return { data: rows, total };
+      }
 
       const [rows] = await pool.execute(query, params);
       return rows;

@@ -58,9 +58,20 @@ const adoptionRequestApiV1Controller = {
 
   async getAdminRequests(req, res) {
     try {
-      const requests = await adoptionRequestService.getAdminAdoptionRequests();
+      const page = Math.max(1, Number(req.query.page || 1));
+      const pageSize = Math.min(50, Math.max(1, Number(req.query.pageSize || req.query.limit || 10)));
+
+      const result = await adoptionRequestService.getAdminAdoptionRequests({
+        page,
+        limit: pageSize,
+      });
+
       return sendSuccess(res, 200, "Tải danh sách hồ sơ nhận nuôi thành công", {
-        requests,
+        data: result.data,
+        total: result.total,
+        page,
+        pageSize,
+        totalPages: Math.max(1, Math.ceil(result.total / pageSize)),
       });
     } catch (error) {
       return sendError(res, 500, "Không thể tải danh sách hồ sơ");

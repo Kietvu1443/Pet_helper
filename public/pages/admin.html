@@ -231,8 +231,74 @@
         }
 
         .table-wrap {
+            position: relative;
             overflow-x: auto;
             padding: 0 16px 16px;
+        }
+
+        .table-wrap.is-loading table {
+            opacity: 0.55;
+            pointer-events: none;
+        }
+
+        .table-loading-overlay {
+            position: absolute;
+            inset: 0 16px 16px 16px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.55);
+            backdrop-filter: blur(1px);
+            color: #1f5133;
+            font-weight: 700;
+            z-index: 1;
+            border-radius: 10px;
+        }
+
+        .table-wrap.is-loading .table-loading-overlay {
+            display: flex;
+        }
+
+        .pagination-bar {
+            padding: 0 16px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            border-top: 1px solid #edf3ee;
+        }
+
+        .pagination-summary {
+            color: #64748b;
+            font-size: 0.88rem;
+            font-weight: 600;
+        }
+
+        .pagination-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .pagination-btn {
+            border: 1px solid #bfd6c8;
+            background: #ffffff;
+            color: #2b663e;
+            border-radius: 8px;
+            padding: 7px 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            background: #f1f8f4;
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
         }
 
         table {
@@ -734,7 +800,8 @@
                     </div>
                     <div class="panel-state" id="adoptionState"></div>
                     <div class="panel-content is-hidden" id="adoptionContent">
-                        <div class="table-wrap">
+                        <div class="table-wrap" id="adoptionTableWrap">
+                            <div class="table-loading-overlay" id="adoptionTableLoading">Đang tải trang...</div>
                             <table>
                                 <thead>
                                     <tr>
@@ -747,6 +814,13 @@
                                 </thead>
                                 <tbody id="adoptionBody"></tbody>
                             </table>
+                        </div>
+                        <div class="pagination-bar" id="adoptionPagination">
+                            <div class="pagination-summary" id="adoptionPaginationSummary">Showing 0-0 of 0</div>
+                            <div class="pagination-controls">
+                                <button type="button" class="pagination-btn" id="adoptionPrevPageBtn" data-page-nav="prev" data-page-tab="adoption">Trước</button>
+                                <button type="button" class="pagination-btn" id="adoptionNextPageBtn" data-page-nav="next" data-page-tab="adoption">Tiếp</button>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -763,7 +837,8 @@
                     </div>
                     <div class="panel-state" id="petsState"></div>
                     <div class="panel-content is-hidden" id="petsContent">
-                        <div class="table-wrap">
+                        <div class="table-wrap" id="petsTableWrap">
+                            <div class="table-loading-overlay" id="petsTableLoading">Đang tải trang...</div>
                             <table>
                                 <thead>
                                     <tr>
@@ -777,6 +852,13 @@
                                 </thead>
                                 <tbody id="petsBody"></tbody>
                             </table>
+                        </div>
+                        <div class="pagination-bar" id="petsPagination">
+                            <div class="pagination-summary" id="petsPaginationSummary">Showing 0-0 of 0</div>
+                            <div class="pagination-controls">
+                                <button type="button" class="pagination-btn" id="petsPrevPageBtn" data-page-nav="prev" data-page-tab="pets">Trước</button>
+                                <button type="button" class="pagination-btn" id="petsNextPageBtn" data-page-nav="next" data-page-tab="pets">Tiếp</button>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -793,7 +875,8 @@
                     </div>
                     <div class="panel-state" id="reportsState"></div>
                     <div class="panel-content is-hidden" id="reportsContent">
-                        <div class="table-wrap">
+                        <div class="table-wrap" id="reportsTableWrap">
+                            <div class="table-loading-overlay" id="reportsTableLoading">Đang tải trang...</div>
                             <table>
                                 <thead>
                                     <tr>
@@ -807,6 +890,13 @@
                                 </thead>
                                 <tbody id="reportsBody"></tbody>
                             </table>
+                        </div>
+                        <div class="pagination-bar" id="reportsPagination">
+                            <div class="pagination-summary" id="reportsPaginationSummary">Showing 0-0 of 0</div>
+                            <div class="pagination-controls">
+                                <button type="button" class="pagination-btn" id="reportsPrevPageBtn" data-page-nav="prev" data-page-tab="reports">Trước</button>
+                                <button type="button" class="pagination-btn" id="reportsNextPageBtn" data-page-nav="next" data-page-tab="reports">Tiếp</button>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -823,7 +913,8 @@
                     </div>
                     <div class="panel-state" id="usersState"></div>
                     <div class="panel-content is-hidden" id="usersContent">
-                        <div class="table-wrap">
+                        <div class="table-wrap" id="usersTableWrap">
+                            <div class="table-loading-overlay" id="usersTableLoading">Đang tải trang...</div>
                             <table>
                                 <thead>
                                     <tr>
@@ -837,6 +928,13 @@
                                 </thead>
                                 <tbody id="usersBody"></tbody>
                             </table>
+                        </div>
+                        <div class="pagination-bar" id="usersPagination">
+                            <div class="pagination-summary" id="usersPaginationSummary">Showing 0-0 of 0</div>
+                            <div class="pagination-controls">
+                                <button type="button" class="pagination-btn" id="usersPrevPageBtn" data-page-nav="prev" data-page-tab="users">Trước</button>
+                                <button type="button" class="pagination-btn" id="usersNextPageBtn" data-page-nav="next" data-page-tab="users">Tiếp</button>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -975,6 +1073,12 @@
             reportRows: [],
             userRows: [],
             pendingActions: new Set(),
+            pagination: {
+                adoption: { page: 1, pageSize: 10, total: 0, totalPages: 1, loading: false, cache: {} },
+                pets: { page: 1, pageSize: 10, total: 0, totalPages: 1, loading: false, cache: {} },
+                reports: { page: 1, pageSize: 10, total: 0, totalPages: 1, loading: false, cache: {} },
+                users: { page: 1, pageSize: 10, total: 0, totalPages: 1, loading: false, cache: {} },
+            },
         };
 
         const globalNote = document.getElementById('globalNote');
@@ -1014,6 +1118,37 @@
             },
         };
 
+        const paginationRefs = {
+            adoption: {
+                wrapEl: document.getElementById('adoptionTableWrap'),
+                loadingEl: document.getElementById('adoptionTableLoading'),
+                summaryEl: document.getElementById('adoptionPaginationSummary'),
+                prevBtn: document.getElementById('adoptionPrevPageBtn'),
+                nextBtn: document.getElementById('adoptionNextPageBtn'),
+            },
+            pets: {
+                wrapEl: document.getElementById('petsTableWrap'),
+                loadingEl: document.getElementById('petsTableLoading'),
+                summaryEl: document.getElementById('petsPaginationSummary'),
+                prevBtn: document.getElementById('petsPrevPageBtn'),
+                nextBtn: document.getElementById('petsNextPageBtn'),
+            },
+            reports: {
+                wrapEl: document.getElementById('reportsTableWrap'),
+                loadingEl: document.getElementById('reportsTableLoading'),
+                summaryEl: document.getElementById('reportsPaginationSummary'),
+                prevBtn: document.getElementById('reportsPrevPageBtn'),
+                nextBtn: document.getElementById('reportsNextPageBtn'),
+            },
+            users: {
+                wrapEl: document.getElementById('usersTableWrap'),
+                loadingEl: document.getElementById('usersTableLoading'),
+                summaryEl: document.getElementById('usersPaginationSummary'),
+                prevBtn: document.getElementById('usersPrevPageBtn'),
+                nextBtn: document.getElementById('usersNextPageBtn'),
+            },
+        };
+
         const statAdoptionTotal = document.getElementById('statAdoptionTotal');
         const statPetsTotal = document.getElementById('statPetsTotal');
         const statReportsTotal = document.getElementById('statReportsTotal');
@@ -1045,6 +1180,27 @@
         const detailStatusValue = document.getElementById('detailStatusValue');
         const detailDateValue = document.getElementById('detailDateValue');
 
+        const PAGINATED_TABS = ['adoption', 'pets', 'reports', 'users'];
+        const PAGE_SIZE = 10;
+        const TAB_ENDPOINTS = {
+            adoption: '/api/v1/adoption-requests/admin',
+            pets: '/api/v1/pets',
+            reports: '/api/v1/admin/reports',
+            users: '/api/v1/admin/users',
+        };
+        const TAB_ROWS_KEYS = {
+            adoption: 'adoptionRows',
+            pets: 'petRows',
+            reports: 'reportRows',
+            users: 'userRows',
+        };
+        const TAB_PENDING_PREFIX = {
+            adoption: 'adoption:',
+            pets: 'pet:',
+            reports: 'report:',
+            users: 'user:',
+        };
+
         const escapeHtml = (value) => String(value || '')
             .replace(/&/g, '&amp;')
             .replace(/</g, '&lt;')
@@ -1064,6 +1220,216 @@
             const date = new Date(value);
             if (Number.isNaN(date.getTime())) return '-';
             return date.toLocaleDateString('vi-VN');
+        };
+
+        const getPaginationState = (tab) => state.pagination[tab];
+
+        const normalizePagedPayload = (payload) => {
+            const container = payload && payload.data ? payload.data : {};
+            const rows = getSafeArray(
+                container.data || container.requests || container.pets || container.reports || container.users || [],
+            );
+            const total = Math.max(0, Number(container.total || rows.length || 0));
+            const page = Math.max(1, Number(container.page || 1));
+            const pageSize = Math.max(1, Number(container.pageSize || container.limit || PAGE_SIZE));
+            const totalPages = Math.max(1, Number(container.totalPages || Math.ceil(total / pageSize)));
+
+            return {
+                rows,
+                total,
+                page,
+                pageSize,
+                totalPages,
+            };
+        };
+
+        const getTabRowsKey = (tab) => TAB_ROWS_KEYS[tab] || null;
+
+        const invalidateTabCache = (tab) => {
+            const pagination = getPaginationState(tab);
+            if (!pagination) return;
+            pagination.cache = {};
+        };
+
+        const setTabLoading = (tab, loading, hasContent = false) => {
+            const pagination = getPaginationState(tab);
+            if (!pagination) return;
+
+            pagination.loading = loading;
+            const refs = paginationRefs[tab];
+            const sectionRef = sectionRefs[tab];
+            if (!refs || !sectionRef) return;
+
+            if (refs.wrapEl) {
+                refs.wrapEl.classList.toggle('is-loading', loading);
+            }
+
+            if (loading && !hasContent) {
+                sectionRef.contentEl.classList.add('is-hidden');
+                sectionRef.stateEl.className = 'panel-state show loading';
+                sectionRef.stateEl.textContent = 'Đang tải dữ liệu trang...';
+            } else if (!loading && !hasContent) {
+                sectionRef.stateEl.className = 'panel-state';
+                sectionRef.stateEl.textContent = '';
+            }
+
+            if (refs.loadingEl) {
+                refs.loadingEl.textContent = loading ? 'Đang tải dữ liệu trang...' : 'Đang tải trang...';
+            }
+
+            updatePaginationControls(tab);
+        };
+
+        const updatePaginationControls = (tab) => {
+            const pagination = getPaginationState(tab);
+            const refs = paginationRefs[tab];
+            if (!pagination || !refs) return;
+
+            const total = Math.max(0, Number(pagination.total || 0));
+            const totalPages = Math.max(1, Number(pagination.totalPages || 1));
+            const page = Math.min(Math.max(1, Number(pagination.page || 1)), totalPages);
+            const start = total === 0 ? 0 : ((page - 1) * pagination.pageSize) + 1;
+            const end = total === 0 ? 0 : Math.min(total, page * pagination.pageSize);
+            const summaryText = total === 0
+                ? 'Showing 0-0 of 0'
+                : `Showing ${start}-${end} of ${total}`;
+
+            if (refs.summaryEl) {
+                refs.summaryEl.textContent = summaryText;
+            }
+
+            const disabled = Boolean(pagination.loading);
+            if (refs.prevBtn) {
+                refs.prevBtn.disabled = disabled || page <= 1;
+            }
+            if (refs.nextBtn) {
+                refs.nextBtn.disabled = disabled || page >= totalPages || total === 0;
+            }
+        };
+
+        const hasPendingForTab = (tab) => {
+            const prefix = TAB_PENDING_PREFIX[tab];
+            if (!prefix) return false;
+            return Array.from(state.pendingActions).some((key) => String(key).startsWith(prefix));
+        };
+
+        const getPageCacheKey = (tab, page, filters = '') => `${tab}:${page}:${filters}`;
+
+        const storePageCache = (tab, page, snapshot, filters = '') => {
+            const pagination = getPaginationState(tab);
+            if (!pagination) return;
+            pagination.cache[getPageCacheKey(tab, page, filters)] = snapshot;
+        };
+
+        const getPageCache = (tab, page, filters = '') => {
+            const pagination = getPaginationState(tab);
+            if (!pagination) return null;
+            return pagination.cache[getPageCacheKey(tab, page, filters)] || null;
+        };
+
+        const renderPaginationAfterLoad = (tab, snapshot) => {
+            const pagination = getPaginationState(tab);
+            const rowsKey = getTabRowsKey(tab);
+            if (!pagination || !rowsKey) return;
+
+            state[rowsKey] = snapshot.rows;
+            pagination.total = snapshot.total;
+            pagination.totalPages = Math.max(1, snapshot.totalPages);
+            pagination.pageSize = snapshot.pageSize || PAGE_SIZE;
+            pagination.page = Math.min(Math.max(1, snapshot.page), pagination.totalPages);
+
+            const normalizedSnapshot = {
+                ...snapshot,
+                page: pagination.page,
+                pageSize: pagination.pageSize,
+                totalPages: pagination.totalPages,
+            };
+
+            storePageCache(tab, pagination.page, normalizedSnapshot);
+            updatePaginationControls(tab);
+
+            const renderMap = {
+                adoption: renderAdoptionRows,
+                pets: renderPetRows,
+                reports: renderReportRows,
+                users: renderUserRows,
+            };
+
+            if (renderMap[tab]) {
+                renderMap[tab]();
+            }
+            renderDashboardStats();
+            setTabLoading(tab, false, snapshot.rows.length > 0);
+        };
+
+        const buildPageUrl = (tab, page, pageSize) => {
+            const endpoint = TAB_ENDPOINTS[tab];
+            if (!endpoint) return null;
+            const url = new URL(endpoint, window.location.origin);
+            url.searchParams.set('page', String(page));
+            url.searchParams.set('pageSize', String(pageSize));
+            return url.pathname + url.search;
+        };
+
+        const loadPagedTab = async (tab, force = false) => {
+            const pagination = getPaginationState(tab);
+            const rowsKey = getTabRowsKey(tab);
+            if (!pagination || !rowsKey) return false;
+
+            const hasContent = state[rowsKey].length > 0;
+            const cached = !force ? getPageCache(tab, pagination.page) : null;
+            if (cached) {
+                state[rowsKey] = cached.rows;
+                pagination.total = cached.total;
+                pagination.page = cached.page;
+                pagination.pageSize = cached.pageSize;
+                pagination.totalPages = cached.totalPages;
+                renderPaginationAfterLoad(tab, cached);
+                setSectionState(tab, state[rowsKey].length === 0 ? 'empty' : 'ready', state[rowsKey].length === 0 ? 'Không có dữ liệu.' : '');
+                state.fetchedTabs[tab] = true;
+                return true;
+            }
+
+            if (!force && pagination.loading) {
+                return false;
+            }
+
+            setTabLoading(tab, true, hasContent);
+
+            try {
+                const requestedPage = pagination.page;
+                const url = buildPageUrl(tab, pagination.page, pagination.pageSize);
+                if (!url) {
+                    throw new Error('Không thể xác định endpoint phân trang.');
+                }
+
+                const payload = await apiFetch(url);
+                const snapshot = normalizePagedPayload(payload);
+                if (snapshot.total > 0 && snapshot.rows.length === 0 && requestedPage > snapshot.totalPages && snapshot.totalPages > 0) {
+                    pagination.page = snapshot.totalPages;
+                    return loadPagedTab(tab, true);
+                }
+
+                state.fetchedTabs[tab] = true;
+                renderPaginationAfterLoad(tab, snapshot);
+
+                if (snapshot.rows.length === 0) {
+                    setSectionState(tab, 'empty', 'Không có dữ liệu.');
+                    return true;
+                }
+
+                setSectionState(tab, 'ready');
+                return true;
+            } catch (error) {
+                if (error.code === 'unauthorized') {
+                    setSectionState(tab, 'unauthorized', 'Vui lòng đăng nhập để truy cập dữ liệu này.');
+                    return false;
+                }
+
+                setSectionState(tab, 'error', error.message || 'Không thể tải dữ liệu.');
+                setTabLoading(tab, false, hasContent);
+                return false;
+            }
         };
 
         const openLoginOverlay = () => {
@@ -1285,10 +1651,6 @@
                 return;
             }
 
-            if (state.detail.isOpen && state.detail.context === sectionKey) {
-                closeDetailModal();
-            }
-
             ref.contentEl.classList.add('is-hidden');
             ref.stateEl.className = `panel-state show ${status}`;
             ref.stateEl.textContent = message || '';
@@ -1478,7 +1840,6 @@
 
             const item = getItemByContext(state.detail.context, state.detail.id);
             if (!item) {
-                closeDetailModal();
                 return;
             }
 
@@ -1577,10 +1938,10 @@
         };
 
         const renderDashboardStats = () => {
-            statAdoptionTotal.textContent = String(state.adoptionRows.length || 0);
-            statPetsTotal.textContent = String(state.petRows.length || 0);
-            statReportsTotal.textContent = String(state.reportRows.length || 0);
-            statUsersTotal.textContent = String(state.userRows.length || 0);
+            statAdoptionTotal.textContent = String(state.pagination.adoption.total || state.adoptionRows.length || 0);
+            statPetsTotal.textContent = String(state.pagination.pets.total || state.petRows.length || 0);
+            statReportsTotal.textContent = String(state.pagination.reports.total || state.reportRows.length || 0);
+            statUsersTotal.textContent = String(state.pagination.users.total || state.userRows.length || 0);
         };
 
         const getSafeArray = (candidate) => (Array.isArray(candidate) ? candidate : []);
@@ -1663,35 +2024,7 @@
         };
 
         async function loadAdoptionRequests(force = false) {
-            if (!force && state.fetchedTabs.adoption) {
-                renderAdoptionRows();
-                setSectionState('adoption', 'ready');
-                return true;
-            }
-
-            setSectionState('adoption', 'loading', 'Đang tải danh sách hồ sơ nhận nuôi...');
-            try {
-                const payload = await apiFetch('/api/v1/adoption-requests/admin');
-                state.adoptionRows = getSafeArray(payload && payload.data ? payload.data.requests : []);
-                state.fetchedTabs.adoption = true;
-                renderDashboardStats();
-
-                if (state.adoptionRows.length === 0) {
-                    setSectionState('adoption', 'empty', 'Không có hồ sơ nhận nuôi nào.');
-                    return true;
-                }
-
-                renderAdoptionRows();
-                setSectionState('adoption', 'ready');
-                return true;
-            } catch (error) {
-                if (error.code === 'unauthorized') {
-                    setSectionState('adoption', 'unauthorized', 'Vui lòng đăng nhập để truy cập dữ liệu nhận nuôi.');
-                    return false;
-                }
-                setSectionState('adoption', 'error', error.message || 'Không thể tải dữ liệu nhận nuôi.');
-                return false;
-            }
+            return loadPagedTab('adoption', force);
         }
 
         async function handleAdoptionStatus(id, nextStatus, actionBtn) {
@@ -1753,7 +2086,8 @@
                         };
                     }
 
-                    state.fetchedTabs.pets = false;
+                    invalidateTabCache('adoption');
+                    await loadTabData('adoption', true);
                     renderDashboardStats();
                     const successMessage = payload.message || 'Cập nhật trạng thái hồ sơ thành công.';
                     setGlobalMessage('success', successMessage);
@@ -1805,35 +2139,7 @@
         };
 
         async function loadPets(force = false) {
-            if (!force && state.fetchedTabs.pets) {
-                renderPetRows();
-                setSectionState('pets', 'ready');
-                return true;
-            }
-
-            setSectionState('pets', 'loading', 'Đang tải danh sách thú cưng...');
-            try {
-                const payload = await apiFetch('/api/v1/pets');
-                state.petRows = getSafeArray(payload && payload.data ? payload.data.pets : []);
-                state.fetchedTabs.pets = true;
-                renderDashboardStats();
-
-                if (state.petRows.length === 0) {
-                    setSectionState('pets', 'empty', 'Hiện chưa có thú cưng nào trong hệ thống.');
-                    return true;
-                }
-
-                renderPetRows();
-                setSectionState('pets', 'ready');
-                return true;
-            } catch (error) {
-                if (error.code === 'unauthorized') {
-                    setSectionState('pets', 'unauthorized', 'Bạn cần đăng nhập lại để quản lý thú cưng.');
-                    return false;
-                }
-                setSectionState('pets', 'error', error.message || 'Không thể tải danh sách thú cưng.');
-                return false;
-            }
+            return loadPagedTab('pets', force);
         }
 
         const handlePetEdit = (id) => {
@@ -1879,6 +2185,8 @@
                     });
 
                     state.petRows = state.petRows.filter((item) => Number(item.id) !== petId);
+                    invalidateTabCache('pets');
+                    await loadTabData('pets', true);
                     renderDashboardStats();
 
                     if (state.petRows.length === 0) {
@@ -1950,36 +2258,7 @@
         };
 
         async function loadReports(force = false) {
-            if (!force && state.fetchedTabs.reports) {
-                renderReportRows();
-                setSectionState('reports', 'ready');
-                return true;
-            }
-
-            setSectionState('reports', 'loading', 'Đang tải danh sách báo cáo...');
-            try {
-                const payload = await apiFetch('/api/v1/admin/reports?limit=100');
-                const reportData = payload && payload.data ? payload.data.data : [];
-                state.reportRows = getSafeArray(reportData);
-                state.fetchedTabs.reports = true;
-                renderDashboardStats();
-
-                if (state.reportRows.length === 0) {
-                    setSectionState('reports', 'empty', 'Không có báo cáo nào cần xử lý.');
-                    return true;
-                }
-
-                renderReportRows();
-                setSectionState('reports', 'ready');
-                return true;
-            } catch (error) {
-                if (error.code === 'unauthorized') {
-                    setSectionState('reports', 'unauthorized', 'Bạn cần đăng nhập lại để truy cập dữ liệu báo cáo.');
-                    return false;
-                }
-                setSectionState('reports', 'error', error.message || 'Không thể tải danh sách báo cáo.');
-                return false;
-            }
+            return loadPagedTab('reports', force);
         }
 
         async function handleReportAction(id, action, actionBtn) {
@@ -2048,6 +2327,8 @@
                         status: updatedStatus,
                     };
 
+                    invalidateTabCache('reports');
+                    await loadTabData('reports', true);
                     renderDashboardStats();
                     const successMessage = payload.message || 'Xử lý báo cáo thành công.';
                     setGlobalMessage('success', successMessage);
@@ -2116,36 +2397,7 @@
         };
 
         async function loadUsers(force = false) {
-            if (!force && state.fetchedTabs.users) {
-                renderUserRows();
-                setSectionState('users', 'ready');
-                return true;
-            }
-
-            setSectionState('users', 'loading', 'Đang tải danh sách người dùng...');
-            try {
-                const payload = await apiFetch('/api/v1/admin/users?limit=100');
-                const userData = payload && payload.data ? payload.data.data : [];
-                state.userRows = getSafeArray(userData);
-                state.fetchedTabs.users = true;
-                renderDashboardStats();
-
-                if (state.userRows.length === 0) {
-                    setSectionState('users', 'empty', 'Không tìm thấy người dùng nào.');
-                    return true;
-                }
-
-                renderUserRows();
-                setSectionState('users', 'ready');
-                return true;
-            } catch (error) {
-                if (error.code === 'unauthorized') {
-                    setSectionState('users', 'unauthorized', 'Bạn cần đăng nhập lại để xem dữ liệu.');
-                    return false;
-                }
-                setSectionState('users', 'error', error.message || 'Không thể tải danh sách người dùng.');
-                return false;
-            }
+            return loadPagedTab('users', force);
         }
 
         async function handleUserRole(id, nextRole, actionBtn) {
@@ -2190,6 +2442,8 @@
                         state.userRows[rowIndex].role = Number(nextRole);
                     }
 
+                    invalidateTabCache('users');
+                    await loadTabData('users', true);
                     const successMessage = payload.message || 'Thay đổi quyền thành công.';
                     setGlobalMessage('success', successMessage);
                     toastSuccess(successMessage);
@@ -2267,6 +2521,8 @@
                         state.userRows[rowIndex].status = nextStatus;
                     }
 
+                    invalidateTabCache('users');
+                    await loadTabData('users', true);
                     const successMessage = payload.message || `Đã ${actionText} tài khoản.`;
                     setGlobalMessage('success', successMessage);
                     toastSuccess(successMessage);
@@ -2288,13 +2544,30 @@
             }
         }
 
+        async function loadDashboardStats(force = false) {
+            if (refreshAllBtn) setButtonBusy(refreshAllBtn, true, 'Đang làm mới...');
+            try {
+                await Promise.all([
+                    loadAdoptionRequests(force),
+                    loadPets(force),
+                    loadReports(force),
+                    loadUsers(force)
+                ]);
+            } catch (err) {
+                console.error('Error loading dashboard stats:', err);
+            } finally {
+                if (refreshAllBtn) setButtonBusy(refreshAllBtn, false);
+                renderDashboardStats();
+            }
+        }
+
         async function loadTabData(tab, force = false) {
             if (state.isBlocked && tab !== 'dashboard') {
                 return;
             }
 
             if (tab === 'dashboard') {
-                renderDashboardStats();
+                await loadDashboardStats(force);
                 return;
             }
 
@@ -2319,26 +2592,32 @@
             }
         }
 
-        navButtons.forEach((button) => {
-            button.addEventListener('click', () => {
-                const nextTab = button.dataset.tab;
-                if (!nextTab) return;
-                switchTab(nextTab, true);
-            });
-        });
-
-        jumpButtons.forEach((button) => {
-            button.addEventListener('click', () => {
-                const nextTab = button.dataset.jumpTab;
-                if (!nextTab) return;
-                switchTab(nextTab, true);
-            });
-        });
-
         document.addEventListener('click', async (event) => {
+            const pageBtn = event.target.closest('button[data-page-tab][data-page-nav]');
+            if (pageBtn) {
+                const tab = pageBtn.dataset.pageTab;
+                const nav = pageBtn.dataset.pageNav;
+                const pagination = getPaginationState(tab);
+                if (!pagination || pagination.loading) {
+                    return;
+                }
+
+                if (nav === 'prev' && pagination.page > 1) {
+                    pagination.page -= 1;
+                } else if (nav === 'next' && pagination.page < pagination.totalPages) {
+                    pagination.page += 1;
+                } else {
+                    return;
+                }
+
+                await loadTabData(tab, true);
+                return;
+            }
+
             const refreshBtn = event.target.closest('[data-refresh-tab]');
             if (refreshBtn) {
                 const targetTab = refreshBtn.dataset.refreshTab;
+                invalidateTabCache(targetTab);
                 await loadTabData(targetTab, true);
                 return;
             }
@@ -2355,113 +2634,60 @@
             const action = actionBtn.dataset.action;
             const id = actionBtn.dataset.id;
 
-            if (action === 'detail-adoption') {
-                openDetailModal('adoption', id);
-                return;
-            }
-
             if (action === 'detail-pet') {
                 openDetailModal('pets', id);
-                return;
-            }
-
-            if (action === 'detail-report') {
-                openDetailModal('reports', id);
-                return;
-            }
-
-            if (action === 'approve-adoption') {
-                await handleAdoptionStatus(id, 'approved', actionBtn);
-                return;
-            }
-
-            if (action === 'reject-adoption') {
-                await handleAdoptionStatus(id, 'rejected', actionBtn);
-                return;
-            }
-
-            if (action === 'edit-pet') {
+            } else if (action === 'edit-pet') {
                 handlePetEdit(id);
-                return;
+            } else if (action === 'delete-pet') {
+                handlePetDelete(id, actionBtn);
+            } else if (action === 'detail-report') {
+                openDetailModal('reports', id);
+            } else if (action === 'resolve-report') {
+                handleReportAction(id, 'resolve', actionBtn);
+            } else if (action === 'ban-report') {
+                handleReportAction(id, 'ban', actionBtn);
+            } else if (action === 'reject-report') {
+                handleReportAction(id, 'reject', actionBtn);
+            } else if (action === 'change-role') {
+                handleUserRole(id, actionBtn.dataset.role, actionBtn);
+            } else if (action === 'change-status') {
+                handleUserStatus(id, actionBtn.dataset.status, actionBtn);
+            } else if (action === 'detail-adoption') {
+                openDetailModal('adoption', id);
+            } else if (action === 'approve-adoption') {
+                handleAdoptionStatus(id, 'approved', actionBtn);
+            } else if (action === 'reject-adoption') {
+                handleAdoptionStatus(id, 'rejected', actionBtn);
             }
+        });
 
-            if (action === 'delete-pet') {
-                await handlePetDelete(id, actionBtn);
-                return;
-            }
+        navButtons.forEach((button) => {
+            button.addEventListener('click', () => {
+                const nextTab = button.dataset.tab;
+                if (!nextTab) return;
+                switchTab(nextTab, true);
+            });
+        });
 
-            if (action === 'resolve-report') {
-                await handleReportAction(id, 'resolve', actionBtn);
-                return;
-            }
-
-            if (action === 'ban-report') {
-                await handleReportAction(id, 'ban', actionBtn);
-                return;
-            }
-
-            if (action === 'reject-report') {
-                await handleReportAction(id, 'reject', actionBtn);
-                return;
-            }
-
-            if (action === 'change-role') {
-                const role = actionBtn.dataset.role;
-                await handleUserRole(id, role, actionBtn);
-                return;
-            }
-
-            if (action === 'change-status') {
-                const status = actionBtn.dataset.status;
-                await handleUserStatus(id, status, actionBtn);
-            }
+        jumpButtons.forEach((button) => {
+            button.addEventListener('click', () => {
+                const nextTab = button.dataset.jumpTab;
+                if (!nextTab) return;
+                switchTab(nextTab, true);
+            });
         });
 
         detailModalCloseBtn.addEventListener('click', closeDetailModal);
         detailModalCloseFooterBtn.addEventListener('click', closeDetailModal);
 
-        detailModal.addEventListener('click', (event) => {
-            if (event.target === detailModal) {
-                closeDetailModal();
-            }
-        });
+        if (refreshAllBtn) {
+            refreshAllBtn.addEventListener('click', () => {
+                PAGINATED_TABS.forEach(invalidateTabCache);
+                loadTabData('dashboard', true);
+            });
+        }
 
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'Escape' && state.detail.isOpen) {
-                closeDetailModal();
-            }
-        });
-
-        refreshAllBtn.addEventListener('click', async () => {
-            if (state.isBlocked) {
-                return;
-            }
-
-            refreshAllBtn.disabled = true;
-            setGlobalMessage('info', 'Đang làm mới toàn bộ dữ liệu dashboard...');
-
-            try {
-                const results = await Promise.all([
-                    loadAdoptionRequests(true),
-                    loadPets(true),
-                    loadReports(true),
-                    loadUsers(true),
-                ]);
-                renderDashboardStats();
-                if (results.every(Boolean)) {
-                    setGlobalMessage('success', 'Đã làm mới số liệu dashboard thành công.');
-                } else {
-                    setGlobalMessage('warning', 'Đã làm mới một phần dữ liệu. Kiểm tra lại các tab đang báo lỗi.');
-                }
-            } catch (error) {
-                setGlobalMessage('error', error.message || 'Không thể làm mới dữ liệu dashboard.');
-            } finally {
-                refreshAllBtn.disabled = false;
-            }
-        });
-
-        bootstrapAdminAccess();
+        document.addEventListener('DOMContentLoaded', bootstrapAdminAccess);
     </script>
 </body>
-
 </html>

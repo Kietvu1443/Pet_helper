@@ -150,10 +150,16 @@ const reportApiV1Controller = {
   async getAdminReports(req, res) {
     try {
       const page = Math.max(1, toNumber(req.query.page, 1));
-      const limit = Math.min(100, Math.max(1, toNumber(req.query.limit, 50)));
+      const pageSize = Math.min(100, Math.max(1, toNumber(req.query.pageSize || req.query.limit, 50)));
 
-      const result = await reportService.getAdminReports({ page, limit });
-      return sendSuccess(res, 200, "Lấy danh sách báo cáo quản trị thành công", result);
+      const result = await reportService.getAdminReports({ page, limit: pageSize });
+      return sendSuccess(res, 200, "Lấy danh sách báo cáo quản trị thành công", {
+        data: result.data,
+        total: result.total,
+        page,
+        pageSize,
+        totalPages: Math.max(1, Math.ceil(result.total / pageSize)),
+      });
     } catch (error) {
       console.error("[Report API v1] getAdminReports error:", error);
       return sendError(res, 500, "Không thể tải danh sách báo cáo");

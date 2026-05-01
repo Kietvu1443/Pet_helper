@@ -20,7 +20,7 @@ const adminApiV1Controller = {
   async getUsers(req, res) {
     try {
       const page = Math.max(1, toNumber(req.query.page, 1));
-      const limit = Math.min(50, Math.max(1, toNumber(req.query.limit, 20)));
+      const pageSize = Math.min(50, Math.max(1, toNumber(req.query.pageSize || req.query.limit, 20)));
       const status = ALLOWED_STATUSES.includes(req.query.status) ? req.query.status : undefined;
       const role = req.query.role !== undefined ? Number(req.query.role) : undefined;
 
@@ -29,13 +29,13 @@ const adminApiV1Controller = {
         return sendError(res, 400, "Giá trị role không hợp lệ (0, 1, hoặc 2)");
       }
 
-      const result = await User.findAll({ page, limit, status, role });
-      const totalPages = Math.ceil(result.total / limit);
+      const result = await User.findAll({ page, limit: pageSize, status, role });
+      const totalPages = Math.max(1, Math.ceil(result.total / pageSize));
 
       return sendSuccess(res, 200, "Lấy danh sách người dùng thành công", {
         data: result.data,
         page,
-        limit,
+        pageSize,
         total: result.total,
         totalPages,
       });
@@ -149,7 +149,7 @@ const adminApiV1Controller = {
   async getReports(req, res) {
     try {
       const page = Math.max(1, toNumber(req.query.page, 1));
-      const limit = Math.min(100, Math.max(1, toNumber(req.query.limit, 20)));
+      const pageSize = Math.min(100, Math.max(1, toNumber(req.query.pageSize || req.query.limit, 20)));
       const status = req.query.status || null;
 
       // Validate status filter
@@ -157,13 +157,13 @@ const adminApiV1Controller = {
         return sendError(res, 400, "Trạng thái lọc không hợp lệ");
       }
 
-      const result = await Report.findAll({ page, limit, status });
-      const totalPages = Math.ceil(result.total / limit);
+      const result = await Report.findAll({ page, limit: pageSize, status });
+      const totalPages = Math.max(1, Math.ceil(result.total / pageSize));
 
       return sendSuccess(res, 200, "Lấy danh sách báo cáo thành công", {
         data: result.data,
         page,
-        limit,
+        pageSize,
         total: result.total,
         totalPages,
       });

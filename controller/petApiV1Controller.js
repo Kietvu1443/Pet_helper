@@ -46,11 +46,16 @@ const petApiV1Controller = {
       const status = allowedStatuses.includes(req.query.status)
         ? req.query.status
         : null;
+      const page = Math.max(1, Number(req.query.page || 1));
+      const pageSize = Math.min(50, Math.max(1, Number(req.query.pageSize || req.query.limit || 10)));
 
-      const pets = await Pet.findAll(status);
+      const result = await Pet.findAll({ status, page, limit: pageSize });
       return sendSuccess(res, 200, "Lấy danh sách thú cưng thành công", {
-        pets,
-        total: pets.length,
+        data: result.data,
+        total: result.total,
+        page,
+        pageSize,
+        totalPages: Math.max(1, Math.ceil(result.total / pageSize)),
       });
     } catch (error) {
       console.error("[Pet API v1] listPets error:", error);

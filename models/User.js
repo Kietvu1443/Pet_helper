@@ -32,7 +32,7 @@ const User = {
   async findById(id) {
     try {
       const [rows] = await pool.execute(
-        "SELECT id, display_name, name, email, role, birthday, address, created_at FROM users WHERE id = ?",
+        "SELECT id, display_name, name, email, role, verify, status, birthday, address, created_at FROM users WHERE id = ?",
         [id],
       );
       return rows[0] || null;
@@ -87,15 +87,96 @@ const User = {
     }
   },
 
-  // Get all users (admin only)
-  async findAll() {
+  // Update user email verification status
+  async updateVerifyStatus(userId, verifyStatus) {
     try {
-      const [rows] = await pool.execute(
-        "SELECT id, display_name, name, email, role, created_at FROM users ORDER BY created_at DESC",
+      const [result] = await pool.execute(
+        "UPDATE users SET verify = ? WHERE id = ?",
+        [verifyStatus, userId],
       );
-      return rows;
+      return result.affectedRows > 0;
+    } catch (error) {
+      console.error("Error updating user verify status:", error);
+      throw error;
+    }
+  },
+
+  // Update profile fields for current user
+  async updateProfile(userId, profileData) {
+    try {
+      const { display_name, name, email, verify } = profileData;
+
+      const [result] = await pool.execute(
+        "UPDATE users SET display_name = ?, name = ?, email = ?, verify = ? WHERE id = ?",
+        [display_name, name, email, verify, userId],
+      );
+
+      if (result.affectedRows === 0) {
+        return null;
+      }
+
+      return this.findById(userId);
+    } catch (error) {
+      console.error("Error updating user profile:", error);
+      throw error;
+    }
+  },
+
+  // Update user status (admin only: ban/unban)
+  async updateStatus(userId, status, reason = null) {
+    try {
+      const bannedAt = status === "banned" ? new Date() : null;
+      const bannedReason = status === "banned" ? reason : null;
+
+      const [result] = await pool.execute(
+        "UPDATE users SET status = ?, banned_reason = ?, banned_at = ? WHERE id = ?",
+        [status, bannedReason, bannedAt, userId],
+      );
+      return result.affectedRows > 0;
+    } catch (error) {
+      console.error("Error updating user status:", error);
+      throw error;
+    }
+  },
+
+  // Get all users (admin only) with pagination and filtering
+  async findAll({ page = 1, limit = 20, status, role } = {}) {
+    try {
+      const offset = (page - 1) * limit;
+      const params = [];
+      const conditions = [];
+
+      if (status && ["active", "banned"].includes(status)) {
+        conditions.push("status = ?");
+        params.push(status);
+      }
+
+      if (role !== undefined && [0, 1, 2].includes(Number(role))) {
+        conditions.push("role = ?");
+        params.push(Number(role));
+      }
+
+      const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
+
+      const [countRows] = await pool.execute(
+        `SELECT COUNT(*) AS total FROM users ${whereClause}`,
+        params,
+      );
+      const total = countRows[0].total;
+
+      const queryParams = [...params, String(limit), String(offset)];
+      const [rows] = await pool.execute(
+        `SELECT id, display_name, name, email, role, status, banned_reason, banned_at, created_at
+         FROM users ${whereClause}
+         ORDER BY created_at DESC
+         LIMIT ? OFFSET ?`,
+        queryParams,
+      );
+
+      return { data: rows, total };
     } catch (error) {
       console.error("Error finding all users:", error);
+      throw error;
     }
   },
 };

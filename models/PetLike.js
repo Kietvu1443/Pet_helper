@@ -54,6 +54,48 @@ const PetLike = {
       throw error;
     }
   },
+
+  // Check if a user has liked a specific pet
+  async checkUserLike(userId, petId) {
+    try {
+      const [rows] = await pool.execute(
+        "SELECT id FROM pet_likes WHERE user_id = ? AND pet_id = ? AND status = 'liked' LIMIT 1",
+        [userId, petId],
+      );
+      return rows.length > 0;
+    } catch (error) {
+      console.error("Error checking user like:", error);
+      throw error;
+    }
+  },
+
+  // Count total likes for a pet
+  async countLikes(petId) {
+    try {
+      const [rows] = await pool.execute(
+        "SELECT COUNT(*) AS total FROM pet_likes WHERE pet_id = ? AND status = 'liked'",
+        [petId],
+      );
+      return rows[0].total;
+    } catch (error) {
+      console.error("Error counting likes:", error);
+      throw error;
+    }
+  },
+
+  // Delete a like (idempotent — always returns success)
+  async delete(userId, petId) {
+    try {
+      await pool.execute(
+        "DELETE FROM pet_likes WHERE user_id = ? AND pet_id = ?",
+        [userId, petId],
+      );
+      return true;
+    } catch (error) {
+      console.error("Error deleting pet like:", error);
+      throw error;
+    }
+  },
 };
 
 module.exports = PetLike;

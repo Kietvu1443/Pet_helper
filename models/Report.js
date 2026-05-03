@@ -72,24 +72,34 @@ const Report = {
   },
 
   /**
-   * Find all reports (admin) with pagination.
+   * Find all reports (admin) with pagination and optional status filter.
    * Returns { data, total }
    */
-  async findAll({ page = 1, limit = 20 } = {}) {
+  async findAll({ page = 1, limit = 20, status = null } = {}) {
     const offset = (page - 1) * limit;
+    const params = [];
+    let whereClause = "";
+
+    if (status && ["pending", "approved", "rejected", "resolved"].includes(status)) {
+      whereClause = "WHERE r.status = ?";
+      params.push(status);
+    }
 
     const [countRows] = await pool.execute(
-      "SELECT COUNT(*) AS total FROM reports",
+      `SELECT COUNT(*) AS total FROM reports r ${whereClause}`,
+      params,
     );
     const total = countRows[0].total;
 
+    const queryParams = [...params, String(limit), String(offset)];
     const [rows] = await pool.execute(
       `SELECT r.*,
               (SELECT pi.image_path FROM pet_images pi WHERE pi.report_id = r.id ORDER BY pi.display_order ASC LIMIT 1) AS image
        FROM reports r
+       ${whereClause}
        ORDER BY r.created_at DESC
        LIMIT ? OFFSET ?`,
-      [String(limit), String(offset)],
+      queryParams,
     );
 
     // Fallback placeholder

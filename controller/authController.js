@@ -7,18 +7,6 @@ const { Resend } = require("resend");
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 const authController = {
-  // Hiện trang đăng nhập
-  showLoginPage: (req, res) => {
-    if (req.user) {
-      return res.redirect("/");
-    }
-    res.render("auth/login", {
-      title: "Đăng nhập - Pet Helper",
-      error: null,
-      success: null,
-    });
-  },
-
   // Xử lí đăng kí
   register: async (req, res) => {
     try {
@@ -126,6 +114,13 @@ const authController = {
       if (!isMatch) {
         return res.status(401).json({
           error: "Tên đăng nhập hoặc mật khẩu bị sai",
+        });
+      }
+
+      // Check if user is banned
+      if (user.status === "banned") {
+        return res.status(403).json({
+          error: "Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.",
         });
       }
 
@@ -308,13 +303,22 @@ const authController = {
       }
 
       // 3. OTP đúng → cập nhật verify = 1
-      await User.updateVerifyStatus(userId, 1);
+      const isUpdated = await User.updateVerifyStatus(userId, 1);
+      if (!isUpdated) {
+        return res.status(500).json({
+          error: "Không thể cập nhật trạng thái xác thực email.",
+        });
+      }
 
       // 4. Xóa OTP khỏi database
       await EmailVerification.deleteByUserId(userId);
 
       // 5. Re-issue JWT cookie với verify = 1
       const updatedUser = await User.findById(userId);
+      if (!updatedUser) {
+        return res.status(404).json({ error: "Không tìm thấy người dùng" });
+      }
+
       const newToken = jwt.sign(
         {
           id: updatedUser.id,
@@ -322,7 +326,7 @@ const authController = {
           name: updatedUser.name,
           email: updatedUser.email,
           role: updatedUser.role,
-          verify: 1,
+          verify: updatedUser.verify,
         },
         JWT_SECRET,
         { expiresIn: "24h" },

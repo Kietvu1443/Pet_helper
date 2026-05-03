@@ -7,7 +7,14 @@ function createError(status, message) {
 }
 
 const adoptionRequestService = {
-  async createAdoptionRequest({ userId, petId, message }) {
+  async createAdoptionRequest({ userId, petId, message, verify }) {
+    if (Number(verify) !== 1) {
+      throw createError(
+        403,
+        "Please verify your account before creating adoption request",
+      );
+    }
+
     const [petRows] = await pool.execute(
       "SELECT id, status FROM pets WHERE id = ? LIMIT 1",
       [petId],
@@ -39,7 +46,15 @@ const adoptionRequestService = {
     return { id: result.insertId, status: "pending" };
   },
 
-  async getAdminAdoptionRequests() {
+  async getAdminAdoptionRequests({ page = 1, limit = 20 } = {}) {
+    const offset = (page - 1) * limit;
+
+    const [countRows] = await pool.execute(
+      `SELECT COUNT(*) AS total FROM adoption_requests`,
+      [],
+    );
+    const total = countRows[0].total;
+
     const [rows] = await pool.execute(
       `SELECT
         ar.id,
@@ -62,7 +77,33 @@ const adoptionRequestService = {
       INNER JOIN users u ON u.id = ar.user_id
       INNER JOIN pets p ON p.id = ar.pet_id
       LEFT JOIN pet_images pi ON pi.pet_id = p.id AND pi.display_order = 0
+      ORDER BY ar.created_at DESC
+      LIMIT ? OFFSET ?`,
+      [String(limit), String(offset)],
+    );
+
+    return { data: rows, total };
+  },
+
+  async getUserAdoptionRequests({ userId }) {
+    const [rows] = await pool.execute(
+      `SELECT
+        ar.id,
+        ar.pet_id,
+        ar.message,
+        ar.status,
+        ar.created_at,
+        ar.reviewed_at,
+        p.name AS pet_name,
+        p.pet_type,
+        p.status AS pet_status,
+        pi.image_path AS pet_image
+      FROM adoption_requests ar
+      INNER JOIN pets p ON p.id = ar.pet_id
+      LEFT JOIN pet_images pi ON pi.pet_id = p.id AND pi.display_order = 0
+      WHERE ar.user_id = ?
       ORDER BY ar.created_at DESC`,
+      [userId],
     );
 
     return rows;
@@ -219,6 +260,19 @@ const adoptionRequestService = {
       throw error;
     } finally {
       connection.release();
+    }
+  },
+
+  async countPendingRequests(petId) {
+    try {
+      const [rows] = await pool.execute(
+        "SELECT COUNT(*) AS total FROM adoption_requests WHERE pet_id = ? AND status = 'pending'",
+        [petId],
+      );
+      return rows[0].total;
+    } catch (error) {
+      console.error("Error counting pending requests:", error);
+      throw error;
     }
   },
 };

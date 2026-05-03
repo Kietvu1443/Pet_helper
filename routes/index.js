@@ -3,32 +3,33 @@ var router = express.Router();
 
 const fs = require('fs');
 const path = require('path');
-const User = require("../models/User");
-const { isAuthenticated } = require("../middleware/authMiddleware");
+
+const staticPagesRoot = path.join(__dirname, "..", "public", "pages");
 
 // GET home page
 router.get("/", function (req, res) {
-  res.render("index", { title: "Hỗ Trợ & Bảo Vệ Vật Nuôi" });
+  res.sendFile(path.join(staticPagesRoot, "index.html"));
 });
 
-// GET profile/settings page
-router.get("/profile", isAuthenticated, async function (req, res) {
-  try {
-    const user = await User.findById(req.user.id);
-    if (!user) {
-      return res.redirect("/auth/login");
-    }
-    res.render("setting", {
-      title: "Cài đặt tài khoản - Pet Helper",
-      user: user,
-    });
-  } catch (error) {
-    console.error("Error loading profile:", error);
-    res.status(500).render("error", {
-      message: "Đã xảy ra lỗi",
-      error: { status: 500 },
-    });
-  }
+// Favorites page shell (API-first static page)
+router.get("/favorites", (_req, res) => {
+  res.redirect(302, "/my-favorites");
+});
+
+router.get("/my-favorites", (_req, res) => {
+  res.sendFile(path.join(staticPagesRoot, "my-favorites.html"));
+});
+
+router.get("/snap", (_req, res) => {
+  res.sendFile(path.join(staticPagesRoot, "snap.html"));
+});
+
+router.get("/profile", (_req, res) => {
+  res.sendFile(path.join(staticPagesRoot, "profile.html"));
+});
+
+router.get("/admin", (_req, res) => {
+  res.sendFile(path.join(staticPagesRoot, "admin.html"));
 });
 
 // API: Lấy ảnh local đầu tiên của Pet (dùng cho Fallback khi rớt mạng)

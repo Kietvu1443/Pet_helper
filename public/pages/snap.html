@@ -1404,12 +1404,9 @@
                     image: pet.image || "/images/logo.svg",
                 });
 
-                if (likedPets.length > 40) {
-                    likedPets = likedPets.slice(0, 40);
-                }
-
+                // Cập nhật: Giữ đồng bộ với database thay vì chỉ giới hạn 40 cái local
                 renderLikedList();
-                showNote("Da them vao danh sach yeu thich.", false);
+                showNote("Đã thêm vào danh sách yêu thích.", false);
             }
 
             function renderLikedList() {
@@ -1596,6 +1593,24 @@
                 updateQueueStatus();
 
                 try {
+                    // Fetch existing favorites to sync with PetSnap
+                    var favResponse = await fetch("/api/v1/favorites/my", {
+                        method: "GET",
+                        credentials: "same-origin",
+                        headers: { Accept: "application/json" }
+                    });
+                    var favPayload = await parseJsonSafe(favResponse);
+                    if (favResponse.ok && favPayload && favPayload.data && Array.isArray(favPayload.data.favorites)) {
+                        likedPets = favPayload.data.favorites.map(function(f) {
+                            return {
+                                id: f.id,
+                                name: f.name,
+                                image: f.image
+                            };
+                        });
+                        renderLikedList();
+                    }
+
                     await ensureQueue();
 
                     if (!queue.length && !hasMoreFromServer) {

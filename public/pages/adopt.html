@@ -726,12 +726,16 @@
             setApiLoading(true);
             showApiError(false);
 
+            const search = searchInput ? searchInput.value.trim() : '';
+            const species = speciesFilter ? speciesFilter.value : '';
+
             const previousPage = currentPage;
             const previousTotalPages = totalPages;
             const previousHasNextPage = hasNextPage;
 
             try {
-                const response = await fetch(`/api/v1/pets?page=${requestedPage}&limit=${PETS_PER_PAGE}`, {
+                const url = `/api/v1/pets?page=${requestedPage}&limit=${PETS_PER_PAGE}&search=${encodeURIComponent(search)}&species=${encodeURIComponent(species)}`;
+                const response = await fetch(url, {
                     method: 'GET',
                     headers: {
                         Accept: 'application/json',
@@ -755,7 +759,6 @@
                 totalPages = parsed.pages;
                 hasNextPage = parsed.hasNext;
 
-                filterPets();
                 updatePaginationUi();
             } catch (error) {
                 console.warn('[Adopt] Failed to load pets from API.', error);
@@ -771,25 +774,21 @@
             }
         }
 
-        function filterPets() {
-            const species = speciesFilter.value;
-            const search = searchInput.value.toLowerCase();
-            const petsGrid = getPetsGrid();
-            const cards = petsGrid ? petsGrid.querySelectorAll('.pet-card') : [];
-
-            cards.forEach((card) => {
-                const cardSpecies = card.dataset.species;
-                const cardName = card.dataset.name;
-
-                const matchSpecies = !species || cardSpecies === species;
-                const matchSearch = !search || cardName.includes(search);
-
-                card.style.display = matchSpecies && matchSearch ? 'block' : 'none';
+        let searchDebounceTimeout;
+        if (speciesFilter) {
+            speciesFilter.addEventListener('change', () => {
+                hydratePetsFromApi(1);
             });
         }
 
-        if (speciesFilter) speciesFilter.addEventListener('change', filterPets);
-        if (searchInput) searchInput.addEventListener('input', filterPets);
+        if (searchInput) {
+            searchInput.addEventListener('input', () => {
+                clearTimeout(searchDebounceTimeout);
+                searchDebounceTimeout = setTimeout(() => {
+                    hydratePetsFromApi(1);
+                }, 500);
+            });
+        }
 
         if (petsPrevBtn) {
             petsPrevBtn.addEventListener('click', function () {

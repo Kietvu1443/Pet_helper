@@ -1134,7 +1134,7 @@
                     + buildMetaCell("Gioi tinh", pet.gender)
                     + buildMetaCell("Mau", pet.color)
                     + "  </div>"
-                    + '  <p class="pet-desc">' + escapeHtml(pet.description || "Chua co mo ta.") + "</p>"
+                    + '  <p class="pet-desc">' + escapeHtml(pet.description || "Chưa có mô tả.") + "</p>"
                     + '  <div class="floating-actions">'
                     + '      <button class="fab-btn nope" type="button" data-card-action="dislike" aria-label="Bo qua">'
                     + '          <img src="/images/btn-nope.png" alt="Nope">'
@@ -1493,7 +1493,7 @@
                     + "<div><strong>Mau:</strong> " + escapeHtml(pet.color || "-") + "</div>"
                     + "<div><strong>Can nang:</strong> " + escapeHtml(pet.weight || "-") + "</div>";
 
-                detailDesc.textContent = pet.description || "Thu cung nay chua co mo ta chi tiet.";
+                detailDesc.textContent = pet.description || "Thú cưng này chưa có mô tả chi tiết";
                 renderDetailImage();
 
                 isDetailOpen = true;

@@ -51,7 +51,7 @@ const petApiV1Controller = {
 
       const result = await Pet.findAll({ status, page, limit: pageSize });
       return sendSuccess(res, 200, "Lấy danh sách thú cưng thành công", {
-        data: result.data,
+        pets: result.data,
         total: result.total,
         page,
         pageSize,

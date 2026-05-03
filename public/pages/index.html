@@ -1892,7 +1892,7 @@
                             <a href="/my-reports" class="dropdown-item">📋
                                 Báo cáo của tôi</a>
                             <a href="/adopt/admin/add" class="dropdown-item role-staff-only is-auth-hidden">🐾 Thêm thú cưng</a>
-                            <a href="/admin" class="dropdown-item role-admin-only is-auth-hidden">⚙️ Quản trị</a>
+                            <a href="/admin" class="dropdown-item role-management-link is-auth-hidden" id="headerManagementLink">🛠️ Quản lý</a>
                             <div class="dropdown-divider"></div>
                             <a href="#" class="dropdown-item logout" id="logoutBtn"
                                 onclick="handleLogout(event)">🚪 Đăng xuất</a>
@@ -2282,6 +2282,7 @@
                 const displayNameText = document.getElementById('headerDisplayNameText');
                 const dropdownDisplayName = document.getElementById('headerDropdownDisplayName');
                 const userRoleText = document.getElementById('headerUserRole');
+                const managementLink = document.getElementById('headerManagementLink');
                 const staffOnlyLinks = document.querySelectorAll('.role-staff-only');
                 const adminOnlyLinks = document.querySelectorAll('.role-admin-only');
 
@@ -2304,10 +2305,25 @@
                         link.classList.add('is-auth-hidden');
                         link.classList.remove('is-auth-visible');
                     });
+                    if (managementLink) {
+                        managementLink.classList.add('is-auth-hidden');
+                        managementLink.classList.remove('is-auth-visible');
+                    }
                 };
 
                 const showRoleLinksForRole = (role) => {
                     hideRoleLinks();
+                    if (managementLink) {
+                        if (role === 0) {
+                            managementLink.textContent = '🧭 Quản trị';
+                        } else if (role === 1) {
+                            managementLink.textContent = '🛠️ Quản lý';
+                        } else {
+                            managementLink.textContent = '🧭 Quản trị';
+                        }
+                        managementLink.classList.remove('is-auth-hidden');
+                        managementLink.classList.add('is-auth-visible');
+                    }
                     if (role === 0 || role === 1) {
                         staffOnlyLinks.forEach((link) => {
                             link.classList.remove('is-auth-hidden');

@@ -23,6 +23,7 @@ if (userDropdownBtn && userDropdown) {
     const displayNameText = document.getElementById('headerDisplayNameText');
     const dropdownDisplayName = document.getElementById('headerDropdownDisplayName');
     const userRoleText = document.getElementById('headerUserRole');
+    const managementLinkId = 'headerManagementLink';
     const staffOnlyLinks = document.querySelectorAll('.role-staff-only');
     const adminOnlyLinks = document.querySelectorAll('.role-admin-only');
 
@@ -45,10 +46,50 @@ if (userDropdownBtn && userDropdown) {
             link.classList.add('is-auth-hidden');
             link.classList.remove('is-auth-visible');
         });
+
+        const managementLink = document.getElementById(managementLinkId);
+        if (managementLink) {
+            managementLink.classList.add('is-auth-hidden');
+            managementLink.classList.remove('is-auth-visible');
+        }
     };
 
     const showRoleLinksForRole = (role) => {
         hideRoleLinks();
+        const managementLink = document.getElementById(managementLinkId) || (() => {
+            const dropdownMenu = document.getElementById('userDropdownMenu');
+            if (!dropdownMenu) return null;
+
+            const profileLink = dropdownMenu.querySelector('a[href="/profile"]');
+            const link = document.createElement('a');
+            link.id = managementLinkId;
+            link.className = 'dropdown-item role-management-link is-auth-hidden';
+            link.href = '/admin';
+            if (profileLink && profileLink.nextSibling) {
+                profileLink.parentNode.insertBefore(link, profileLink.nextSibling);
+            } else if (profileLink && profileLink.parentNode) {
+                profileLink.parentNode.insertBefore(link, profileLink.nextSibling);
+            } else {
+                dropdownMenu.insertBefore(link, dropdownMenu.querySelector('.dropdown-divider'));
+            }
+            return link;
+        })();
+
+        if (managementLink) {
+            if (role === 0) {
+                managementLink.textContent = '🧭 Quản trị';
+                managementLink.href = '/admin';
+            } else if (role === 1) {
+                managementLink.textContent = '🛠️ Quản lý';
+                managementLink.href = '/admin';
+            } else {
+                managementLink.textContent = '🧭 Quản trị';
+                managementLink.href = '/admin';
+            }
+            managementLink.classList.remove('is-auth-hidden');
+            managementLink.classList.add('is-auth-visible');
+        }
+
         if (role === 0 || role === 1) {
             staffOnlyLinks.forEach((link) => {
                 link.classList.remove('is-auth-hidden');

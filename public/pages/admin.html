@@ -693,8 +693,11 @@
                             </div>
                             <div class="dropdown-divider"></div>
                             <a href="/profile" class="dropdown-item">👤 Tài khoản</a>
-                            <a href="/admin" class="dropdown-item role-admin-only is-auth-hidden">🧭 Dashboard quản trị</a>
+                            <a href="/admin" class="dropdown-item role-management-link is-auth-hidden" id="headerManagementLink">🧭 Quản trị</a>
+                            <a href="/admin?tab=users" class="dropdown-item role-admin-only is-auth-hidden">👥 Quản lý người dùng</a>
+                            <a href="/admin?tab=users" class="dropdown-item role-admin-only is-auth-hidden">🛡️ Chỉnh quyền vai trò</a>
                             <a href="/admin/adoption-requests" class="dropdown-item role-staff-only is-auth-hidden">🗂️ Xét duyệt nhận nuôi</a>
+                            <a href="/adopt/admin/add" class="dropdown-item role-staff-only is-auth-hidden">🐾 Quản lý thú cưng</a>
                             <a href="/admin/reports" class="dropdown-item role-staff-only is-auth-hidden">📣 Quản lý báo cáo</a>
                             <div class="dropdown-divider"></div>
                             <a href="#" class="dropdown-item logout" id="logoutBtn" onclick="handleLogout(event)">🚪 Đăng xuất</a>
@@ -741,7 +744,7 @@
                     <button class="nav-btn" data-tab="adoption">Adoption Requests</button>
                     <button class="nav-btn" data-tab="pets">Pets</button>
                     <button class="nav-btn" data-tab="reports">Reports</button>
-                    <button class="nav-btn" data-tab="users">Users</button>
+                    <button class="nav-btn" data-tab="users" data-admin-only="true">Users</button>
                 </nav>
             </aside>
 
@@ -773,7 +776,7 @@
                                 <p class="stat-label">Báo cáo thất lạc</p>
                                 <p class="stat-value" id="statReportsTotal">-</p>
                             </article>
-                            <article class="stat-card">
+                            <article class="stat-card" data-admin-only="true">
                                 <p class="stat-label">Người dùng</p>
                                 <p class="stat-value" id="statUsersTotal">-</p>
                             </article>
@@ -783,7 +786,7 @@
                             <button class="mini-link-btn" type="button" data-jump-tab="adoption">Đi đến Adoption Requests</button>
                             <button class="mini-link-btn" type="button" data-jump-tab="pets">Đi đến Pets</button>
                             <button class="mini-link-btn" type="button" data-jump-tab="reports">Đi đến Reports</button>
-                            <button class="mini-link-btn" type="button" data-jump-tab="users">Đi đến Users</button>
+                            <button class="mini-link-btn" type="button" data-jump-tab="users" data-admin-only="true">Đi đến Users</button>
                         </div>
                     </div>
                 </section>
@@ -901,7 +904,7 @@
                     </div>
                 </section>
 
-                <section id="panel-users" class="tab-panel">
+                <section id="panel-users" class="tab-panel" data-admin-only="true">
                     <div class="panel-head">
                         <div>
                             <h2>Users Management</h2>
@@ -1055,6 +1058,7 @@
 
         const state = {
             currentUser: null,
+            currentRole: null,
             activeTab: 'dashboard',
             isBlocked: false,
             detail: {
@@ -1086,6 +1090,13 @@
         const navButtons = Array.from(document.querySelectorAll('.nav-btn[data-tab]'));
         const jumpButtons = Array.from(document.querySelectorAll('[data-jump-tab]'));
         const refreshAllBtn = document.getElementById('refreshAllBtn');
+        const headerDisplayNameTextEl = document.getElementById('headerDisplayNameText');
+        const headerDropdownDisplayNameEl = document.getElementById('headerDropdownDisplayName');
+        const headerRoleTextEl = document.getElementById('headerUserRole');
+        const headerManagementLink = document.getElementById('headerManagementLink');
+        const roleAdminOnlyLinks = Array.from(document.querySelectorAll('.role-admin-only'));
+        const roleStaffOnlyLinks = Array.from(document.querySelectorAll('.role-staff-only'));
+        const adminOnlyElements = Array.from(document.querySelectorAll('[data-admin-only="true"]'));
 
         const panelEls = {
             dashboard: document.getElementById('panel-dashboard'),
@@ -1223,6 +1234,94 @@
         };
 
         const getPaginationState = (tab) => state.pagination[tab];
+
+        const isAdminRole = () => Number(state.currentRole) === 0;
+        const isStaffRole = () => Number(state.currentRole) === 1;
+        const canViewUsers = () => isAdminRole();
+
+        const getRolePanelLabel = () => {
+            if (isAdminRole()) return 'Quản trị';
+            if (isStaffRole()) return 'Quản lý';
+            return 'Tài khoản';
+        };
+
+        const applyRoleScopedVisibility = () => {
+            const allowUsers = canViewUsers();
+
+            adminOnlyElements.forEach((el) => {
+                el.style.display = allowUsers ? '' : 'none';
+            });
+
+            roleAdminOnlyLinks.forEach((el) => {
+                if (allowUsers) {
+                    el.classList.remove('is-auth-hidden');
+                    el.classList.add('is-auth-visible');
+                    return;
+                }
+                el.classList.add('is-auth-hidden');
+                el.classList.remove('is-auth-visible');
+            });
+
+            roleStaffOnlyLinks.forEach((el) => {
+                if (isAdminRole() || isStaffRole()) {
+                    el.classList.remove('is-auth-hidden');
+                    el.classList.add('is-auth-visible');
+                    return;
+                }
+                el.classList.add('is-auth-hidden');
+                el.classList.remove('is-auth-visible');
+            });
+
+            const panelLabel = getRolePanelLabel();
+            if (headerDisplayNameTextEl) {
+                headerDisplayNameTextEl.textContent = panelLabel;
+            }
+            if (headerDropdownDisplayNameEl) {
+                headerDropdownDisplayNameEl.textContent = panelLabel;
+            }
+            if (headerRoleTextEl) {
+                headerRoleTextEl.textContent = isAdminRole() ? '👑 Admin' : (isStaffRole() ? '🛠️ Staff' : '👤 User');
+            }
+
+            if (headerManagementLink) {
+                if (isAdminRole()) {
+                    headerManagementLink.textContent = '🧭 Quản trị';
+                    headerManagementLink.href = '/admin';
+                } else if (isStaffRole()) {
+                    headerManagementLink.textContent = '🛠️ Quản lý';
+                    headerManagementLink.href = '/admin';
+                }
+                headerManagementLink.classList.remove('is-auth-hidden');
+                headerManagementLink.classList.add('is-auth-visible');
+            }
+
+            if (!allowUsers && state.activeTab === 'users') {
+                switchTab('dashboard', true);
+            }
+        };
+
+        const hookHeaderUserStateSync = () => {
+            if (window.__adminRoleHeaderHooked) {
+                return;
+            }
+
+            const originalApplyHeaderUserState = typeof window.applyHeaderUserState === 'function'
+                ? window.applyHeaderUserState
+                : null;
+
+            if (!originalApplyHeaderUserState) {
+                return;
+            }
+
+            window.__adminRoleHeaderHooked = true;
+            window.applyHeaderUserState = (user) => {
+                originalApplyHeaderUserState(user);
+                if (user && user.role !== undefined) {
+                    state.currentRole = Number(user.role);
+                }
+                applyRoleScopedVisibility();
+            };
+        };
 
         const normalizePagedPayload = (payload) => {
             const container = payload && payload.data ? payload.data : {};
@@ -1906,6 +2005,18 @@
             }
         };
 
+        const readInitialTab = () => {
+            try {
+                const queryTab = new URLSearchParams(window.location.search).get('tab');
+                if (queryTab && TAB_LIST.includes(queryTab)) {
+                    return queryTab;
+                }
+            } catch (error) {
+                // Ignore malformed query string.
+            }
+            return readPersistedTab();
+        };
+
         const persistTab = (tab) => {
             try {
                 localStorage.setItem(TAB_KEY, tab);
@@ -1916,6 +2027,10 @@
 
         const switchTab = (tab, persist = true) => {
             if (!TAB_LIST.includes(tab)) {
+                return;
+            }
+
+            if (tab === 'users' && !canViewUsers()) {
                 return;
             }
 
@@ -1941,7 +2056,9 @@
             statAdoptionTotal.textContent = String(state.pagination.adoption.total || state.adoptionRows.length || 0);
             statPetsTotal.textContent = String(state.pagination.pets.total || state.petRows.length || 0);
             statReportsTotal.textContent = String(state.pagination.reports.total || state.reportRows.length || 0);
-            statUsersTotal.textContent = String(state.pagination.users.total || state.userRows.length || 0);
+            if (canViewUsers()) {
+                statUsersTotal.textContent = String(state.pagination.users.total || state.userRows.length || 0);
+            }
         };
 
         const getSafeArray = (candidate) => (Array.isArray(candidate) ? candidate : []);
@@ -1960,14 +2077,18 @@
                 }
 
                 state.currentUser = meUser;
-                if (Number(meUser.role) !== 0) {
+                state.currentRole = Number(meUser.role);
+                if (!isAdminRole() && !isStaffRole()) {
                     setBlockedState('Không có quyền truy cập');
-                    setGlobalMessage('warning', 'Tài khoản hiện tại không có quyền admin.');
+                    setGlobalMessage('warning', 'Tài khoản hiện tại không có quyền truy cập khu vực quản lý.');
                     return;
                 }
 
-                setGlobalMessage('success', `Xin chào ${meUser.display_name || meUser.name || 'Admin'}, bạn có thể quản trị dữ liệu từ dashboard này.`);
-                const initialTab = readPersistedTab();
+                hookHeaderUserStateSync();
+                applyRoleScopedVisibility();
+                const roleLabel = isAdminRole() ? 'Admin' : 'Staff';
+                setGlobalMessage('success', `Xin chào ${meUser.display_name || meUser.name || roleLabel}, bạn có thể quản lý dữ liệu từ dashboard này.`);
+                const initialTab = readInitialTab();
                 switchTab(initialTab, false);
             } catch (error) {
                 if (error.code === 'unauthorized') {
@@ -2358,9 +2479,10 @@
                 const key = `user:${user.id}`;
                 const pending = isPending(key);
                 const roleText = user.role === 0 ? 'Admin' : (user.role === 1 ? 'Staff' : 'User');
+                const isCurrentAdmin = isAdminRole() && Boolean(state.currentUser);
                 
-                const canChangeRole = user.role !== 0 && state.currentUser && state.currentUser.id !== user.id;
-                const canBan = user.role !== 0 && state.currentUser && state.currentUser.id !== user.id;
+                const canChangeRole = isCurrentAdmin && user.role !== 0 && state.currentUser.id !== user.id;
+                const canBan = isCurrentAdmin && user.role !== 0 && state.currentUser.id !== user.id;
 
                 const nextRole = user.role === 1 ? 2 : 1;
                 const roleActionText = user.role === 1 ? 'Hạ cấp User' : 'Thăng cấp Staff';
@@ -2397,10 +2519,17 @@
         };
 
         async function loadUsers(force = false) {
+            if (!canViewUsers()) {
+                return false;
+            }
             return loadPagedTab('users', force);
         }
 
         async function handleUserRole(id, nextRole, actionBtn) {
+            if (!isAdminRole()) {
+                setGlobalMessage('warning', 'Bạn không có quyền thay đổi vai trò người dùng.');
+                return;
+            }
             const userId = Number(id);
             const actionKey = makeActionPendingKey('user', userId, 'change-role');
             if (state.pendingActions.has(actionKey)) {
@@ -2466,6 +2595,10 @@
         }
 
         async function handleUserStatus(id, nextStatus, actionBtn) {
+            if (!isAdminRole()) {
+                setGlobalMessage('warning', 'Bạn không có quyền thay đổi trạng thái người dùng.');
+                return;
+            }
             const userId = Number(id);
             const actionText = nextStatus === 'banned' ? 'khóa' : 'mở khóa';
             const actionKey = makeActionPendingKey('user', userId, `change-status:${nextStatus}`);
@@ -2547,12 +2680,17 @@
         async function loadDashboardStats(force = false) {
             if (refreshAllBtn) setButtonBusy(refreshAllBtn, true, 'Đang làm mới...');
             try {
-                await Promise.all([
+                const loaders = [
                     loadAdoptionRequests(force),
                     loadPets(force),
                     loadReports(force),
-                    loadUsers(force)
-                ]);
+                ];
+
+                if (canViewUsers()) {
+                    loaders.push(loadUsers(force));
+                }
+
+                await Promise.all(loaders);
             } catch (err) {
                 console.error('Error loading dashboard stats:', err);
             } finally {

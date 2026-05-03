@@ -1,245 +1,124 @@
-# Pet Support - Hỗ Trợ & Bảo Vệ Vật Nuôi
+# 🐾 Pet Helper - Hỗ Trợ & Bảo Vệ Vật Nuôi
 
-Website hỗ trợ và bảo vệ vật nuôi - Node.js + Express (Restful api)
+[![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+[![Express](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
+[![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com/)
+[![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
 
-## 🐳 Chạy bằng Docker (khuyên dùng)
+**Pet Helper** là một nền tảng Web được xây dựng nhằm hỗ trợ việc nhận nuôi thú cưng và báo cáo thú cưng thất lạc. Hệ thống kết nối những người yêu động vật với các trạm cứu hộ, giúp các bé thú cưng tìm thấy mái ấm mới và hỗ trợ chủ nuôi tìm lại thú cưng bị lạc.
 
-Yêu cầu: đã cài Docker Desktop.
+---
 
-### Chạy lần đầu
+## ✨ Tính năng chính
+
+### 👤 Dành cho Người dùng
+- **Xác thực & Bảo mật**: Đăng ký, đăng nhập và xác thực tài khoản qua Email OTP (sử dụng Resend API).
+- **Nhận nuôi thú cưng**: Xem danh sách thú cưng, gửi yêu cầu nhận nuôi và theo dõi trạng thái hồ sơ.
+- **PetSnap**: Trải nghiệm duyệt thú cưng kiểu "Tinder", giúp bạn nhanh chóng tìm thấy thú cưng ưng ý.
+- **Báo cáo Thú cưng**: Gửi báo cáo Thất lạc (Lost) hoặc Tìm thấy (Found) thú cưng kèm hình ảnh và vị trí.
+- **Yêu thích**: Lưu lại danh sách các bé thú cưng bạn đang quan tâm.
+
+### 🛠️ Dành cho Staff (Nhân viên)
+- **Quản lý Thú cưng**: Thêm, chỉnh sửa thông tin và quản lý hình ảnh thú cưng.
+- **Duyệt hồ sơ**: Xem xét và phê duyệt các yêu cầu nhận nuôi từ người dùng.
+
+### 👑 Dành cho Admin (Quản trị viên)
+- **Quản lý Người dùng**: Theo dõi danh sách thành viên, phân quyền (Staff/User) và khóa tài khoản vi phạm.
+- **Quản lý Báo cáo**: Xử lý các báo cáo thất lạc/tìm thấy từ cộng đồng.
+- **Thống kê**: Xem tổng quan số liệu về thú cưng, người dùng và các hoạt động trên hệ thống.
+
+---
+
+## 🛠️ Công nghệ sử dụng
+
+- **Backend**: Node.js, Express.js.
+- **Database**: MySQL (sử dụng `mysql2/promise` và Connection Pool).
+- **Template Engine**: EJS (Embedded JavaScript templates).
+- **Cloud Storage**: Cloudinary (lưu trữ hình ảnh).
+- **Email Service**: Resend API (gửi mã OTP).
+- **Docker**: Docker Compose cho việc đóng gói và triển khai nhanh chóng.
+
+---
+
+## 🚀 Hướng dẫn cài đặt
+
+### 1. Sử dụng Docker (Khuyên dùng)
+Yêu cầu: Đã cài đặt Docker Desktop.
 
 ```bash
-docker compose up --build
+# Khởi chạy hệ thống lần đầu (bao gồm build)
+docker-compose up --build
+
+# Chạy ở chế độ nền
+docker-compose up -d
+
+# Dừng hệ thống
+docker-compose down
+```
+- **Website**: [http://localhost:3000](http://localhost:3000)
+- **Quản lý DB (phpMyAdmin)**: [http://localhost:8080](http://localhost:8080) (User: `root` / Pass: `root123`)
+
+### 2. Cài đặt thủ công (Local)
+Yêu cầu: Node.js >= 16, MySQL.
+
+1. **Cấu hình môi trường**: Tạo file `.env` tại thư mục gốc:
+```env
+PORT=3000
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=your_password
+DB_NAME=pet_helper
+
+# Cloudinary Config
+CLOUDINARY_CLOUD_NAME=your_name
+CLOUDINARY_API_KEY=your_key
+CLOUDINARY_API_SECRET=your_secret
+
+# Email Config
+RESEND_API_KEY=your_resend_key
 ```
 
-Sau khi chạy xong, mở: http://localhost:3000
-
-UI quản lý DB (phpMyAdmin): http://localhost:8080
-
-### Chạy lại (không build lại)
-
-```bash
-docker compose up
-```
-
-### Chạy nền
-
-```bash
-docker compose up -d
-```
-
-### Dừng container
-
-```bash
-docker compose down
-```
-
-### Xóa cả dữ liệu DB (làm mới hoàn toàn)
-
-```bash
-docker compose down -v
-```
-
-Ghi chú:
-
-- DB chạy trong service `db` (MySQL 8), app chạy trong service `app`.
-- UI DB chạy trong service `phpmyadmin` (cổng `8080`).
-- MySQL Docker map ra máy host cổng `3307` (để không trùng XAMPP `3306`).
-- File `database/schema.sql` được chạy tự động khi khởi tạo DB lần đầu.
-- Thông tin DB đã được cấu hình sẵn trong `docker-compose.yml`.
-
-Đăng nhập phpMyAdmin:
-
-- Server: `db`
-- Username: `root`
-- Password: `root123`
-
-### Sync dữ liệu XAMPP -> Docker (1 lệnh)
-
-Chạy trọn bộ backup + restore chỉ với 1 lệnh:
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\sync-xampp-to-docker.ps1
-```
-
-Backup raw từ XAMPP:
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\backup-xampp.ps1 -DbName pet_helper
-```
-
-Restore vào Docker (đổi tên file theo backup vừa tạo):
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\restore-docker.ps1 -SqlFile .\backups\pet_helper_YYYYMMDD_HHMMSS.sql
-```
-
-Tùy chọn:
-
-- Nếu muốn import đè mà không reset DB trước: thêm `-NoReset`
-- Nếu XAMPP có mật khẩu root: thêm `-Password your_password` khi chạy backup
-
-Lưu ý encoding tiếng Việt:
-
-- Script đã được cấu hình để dump/import theo `utf8mb4` an toàn trên Windows.
-- Nếu bạn từng thấy dữ liệu dạng `M??o T??y`, hãy **backup lại từ XAMPP bằng script mới** rồi restore lại Docker.
-- File dump cũ đã lỗi encoding thường không phục hồi chính xác, nên ưu tiên tạo dump mới.
-
-## 🚀 Chạy
-
+2. **Cài đặt thư viện & Chạy**:
 ```bash
 npm install
 npm start
 ```
 
-Mở http://localhost:3000
+---
+
+## 📊 Sơ đồ hệ thống (UML)
+
+Dự án đã được thiết kế với các sơ đồ UML chi tiết nằm trong thư mục `/UML`:
+- **State Diagrams**: [Chi tiết trạng thái thực thể](UML/StateDiagrams.puml)
+- **Activity Diagrams**: [Luồng hoạt động của Actor](UML/Activity/)
+- **Sequence Diagrams**: [Quy trình xử lý logic](UML/Sequence/)
 
 ---
 
-## 📁 Cấu trúc MVC
+## 🔐 Tài khoản thử nghiệm
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                        BROWSER                              │
-│  (Chạy JavaScript client-side và các trang web hiệu ứng     │
-└─────────────────────────────────────────────────────────────┘
-                            ↕ HTTP Request/Response
-┌─────────────────────────────────────────────────────────────┐
-│                     SERVER (Node.js)                        │
-├─────────────────┬───────────────────┬───────────────────────┤
-│     MODEL       │    CONTROLLER     │        VIEW           │
-│   (models/)     │   (controller/)   │      (views/)         │
-├─────────────────┼───────────────────┼───────────────────────┤
-│ Xử lý DATABASE  │ Xử lý LOGIC       │ Hiển thị HTML         │
-│ - Đọc/ghi DB    │ - Nhận request    │ - Template EJS        │
-│ - Query SQL     │ - Gọi Model       │ - Gửi HTML về browser │
-│                 │ - Trả về View     │                       │
-└─────────────────┴───────────────────┴───────────────────────┘
-```
-
-## 📂 Mỗi thư mục làm gì
-
-| Thư mục       | File              | Chạy ở đâu       | Chức năng                             |
-| ------------- | ----------------- | ---------------- | ------------------------------------- |
-| `models/`     | `*.model.js`      | Server           | Làm việc với **database** (CRUD)      |
-| `views/`      | `*.ejs`           | Server → Browser | **Hiển thị HTML** cho người dùng      |
-| `controller/` | `*.controller.js` | Server           | **Xử lý logic**, kết nối Model ↔ View |
-| `routes/`     | `*.route.js`      | Server           | **Điều hướng URL** đến Controller     |
-| `public/`     | `*.js, *.css`     | Browser          | **Tương tác UI** (click, popup, CSS)  |
-
-## 🔄 Luồng xử lý
-
-```
-1. Người dùng truy cập URL (ví dụ: /adopt)
-         ↓
-2. routes/adopt.route.js → Điều hướng đến controller
-         ↓
-3. controller/adopt.controller.js → Xử lý logic, gọi model
-         ↓
-4. models/pet.model.js → Lấy dữ liệu từ database
-         ↓
-5. views/adopt/index.ejs → Render HTML với dữ liệu
-         ↓
-6. Browser hiển thị trang + chạy JavaScript client
-```
-
-taskkill /F /IM node.exe
-
-## 💡 Lưu ý quan trọng
-
-- **Server-side JS** (`routes/`, `controller/`, `models/`) → KHÔNG có `document`, `window`
-- **Client-side JS** (`<script>` trong `.ejs` hoặc `public/*.js`) → CÓ `document`, `window`
-- SweetAlert2, jQuery, DOM manipulation → Phải đặt ở **client-side**
+| Vai trò | Email | Mật khẩu |
+| :--- | :--- | :--- |
+| **Admin** | `admin@pethelper.vn` | `admin123` |
+| **Staff** | `truestaff@example.com` (Cần tạo) | `1234567` |
+| **User** | `trueuser@example.com` (Cần tạo) | `1234567` |
 
 ---
 
-## 🗄️ Kết nối MySQL
+## 📁 Cấu trúc thư mục
 
-### Cài đặt package
-
-```bash
-npm install mysql2
-```
-
-### Cấu hình kết nối (`config/db.js`)
-
-```javascript
-const mysql = require("mysql2/promise");
-
-const pool = mysql.createPool({
-  host: "localhost", // Địa chỉ MySQL server
-  port: 3306, // Port mặc định
-  user: "root", // Username
-  password: "", // Password (để trống nếu không có)
-  database: "pethelper", // Tên database
-  connectionLimit: 10,
-});
-
-module.exports = { pool };
-```
-
-### Sử dụng trong Models
-
-```javascript
-const { pool } = require("../config/db");
-
-// SELECT
-const [rows] = await pool.execute("SELECT * FROM users WHERE id = ?", [id]);
-
-// INSERT
-const [result] = await pool.execute(
-  "INSERT INTO users (name, email) VALUES (?, ?)",
-  [name, email],
-);
-
-// UPDATE
-await pool.execute("UPDATE users SET name = ? WHERE id = ?", [name, id]);
-```
-
-### Khởi tạo Database
-
-```bash
-# Chạy file schema.sql trong MySQL
-mysql -u root -p < database/schema.sql
+```text
+├── config/         # Cấu hình Database, Cloudinary, v.v.
+├── controller/     # Xử lý logic nghiệp vụ (MVC - Controller)
+├── database/       # Chứa schema SQL và các file migration
+├── middleware/     # Kiểm tra quyền, xác thực JWT
+├── models/         # Tương tác trực tiếp với Database (MVC - Model)
+├── public/         # Tài nguyên tĩnh (JS, CSS, Images, HTML)
+├── routes/         # Định tuyến API và Web
+├── utils/          # Các hàm tiện ích (Response, Email, v.v.)
+└── views/          # Giao diện phía Server (MVC - View)
 ```
 
 ---
-
-## 🔐 Hệ thống phân quyền
-
-| Role     | Giá trị | Quyền hạn             |
-| -------- | ------- | --------------------- |
-| 👑 Admin | 0       | Toàn quyền + Quản trị |
-| 🛠️ Staff | 1       | Thêm/sửa/xóa thú cưng |
-| 👤 User  | 2       | Xem và nhận nuôi      |
-
-### Cập nhật role cho tài khoản
-
-```sql
--- Đổi thành Admin
-UPDATE users SET role = 0 WHERE display_name = 'TênTàiKhoản';
-
--- Đổi thành Staff
-UPDATE users SET role = 1 WHERE display_name = 'TênTàiKhoản';
-```
-
-### Tài khoản mặc định của admin
-
-- **Tên đăng nhập:** `trueadmin`
-- **Mật khẩu:** `1234567`
-
-### Tài khoản mặc định của user
-
-- **Tên đăng nhập:** `trueuser`
-- **Mật khẩu:** `1234567`
-
-### Tài khoản mặc định của staff
-
-- **Tên đăng nhập:** `truestaff`
-- **Mật khẩu:** `1234567`
-
-
-⚠️ Nhắc nhở: Mã hoá mật khẩu đang TẮT. Khi deploy, hãy uncomment 3 dòng bcrypt trong models/User.js.
-
-NODE_ENV=production
-NODE_ENV=development
+© 2026 Pet Helper Team.

@@ -676,7 +676,7 @@
         <div class="top-bar">
             <a href="/" class="logo-group">
                 <div class="logo-circle">
-                    <img src="/images/logo.svg" alt="logo" id="the_logo">
+                    <img src="/images/the_logo.jpg" alt="logo" id="the_logo">
                 </div>
                 <div class="web-name">PET HELPER</div>
             </a>
@@ -736,15 +736,15 @@
     <main class="admin-page">
         <section class="admin-shell">
             <aside class="sidebar">
-                <h1 class="sidebar-title">Admin Dashboard</h1>
+                <h1 class="sidebar-title">Bảng điều khiển</h1>
                 <p class="sidebar-desc">Quản lý yêu cầu nhận nuôi, thú cưng và báo cáo trong một màn hình duy nhất.</p>
 
                 <nav class="sidebar-nav">
-                    <button class="nav-btn" data-tab="dashboard">Dashboard</button>
-                    <button class="nav-btn" data-tab="adoption">Adoption Requests</button>
-                    <button class="nav-btn" data-tab="pets">Pets</button>
-                    <button class="nav-btn" data-tab="reports">Reports</button>
-                    <button class="nav-btn" data-tab="users" data-admin-only="true">Users</button>
+                    <button class="nav-btn" data-tab="dashboard">Bảng điều khiển</button>
+                    <button class="nav-btn" data-tab="adoption">Yêu cầu nhận nuôi</button>
+                    <button class="nav-btn" data-tab="pets">Thú cưng</button>
+                    <button class="nav-btn" data-tab="reports">Báo cáo</button>
+                    <button class="nav-btn" data-tab="users" data-admin-only="true">Quản lí tài khoản</button>
                 </nav>
             </aside>
 
@@ -794,7 +794,7 @@
                 <section id="panel-adoption" class="tab-panel">
                     <div class="panel-head">
                         <div>
-                            <h2>Adoption Requests</h2>
+                            <h2>Yêu cầu nhận nuôi</h2>
                             <p class="panel-sub">Danh sách hồ sơ nhận nuôi và trạng thái xử lý.</p>
                         </div>
                         <div class="panel-tools">
@@ -831,7 +831,7 @@
                 <section id="panel-pets" class="tab-panel">
                     <div class="panel-head">
                         <div>
-                            <h2>Pets</h2>
+                            <h2>Thú cưng</h2>
                             <p class="panel-sub">Quản lý danh sách thú cưng có trong hệ thống.</p>
                         </div>
                         <div class="panel-tools">
@@ -869,7 +869,7 @@
                 <section id="panel-reports" class="tab-panel">
                     <div class="panel-head">
                         <div>
-                            <h2>Reports</h2>
+                            <h2>Báo cáo</h2>
                             <p class="panel-sub">Kiểm duyệt báo cáo thất lạc và tìm thấy.</p>
                         </div>
                         <div class="panel-tools">
@@ -907,7 +907,7 @@
                 <section id="panel-users" class="tab-panel" data-admin-only="true">
                     <div class="panel-head">
                         <div>
-                            <h2>Users Management</h2>
+                            <h2>Quản lí người dùng</h2>
                             <p class="panel-sub">Quản lý người dùng, phân quyền và khóa tài khoản.</p>
                         </div>
                         <div class="panel-tools">
@@ -1390,8 +1390,8 @@
             const start = total === 0 ? 0 : ((page - 1) * pagination.pageSize) + 1;
             const end = total === 0 ? 0 : Math.min(total, page * pagination.pageSize);
             const summaryText = total === 0
-                ? 'Showing 0-0 of 0'
-                : `Showing ${start}-${end} of ${total}`;
+                ? 'Hiển thị 0-0 of 0'
+                : `Hiển thị ${start}-${end} trên ${total} trang`;
 
             if (refs.summaryEl) {
                 refs.summaryEl.textContent = summaryText;

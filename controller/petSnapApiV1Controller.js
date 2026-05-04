@@ -22,7 +22,7 @@ const normalizePet = (pet) => {
     pet.avatar_image ||
     pet.image_url ||
     (Array.isArray(pet.images) && pet.images[0] && pet.images[0].image_path) ||
-    "/images/logo.svg";
+    "/images/the_logo.jpg";
 
   return {
     id: pet.id,

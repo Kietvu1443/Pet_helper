@@ -1,0 +1,1884 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Pet Helper</title>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <link rel="stylesheet" href="/stylesheets/auth.css">
+    <link rel="stylesheet" href="/stylesheets/staticHeader.css">
+    <style>
+        body {
+            margin: 0;
+        }
+
+        .admin-page {
+            min-height: calc(100vh - 140px);
+            background: linear-gradient(180deg, #f5faf7 0%, #eef6f1 100%);
+            padding: 28px 16px;
+        }
+
+        .admin-shell {
+            max-width: 1240px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 16px;
+        }
+
+        .sidebar {
+            background: #ffffff;
+            border: 1px solid #d8e7dc;
+            border-radius: 14px;
+            box-shadow: 0 4px 18px rgba(14, 54, 34, 0.05);
+            padding: 16px;
+            height: fit-content;
+            position: sticky;
+            top: 12px;
+        }
+
+        .sidebar-title {
+            margin: 0 0 12px;
+            color: #1f5133;
+            font-size: 1.08rem;
+        }
+
+        .sidebar-desc {
+            margin: 0 0 14px;
+            color: #64748b;
+            font-size: 0.9rem;
+            line-height: 1.45;
+        }
+
+        .sidebar-nav {
+            display: grid;
+            gap: 8px;
+        }
+
+        .nav-btn {
+            width: 100%;
+            border: 1px solid #d4e4d9;
+            border-radius: 10px;
+            background: #f8fcfa;
+            color: #1f5133;
+            font-weight: 700;
+            text-align: left;
+            padding: 10px 12px;
+            cursor: pointer;
+            transition: background 0.2s ease, border-color 0.2s ease;
+        }
+
+        .nav-btn:hover {
+            background: #eef8f2;
+            border-color: #aacdb6;
+        }
+
+        .nav-btn.active {
+            background: #2b663e;
+            border-color: #2b663e;
+            color: #ffffff;
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .main-panel {
+            min-width: 0;
+        }
+
+        .global-note {
+            display: none;
+            margin-bottom: 12px;
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        .global-note.show {
+            display: block;
+        }
+
+        .global-note.info {
+            background: #e8f5ec;
+            color: #1f5133;
+        }
+
+        .global-note.success {
+            background: #ecfdf3;
+            color: #166534;
+        }
+
+        .global-note.warning {
+            background: #fff7ed;
+            color: #9a3412;
+        }
+
+        .global-note.error {
+            background: #fef2f2;
+            color: #991b1b;
+        }
+
+        .blocked-state {
+            display: none;
+            background: #ffffff;
+            border: 1px solid #f5d0d0;
+            border-radius: 14px;
+            padding: 18px;
+            color: #991b1b;
+            font-weight: 700;
+            box-shadow: 0 4px 18px rgba(127, 29, 29, 0.08);
+            margin-bottom: 12px;
+        }
+
+        .blocked-state.show {
+            display: block;
+        }
+
+        .tab-panel {
+            display: none;
+            background: #ffffff;
+            border: 1px solid #d8e7dc;
+            border-radius: 14px;
+            box-shadow: 0 4px 18px rgba(14, 54, 34, 0.05);
+            overflow: hidden;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        .panel-head {
+            padding: 14px 16px;
+            border-bottom: 1px solid #e4efe8;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .panel-head h2 {
+            margin: 0;
+            color: #1f5133;
+            font-size: 1.05rem;
+        }
+
+        .panel-sub {
+            margin: 0;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .panel-tools {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .tool-btn {
+            border: 1px solid #bfd6c8;
+            background: #ffffff;
+            color: #2b663e;
+            border-radius: 8px;
+            padding: 7px 10px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .tool-btn:hover {
+            background: #f1f8f4;
+        }
+
+        .panel-state {
+            display: none;
+            margin: 14px 16px;
+            border-radius: 10px;
+            padding: 11px 12px;
+            font-weight: 600;
+        }
+
+        .panel-state.show {
+            display: block;
+        }
+
+        .panel-state.loading {
+            background: #e8f5ec;
+            color: #1f5133;
+        }
+
+        .panel-state.empty {
+            background: #f8fafc;
+            color: #475569;
+        }
+
+        .panel-state.error {
+            background: #fef2f2;
+            color: #991b1b;
+        }
+
+        .panel-state.unauthorized {
+            background: #fff7ed;
+            color: #9a3412;
+        }
+
+        .panel-content.is-hidden {
+            display: none;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            padding: 0 16px 16px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 780px;
+        }
+
+        th,
+        td {
+            padding: 11px 10px;
+            border-bottom: 1px solid #edf3ee;
+            text-align: left;
+            font-size: 0.9rem;
+            color: #1f2937;
+            vertical-align: middle;
+        }
+
+        th {
+            background: #f5faf7;
+            color: #385f49;
+            font-size: 0.83rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.2px;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 999px;
+            padding: 4px 9px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .status-pill.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-pill.approved {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-pill.rejected {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .status-pill.available {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-pill.adopted {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .status-pill.lost {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .status-pill.found {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .row-actions {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            border: 1px solid transparent;
+            border-radius: 8px;
+            padding: 6px 10px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.82rem;
+        }
+
+        .action-btn.approve {
+            background: #16a34a;
+            color: #ffffff;
+        }
+
+        .action-btn.reject {
+            background: #dc2626;
+            color: #ffffff;
+        }
+
+        .action-btn.edit {
+            background: #2b663e;
+            color: #ffffff;
+        }
+
+        .action-btn.detail {
+            background: #f8fafc;
+            color: #334155;
+            border-color: #cbd5e1;
+        }
+
+        .action-btn.detail:hover {
+            background: #f1f5f9;
+        }
+
+        .action-btn.delete {
+            background: #7f1d1d;
+            color: #ffffff;
+        }
+
+        .action-btn:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+
+        .reporter-cell,
+        .pet-cell {
+            display: grid;
+            gap: 2px;
+        }
+
+        .main-text {
+            color: #111827;
+            font-weight: 700;
+        }
+
+        .sub-text {
+            color: #64748b;
+            font-size: 0.82rem;
+        }
+
+        .dashboard-body {
+            padding: 16px;
+            display: grid;
+            gap: 14px;
+        }
+
+        .stats-grid {
+            display: grid;
+            gap: 12px;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .stat-card {
+            border: 1px solid #dbe9df;
+            border-radius: 12px;
+            background: #f8fcfa;
+            padding: 12px;
+        }
+
+        .stat-label {
+            margin: 0 0 6px;
+            color: #64748b;
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            font-weight: 800;
+            letter-spacing: 0.25px;
+        }
+
+        .stat-value {
+            margin: 0;
+            color: #1f5133;
+            font-size: 1.35rem;
+            font-weight: 800;
+        }
+
+        .dash-hint {
+            margin: 0;
+            color: #475569;
+            line-height: 1.5;
+            font-size: 0.92rem;
+        }
+
+        .mini-link-btn {
+            border: 1px solid #bfd6c8;
+            background: #ffffff;
+            color: #2b663e;
+            border-radius: 8px;
+            padding: 8px 10px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.84rem;
+        }
+
+        .mini-link-btn:hover {
+            background: #f1f8f4;
+        }
+
+        .detail-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.52);
+            z-index: 1300;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .detail-modal.show {
+            display: flex;
+        }
+
+        .detail-modal-card {
+            width: 920px;
+            max-width: 100%;
+            background: #ffffff;
+            border-radius: 14px;
+            border: 1px solid #dbe7df;
+            overflow: hidden;
+            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.28);
+        }
+
+        .detail-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 14px 16px;
+            border-bottom: 1px solid #e6efe9;
+            background: #f8fcfa;
+        }
+
+        .detail-modal-title {
+            margin: 0;
+            color: #1f5133;
+            font-size: 1.08rem;
+            font-weight: 800;
+        }
+
+        .detail-modal-close {
+            border: 1px solid #cbd5e1;
+            background: #ffffff;
+            color: #334155;
+            border-radius: 8px;
+            padding: 6px 10px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .detail-modal-body {
+            padding: 16px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .detail-preview {
+            display: grid;
+            gap: 12px;
+        }
+
+        .detail-preview img {
+            width: 100%;
+            height: 260px;
+            object-fit: cover;
+            border-radius: 10px;
+            background: #f3f4f6;
+            border: 1px solid #e2e8f0;
+        }
+
+        .detail-image-placeholder {
+            min-height: 260px;
+            border-radius: 10px;
+            border: 1px dashed #cbd5e1;
+            background: #f8fafc;
+            color: #64748b;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            text-align: center;
+            padding: 12px;
+        }
+
+        .detail-image-placeholder.show {
+            display: flex;
+        }
+
+        .detail-groups {
+            display: grid;
+            gap: 12px;
+        }
+
+        .detail-group {
+            display: none;
+        }
+
+        .detail-group.show {
+            display: block;
+        }
+
+        .detail-label {
+            margin: 0;
+            color: #64748b;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            font-weight: 800;
+            letter-spacing: 0.2px;
+        }
+
+        .detail-value {
+            margin: 4px 0 0;
+            color: #0f172a;
+            font-size: 0.94rem;
+            font-weight: 600;
+            word-break: break-word;
+            line-height: 1.45;
+        }
+
+        .detail-value.italic {
+            font-style: italic;
+            font-weight: 500;
+            color: #334155;
+        }
+
+        .detail-modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            padding: 14px 16px;
+            border-top: 1px solid #e6efe9;
+            background: #f8fcfa;
+        }
+
+        @media (max-width: 1024px) {
+            .admin-shell {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: static;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .detail-modal-body {
+                grid-template-columns: 1fr;
+            }
+
+            .detail-preview img,
+            .detail-image-placeholder {
+                min-height: 220px;
+                height: 220px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="top-bar">
+            <a href="/" class="logo-group">
+                <div class="logo-circle">
+                    <img src="/images/logo.svg" alt="logo" id="the_logo">
+                </div>
+                <div class="web-name">PET HELPER</div>
+            </a>
+            <div class="user-actions">
+                <div class="auth-user-actions is-auth-hidden" id="headerAuthUserState">
+                    <div class="user-dropdown" id="headerUserDropdown">
+                        <span id="userDropdownBtn" style="cursor: pointer;">
+                            <span id="headerDisplayNameText">Tài khoản</span> ▼
+                        </span>
+                        <div class="user-dropdown-menu" id="userDropdownMenu">
+                            <div class="dropdown-header">
+                                <strong id="headerDropdownDisplayName">Tài khoản</strong>
+                                <span class="user-role" id="headerUserRole">👤 User</span>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <a href="/profile" class="dropdown-item">👤 Tài khoản</a>
+                            <a href="/admin" class="dropdown-item role-admin-only is-auth-hidden">🧭 Dashboard quản trị</a>
+                            <a href="/admin/adoption-requests" class="dropdown-item role-staff-only is-auth-hidden">🗂️ Xét duyệt nhận nuôi</a>
+                            <a href="/admin/reports" class="dropdown-item role-staff-only is-auth-hidden">📣 Quản lý báo cáo</a>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" class="dropdown-item logout" id="logoutBtn" onclick="handleLogout(event)">🚪 Đăng xuất</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="auth-guest-actions is-auth-visible" id="headerAuthGuestState">
+                    <a href="#" onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('login'); } return false;"><span>Đăng nhập</span></a>
+                    <a href="#" onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('register'); } return false;"><span>Đăng ký</span></a>
+                </div>
+                <span>Giỏ hàng <span id="cart-count-display">(0)</span></span>
+                <span class="lang-switch">VN / EN</span>
+            </div>
+            <button class="hamburger-btn" id="hamburgerBtn" aria-label="Mở menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+        </div>
+
+        <div class="mobile-nav-overlay" id="mobileNavOverlay"></div>
+
+        <nav class="main-nav" id="mainNav">
+            <button class="mobile-nav-close" id="mobileNavClose" aria-label="Đóng menu">✕</button>
+            <ul>
+                <li><a href="/adopt">Nhận nuôi</a></li>
+                <li><a href="/reports">Thất lạc</a></li>
+                <li><a href="/about">Về chúng tôi</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div id="auth-overlay-mount"></div>
+    <script src="/javascripts/authOverlayLoader.js" defer></script>
+
+    <main class="admin-page">
+        <section class="admin-shell">
+            <aside class="sidebar">
+                <h1 class="sidebar-title">Admin Dashboard</h1>
+                <p class="sidebar-desc">Quản lý yêu cầu nhận nuôi, thú cưng và báo cáo trong một màn hình duy nhất.</p>
+
+                <nav class="sidebar-nav">
+                    <button class="nav-btn" data-tab="dashboard">Dashboard</button>
+                    <button class="nav-btn" data-tab="adoption">Adoption Requests</button>
+                    <button class="nav-btn" data-tab="pets">Pets</button>
+                    <button class="nav-btn" data-tab="reports">Reports</button>
+                </nav>
+            </aside>
+
+            <section class="main-panel">
+                <div id="globalNote" class="global-note"></div>
+                <div id="blockedState" class="blocked-state"></div>
+
+                <section id="panel-dashboard" class="tab-panel">
+                    <div class="panel-head">
+                        <div>
+                            <h2>Tổng quan quản trị</h2>
+                            <p class="panel-sub">Số liệu tổng hợp nhanh từ các phân hệ chính.</p>
+                        </div>
+                        <div class="panel-tools">
+                            <button class="tool-btn" id="refreshAllBtn" type="button">Làm mới số liệu</button>
+                        </div>
+                    </div>
+                    <div class="dashboard-body">
+                        <div class="stats-grid">
+                            <article class="stat-card">
+                                <p class="stat-label">Hồ sơ nhận nuôi</p>
+                                <p class="stat-value" id="statAdoptionTotal">-</p>
+                            </article>
+                            <article class="stat-card">
+                                <p class="stat-label">Thú cưng</p>
+                                <p class="stat-value" id="statPetsTotal">-</p>
+                            </article>
+                            <article class="stat-card">
+                                <p class="stat-label">Báo cáo thất lạc</p>
+                                <p class="stat-value" id="statReportsTotal">-</p>
+                            </article>
+                        </div>
+                        <p class="dash-hint">Chọn một tab bên trái để quản trị chi tiết. Các hành động duyệt/từ chối sẽ cập nhật trực tiếp trên giao diện, không cần tải lại trang.</p>
+                        <div>
+                            <button class="mini-link-btn" type="button" data-jump-tab="adoption">Đi đến Adoption Requests</button>
+                            <button class="mini-link-btn" type="button" data-jump-tab="pets">Đi đến Pets</button>
+                            <button class="mini-link-btn" type="button" data-jump-tab="reports">Đi đến Reports</button>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="panel-adoption" class="tab-panel">
+                    <div class="panel-head">
+                        <div>
+                            <h2>Adoption Requests</h2>
+                            <p class="panel-sub">Danh sách hồ sơ nhận nuôi và trạng thái xử lý.</p>
+                        </div>
+                        <div class="panel-tools">
+                            <button class="tool-btn" data-refresh-tab="adoption" type="button">Tải lại</button>
+                        </div>
+                    </div>
+                    <div class="panel-state" id="adoptionState"></div>
+                    <div class="panel-content is-hidden" id="adoptionContent">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Người dùng</th>
+                                        <th>Thú cưng</th>
+                                        <th>Trạng thái</th>
+                                        <th>Ngày tạo</th>
+                                        <th>Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adoptionBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="panel-pets" class="tab-panel">
+                    <div class="panel-head">
+                        <div>
+                            <h2>Pets</h2>
+                            <p class="panel-sub">Quản lý danh sách thú cưng có trong hệ thống.</p>
+                        </div>
+                        <div class="panel-tools">
+                            <button class="tool-btn" data-refresh-tab="pets" type="button">Tải lại</button>
+                        </div>
+                    </div>
+                    <div class="panel-state" id="petsState"></div>
+                    <div class="panel-content is-hidden" id="petsContent">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Tên</th>
+                                        <th>Loại</th>
+                                        <th>Trạng thái</th>
+                                        <th>Cập nhật</th>
+                                        <th>Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="petsBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="panel-reports" class="tab-panel">
+                    <div class="panel-head">
+                        <div>
+                            <h2>Reports</h2>
+                            <p class="panel-sub">Kiểm duyệt báo cáo thất lạc và tìm thấy.</p>
+                        </div>
+                        <div class="panel-tools">
+                            <button class="tool-btn" data-refresh-tab="reports" type="button">Tải lại</button>
+                        </div>
+                    </div>
+                    <div class="panel-state" id="reportsState"></div>
+                    <div class="panel-content is-hidden" id="reportsContent">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Người báo cáo</th>
+                                        <th>Loại</th>
+                                        <th>Vị trí</th>
+                                        <th>Trạng thái</th>
+                                        <th>Ngày tạo</th>
+                                        <th>Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="reportsBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </section>
+        </section>
+    </main>
+
+    <div class="detail-modal" id="detailModal" aria-hidden="true">
+        <div class="detail-modal-card" role="dialog" aria-modal="true" aria-labelledby="detailModalTitle">
+            <div class="detail-modal-header">
+                <h2 class="detail-modal-title" id="detailModalTitle">Chi tiết</h2>
+                <button type="button" class="detail-modal-close" id="detailModalCloseBtn">Đóng</button>
+            </div>
+
+            <div class="detail-modal-body">
+                <div class="detail-preview">
+                    <img id="detailModalImage" src="" alt="Ảnh chi tiết">
+                    <div class="detail-image-placeholder" id="detailImagePlaceholder">Không có hình ảnh</div>
+
+                    <div class="detail-group" id="detailDescriptionGroup">
+                        <p class="detail-label">Mô tả</p>
+                        <p class="detail-value italic" id="detailDescriptionValue">-</p>
+                    </div>
+
+                    <div class="detail-group" id="detailReasonGroup">
+                        <p class="detail-label">Lý do nhận nuôi</p>
+                        <p class="detail-value" id="detailReasonValue">-</p>
+                    </div>
+                </div>
+
+                <div class="detail-groups">
+                    <div class="detail-group" id="detailUserGroup">
+                        <p class="detail-label">Thông tin người dùng</p>
+                        <p class="detail-value" id="detailUserValue">-</p>
+                    </div>
+
+                    <div class="detail-group show" id="detailEmailGroup">
+                        <p class="detail-label">Email</p>
+                        <p class="detail-value" id="detailEmailValue">-</p>
+                    </div>
+
+                    <div class="detail-group" id="detailPhoneGroup">
+                        <p class="detail-label">Số điện thoại</p>
+                        <p class="detail-value" id="detailPhoneValue">-</p>
+                    </div>
+
+                    <div class="detail-group" id="detailPetGroup">
+                        <p class="detail-label">Thú cưng</p>
+                        <p class="detail-value" id="detailPetValue">-</p>
+                    </div>
+
+                    <div class="detail-group" id="detailTypeGroup">
+                        <p class="detail-label">Loại</p>
+                        <p class="detail-value" id="detailTypeValue">-</p>
+                    </div>
+
+                    <div class="detail-group" id="detailLocationGroup">
+                        <p class="detail-label">Vị trí</p>
+                        <p class="detail-value" id="detailLocationValue">-</p>
+                    </div>
+
+                    <div class="detail-group show" id="detailStatusGroup">
+                        <p class="detail-label">Trạng thái</p>
+                        <p class="detail-value" id="detailStatusValue">-</p>
+                    </div>
+
+                    <div class="detail-group show" id="detailDateGroup">
+                        <p class="detail-label">Ngày tạo</p>
+                        <p class="detail-value" id="detailDateValue">-</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-modal-footer">
+                <button type="button" class="tool-btn" id="detailModalCloseFooterBtn">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <a href="/" class="logo">
+                    <span style="font-size: 1.5rem;">🐾</span>
+                    <span>Pet Helper</span>
+                </a>
+                <p>Nền tảng hỗ trợ và bảo vệ vật nuôi hàng đầu Việt Nam.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Liên hệ</h4>
+                <ul>
+                    <li>📧 support@pethelper.vn</li>
+                    <li>📞 1900-XXXX</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 Pet Helper Green Project. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="/javascripts/staticHeader.js"></script>
+    <script src="/javascripts/staticFooter.js"></script>
+
+    <script>
+        const TAB_KEY = 'admin.dashboard.activeTab';
+        const TAB_LIST = ['dashboard', 'adoption', 'pets', 'reports'];
+
+        class ApiFetchError extends Error {
+            constructor(message, status, code) {
+                super(message);
+                this.name = 'ApiFetchError';
+                this.status = status || 0;
+                this.code = code || 'api';
+            }
+        }
+
+        const state = {
+            currentUser: null,
+            activeTab: 'dashboard',
+            isBlocked: false,
+            detail: {
+                isOpen: false,
+                context: null,
+                id: null,
+            },
+            fetchedTabs: {
+                adoption: false,
+                pets: false,
+                reports: false,
+            },
+            adoptionRows: [],
+            petRows: [],
+            reportRows: [],
+            pendingActions: new Set(),
+        };
+
+        const globalNote = document.getElementById('globalNote');
+        const blockedState = document.getElementById('blockedState');
+        const navButtons = Array.from(document.querySelectorAll('.nav-btn[data-tab]'));
+        const jumpButtons = Array.from(document.querySelectorAll('[data-jump-tab]'));
+        const refreshAllBtn = document.getElementById('refreshAllBtn');
+
+        const panelEls = {
+            dashboard: document.getElementById('panel-dashboard'),
+            adoption: document.getElementById('panel-adoption'),
+            pets: document.getElementById('panel-pets'),
+            reports: document.getElementById('panel-reports'),
+        };
+
+        const sectionRefs = {
+            adoption: {
+                stateEl: document.getElementById('adoptionState'),
+                contentEl: document.getElementById('adoptionContent'),
+                bodyEl: document.getElementById('adoptionBody'),
+            },
+            pets: {
+                stateEl: document.getElementById('petsState'),
+                contentEl: document.getElementById('petsContent'),
+                bodyEl: document.getElementById('petsBody'),
+            },
+            reports: {
+                stateEl: document.getElementById('reportsState'),
+                contentEl: document.getElementById('reportsContent'),
+                bodyEl: document.getElementById('reportsBody'),
+            },
+        };
+
+        const statAdoptionTotal = document.getElementById('statAdoptionTotal');
+        const statPetsTotal = document.getElementById('statPetsTotal');
+        const statReportsTotal = document.getElementById('statReportsTotal');
+
+        const detailModal = document.getElementById('detailModal');
+        const detailModalTitle = document.getElementById('detailModalTitle');
+        const detailModalCloseBtn = document.getElementById('detailModalCloseBtn');
+        const detailModalCloseFooterBtn = document.getElementById('detailModalCloseFooterBtn');
+        const detailModalImage = document.getElementById('detailModalImage');
+        const detailImagePlaceholder = document.getElementById('detailImagePlaceholder');
+
+        const detailDescriptionGroup = document.getElementById('detailDescriptionGroup');
+        const detailDescriptionValue = document.getElementById('detailDescriptionValue');
+        const detailReasonGroup = document.getElementById('detailReasonGroup');
+        const detailReasonValue = document.getElementById('detailReasonValue');
+        const detailUserGroup = document.getElementById('detailUserGroup');
+        const detailUserValue = document.getElementById('detailUserValue');
+        const detailEmailGroup = document.getElementById('detailEmailGroup');
+        const detailEmailValue = document.getElementById('detailEmailValue');
+        const detailPhoneGroup = document.getElementById('detailPhoneGroup');
+        const detailPhoneValue = document.getElementById('detailPhoneValue');
+        const detailPetGroup = document.getElementById('detailPetGroup');
+        const detailPetValue = document.getElementById('detailPetValue');
+        const detailTypeGroup = document.getElementById('detailTypeGroup');
+        const detailTypeValue = document.getElementById('detailTypeValue');
+        const detailLocationGroup = document.getElementById('detailLocationGroup');
+        const detailLocationValue = document.getElementById('detailLocationValue');
+        const detailStatusValue = document.getElementById('detailStatusValue');
+        const detailDateValue = document.getElementById('detailDateValue');
+
+        const escapeHtml = (value) => String(value || '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+
+        const hasValue = (value) => {
+            if (value === null || value === undefined) {
+                return false;
+            }
+            return String(value).trim() !== '';
+        };
+
+        const formatDate = (value) => {
+            if (!value) return '-';
+            const date = new Date(value);
+            if (Number.isNaN(date.getTime())) return '-';
+            return date.toLocaleDateString('vi-VN');
+        };
+
+        const openLoginOverlay = () => {
+            if (typeof window.openLoginOverlaySafely === 'function') {
+                window.openLoginOverlaySafely();
+                return;
+            }
+            if (typeof openOverlay === 'function') {
+                openOverlay('auth-overlay');
+            }
+            if (typeof overlayActivateTab === 'function') {
+                overlayActivateTab('login');
+            }
+        };
+
+        const parseJsonSafe = async (response) => {
+            try {
+                return await response.json();
+            } catch (error) {
+                return null;
+            }
+        };
+
+        const setGlobalMessage = (type, message) => {
+            globalNote.className = 'global-note';
+            globalNote.textContent = '';
+            if (!message) {
+                return;
+            }
+            globalNote.classList.add('show', type || 'info');
+            globalNote.textContent = message;
+        };
+
+        const setBlockedState = (message) => {
+            state.isBlocked = true;
+            blockedState.classList.add('show');
+            blockedState.textContent = message;
+
+            navButtons.forEach((button) => {
+                button.disabled = button.dataset.tab !== 'dashboard';
+            });
+
+            jumpButtons.forEach((button) => {
+                button.disabled = true;
+            });
+
+            refreshAllBtn.disabled = true;
+            switchTab('dashboard', false);
+        };
+
+        const setSectionState = (sectionKey, status, message) => {
+            const ref = sectionRefs[sectionKey];
+            if (!ref) return;
+
+            if (status === 'ready') {
+                ref.stateEl.className = 'panel-state';
+                ref.stateEl.textContent = '';
+                ref.contentEl.classList.remove('is-hidden');
+                return;
+            }
+
+            if (state.detail.isOpen && state.detail.context === sectionKey) {
+                closeDetailModal();
+            }
+
+            ref.contentEl.classList.add('is-hidden');
+            ref.stateEl.className = `panel-state show ${status}`;
+            ref.stateEl.textContent = message || '';
+        };
+
+        const statusText = (status) => {
+            if (status === 'approved') return 'Đã duyệt';
+            if (status === 'rejected') return 'Đã từ chối';
+            if (status === 'adopted') return 'Đã nhận nuôi';
+            if (status === 'available') return 'Sẵn sàng';
+            return 'Chờ duyệt';
+        };
+
+        const typeText = (type) => {
+            if (type === 'lost') return 'Thất lạc';
+            if (type === 'found') return 'Tìm thấy';
+            return 'Không rõ';
+        };
+
+        const renderStatusPill = (status, fallback) => {
+            const normalized = String(status || fallback || 'pending');
+            return `<span class="status-pill ${escapeHtml(normalized)}">${escapeHtml(statusText(normalized))}</span>`;
+        };
+
+        const setDetailGroupText = (groupEl, valueEl, value, useFallback = false, fallbackText = '-') => {
+            if (!groupEl || !valueEl) return;
+
+            if (hasValue(value)) {
+                groupEl.classList.add('show');
+                valueEl.textContent = String(value);
+                return;
+            }
+
+            if (useFallback) {
+                groupEl.classList.add('show');
+                valueEl.textContent = fallbackText;
+                return;
+            }
+
+            groupEl.classList.remove('show');
+            valueEl.textContent = fallbackText;
+        };
+
+        const setDetailImage = (imagePath) => {
+            const hasImage = hasValue(imagePath);
+            if (hasImage) {
+                detailModalImage.style.display = 'block';
+                detailImagePlaceholder.classList.remove('show');
+                detailModalImage.src = String(imagePath);
+                return;
+            }
+
+            detailModalImage.style.display = 'none';
+            detailImagePlaceholder.classList.add('show');
+            detailModalImage.removeAttribute('src');
+        };
+
+        const getItemByContext = (context, id) => {
+            const targetId = Number(id);
+            if (!targetId) {
+                return null;
+            }
+
+            if (context === 'adoption') {
+                return state.adoptionRows.find((item) => Number(item.id) === targetId) || null;
+            }
+
+            if (context === 'pets') {
+                return state.petRows.find((item) => Number(item.id) === targetId) || null;
+            }
+
+            if (context === 'reports') {
+                return state.reportRows.find((item) => Number(item.id) === targetId) || null;
+            }
+
+            return null;
+        };
+
+        const buildDetailPayload = (context, item) => {
+            if (context === 'adoption') {
+                return {
+                    title: 'Chi tiết hồ sơ nhận nuôi',
+                    image: item.pet_image || null,
+                    description: item.description || null,
+                    adoptionReason: item.message || null,
+                    userInfo: item.display_name || item.user_name || null,
+                    email: item.email || null,
+                    phone: item.phone || null,
+                    petInfo: item.pet_name || item.pet_id ? `${item.pet_name || '-'} (#${item.pet_id || '-'})` : null,
+                    typeInfo: item.pet_type || null,
+                    location: item.address || null,
+                    status: item.status || 'pending',
+                    createdAt: formatDate(item.created_at),
+                };
+            }
+
+            if (context === 'pets') {
+                return {
+                    title: 'Chi tiết thú cưng',
+                    image: item.avatar_image || item.image_url || null,
+                    description: item.description || null,
+                    adoptionReason: null,
+                    userInfo: item.contact_info || null,
+                    email: null,
+                    phone: null,
+                    petInfo: item.name ? `${item.name} (#${item.id || '-'})` : null,
+                    typeInfo: item.pet_type || null,
+                    location: item.source_url || null,
+                    status: item.status || 'available',
+                    createdAt: formatDate(item.created_at),
+                };
+            }
+
+            return {
+                title: 'Chi tiết báo cáo',
+                image: item.image || null,
+                description: item.description || null,
+                adoptionReason: null,
+                userInfo: item.reporter_name || null,
+                email: item.email || null,
+                phone: item.phone || null,
+                petInfo: null,
+                typeInfo: typeText(item.type || ''),
+                location: item.address || item.found_location || null,
+                status: item.status || 'pending',
+                createdAt: formatDate(item.created_at),
+            };
+        };
+
+        const applyDetailPayload = (context, payload) => {
+            detailModalTitle.textContent = payload.title || 'Chi tiết';
+            setDetailImage(payload.image);
+
+            setDetailGroupText(detailDescriptionGroup, detailDescriptionValue, payload.description);
+            setDetailGroupText(detailReasonGroup, detailReasonValue, payload.adoptionReason);
+            setDetailGroupText(detailUserGroup, detailUserValue, payload.userInfo);
+            setDetailGroupText(detailEmailGroup, detailEmailValue, payload.email);
+            setDetailGroupText(detailPhoneGroup, detailPhoneValue, payload.phone);
+            setDetailGroupText(detailPetGroup, detailPetValue, payload.petInfo);
+            setDetailGroupText(detailTypeGroup, detailTypeValue, payload.typeInfo);
+            setDetailGroupText(detailLocationGroup, detailLocationValue, payload.location);
+
+            detailStatusValue.innerHTML = renderStatusPill(payload.status || 'pending', 'pending');
+            detailDateValue.textContent = hasValue(payload.createdAt) ? String(payload.createdAt) : '-';
+
+            detailModalImage.onerror = () => {
+                setDetailImage(null);
+            };
+        };
+
+        const closeDetailModal = () => {
+            state.detail = {
+                isOpen: false,
+                context: null,
+                id: null,
+            };
+            detailModal.classList.remove('show');
+            detailModal.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        };
+
+        const openDetailModal = (context, id) => {
+            const item = getItemByContext(context, id);
+            if (!item) {
+                setGlobalMessage('warning', 'Không tìm thấy dữ liệu chi tiết cho mục đã chọn.');
+                return;
+            }
+
+            state.detail = {
+                isOpen: true,
+                context,
+                id: Number(id),
+            };
+
+            const payload = buildDetailPayload(context, item);
+            applyDetailPayload(context, payload);
+
+            detailModal.classList.add('show');
+            detailModal.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+        };
+
+        const refreshOpenedDetailModal = () => {
+            if (!state.detail.isOpen) {
+                return;
+            }
+
+            const item = getItemByContext(state.detail.context, state.detail.id);
+            if (!item) {
+                closeDetailModal();
+                return;
+            }
+
+            const payload = buildDetailPayload(state.detail.context, item);
+            applyDetailPayload(state.detail.context, payload);
+        };
+
+        const isPending = (key) => state.pendingActions.has(key);
+
+        async function apiFetch(path, options = {}, context = {}) {
+            const method = options.method || 'GET';
+            const headers = {
+                Accept: 'application/json',
+                ...(options.headers || {}),
+            };
+
+            const fetchOptions = {
+                method,
+                credentials: 'include',
+                headers,
+            };
+
+            if (options.body !== undefined) {
+                const isFormData = typeof FormData !== 'undefined' && options.body instanceof FormData;
+                if (isFormData) {
+                    fetchOptions.body = options.body;
+                } else {
+                    fetchOptions.body = JSON.stringify(options.body);
+                    if (!fetchOptions.headers['Content-Type']) {
+                        fetchOptions.headers['Content-Type'] = 'application/json';
+                    }
+                }
+            }
+
+            const response = await fetch(path, fetchOptions);
+            const payload = await parseJsonSafe(response);
+            const message = (payload && (payload.message || payload.error)) || 'Không thể xử lý yêu cầu';
+
+            if (response.status === 401) {
+                if (!context.suppressAuthOverlay) {
+                    openLoginOverlay();
+                }
+                throw new ApiFetchError(message || 'Vui lòng đăng nhập tài khoản', 401, 'unauthorized');
+            }
+
+            if (!response.ok) {
+                throw new ApiFetchError(message, response.status, 'http');
+            }
+
+            if (payload && payload.success === false) {
+                throw new ApiFetchError(payload.message || 'Yêu cầu thất bại', response.status || 400, 'api');
+            }
+
+            return payload || { success: true, message: '', data: null };
+        }
+
+        const readPersistedTab = () => {
+            try {
+                const raw = localStorage.getItem(TAB_KEY);
+                if (!raw) return 'dashboard';
+                return TAB_LIST.includes(raw) ? raw : 'dashboard';
+            } catch (error) {
+                return 'dashboard';
+            }
+        };
+
+        const persistTab = (tab) => {
+            try {
+                localStorage.setItem(TAB_KEY, tab);
+            } catch (error) {
+                // Ignore storage errors.
+            }
+        };
+
+        const switchTab = (tab, persist = true) => {
+            if (!TAB_LIST.includes(tab)) {
+                return;
+            }
+
+            state.activeTab = tab;
+            navButtons.forEach((button) => {
+                button.classList.toggle('active', button.dataset.tab === tab);
+            });
+
+            Object.entries(panelEls).forEach(([key, panel]) => {
+                panel.classList.toggle('active', key === tab);
+            });
+
+            if (persist) {
+                persistTab(tab);
+            }
+
+            loadTabData(tab).catch((error) => {
+                setGlobalMessage('error', error.message || 'Không thể tải dữ liệu tab');
+            });
+        };
+
+        const renderDashboardStats = () => {
+            statAdoptionTotal.textContent = String(state.adoptionRows.length || 0);
+            statPetsTotal.textContent = String(state.petRows.length || 0);
+            statReportsTotal.textContent = String(state.reportRows.length || 0);
+        };
+
+        const getSafeArray = (candidate) => (Array.isArray(candidate) ? candidate : []);
+
+        async function bootstrapAdminAccess() {
+            setGlobalMessage('info', 'Đang xác thực quyền truy cập quản trị...');
+
+            try {
+                const mePayload = await apiFetch('/api/v1/auth/me');
+                const meUser = mePayload && mePayload.data ? mePayload.data.user : null;
+
+                if (!meUser) {
+                    setBlockedState('Không thể xác định thông tin tài khoản.');
+                    setGlobalMessage('error', 'Không thể tải thông tin người dùng hiện tại.');
+                    return;
+                }
+
+                state.currentUser = meUser;
+                if (Number(meUser.role) !== 0) {
+                    setBlockedState('Không có quyền truy cập');
+                    setGlobalMessage('warning', 'Tài khoản hiện tại không có quyền admin.');
+                    return;
+                }
+
+                setGlobalMessage('success', `Xin chào ${meUser.display_name || meUser.name || 'Admin'}, bạn có thể quản trị dữ liệu từ dashboard này.`);
+                const initialTab = readPersistedTab();
+                switchTab(initialTab, false);
+            } catch (error) {
+                if (error.code === 'unauthorized') {
+                    setBlockedState('Vui lòng đăng nhập để truy cập trang quản trị.');
+                    setGlobalMessage('warning', 'Phiên đăng nhập đã hết hạn hoặc chưa đăng nhập.');
+                    return;
+                }
+
+                setBlockedState('Không thể truy cập dashboard quản trị ở thời điểm hiện tại.');
+                setGlobalMessage('error', error.message || 'Lỗi không xác định khi xác thực quyền truy cập.');
+            }
+        }
+
+        const renderAdoptionRows = () => {
+            const body = sectionRefs.adoption.bodyEl;
+            body.innerHTML = state.adoptionRows.map((item) => {
+                const key = `adoption:${item.id}`;
+                const pending = isPending(key);
+                const canModerate = String(item.status || 'pending') === 'pending';
+
+                return `
+                    <tr>
+                        <td>
+                            <div class="reporter-cell">
+                                <span class="main-text">${escapeHtml(item.display_name || item.user_name || '-')}</span>
+                                <span class="sub-text">${escapeHtml(item.email || '-')}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="pet-cell">
+                                <span class="main-text">${escapeHtml(item.pet_name || '-')}</span>
+                                <span class="sub-text">#${escapeHtml(item.pet_id || '-')}</span>
+                            </div>
+                        </td>
+                        <td>${renderStatusPill(item.status, 'pending')}</td>
+                        <td>${escapeHtml(formatDate(item.created_at))}</td>
+                        <td>
+                            <div class="row-actions">
+                                <button class="action-btn detail" data-action="detail-adoption" data-id="${escapeHtml(item.id)}">Chi tiết</button>
+                                <button class="action-btn approve" data-action="approve-adoption" data-id="${escapeHtml(item.id)}" ${(!canModerate || pending) ? 'disabled' : ''}>Duyệt</button>
+                                <button class="action-btn reject" data-action="reject-adoption" data-id="${escapeHtml(item.id)}" ${(!canModerate || pending) ? 'disabled' : ''}>Từ chối</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            refreshOpenedDetailModal();
+        };
+
+        async function loadAdoptionRequests(force = false) {
+            if (!force && state.fetchedTabs.adoption) {
+                renderAdoptionRows();
+                setSectionState('adoption', 'ready');
+                return true;
+            }
+
+            setSectionState('adoption', 'loading', 'Đang tải danh sách hồ sơ nhận nuôi...');
+            try {
+                const payload = await apiFetch('/api/v1/adoption-requests/admin');
+                state.adoptionRows = getSafeArray(payload && payload.data ? payload.data.requests : []);
+                state.fetchedTabs.adoption = true;
+                renderDashboardStats();
+
+                if (state.adoptionRows.length === 0) {
+                    setSectionState('adoption', 'empty', 'Không có hồ sơ nhận nuôi nào.');
+                    return true;
+                }
+
+                renderAdoptionRows();
+                setSectionState('adoption', 'ready');
+                return true;
+            } catch (error) {
+                if (error.code === 'unauthorized') {
+                    setSectionState('adoption', 'unauthorized', 'Vui lòng đăng nhập để truy cập dữ liệu nhận nuôi.');
+                    return false;
+                }
+                setSectionState('adoption', 'error', error.message || 'Không thể tải dữ liệu nhận nuôi.');
+                return false;
+            }
+        }
+
+        async function handleAdoptionStatus(id, nextStatus) {
+            const requestId = Number(id);
+            const rowIndex = state.adoptionRows.findIndex((row) => Number(row.id) === requestId);
+            if (rowIndex < 0) {
+                return;
+            }
+
+            if (nextStatus === 'rejected') {
+                const confirmed = window.confirm('Bạn có chắc muốn từ chối hồ sơ nhận nuôi này?');
+                if (!confirmed) {
+                    return;
+                }
+            }
+
+            const key = `adoption:${requestId}`;
+            const previousRow = { ...state.adoptionRows[rowIndex] };
+            state.pendingActions.add(key);
+            state.adoptionRows[rowIndex] = {
+                ...state.adoptionRows[rowIndex],
+                status: nextStatus,
+            };
+            renderAdoptionRows();
+
+            try {
+                const payload = await apiFetch(`/api/v1/adoption-requests/${requestId}/status`, {
+                    method: 'PATCH',
+                    body: { status: nextStatus },
+                });
+
+                const updated = payload && payload.data ? payload.data.request : null;
+                if (updated && updated.status) {
+                    state.adoptionRows[rowIndex] = {
+                        ...state.adoptionRows[rowIndex],
+                        status: updated.status,
+                    };
+                }
+
+                state.fetchedTabs.pets = false;
+                renderDashboardStats();
+                setGlobalMessage('success', payload.message || 'Cập nhật trạng thái hồ sơ thành công.');
+            } catch (error) {
+                state.adoptionRows[rowIndex] = previousRow;
+                setGlobalMessage('error', error.message || 'Không thể cập nhật trạng thái hồ sơ.');
+            } finally {
+                state.pendingActions.delete(key);
+                renderAdoptionRows();
+            }
+        }
+
+        const renderPetRows = () => {
+            const body = sectionRefs.pets.bodyEl;
+            body.innerHTML = state.petRows.map((pet) => {
+                const key = `pet:${pet.id}`;
+                const pending = isPending(key);
+
+                return `
+                    <tr>
+                        <td>#${escapeHtml(pet.id)}</td>
+                        <td>${escapeHtml(pet.name || '-')}</td>
+                        <td>${escapeHtml(pet.pet_type || '-')}</td>
+                        <td>${renderStatusPill(pet.status || 'available', 'available')}</td>
+                        <td>${escapeHtml(formatDate(pet.updated_at || pet.created_at))}</td>
+                        <td>
+                            <div class="row-actions">
+                                <button class="action-btn detail" data-action="detail-pet" data-id="${escapeHtml(pet.id)}">Chi tiết</button>
+                                <button class="action-btn edit" data-action="edit-pet" data-id="${escapeHtml(pet.id)}">Sửa</button>
+                                <button class="action-btn delete" data-action="delete-pet" data-id="${escapeHtml(pet.id)}" ${pending ? 'disabled' : ''}>Xóa</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            refreshOpenedDetailModal();
+        };
+
+        async function loadPets(force = false) {
+            if (!force && state.fetchedTabs.pets) {
+                renderPetRows();
+                setSectionState('pets', 'ready');
+                return true;
+            }
+
+            setSectionState('pets', 'loading', 'Đang tải danh sách thú cưng...');
+            try {
+                const payload = await apiFetch('/api/v1/pets');
+                state.petRows = getSafeArray(payload && payload.data ? payload.data.pets : []);
+                state.fetchedTabs.pets = true;
+                renderDashboardStats();
+
+                if (state.petRows.length === 0) {
+                    setSectionState('pets', 'empty', 'Hiện chưa có thú cưng nào trong hệ thống.');
+                    return true;
+                }
+
+                renderPetRows();
+                setSectionState('pets', 'ready');
+                return true;
+            } catch (error) {
+                if (error.code === 'unauthorized') {
+                    setSectionState('pets', 'unauthorized', 'Bạn cần đăng nhập lại để quản lý thú cưng.');
+                    return false;
+                }
+                setSectionState('pets', 'error', error.message || 'Không thể tải danh sách thú cưng.');
+                return false;
+            }
+        }
+
+        const handlePetEdit = (id) => {
+            window.location.href = `/adopt/admin/edit/${id}`;
+        };
+
+        async function handlePetDelete(id) {
+            const petId = Number(id);
+            if (!petId) return;
+
+            const confirmed = window.confirm('Bạn có chắc muốn xóa thú cưng này khỏi hệ thống?');
+            if (!confirmed) {
+                return;
+            }
+
+            const key = `pet:${petId}`;
+            state.pendingActions.add(key);
+            renderPetRows();
+
+            try {
+                const payload = await apiFetch(`/api/v1/pets/${petId}`, {
+                    method: 'DELETE',
+                });
+
+                state.petRows = state.petRows.filter((item) => Number(item.id) !== petId);
+                renderDashboardStats();
+
+                if (state.petRows.length === 0) {
+                    setSectionState('pets', 'empty', 'Hiện chưa còn thú cưng nào trong hệ thống.');
+                } else {
+                    renderPetRows();
+                    setSectionState('pets', 'ready');
+                }
+
+                setGlobalMessage('success', payload.message || 'Đã xóa thú cưng thành công.');
+            } catch (error) {
+                setGlobalMessage('error', error.message || 'Không thể xóa thú cưng.');
+            } finally {
+                state.pendingActions.delete(key);
+                renderPetRows();
+            }
+        }
+
+        const renderReportRows = () => {
+            const body = sectionRefs.reports.bodyEl;
+            body.innerHTML = state.reportRows.map((report) => {
+                const key = `report:${report.id}`;
+                const pending = isPending(key);
+                const canModerate = String(report.status || 'pending') === 'pending';
+                const reportType = String(report.type || 'lost');
+
+                return `
+                    <tr>
+                        <td>
+                            <div class="reporter-cell">
+                                <span class="main-text">${escapeHtml(report.reporter_name || '-')}</span>
+                                <span class="sub-text">${escapeHtml(report.email || '-')}</span>
+                            </div>
+                        </td>
+                        <td><span class="status-pill ${escapeHtml(reportType)}">${escapeHtml(typeText(reportType))}</span></td>
+                        <td>${escapeHtml(report.address || report.found_location || '-')}</td>
+                        <td>${renderStatusPill(report.status, 'pending')}</td>
+                        <td>${escapeHtml(formatDate(report.created_at))}</td>
+                        <td>
+                            <div class="row-actions">
+                                <button class="action-btn detail" data-action="detail-report" data-id="${escapeHtml(report.id)}">Chi tiết</button>
+                                <button class="action-btn approve" data-action="approve-report" data-id="${escapeHtml(report.id)}" ${(!canModerate || pending) ? 'disabled' : ''}>Duyệt</button>
+                                <button class="action-btn reject" data-action="reject-report" data-id="${escapeHtml(report.id)}" ${(!canModerate || pending) ? 'disabled' : ''}>Từ chối</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            refreshOpenedDetailModal();
+        };
+
+        async function loadReports(force = false) {
+            if (!force && state.fetchedTabs.reports) {
+                renderReportRows();
+                setSectionState('reports', 'ready');
+                return true;
+            }
+
+            setSectionState('reports', 'loading', 'Đang tải danh sách báo cáo...');
+            try {
+                const payload = await apiFetch('/api/v1/admin/reports?limit=100');
+                const reportData = payload && payload.data ? payload.data.data : [];
+                state.reportRows = getSafeArray(reportData);
+                state.fetchedTabs.reports = true;
+                renderDashboardStats();
+
+                if (state.reportRows.length === 0) {
+                    setSectionState('reports', 'empty', 'Không có báo cáo nào cần xử lý.');
+                    return true;
+                }
+
+                renderReportRows();
+                setSectionState('reports', 'ready');
+                return true;
+            } catch (error) {
+                if (error.code === 'unauthorized') {
+                    setSectionState('reports', 'unauthorized', 'Bạn cần đăng nhập lại để truy cập dữ liệu báo cáo.');
+                    return false;
+                }
+                setSectionState('reports', 'error', error.message || 'Không thể tải danh sách báo cáo.');
+                return false;
+            }
+        }
+
+        async function handleReportStatus(id, nextStatus) {
+            const reportId = Number(id);
+            const rowIndex = state.reportRows.findIndex((row) => Number(row.id) === reportId);
+            if (rowIndex < 0) {
+                return;
+            }
+
+            if (nextStatus === 'rejected') {
+                const confirmed = window.confirm('Bạn có chắc muốn từ chối báo cáo này?');
+                if (!confirmed) {
+                    return;
+                }
+            }
+
+            const key = `report:${reportId}`;
+            const previousRow = { ...state.reportRows[rowIndex] };
+            state.pendingActions.add(key);
+            state.reportRows[rowIndex] = {
+                ...state.reportRows[rowIndex],
+                status: nextStatus,
+            };
+            renderReportRows();
+
+            try {
+                const payload = await apiFetch(`/api/v1/admin/reports/${reportId}/status`, {
+                    method: 'PATCH',
+                    body: { status: nextStatus },
+                });
+
+                const updated = payload && payload.data ? payload.data.report : null;
+                if (updated && updated.status) {
+                    state.reportRows[rowIndex] = {
+                        ...state.reportRows[rowIndex],
+                        status: updated.status,
+                    };
+                }
+
+                renderDashboardStats();
+                setGlobalMessage('success', payload.message || 'Cập nhật trạng thái báo cáo thành công.');
+            } catch (error) {
+                state.reportRows[rowIndex] = previousRow;
+                setGlobalMessage('error', error.message || 'Không thể cập nhật trạng thái báo cáo.');
+            } finally {
+                state.pendingActions.delete(key);
+                renderReportRows();
+            }
+        }
+
+        async function loadTabData(tab, force = false) {
+            if (state.isBlocked && tab !== 'dashboard') {
+                return;
+            }
+
+            if (tab === 'dashboard') {
+                renderDashboardStats();
+                return;
+            }
+
+            if (tab === 'adoption') {
+                await loadAdoptionRequests(force);
+                return;
+            }
+
+            if (tab === 'pets') {
+                await loadPets(force);
+                return;
+            }
+
+            if (tab === 'reports') {
+                await loadReports(force);
+            }
+        }
+
+        navButtons.forEach((button) => {
+            button.addEventListener('click', () => {
+                const nextTab = button.dataset.tab;
+                if (!nextTab) return;
+                switchTab(nextTab, true);
+            });
+        });
+
+        jumpButtons.forEach((button) => {
+            button.addEventListener('click', () => {
+                const nextTab = button.dataset.jumpTab;
+                if (!nextTab) return;
+                switchTab(nextTab, true);
+            });
+        });
+
+        document.addEventListener('click', async (event) => {
+            const refreshBtn = event.target.closest('[data-refresh-tab]');
+            if (refreshBtn) {
+                const targetTab = refreshBtn.dataset.refreshTab;
+                await loadTabData(targetTab, true);
+                return;
+            }
+
+            const actionBtn = event.target.closest('button[data-action]');
+            if (!actionBtn) {
+                return;
+            }
+
+            const action = actionBtn.dataset.action;
+            const id = actionBtn.dataset.id;
+
+            if (action === 'detail-adoption') {
+                openDetailModal('adoption', id);
+                return;
+            }
+
+            if (action === 'detail-pet') {
+                openDetailModal('pets', id);
+                return;
+            }
+
+            if (action === 'detail-report') {
+                openDetailModal('reports', id);
+                return;
+            }
+
+            if (action === 'approve-adoption') {
+                await handleAdoptionStatus(id, 'approved');
+                return;
+            }
+
+            if (action === 'reject-adoption') {
+                await handleAdoptionStatus(id, 'rejected');
+                return;
+            }
+
+            if (action === 'edit-pet') {
+                handlePetEdit(id);
+                return;
+            }
+
+            if (action === 'delete-pet') {
+                await handlePetDelete(id);
+                return;
+            }
+
+            if (action === 'approve-report') {
+                await handleReportStatus(id, 'approved');
+                return;
+            }
+
+            if (action === 'reject-report') {
+                await handleReportStatus(id, 'rejected');
+            }
+        });
+
+        detailModalCloseBtn.addEventListener('click', closeDetailModal);
+        detailModalCloseFooterBtn.addEventListener('click', closeDetailModal);
+
+        detailModal.addEventListener('click', (event) => {
+            if (event.target === detailModal) {
+                closeDetailModal();
+            }
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && state.detail.isOpen) {
+                closeDetailModal();
+            }
+        });
+
+        refreshAllBtn.addEventListener('click', async () => {
+            if (state.isBlocked) {
+                return;
+            }
+
+            refreshAllBtn.disabled = true;
+            setGlobalMessage('info', 'Đang làm mới toàn bộ dữ liệu dashboard...');
+
+            try {
+                const results = await Promise.all([
+                    loadAdoptionRequests(true),
+                    loadPets(true),
+                    loadReports(true),
+                ]);
+                renderDashboardStats();
+                if (results.every(Boolean)) {
+                    setGlobalMessage('success', 'Đã làm mới số liệu dashboard thành công.');
+                } else {
+                    setGlobalMessage('warning', 'Đã làm mới một phần dữ liệu. Kiểm tra lại các tab đang báo lỗi.');
+                }
+            } catch (error) {
+                setGlobalMessage('error', error.message || 'Không thể làm mới dữ liệu dashboard.');
+            } finally {
+                refreshAllBtn.disabled = false;
+            }
+        });
+
+        bootstrapAdminAccess();
+    </script>
+</body>
+
+</html>

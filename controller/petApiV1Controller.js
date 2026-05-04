@@ -47,9 +47,20 @@ const petApiV1Controller = {
         ? req.query.status
         : null;
       const page = Math.max(1, Number(req.query.page || 1));
-      const pageSize = Math.min(50, Math.max(1, Number(req.query.pageSize || req.query.limit || 10)));
+      const pageSize = Math.min(
+        50,
+        Math.max(1, Number(req.query.pageSize || req.query.limit || 10)),
+      );
+      const search = req.query.search || null;
+      const species = req.query.species || null;
 
-      const result = await Pet.findAll({ status, page, limit: pageSize });
+      const result = await Pet.findAll({
+        status,
+        page,
+        limit: pageSize,
+        search,
+        species,
+      });
       return sendSuccess(res, 200, "Lấy danh sách thú cưng thành công", {
         pets: result.data,
         total: result.total,

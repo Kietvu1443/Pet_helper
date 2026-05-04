@@ -22,7 +22,7 @@ const normalizeFavorite = (row) => ({
   pet_code: row.pet_code,
   description: row.description,
   liked_at: row.liked_at,
-  image: row.avatar_image || row.image_url || "/images/logo.svg",
+  image: row.avatar_image || row.image_url || "/images/the_logo.jpg",
 });
 
 const favoritesApiV1Controller = {

@@ -1,6 +1,6 @@
 const { pool } = require("../config/db");
 
-const DEFAULT_PLACEHOLDER_IMAGE = "/images/logo.svg";
+const DEFAULT_PLACEHOLDER_IMAGE = "/images/the_logo.jpg";
 
 const Report = {
   /**

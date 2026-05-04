@@ -19,35 +19,55 @@ const Pet = {
       let status = null;
       let page = 1;
       let limit = null;
+      let search = null;
+      let pet_type = null;
 
-      if (typeof options === 'string' || options === null) {
+      if (typeof options === "string" || options === null) {
         status = options;
-      } else if (typeof options === 'object') {
+      } else if (typeof options === "object") {
         status = options.status || null;
         page = Math.max(1, Number(options.page || 1));
         limit = Math.min(50, Math.max(1, Number(options.limit || 20)));
+        search = options.search || null;
+        pet_type = options.pet_type || options.species || null;
       }
+
+      let whereClauses = [];
+      let params = [];
+
+      if (status) {
+        whereClauses.push("p.status = ?");
+        params.push(status);
+      }
+
+      if (pet_type) {
+        whereClauses.push("p.pet_type = ?");
+        params.push(pet_type);
+      }
+
+      if (search) {
+        whereClauses.push(
+          "(LOWER(p.name) LIKE LOWER(?) OR LOWER(p.description) LIKE LOWER(?) OR LOWER(p.pet_code) LIKE LOWER(?))",
+        );
+        const searchTerm = `%${search}%`;
+        params.push(searchTerm, searchTerm, searchTerm);
+      }
+
+      const whereSql =
+        whereClauses.length > 0 ? " WHERE " + whereClauses.join(" AND ") : "";
 
       let query = `
         SELECT p.*, pi.image_path as avatar_image
         FROM pets p
         LEFT JOIN pet_images pi ON p.id = pi.pet_id AND pi.display_order = 0
+        ${whereSql}
+        ORDER BY p.created_at DESC
       `;
-      let params = [];
-
-      if (status) {
-        query += " WHERE p.status = ?";
-        params.push(status);
-      }
-
-      query += " ORDER BY p.created_at DESC";
 
       if (limit !== null) {
         const offset = (page - 1) * limit;
-        const [countRows] = await pool.execute(
-          `SELECT COUNT(*) AS total FROM pets p ${status ? "WHERE p.status = ?" : ""}`,
-          params,
-        );
+        const countQuery = `SELECT COUNT(*) AS total FROM pets p ${whereSql}`;
+        const [countRows] = await pool.execute(countQuery, params);
         const total = countRows[0].total;
 
         query += " LIMIT ? OFFSET ?";

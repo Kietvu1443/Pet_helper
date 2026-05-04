@@ -14,7 +14,8 @@ const newsService = {
   // ===== PUBLIC =====
 
   async getPublicNews({ category, page = 1, limit = 12 }) {
-    const offset = (page - 1) * limit;
+    const limitNum = Number(limit);
+    const offset = Number((page - 1) * limitNum);
     const conditions = ["n.status = 'approved'"];
     const params = [];
 
@@ -30,7 +31,7 @@ const newsService = {
       params
     );
 
-    const [rows] = await pool.execute(
+    const [rows] = await pool.query(
       `SELECT
         n.id, n.title, n.image, n.category, n.view_count,
         n.created_at, n.updated_at,
@@ -40,18 +41,18 @@ const newsService = {
         (SELECT COUNT(*) FROM news_comments nc WHERE nc.news_id = n.id) AS comment_count,
         (SELECT COUNT(*) FROM news_follows nf WHERE nf.news_id = n.id) AS follow_count
        FROM news n
-       INNER JOIN users u ON u.id = n.author_id
+       LEFT JOIN users u ON u.id = n.author_id
        WHERE ${where}
        ORDER BY n.created_at DESC
        LIMIT ? OFFSET ?`,
-      [...params, limit, offset]
+      [...params, limitNum, offset]
     );
 
     return {
       news: rows,
       total,
       page,
-      totalPages: Math.ceil(total / limit),
+      totalPages: Math.ceil(total / limitNum),
     };
   },
 
@@ -65,7 +66,7 @@ const newsService = {
         (SELECT COUNT(*) FROM news_comments nc WHERE nc.news_id = n.id) AS comment_count,
         (SELECT COUNT(*) FROM news_follows nf WHERE nf.news_id = n.id) AS follow_count
        FROM news n
-       INNER JOIN users u ON u.id = n.author_id
+       LEFT JOIN users u ON u.id = n.author_id
        WHERE n.id = ? AND n.status = 'approved'`,
       [newsId]
     );
@@ -96,17 +97,17 @@ const newsService = {
   },
 
   async getRandomFeaturedNews(limit = 3) {
-    const [rows] = await pool.execute(
+    const [rows] = await pool.query(
       `SELECT n.id, n.title, n.image, n.category, n.created_at,
               u.display_name AS author_name, u.name AS author_full_name,
               u.email AS author_email, u.role AS author_role,
               (SELECT COUNT(*) FROM news_likes nl WHERE nl.news_id = n.id) AS like_count
        FROM news n
-       INNER JOIN users u ON u.id = n.author_id
+       LEFT JOIN users u ON u.id = n.author_id
        WHERE n.status = 'approved'
        ORDER BY RAND()
        LIMIT ?`,
-      [limit]
+      [Number(limit)]
     );
     return rows;
   },
@@ -239,7 +240,7 @@ const newsService = {
       [userId]
     );
 
-    const [rows] = await pool.execute(
+    const [rows] = await pool.query(
       `SELECT n.id, n.title, n.image, n.category, n.created_at,
               u.display_name AS author_name, u.name AS author_full_name,
               u.email AS author_email, u.role AS author_role,
@@ -279,7 +280,7 @@ const newsService = {
       [userId]
     );
 
-    const [rows] = await pool.execute(
+    const [rows] = await pool.query(
       `SELECT id, title, image, category, status, rejected_reason,
               view_count, created_at, updated_at
        FROM news WHERE author_id = ?
@@ -310,17 +311,17 @@ const newsService = {
       params
     );
 
-    const [rows] = await pool.execute(
+    const [rows] = await pool.query(
       `SELECT n.id, n.title, n.image, n.category, n.status,
               n.rejected_reason, n.view_count, n.created_at, n.updated_at,
               u.display_name AS author_name, u.name AS author_full_name,
               u.email AS author_email, u.role AS author_role
        FROM news n
-       INNER JOIN users u ON u.id = n.author_id
+       LEFT JOIN users u ON u.id = n.author_id
        ${where}
        ORDER BY n.created_at DESC
        LIMIT ? OFFSET ?`,
-      [...params, limit, offset]
+      [...params, Number(limit), offset]
     );
 
     return { news: rows, total, page, totalPages: Math.ceil(total / limit) };

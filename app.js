@@ -21,6 +21,7 @@ var adoptionRequestApiV1Router = require("./routes/api/v1/adoptionRequests");
 var adoptionRequestRouter = require("./routes/adoptionRequest");
 var reportRouter = require("./routes/report");
 var reportApiV1Router = require("./routes/api/v1/reports");
+var newsApiV1Router = require("./routes/api/v1/news");
 
 var app = express();
 
@@ -38,6 +39,7 @@ app.use(setUserLocals);
 // Route handlers
 app.use("/api/v1/auth", authApiV1Router);
 app.use("/api/v1", reportApiV1Router);
+app.use("/api/v1", newsApiV1Router);
 app.use("/api/v1", petApiV1Router);
 app.use("/api/v1", petSnapApiV1Router);
 app.use("/api/v1", favoritesApiV1Router);

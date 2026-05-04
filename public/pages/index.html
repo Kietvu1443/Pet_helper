@@ -1891,7 +1891,10 @@
                                 Thú cưng đã yêu thích</a>
                             <a href="/my-reports" class="dropdown-item">📋
                                 Báo cáo của tôi</a>
+                            <a href="/my-adoption-requests" class="dropdown-item">🏠 Yêu cầu nhận nuôi</a>
                             <a href="/adopt/admin/add" class="dropdown-item role-staff-only is-auth-hidden">🐾 Thêm thú cưng</a>
+                            <a href="/admin/reports" class="dropdown-item role-staff-only is-auth-hidden">📋 Duyệt báo cáo</a>
+                            <a href="/admin/adoption-requests" class="dropdown-item role-staff-only is-auth-hidden">🏠 Xét duyệt nhận nuôi</a>
                             <a href="/admin" class="dropdown-item role-admin-only is-auth-hidden">⚙️ Quản trị</a>
                             <div class="dropdown-divider"></div>
                             <a href="#" class="dropdown-item logout" id="logoutBtn"
@@ -1938,16 +1941,18 @@
                         <li><a href="/tips" onclick="window.location.href='/tips'; return false;">Mẹo chăm sóc thú
                                 cưng</a>
                         </li>
+                        <li><a href="/reports/list" onclick="window.location.href='/reports/list'; return false;">Xem báo cáo thất lạc</a>
+                        </li>
                     </ul>
                 </li>
                 <li>
                     <a href="#" class="has-dropdown nav-item">Dịch vụ <span class="nav-arrow arrow">▼</span></a>
                     <ul class="nav-dropdown">
-                        <li><a href="#" onclick="openOverlay('booking-overlay')">Đặt lịch tiêm phòng</a></li>
-                        <li><a href="#" onclick="openOverlay('shop-overlay')">Danh mục đồ ăn/ đồ dùng</a></li>
+                        <li><a href="/booking">Đặt lịch tiêm phòng</a></li>
+                        <li><a href="/shop">Danh mục đồ ăn/ đồ dùng</a></li>
                     </ul>
                 </li>
-                <li><a href="#" onclick="openOverlay('news-overlay')">Tin tức</a></li>
+                <li><a href="/news">Tin tức</a></li>
                 <li>
                     <a href="#" class="has-dropdown nav-item">Về chúng tôi <span class="nav-arrow arrow">▼</span></a>
                     <ul class="nav-dropdown">
@@ -2014,27 +2019,88 @@
             </div>
         </section>
 
-        <!-- News Grid Section -->
+        <!-- News Bulletin Section -->
         <section class="card-box section news-section">
-            <div class="section-header">
-                <h2>🌿 Bảng Tin 🌿</h2>
+            <div class="bulletin-section-title">
+                <h2>🌿 Bảng Tin</h2>
+                <div class="bulletin-title-line"></div>
             </div>
-            <div class="news-grid">
-                <div class="grid-item item-large"><img
-                        src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=600&q=80"
-                        alt="Dog"></div>
-                <div class="grid-item"><img
-                        src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=300&q=80"
-                        alt="Dog 2"></div>
-                <div class="grid-item"><img
-                        src="https://images.unsplash.com/photo-1533738363-b7f9aef128ce?auto=format&fit=crop&w=300&q=80"
-                        alt="Cat 2"></div>
-                <div class="grid-item"><img
-                        src="https://images.unsplash.com/photo-1592194996308-7b43878e84a6?auto=format&fit=crop&w=300&q=80"
-                        alt="Cat 3"></div>
-                <div class="grid-item item-large"><img
-                        src="https://images.unsplash.com/photo-1574158622682-e40e69881006?auto=format&fit=crop&w=600&q=80"
-                        alt="Cat Large"></div>
+
+            <div class="bulletin-layout">
+                <!-- Bài nổi bật -->
+                <a href="/news" class="bulletin-featured">
+                    <div class="bulletin-featured-img-wrap">
+                        <span class="bulletin-featured-badge">⭐ Nổi bật</span>
+                        <img
+                            src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=700&q=80"
+                            alt="Chiến dịch cứu trợ thú cưng"
+                            class="bulletin-featured-img">
+                    </div>
+                    <div class="bulletin-featured-body">
+                        <div class="bulletin-featured-category">🐾 Cộng đồng</div>
+                        <div class="bulletin-featured-title">Chiến dịch "Mùa Đông Ấm Áp" — Cứu trợ hơn 500 chú chó mèo vô gia cư</div>
+                        <p class="bulletin-featured-desc">Tổng kết hành trình đầy cảm xúc: những chú chó mèo được giải cứu, chăm sóc và tìm được mái ấm mới sau chiến dịch kéo dài suốt một tháng.</p>
+                        <div class="bulletin-featured-meta">
+                            <span>📅 2 ngày trước</span>
+                            <span>👁 1.2k lượt xem</span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Bài phụ 1 -->
+                <a href="/news" class="bulletin-card">
+                    <div class="bulletin-card-img-wrap">
+                        <img
+                            src="https://images.unsplash.com/photo-1574158622682-e40e69881006?auto=format&fit=crop&w=300&q=80"
+                            alt="Sức khỏe thú cưng"
+                            class="bulletin-card-img">
+                    </div>
+                    <div class="bulletin-card-body">
+                        <div>
+                            <div class="bulletin-card-category">💉 Sức khỏe</div>
+                            <div class="bulletin-card-title">Làm thế nào để bảo vệ thú cưng khỏi bệnh dại trong mùa mưa?</div>
+                        </div>
+                        <div class="bulletin-card-meta">⏱ 2 giờ trước</div>
+                    </div>
+                </a>
+
+                <!-- Bài phụ 2 -->
+                <a href="/news" class="bulletin-card">
+                    <div class="bulletin-card-img-wrap">
+                        <img
+                            src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=300&q=80"
+                            alt="Nhận nuôi mèo"
+                            class="bulletin-card-img">
+                    </div>
+                    <div class="bulletin-card-body">
+                        <div>
+                            <div class="bulletin-card-category">🏠 Nhận nuôi</div>
+                            <div class="bulletin-card-title">Bé Miu tìm được chủ nhân mới sau 3 tháng điều trị phục hồi</div>
+                        </div>
+                        <div class="bulletin-card-meta">⏱ 1 ngày trước</div>
+                    </div>
+                </a>
+
+                <!-- Bài phụ 3 -->
+                <a href="/news" class="bulletin-card">
+                    <div class="bulletin-card-img-wrap">
+                        <img
+                            src="https://images.unsplash.com/photo-1592194996308-7b43878e84a6?auto=format&fit=crop&w=300&q=80"
+                            alt="Mẹo chăm sóc"
+                            class="bulletin-card-img">
+                    </div>
+                    <div class="bulletin-card-body">
+                        <div>
+                            <div class="bulletin-card-category">📚 Kiến thức</div>
+                            <div class="bulletin-card-title">5 dấu hiệu thú cưng của bạn đang bị stress — đừng bỏ qua!</div>
+                        </div>
+                        <div class="bulletin-card-meta">⏱ 3 ngày trước</div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="bulletin-footer">
+                <a href="/news" class="bulletin-btn-all">Xem tất cả tin tức &nbsp;→</a>
             </div>
         </section>
 
@@ -2072,11 +2138,58 @@
             
             </div>
             
-            <div class="adopt-filter-bar">
-                <a href="/adopt?type=dog"><span>🐶 Chó (12)</span></a>
-                <a href="/adopt?type=cat"><span>🐱 Mèo (8)</span></a>
+            <div class="adopt-filter-bar" id="adoptFilterBar">
+                <a href="/adopt?type=dog"><span id="dogCount">🐶 Chó (...)</span></a>
+                <a href="/adopt?type=cat"><span id="catCount">🐱 Mèo (...)</span></a>
+                <a href="/adopt?type=other"><span id="otherCount" style="display:none">🐾 Khác (...)</span></a>
                 <a href="/adopt" style="color: #666">Xem tất cả →</a>
             </div>
+
+            <script>
+            (function() {
+                async function loadPetCounts() {
+                    try {
+                        const res = await fetch('/api/v1/pets?page=1&limit=100', {
+                            credentials: 'same-origin',
+                            headers: { Accept: 'application/json' }
+                        });
+                        if (!res.ok) return;
+                        const json = await res.json();
+                        const pets = (json.data && json.data.pets) || (json.data && Array.isArray(json.data) ? json.data : []);
+
+                        let dogCount = 0, catCount = 0, otherCount = 0, total = 0;
+                        pets.forEach(function(pet) {
+                            const type = (pet.pet_type || '').toLowerCase();
+                            if (type === 'dog' || type === 'chó') dogCount++;
+                            else if (type === 'cat' || type === 'mèo') catCount++;
+                            else otherCount++;
+                            total++;
+                        });
+
+                        // Nếu API có total thì dùng total từ API
+                        if (json.data && json.data.total) {
+                            total = json.data.total;
+                        }
+
+                        const dogEl = document.getElementById('dogCount');
+                        const catEl = document.getElementById('catCount');
+                        const otherEl = document.getElementById('otherCount');
+
+                        if (dogEl) dogEl.textContent = '🐶 Chó (' + dogCount + ')';
+                        if (catEl) catEl.textContent = '🐱 Mèo (' + catCount + ')';
+                        if (otherEl) {
+                            if (otherCount > 0) {
+                                otherEl.textContent = '🐾 Khác (' + otherCount + ')';
+                                otherEl.style.display = '';
+                            }
+                        }
+                    } catch(e) {
+                        // Giữ nguyên nếu lỗi
+                    }
+                }
+                loadPetCounts();
+            })();
+            </script>
         </section>
 
         <!-- Contact Section -->

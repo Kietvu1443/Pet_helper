@@ -22,9 +22,92 @@
             padding: 20px
         }
     </style>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <link rel="stylesheet" href="/stylesheets/staticHeader.css">
 </head>
 
 <body>
+<header class="header">
+        <div class="top-bar">
+            <a href="/" class="logo-group">
+                <div class="logo-circle">
+                    <img src="/images/the_logo.jpg" alt="logo" id="the_logo">
+                </div>
+                <div class="web-name">PET HELPER</div>
+            </a>
+            <div class="user-actions">
+                <div class="auth-user-actions is-auth-hidden" id="headerAuthUserState">
+                    <div class="user-dropdown" id="headerUserDropdown">
+                        <span id="userDropdownBtn" style="cursor: pointer;">
+                            <span id="headerDisplayNameText">Tài khoản</span> ▼
+                        </span>
+                        <div class="user-dropdown-menu" id="userDropdownMenu">
+                            <div class="dropdown-header">
+                                <strong id="headerDropdownDisplayName">Tài khoản</strong>
+                                <span class="user-role" id="headerUserRole">👤 User</span>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <a href="/profile" class="dropdown-item">👤 Tài khoản</a>
+                            <a href="/my-favorites" class="dropdown-item">❤️ Thú cưng đã yêu thích</a>
+                            <a href="/my-reports" class="dropdown-item">📋 Báo cáo của tôi</a>
+                            <a href="/adopt/admin/add" class="dropdown-item role-staff-only is-auth-hidden">🐾 Thêm thú cưng</a>
+                            <a href="/admin/reports" class="dropdown-item role-staff-only is-auth-hidden">📋 Duyệt báo cáo</a>
+                            <a href="/admin/adoption-requests" class="dropdown-item role-staff-only is-auth-hidden">🏠 Xét duyệt nhận nuôi</a>
+                            <a href="/admin" class="dropdown-item role-admin-only is-auth-hidden">⚙️ Quản trị</a>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" class="dropdown-item logout" id="logoutBtn" onclick="handleLogout(event)">🚪 Đăng xuất</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="auth-guest-actions is-auth-visible" id="headerAuthGuestState">
+                    <a href="#" onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('login'); } return false;"><span>Đăng nhập</span></a>
+                    <a href="#" onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('register'); } return false;"><span>Đăng ký</span></a>
+                </div>
+                <span class="lang-switch">VN / EN</span>
+            </div>
+            <button class="hamburger-btn" id="hamburgerBtn" aria-label="Mở menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+        </div>
+        <div class="mobile-nav-overlay" id="mobileNavOverlay"></div>
+        <nav class="main-nav" id="mainNav">
+            <button class="mobile-nav-close" id="mobileNavClose" aria-label="Đóng menu">✕</button>
+            <ul>
+                <li>
+                    <a href="#" class="has-dropdown nav-item">Nhận nuôi <span class="nav-arrow arrow">▼</span></a>
+                    <ul class="nav-dropdown">
+                        <li><a href="/adopt">Xem vật nuôi có thể nhận nuôi</a></li>
+                        <li><a href="/snap" style="color: #ea580c; font-weight: bold;">PetSnap (Tìm kiếm ngẫu hứng!)</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="has-dropdown nav-item">Thất lạc <span class="nav-arrow arrow">▼</span></a>
+                    <ul class="nav-dropdown">
+                        <li><a href="/lost">Báo mất thú cưng</a></li>
+                        <li><a href="/found">Báo tin nhặt được</a></li>
+                        <li><a href="/tips">Mẹo chăm sóc thú cưng</a></li>
+                        <li><a href="/reports/list">Xem báo cáo thất lạc</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="has-dropdown nav-item">Dịch vụ <span class="nav-arrow arrow">▼</span></a>
+                    <ul class="nav-dropdown">
+                        <li><a href="/booking">Đặt lịch tiêm phòng</a></li>
+                        <li><a href="/shop">Danh mục đồ ăn/ đồ dùng</a></li>
+                    </ul>
+                </li>
+                <li><a href="/news">Tin tức</a></li>
+                <li>
+                    <a href="#" class="has-dropdown nav-item">Về chúng tôi <span class="nav-arrow arrow">▼</span></a>
+                    <ul class="nav-dropdown">
+                        <li><a href="#contact-section">Liên hệ với chúng tôi</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </header>
     <div class="wrap">
         <h1>Mẹo Tìm Kiếm Hiệu Quả</h1>
         <p>Đừng hoảng loạn, hãy bình tĩnh và hành động nhanh trong giờ vàng.</p>
@@ -35,6 +118,10 @@
         </ol>
         <p><a href="/reports/list">Xem danh sách báo cáo</a></p>
     </div>
+    <div id="auth-overlay-mount"></div>
+    <script src="/javascripts/authOverlayLoader.js" defer></script>
+    <script src="/javascripts/staticHeader.js"></script>
+    <script src="/javascripts/staticFooter.js"></script>
 </body>
 
 </html>

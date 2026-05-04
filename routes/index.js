@@ -11,6 +11,21 @@ router.get("/", function (req, res) {
   res.sendFile(path.join(staticPagesRoot, "index.html"));
 });
 
+router.get("/news", (_req, res) => {
+  res.sendFile(path.join(staticPagesRoot, "news.html"));
+});
+
+router.get("/news/:id", (_req, res) => {
+  res.sendFile(path.join(staticPagesRoot, "news-detail.html"));
+});
+
+router.get("/shop", (_req, res) => {
+  res.sendFile(path.join(staticPagesRoot, "shop.html"));
+});
+
+router.get("/booking", (_req, res) => {
+  res.sendFile(path.join(staticPagesRoot, "booking.html"));
+});
 // Favorites page shell (API-first static page)
 router.get("/favorites", (_req, res) => {
   res.redirect(302, "/my-favorites");
@@ -31,6 +46,11 @@ router.get("/profile", (_req, res) => {
 router.get("/admin", (_req, res) => {
   res.sendFile(path.join(staticPagesRoot, "admin.html"));
 });
+
+
+
+
+
 
 // API: Lấy ảnh local đầu tiên của Pet (dùng cho Fallback khi rớt mạng)
 router.get("/api/pets/:id/local-avatar", function (req, res) {

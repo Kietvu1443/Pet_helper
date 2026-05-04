@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Cửa hàng - Pet Helper">
+    <title>Cửa Hàng | Pet Helper</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        .page-hero {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: #fff;
+            padding: 50px 0 40px;
+            margin-bottom: 40px;
+        }
+
+        .page-hero h1 {
+            font-size: 2.2rem;
+            font-weight: 900;
+            margin-bottom: 8px;
+        }
+
+        .page-hero p {
+            font-size: 1rem;
+            opacity: 0.85;
+        }
+
+        /* --- FILTER & SEARCH BAR --- */
+        .shop-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-bottom: 28px;
+        }
+
+        .shop-filter-bar {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .shop-filter-btn {
+            padding: 7px 18px;
+            border-radius: 20px;
+            border: 2px solid #e0f0e8;
+            background: #fff;
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .shop-filter-btn:hover,
+        .shop-filter-btn.active {
+            background: var(--primary-color);
+            color: #fff;
+            border-color: var(--primary-color);
+        }
+
+        .shop-search {
+            display: flex;
+            align-items: center;
+            background: #fff;
+            border: 2px solid #e0f0e8;
+            border-radius: 25px;
+            padding: 7px 16px;
+            gap: 8px;
+            min-width: 220px;
+        }
+
+        .shop-search input {
+            border: none;
+            outline: none;
+            font-size: 0.9rem;
+            color: #333;
+            background: transparent;
+            width: 100%;
+        }
+
+        /* --- PRODUCT GRID --- */
+        .shop-grid-main {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 22px;
+            margin-bottom: 40px;
+        }
+
+        .product-card-page {
+            background: #fff;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(45, 106, 79, 0.07);
+            border: 1px solid #e8f4ed;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.22s, box-shadow 0.22s;
+        }
+
+        .product-card-page:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 28px rgba(45, 106, 79, 0.16);
+        }
+
+        .product-card-page .prod-img-wrap {
+            overflow: hidden;
+            height: 200px;
+            position: relative;
+        }
+
+        .product-card-page .prod-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.45s ease;
+        }
+
+        .product-card-page:hover .prod-img-wrap img {
+            transform: scale(1.06);
+        }
+
+        .prod-tag {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: #ffb703;
+            color: #000;
+            font-size: 0.7rem;
+            font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 12px;
+        }
+
+        .product-card-page .prod-info {
+            padding: 16px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .prod-category {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 6px;
+        }
+
+        .product-card-page .prod-name {
+            font-weight: 700;
+            font-size: 0.97rem;
+            margin-bottom: 8px;
+            color: #222;
+            line-height: 1.4;
+            flex: 1;
+        }
+
+        .product-card-page .prod-price {
+            color: #d90429;
+            font-weight: 800;
+            font-size: 1.15rem;
+            margin-bottom: 14px;
+        }
+
+        .product-card-page .prod-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-add-cart-icon {
+            flex: 1;
+            padding: 9px;
+            border: 2px solid var(--btn-outline-border);
+            background: #fff;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .btn-add-cart-icon:hover {
+            background: var(--accent-color);
+        }
+
+        .btn-buy-now {
+            flex: 2;
+            padding: 9px;
+            border: none;
+            background: var(--btn-solid-bg);
+            color: #fff;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .btn-buy-now:hover {
+            background: var(--secondary-color);
+        }
+
+        /* --- CART SIDEBAR (tái sử dụng từ index) --- */
+        .cart-overlay {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100%;
+            background: #fff;
+            z-index: 3000;
+            box-shadow: -5px 0 20px rgba(0, 0, 0, 0.1);
+            transition: 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cart-overlay.open {
+            right: 0;
+        }
+
+        .cart-header {
+            padding: 20px;
+            background: var(--primary-color);
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-items {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .cart-footer {
+            padding: 20px;
+            border-top: 1px solid #ddd;
+            background: #f9f9f9;
+        }
+
+        .total-price {
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            padding: 12px;
+            background: #d90429;
+            color: #fff;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .shop-grid-main {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .shop-grid-main {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .shop-grid-main {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="/stylesheets/staticHeader.css">
+</head>
+
+<body>
+
+    <header class="header">
+        <div class="top-bar">
+            <a href="/" class="logo-group">
+                <div class="logo-circle">
+                    <img src="/images/the_logo.jpg" alt="logo" id="the_logo">
+                </div>
+                <div class="web-name">PET HELPER</div>
+            </a>
+            <div class="user-actions">
+                <div class="auth-user-actions is-auth-hidden" id="headerAuthUserState">
+                    <div class="user-dropdown" id="headerUserDropdown">
+                        <span id="userDropdownBtn" style="cursor: pointer;">
+                            <span id="headerDisplayNameText">Tài khoản</span> ▼
+                        </span>
+                        <div class="user-dropdown-menu" id="userDropdownMenu">
+                            <div class="dropdown-header">
+                                <strong id="headerDropdownDisplayName">Tài khoản</strong>
+                                <span class="user-role" id="headerUserRole">👤 User</span>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <a href="/profile" class="dropdown-item">👤 Tài khoản</a>
+                            <a href="/my-favorites" class="dropdown-item">❤️ Thú cưng đã yêu thích</a>
+                            <a href="/my-reports" class="dropdown-item">📋 Báo cáo của tôi</a>
+                            <a href="/adopt/admin/add" class="dropdown-item role-staff-only is-auth-hidden">🐾 Thêm thú cưng</a>
+                            <a href="/admin/reports" class="dropdown-item role-staff-only is-auth-hidden">📋 Duyệt báo cáo</a>
+                            <a href="/admin/adoption-requests" class="dropdown-item role-staff-only is-auth-hidden">🏠 Xét duyệt nhận nuôi</a>
+                            <a href="/admin" class="dropdown-item role-admin-only is-auth-hidden">⚙️ Quản trị</a>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" class="dropdown-item logout" id="logoutBtn" onclick="handleLogout(event)">🚪 Đăng xuất</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="auth-guest-actions is-auth-visible" id="headerAuthGuestState">
+                    <a href="#" onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('login'); } return false;"><span>Đăng nhập</span></a>
+                    <a href="#" onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('register'); } return false;"><span>Đăng ký</span></a>
+                </div>
+                <span class="lang-switch">VN / EN</span>
+            </div>
+            <button class="hamburger-btn" id="hamburgerBtn" aria-label="Mở menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+        </div>
+        <div class="mobile-nav-overlay" id="mobileNavOverlay"></div>
+        <nav class="main-nav" id="mainNav">
+            <button class="mobile-nav-close" id="mobileNavClose" aria-label="Đóng menu">✕</button>
+            <ul>
+                <li>
+                    <a href="#" class="has-dropdown nav-item">Nhận nuôi <span class="nav-arrow arrow">▼</span></a>
+                    <ul class="nav-dropdown">
+                        <li><a href="/adopt">Xem vật nuôi có thể nhận nuôi</a></li>
+                        <li><a href="/snap" style="color: #ea580c; font-weight: bold;">PetSnap (Tìm kiếm ngẫu hứng!)</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="has-dropdown nav-item">Thất lạc <span class="nav-arrow arrow">▼</span></a>
+                    <ul class="nav-dropdown">
+                        <li><a href="/lost">Báo mất thú cưng</a></li>
+                        <li><a href="/found">Báo tin nhặt được</a></li>
+                        <li><a href="/tips">Mẹo chăm sóc thú cưng</a></li>
+                        <li><a href="/reports/list">Xem báo cáo thất lạc</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="has-dropdown nav-item">Dịch vụ <span class="nav-arrow arrow">▼</span></a>
+                    <ul class="nav-dropdown">
+                        <li><a href="/booking">Đặt lịch tiêm phòng</a></li>
+                        <li><a href="/shop">Danh mục đồ ăn/ đồ dùng</a></li>
+                    </ul>
+                </li>
+                <li><a href="/news">Tin tức</a></li>
+                <li>
+                    <a href="#" class="has-dropdown nav-item">Về chúng tôi <span class="nav-arrow arrow">▼</span></a>
+                    <ul class="nav-dropdown">
+                        <li><a href="#contact-section">Liên hệ với chúng tôi</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Cart Sidebar -->
+    <div id="cart-sidebar" class="cart-overlay">
+        <div class="cart-header">
+            <div>GIỎ HÀNG CỦA BẠN</div>
+            <div style="cursor: pointer;" onclick="toggleCart()">✕ Đóng</div>
+        </div>
+        <div class="cart-items" id="cart-items-container"></div>
+        <div class="cart-footer">
+            <div class="total-price"><span>Tổng cộng:</span><span id="cart-total">0đ</span></div>
+            <button class="checkout-btn"
+                onclick="Swal.fire('Thông báo', 'Chức năng thanh toán đang phát triển!', 'info')">THANH TOÁN</button>
+        </div>
+    </div>
+
+    <div class="page-hero">
+        <div class="container">
+            <h1>🛒 Cửa Hàng Pet Helper</h1>
+            <p>Thức ăn, phụ kiện và đồ dùng chất lượng cao cho thú cưng của bạn</p>
+        </div>
+    </div>
+
+    <main class="container">
+
+        <!-- Toolbar lọc & tìm kiếm -->
+        <div class="shop-toolbar">
+            <div class="shop-filter-bar">
+                <button class="shop-filter-btn active">Tất cả</button>
+                <button class="shop-filter-btn">🦴 Thức ăn chó</button>
+                <button class="shop-filter-btn">🐟 Thức ăn mèo</button>
+                <button class="shop-filter-btn">🧸 Đồ chơi</button>
+                <button class="shop-filter-btn">🛁 Vệ sinh</button>
+                <button class="shop-filter-btn">🏠 Chuồng / Nhà</button>
+            </div>
+            <div class="shop-search">
+                <span>🔍</span>
+                <input type="text" placeholder="Tìm sản phẩm...">
+            </div>
+        </div>
+
+        <!-- Lưới sản phẩm -->
+        <div class="shop-grid-main">
+
+            <div class="product-card-page">
+                <div class="prod-img-wrap">
+                    <span class="prod-tag">Bán chạy</span>
+                    <img src="https://images.unsplash.com/photo-1589924691195-41432c84c161?auto=format&fit=crop&w=400&q=80" alt="Royal Canin">
+                </div>
+                <div class="prod-info">
+                    <div class="prod-category">🦴 Thức ăn chó</div>
+                    <div class="prod-name">Hạt Royal Canin cho Chó (1kg)</div>
+                    <div class="prod-price">150.000đ</div>
+                    <div class="prod-actions">
+                        <button class="btn-add-cart-icon" onclick="addToCart('Hạt Royal Canin', 150000)">🛒</button>
+                        <button class="btn-buy-now" onclick="addToCart('Hạt Royal Canin', 150000); toggleCart();">Mua ngay</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card-page">
+                <div class="prod-img-wrap">
+                    <img src="https://images.unsplash.com/photo-1615266895738-11f1371cd7e5?auto=format&fit=crop&w=400&q=80" alt="Pate Whiskas">
+                </div>
+                <div class="prod-info">
+                    <div class="prod-category">🐟 Thức ăn mèo</div>
+                    <div class="prod-name">Pate Whiskas cho Mèo (85g)</div>
+                    <div class="prod-price">25.000đ</div>
+                    <div class="prod-actions">
+                        <button class="btn-add-cart-icon" onclick="addToCart('Pate Whiskas', 25000)">🛒</button>
+                        <button class="btn-buy-now" onclick="addToCart('Pate Whiskas', 25000); toggleCart();">Mua ngay</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card-page">
+                <div class="prod-img-wrap">
+                    <span class="prod-tag">Mới</span>
+                    <img src="https://images.unsplash.com/photo-1576201836106-db1758fd1c97?auto=format&fit=crop&w=400&q=80" alt="Chuồng gỗ">
+                </div>
+                <div class="prod-info">
+                    <div class="prod-category">🏠 Chuồng / Nhà</div>
+                    <div class="prod-name">Chuồng gỗ cao cấp</div>
+                    <div class="prod-price">1.200.000đ</div>
+                    <div class="prod-actions">
+                        <button class="btn-add-cart-icon" onclick="addToCart('Chuồng gỗ cao cấp', 1200000)">🛒</button>
+                        <button class="btn-buy-now" onclick="addToCart('Chuồng gỗ cao cấp', 1200000); toggleCart();">Mua ngay</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card-page">
+                <div class="prod-img-wrap">
+                    <img src="https://images.unsplash.com/photo-1597843786271-10a015702561?auto=format&fit=crop&w=400&q=80" alt="Dây dắt chó">
+                </div>
+                <div class="prod-info">
+                    <div class="prod-category">🧸 Đồ chơi / Phụ kiện</div>
+                    <div class="prod-name">Dây dắt chó đi dạo</div>
+                    <div class="prod-price">80.000đ</div>
+                    <div class="prod-actions">
+                        <button class="btn-add-cart-icon" onclick="addToCart('Dây dắt chó', 80000)">🛒</button>
+                        <button class="btn-buy-now" onclick="addToCart('Dây dắt chó', 80000); toggleCart();">Mua ngay</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card-page">
+                <div class="prod-img-wrap">
+                    <img src="https://images.unsplash.com/photo-1545249390-6bdfa286032f?auto=format&fit=crop&w=400&q=80" alt="Sữa tắm">
+                </div>
+                <div class="prod-info">
+                    <div class="prod-category">🛁 Vệ sinh</div>
+                    <div class="prod-name">Sữa tắm diệt ve rận</div>
+                    <div class="prod-price">120.000đ</div>
+                    <div class="prod-actions">
+                        <button class="btn-add-cart-icon" onclick="addToCart('Sữa tắm', 120000)">🛒</button>
+                        <button class="btn-buy-now" onclick="addToCart('Sữa tắm', 120000); toggleCart();">Mua ngay</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card-page">
+                <div class="prod-img-wrap">
+                    <span class="prod-tag">Sale</span>
+                    <img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=400&q=80" alt="Đồ chơi mèo">
+                </div>
+                <div class="prod-info">
+                    <div class="prod-category">🧸 Đồ chơi</div>
+                    <div class="prod-name">Bộ đồ chơi cần câu cho mèo</div>
+                    <div class="prod-price">65.000đ</div>
+                    <div class="prod-actions">
+                        <button class="btn-add-cart-icon" onclick="addToCart('Đồ chơi cần câu', 65000)">🛒</button>
+                        <button class="btn-buy-now" onclick="addToCart('Đồ chơi cần câu', 65000); toggleCart();">Mua ngay</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card-page">
+                <div class="prod-img-wrap">
+                    <img src="https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=400&q=80" alt="Thức ăn chó con">
+                </div>
+                <div class="prod-info">
+                    <div class="prod-category">🦴 Thức ăn chó</div>
+                    <div class="prod-name">Hạt ProPlan Puppy (1.5kg)</div>
+                    <div class="prod-price">220.000đ</div>
+                    <div class="prod-actions">
+                        <button class="btn-add-cart-icon" onclick="addToCart('Hạt ProPlan Puppy', 220000)">🛒</button>
+                        <button class="btn-buy-now" onclick="addToCart('Hạt ProPlan Puppy', 220000); toggleCart();">Mua ngay</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card-page">
+                <div class="prod-img-wrap">
+                    <img src="https://images.unsplash.com/photo-1533738363-b7f9aef128ce?auto=format&fit=crop&w=400&q=80" alt="Khay vệ sinh mèo">
+                </div>
+                <div class="prod-info">
+                    <div class="prod-category">🛁 Vệ sinh</div>
+                    <div class="prod-name">Khay vệ sinh mèo + cát thơm 5L</div>
+                    <div class="prod-price">95.000đ</div>
+                    <div class="prod-actions">
+                        <button class="btn-add-cart-icon" onclick="addToCart('Khay vệ sinh mèo', 95000)">🛒</button>
+                        <button class="btn-buy-now" onclick="addToCart('Khay vệ sinh mèo', 95000); toggleCart();">Mua ngay</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer được inject bởi staticFooter.js -->
+
+    <div id="auth-overlay-mount"></div>
+    <script src="/javascripts/authOverlayLoader.js" defer></script>
+    <script src="/javascripts/staticHeader.js"></script>
+    <script src="/javascripts/staticFooter.js"></script>
+
+    <script>
+        // --- LOGIC GIỎ HÀNG ---
+        let cart = [];
+
+        function addToCart(name, price) {
+            const existing = cart.find(i => i.name === name);
+            if (existing) {
+                existing.qty++;
+            } else {
+                cart.push({ name, price, qty: 1 });
+            }
+            updateCartUI();
+            const countEl = document.getElementById('cart-count-display');
+            if (countEl) countEl.innerText = '(' + cart.reduce((s, i) => s + i.qty, 0) + ')';
+        }
+
+        function toggleCart() {
+            const sidebar = document.getElementById('cart-sidebar');
+            if (sidebar) sidebar.classList.toggle('open');
+        }
+
+        function updateCartUI() {
+            const container = document.getElementById('cart-items-container');
+            const totalDisplay = document.getElementById('cart-total');
+            if (!container) return;
+            container.innerHTML = '';
+            let totalPrice = 0;
+            cart.forEach((item, index) => {
+                totalPrice += item.price * item.qty;
+                container.innerHTML += `
+                    <div class="cart-item-row">
+                        <div class="cart-item-top"><span>${item.name}</span></div>
+                        <div class="cart-item-bottom">
+                            <div class="qty-control">
+                                <button class="qty-btn" onclick="changeQty(${index}, -1)">-</button>
+                                <span>${item.qty}</span>
+                                <button class="qty-btn" onclick="changeQty(${index}, 1)">+</button>
+                            </div>
+                            <span>${(item.price * item.qty).toLocaleString()}đ</span>
+                            <span class="cart-remove-btn" onclick="removeItem(${index})">Xóa</span>
+                        </div>
+                    </div>`;
+            });
+            if (totalDisplay) totalDisplay.innerText = totalPrice.toLocaleString() + 'đ';
+        }
+
+        function changeQty(index, delta) {
+            cart[index].qty += delta;
+            if (cart[index].qty <= 0) cart.splice(index, 1);
+            updateCartUI();
+            const countEl = document.getElementById('cart-count-display');
+            if (countEl) countEl.innerText = '(' + cart.reduce((s, i) => s + i.qty, 0) + ')';
+        }
+
+        function removeItem(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+            const countEl = document.getElementById('cart-count-display');
+            if (countEl) countEl.innerText = '(' + cart.reduce((s, i) => s + i.qty, 0) + ')';
+        }
+
+        // Filter buttons
+        document.querySelectorAll('.shop-filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.shop-filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+    </script>
+
+</body>
+</html>

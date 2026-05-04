@@ -251,9 +251,10 @@
                 <li>
                     <a href="#" class="has-dropdown nav-item">Thất lạc <span class="nav-arrow arrow">▼</span></a>
                     <ul class="nav-dropdown">
-                        <li><a href="/reports">Báo mất thú cưng</a></li>
-                        <li><a href="/reports">Báo tin nhặt được</a></li>
-                        <li><a href="/about">Mẹo tìm kiếm hiệu quả</a></li>
+                        <li><a href="/lost">Báo mất thú cưng</a></li>
+                        <li><a href="/found">Báo tin nhặt được</a></li>
+                        <li><a href="/tips">Mẹo tìm kiếm hiệu quả</a></li>
+                        <li><a href="/reports/list">Xem báo cáo thất lạc</a></li>
                     </ul>
                 </li>
                 <li>
@@ -287,9 +288,9 @@
                 <div class="filter-group">
                     <select id="speciesFilter">
                         <option value="">Tất cả loài</option>
-                        <option value="Chó">🐕 Chó</option>
-                        <option value="Mèo">🐱 Mèo</option>
-                        <option value="Khác">🐰 Khác</option>
+                        <option value="dog">🐕 Chó</option>
+                        <option value="cat">🐱 Mèo</option>
+                        <option value="other">🐰 Khác</option>
                     </select>
                 </div>
                 <div class="filter-group">
@@ -393,6 +394,7 @@
         let isLoadingPets = false;
         let currentAuthUser = null;
         let favoritePetIds = new Set();
+        let adoptedPetIds = new Set();
         const favoriteInFlight = new Set();
 
         function getPetsGrid() {
@@ -428,7 +430,11 @@
         function renderPetCard(pet) {
             const imageUrl = pet.avatar_image || pet.image_url || 'https://via.placeholder.com/400x220?text=No+Image';
             const name = escapeHtml(pet.name || '');
-            const petType = escapeHtml(pet.pet_type || '');
+            const petTypeRaw = (pet.pet_type || '').toLowerCase();
+            const petTypeKey = petTypeRaw === 'chó' || petTypeRaw === 'dog' ? 'dog'
+                             : petTypeRaw === 'mèo' || petTypeRaw === 'cat' ? 'cat'
+                             : 'other';
+            const petType = escapeHtml(petTypeKey);
             const breed = escapeHtml(pet.breed || '');
             const age = escapeHtml(pet.age || '');
             const gender = escapeHtml(getGenderLabel(pet.gender));
@@ -442,8 +448,10 @@
             const favoriteClass = isLiked ? 'is-liked' : '';
             const favoriteIcon = isLiked ? '❤️' : '🤍';
 
+            const isAdopted = adoptedPetIds.has(Number(pet.id));
             return `
-                <div class="pet-card" data-species="${petType}" data-name="${name.toLowerCase()}">
+                <div class="pet-card" data-species="${petType}" data-name="${name.toLowerCase()}" style="position:relative;">
+                    ${isAdopted ? '<div style=\"position:absolute;top:10px;right:10px;background:#6b7280;color:#fff;font-size:0.72rem;font-weight:800;padding:4px 10px;border-radius:20px;z-index:2;\">⏳ Đã đăng ký</div>' : ''}
                     <img src="${escapeHtml(imageUrl)}" alt="${name}" class="card-image" loading="lazy" onerror="fallbackPetImage(this, '${imageId}')">
                     <div class="card-body">
                         <span class="card-tag">${escapeHtml(getTagLabel(pet.pet_type))}</span>
@@ -541,6 +549,26 @@
                     : [];
 
                 favoritePetIds = new Set((Array.isArray(favorites) ? favorites : []).map((item) => Number(item.id)));
+
+                // Load adoption requests
+                try {
+                    const adoptRes = await fetch('/api/v1/adoption-requests/my', {
+                        method: 'GET',
+                        headers: { Accept: 'application/json' },
+                        credentials: 'same-origin',
+                    });
+                    if (adoptRes.ok) {
+                        const adoptPayload = await parseJsonSafe(adoptRes);
+                        const requests = (adoptPayload && adoptPayload.data && adoptPayload.data.requests)
+                            || (adoptPayload && adoptPayload.data && adoptPayload.data.data)
+                            || [];
+                        adoptedPetIds = new Set(
+                            requests.filter(r => r.status !== 'rejected').map(r => Number(r.pet_id))
+                        );
+                    }
+                } catch (e) {
+                    adoptedPetIds = new Set();
+                }
             } catch (error) {
                 currentAuthUser = null;
                 favoritePetIds = new Set();
@@ -642,6 +670,7 @@
 
             const cardsHtml = pets.map(renderPetCard).join('');
             petsListContainer.innerHTML = `<div class="card-grid" id="petsGrid">${cardsHtml}</div>`;
+            filterPets(); // Áp dụng filter ngay sau khi render
         }
 
         function setApiLoading(isLoading) {
@@ -787,6 +816,15 @@
                 card.style.display = matchSpecies && matchSearch ? 'block' : 'none';
             });
         }
+
+        // Đọc URL param ?type=dog/cat/other và set filter
+        (function() {
+            const params = new URLSearchParams(window.location.search);
+            const typeParam = params.get('type');
+            if (typeParam && speciesFilter) {
+                speciesFilter.value = typeParam;
+            }
+        })();
 
         if (speciesFilter) speciesFilter.addEventListener('change', filterPets);
         if (searchInput) searchInput.addEventListener('input', filterPets);

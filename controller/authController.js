@@ -206,45 +206,10 @@ const authController = {
       // Lưu vào database
       await EmailVerification.saveOtp(userId, otp, expiresAt);
 
-      // 5. Gửi email qua Resend
-      const emailResult = await resend.emails.send({
-        from: "Pet Helper <noreply@mail.pethelper.app>",
-        to: user.email,
-        subject: "Xác minh tài khoản Pet Helper",
-        html: `
-          <div style="font-family: system-ui, sans-serif; max-width: 480px; margin: 0 auto; padding: 32px;">
-            <h2 style="color: #2b663e;">Pet Helper - Xác minh Email</h2>
-            <p>Xin chào <b>${user.name}</b>,</p>
-            <p>Mã xác minh của bạn là:</p>
-            <div style="background: #f0fdf4; border: 2px solid #2b663e; border-radius: 12px; padding: 20px; text-align: center; margin: 24px 0;">
-              <span style="font-size: 32px; font-weight: 800; letter-spacing: 8px; color: #2b663e;">${otp}</span>
-            </div>
-            <p style="color: #666;">Mã này sẽ hết hạn sau <b>5 phút</b>.</p>
-            <p style="color: #666;">Nếu bạn không yêu cầu mã này, vui lòng bỏ qua email này.</p>
-            <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 24px 0;">
-            <p style="font-size: 12px; color: #999;">© Pet Helper - Hỗ Trợ & Bảo Vệ Vật Nuôi</p>
-          </div>
-        `,
-      });
-
-      // Log kết quả từ Resend API để debug
-      console.log(
-        "📧 Resend API response:",
-        JSON.stringify(emailResult, null, 2),
-      );
-
-      // Kiểm tra nếu Resend trả lỗi
-      if (emailResult.error) {
-        console.error("❌ Resend API error:", emailResult.error);
-        // Vẫn trả success vì OTP đã lưu vào DB, nhưng thông báo lỗi gửi email
-        return res.status(500).json({
-          error: `Không thể gửi email: ${emailResult.error.message}. Kiểm tra lại cấu hình Resend API.`,
-        });
-      }
-
-      console.log(
-        `✅ OTP sent to ${user.email} (OTP: ${otp} - chỉ log trong dev)`,
-      );
+      // 5. [DEV MODE] Bỏ qua gửi email, log OTP ra console để test
+      console.log("========================================");
+      console.log(`📧 [DEV] OTP cho ${user.email}: ${otp}`);
+      console.log("========================================");
       res
         .status(200)
         .json({ message: "Mã OTP đã được gửi tới email của bạn." });

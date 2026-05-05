@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="/stylesheets/style.css">
     <link rel="stylesheet" href="/stylesheets/auth.css">
     <link rel="stylesheet" href="/stylesheets/staticHeader.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         body {
             margin: 0;
@@ -295,6 +296,11 @@
             color: #1d4ed8;
         }
 
+        .status-pill.published {
+            background: #dcfce7;
+            color: #166534;
+        }
+
         .status-pill.lost {
             background: #fee2e2;
             color: #b91c1c;
@@ -303,6 +309,72 @@
         .status-pill.found {
             background: #dcfce7;
             color: #166534;
+        }
+
+        /* Split report card — 2 sub-cards inside 1 grid cell */
+        .stat-card-split {
+            border: 1px solid #dbe9df;
+            border-radius: 12px;
+            background: #f8fcfa;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-card-split-inner {
+            flex: 1;
+            padding: 14px 16px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .stat-card-split-inner:hover {
+            background: #eef8f2;
+        }
+
+        .stat-card-split-inner + .stat-card-split-inner {
+            border-top: 1px dashed #c6dece;
+        }
+
+        /* Report filter toggle */
+        .report-filter-bar {
+            display: flex;
+            gap: 6px;
+            padding: 12px 16px 0;
+        }
+
+        .report-filter-btn {
+            border: 1px solid #d4e4d9;
+            border-radius: 8px;
+            background: #f8fcfa;
+            color: #1f5133;
+            font-weight: 700;
+            font-size: 0.84rem;
+            padding: 6px 14px;
+            cursor: pointer;
+            transition: background 0.15s, border-color 0.15s;
+        }
+
+        .report-filter-btn:hover {
+            background: #eef8f2;
+        }
+
+        .report-filter-btn.active {
+            background: #2b663e;
+            border-color: #2b663e;
+            color: #ffffff;
+        }
+
+        @media (max-width: 640px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .stats-grid-row2 {
+                grid-template-columns: 1fr;
+            }
+            .quick-actions {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
         .row-actions {
@@ -381,6 +453,12 @@
         .stats-grid {
             display: grid;
             gap: 12px;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .stats-grid-row2 {
+            display: grid;
+            gap: 12px;
             grid-template-columns: repeat(3, minmax(0, 1fr));
         }
 
@@ -388,24 +466,264 @@
             border: 1px solid #dbe9df;
             border-radius: 12px;
             background: #f8fcfa;
-            padding: 12px;
+            padding: 14px 16px;
+            cursor: pointer;
+            transition: border-color 0.18s, box-shadow 0.18s;
+        }
+
+        .stat-card:hover {
+            border-color: #8fbfa4;
+            box-shadow: 0 2px 10px rgba(14,54,34,0.07);
+        }
+
+        .stat-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
         }
 
         .stat-label {
-            margin: 0 0 6px;
+            margin: 0;
             color: #64748b;
-            font-size: 0.82rem;
+            font-size: 0.8rem;
             text-transform: uppercase;
             font-weight: 800;
-            letter-spacing: 0.25px;
+            letter-spacing: 0.3px;
+        }
+
+        .stat-icon {
+            font-size: 1.2rem;
+            line-height: 1;
+        }
+
+        .stat-main {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+            margin-bottom: 10px;
         }
 
         .stat-value {
             margin: 0;
             color: #1f5133;
-            font-size: 1.35rem;
+            font-size: 1.8rem;
             font-weight: 800;
+            line-height: 1;
         }
+
+        .stat-unit {
+            color: #64748b;
+            font-size: 0.82rem;
+            font-weight: 600;
+        }
+
+        .stat-breakdown {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .stat-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            border-radius: 6px;
+            padding: 3px 8px;
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        .stat-chip.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .stat-chip.approved, .stat-chip.available {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .stat-chip.rejected, .stat-chip.closed {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .stat-chip.adopted {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .stat-chip.neutral {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        /* Urgent table */
+        .urgent-section {
+            border: 1px solid #fde68a;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #fffbeb;
+        }
+
+        .urgent-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 11px 14px;
+            border-bottom: 1px solid #fde68a;
+            background: #fef9c3;
+        }
+
+        .urgent-title {
+            margin: 0;
+            color: #78350f;
+            font-size: 0.88rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .urgent-count-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #f59e0b;
+            color: #ffffff;
+            border-radius: 999px;
+            min-width: 20px;
+            height: 20px;
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 0 5px;
+        }
+
+        .urgent-empty {
+            padding: 16px 14px;
+            color: #6b7280;
+            font-size: 0.88rem;
+            text-align: center;
+        }
+
+        .urgent-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 9px 14px;
+            border-bottom: 1px solid #fde68a;
+            font-size: 0.88rem;
+        }
+
+        .urgent-row:last-child {
+            border-bottom: none;
+        }
+
+        .urgent-row-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+            flex: 1;
+        }
+
+        .urgent-type-badge {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 6px;
+            padding: 2px 8px;
+            font-size: 0.73rem;
+            font-weight: 800;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .urgent-type-badge.adoption {
+            background: #ede9fe;
+            color: #5b21b6;
+        }
+
+        .urgent-type-badge.report {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .urgent-type-badge.news {
+            background: #e0f2fe;
+            color: #0369a1;
+        }
+
+        .urgent-info {
+            min-width: 0;
+        }
+
+        .urgent-name {
+            font-weight: 700;
+            color: #111827;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .urgent-meta {
+            color: #6b7280;
+            font-size: 0.78rem;
+        }
+
+        .urgent-go-btn {
+            flex-shrink: 0;
+            border: 1px solid #d4e4d9;
+            background: #ffffff;
+            color: #2b663e;
+            border-radius: 7px;
+            padding: 4px 10px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .urgent-go-btn:hover {
+            background: #f0faf4;
+        }
+
+        /* Quick actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .quick-action-btn {
+            border: 1px solid #d4e4d9;
+            border-radius: 10px;
+            background: #ffffff;
+            color: #1f5133;
+            font-weight: 700;
+            font-size: 0.84rem;
+            padding: 10px 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: background 0.15s, border-color 0.15s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .quick-action-btn:hover {
+            background: #eef8f2;
+            border-color: #8fbfa4;
+        }
+
+        .quick-action-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .qa-icon { font-size: 1.3rem; }
 
         .dash-hint {
             margin: 0;
@@ -641,9 +959,36 @@
         <nav class="main-nav" id="mainNav">
             <button class="mobile-nav-close" id="mobileNavClose" aria-label="Đóng menu">✕</button>
             <ul>
-                <li><a href="/adopt">Nhận nuôi</a></li>
-                <li><a href="/reports">Thất lạc</a></li>
-                <li><a href="/about">Về chúng tôi</a></li>
+                <li>
+                    <a href="#" class="has-dropdown nav-item">Nhận nuôi <span class="nav-arrow">▼</span></a>
+                    <ul class="nav-dropdown">
+                        <li><a href="/adopt">Xem vật nuôi có thể nhận nuôi</a></li>
+                        <li><a href="/snap" style="color:#ea580c;font-weight:bold;">PetSnap</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="has-dropdown nav-item">Thất lạc <span class="nav-arrow">▼</span></a>
+                    <ul class="nav-dropdown">
+                        <li><a href="/lost">Báo mất thú cưng</a></li>
+                        <li><a href="/found">Báo tin nhặt được</a></li>
+                        <li><a href="/tips">Mẹo chăm sóc thú cưng</a></li>
+                        <li><a href="/reports/list">Xem báo cáo thất lạc</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="has-dropdown nav-item">Dịch vụ <span class="nav-arrow">▼</span></a>
+                    <ul class="nav-dropdown">
+                        <li><a href="/booking">Đặt lịch tiêm phòng</a></li>
+                        <li><a href="/shop">Danh mục đồ dùng</a></li>
+                    </ul>
+                </li>
+                <li><a href="/news">Tin tức</a></li>
+                <li>
+                    <a href="#" class="has-dropdown nav-item">Về chúng tôi <span class="nav-arrow">▼</span></a>
+                    <ul class="nav-dropdown">
+                        <li><a href="#contact-section">Liên hệ với chúng tôi</a></li>
+                    </ul>
+                </li>
             </ul>
         </nav>
     </header>
@@ -658,10 +1003,11 @@
                 <p class="sidebar-desc">Quản lý yêu cầu nhận nuôi, thú cưng và báo cáo trong một màn hình duy nhất.</p>
 
                 <nav class="sidebar-nav">
-                    <button class="nav-btn" data-tab="dashboard">Dashboard</button>
-                    <button class="nav-btn" data-tab="adoption">Adoption Requests</button>
-                    <button class="nav-btn" data-tab="pets">Pets</button>
-                    <button class="nav-btn" data-tab="reports">Reports</button>
+                    <button class="nav-btn" data-tab="dashboard">📊 Dashboard</button>
+                    <button class="nav-btn" data-tab="adoption">🗂️ Hồ sơ nhận nuôi</button>
+                    <button class="nav-btn" data-tab="pets">🐾 Thú cưng</button>
+                    <button class="nav-btn" data-tab="reports">📣 Báo cáo</button>
+                    <button class="nav-btn" data-tab="news">📰 Bài tin</button>
                 </nav>
             </aside>
 
@@ -673,33 +1019,135 @@
                     <div class="panel-head">
                         <div>
                             <h2>Tổng quan quản trị</h2>
-                            <p class="panel-sub">Số liệu tổng hợp nhanh từ các phân hệ chính.</p>
+                            <p class="panel-sub">Số liệu thực từ toàn bộ hệ thống.</p>
                         </div>
                         <div class="panel-tools">
-                            <button class="tool-btn" id="refreshAllBtn" type="button">Làm mới số liệu</button>
+                            <button class="tool-btn" id="refreshAllBtn" type="button">🔄 Làm mới số liệu</button>
                         </div>
                     </div>
                     <div class="dashboard-body">
+
+                        <!-- Hàng 1: Hồ sơ nhận nuôi + Thú cưng -->
                         <div class="stats-grid">
-                            <article class="stat-card">
-                                <p class="stat-label">Hồ sơ nhận nuôi</p>
-                                <p class="stat-value" id="statAdoptionTotal">-</p>
+                            <article class="stat-card" data-jump-tab="adoption" title="Đi đến Hồ sơ nhận nuôi">
+                                <div class="stat-card-header">
+                                    <p class="stat-label">Hồ sơ nhận nuôi</p>
+                                    <span class="stat-icon">🗂️</span>
+                                </div>
+                                <div class="stat-main">
+                                    <p class="stat-value" id="statAdoptionTotal">-</p>
+                                    <span class="stat-unit">hồ sơ</span>
+                                </div>
+                                <div class="stat-breakdown">
+                                    <span class="stat-chip pending" id="statAdoptionPending">– chờ duyệt</span>
+                                    <span class="stat-chip approved" id="statAdoptionApproved">– đã duyệt</span>
+                                    <span class="stat-chip rejected" id="statAdoptionRejected">– từ chối</span>
+                                </div>
                             </article>
-                            <article class="stat-card">
-                                <p class="stat-label">Thú cưng</p>
-                                <p class="stat-value" id="statPetsTotal">-</p>
+
+                            <article class="stat-card" data-jump-tab="pets" title="Đi đến Thú cưng">
+                                <div class="stat-card-header">
+                                    <p class="stat-label">Thú cưng</p>
+                                    <span class="stat-icon">🐾</span>
+                                </div>
+                                <div class="stat-main">
+                                    <p class="stat-value" id="statPetsTotal">-</p>
+                                    <span class="stat-unit">thú cưng</span>
+                                </div>
+                                <div class="stat-breakdown">
+                                    <span class="stat-chip available" id="statPetsAvailable">– sẵn sàng</span>
+                                    <span class="stat-chip adopted" id="statPetsAdopted">– đã nhận nuôi</span>
+                                </div>
                             </article>
-                            <article class="stat-card">
-                                <p class="stat-label">Báo cáo thất lạc</p>
-                                <p class="stat-value" id="statReportsTotal">-</p>
+
+                        </div>
+
+                        <!-- Hàng 2: Thất lạc + Tìm thấy + Bài tin -->
+                        <div class="stats-grid-row2">
+                            <article class="stat-card" data-report-filter="lost" title="Lọc báo cáo thất lạc" style="cursor:pointer;">
+                                <div class="stat-card-header">
+                                    <p class="stat-label">Báo cáo thất lạc</p>
+                                    <span class="stat-icon">🔴</span>
+                                </div>
+                                <div class="stat-main">
+                                    <p class="stat-value" id="statReportsLostTotal">-</p>
+                                    <span class="stat-unit">báo cáo</span>
+                                </div>
+                                <div class="stat-breakdown">
+                                    <span class="stat-chip pending" id="statReportsLostPending">– chờ duyệt</span>
+                                    <span class="stat-chip approved" id="statReportsLostApproved">– đã duyệt</span>
+                                </div>
+                            </article>
+
+                            <article class="stat-card" data-report-filter="found" title="Lọc báo cáo tìm thấy" style="cursor:pointer;">
+                                <div class="stat-card-header">
+                                    <p class="stat-label">Báo cáo tìm thấy</p>
+                                    <span class="stat-icon">🟢</span>
+                                </div>
+                                <div class="stat-main">
+                                    <p class="stat-value" id="statReportsFoundTotal">-</p>
+                                    <span class="stat-unit">báo cáo</span>
+                                </div>
+                                <div class="stat-breakdown">
+                                    <span class="stat-chip pending" id="statReportsFoundPending">– chờ duyệt</span>
+                                    <span class="stat-chip approved" id="statReportsFoundApproved">– đã duyệt</span>
+                                </div>
+                            </article>
+
+                            <article class="stat-card" data-jump-tab="news" title="Đi đến Bài tin">
+                                <div class="stat-card-header">
+                                    <p class="stat-label">Bài tin</p>
+                                    <span class="stat-icon">📰</span>
+                                </div>
+                                <div class="stat-main">
+                                    <p class="stat-value" id="statNewsTotal">-</p>
+                                    <span class="stat-unit">bài tin</span>
+                                </div>
+                                <div class="stat-breakdown">
+                                    <span class="stat-chip pending" id="statNewsPending">– chờ duyệt</span>
+                                    <span class="stat-chip approved" id="statNewsApproved">– đã duyệt</span>
+                                    <span class="stat-chip rejected" id="statNewsRejected">– từ chối</span>
+                                </div>
                             </article>
                         </div>
-                        <p class="dash-hint">Chọn một tab bên trái để quản trị chi tiết. Các hành động duyệt/từ chối sẽ cập nhật trực tiếp trên giao diện, không cần tải lại trang.</p>
+
+                        <!-- Urgent table -->
+                        <div class="urgent-section">
+                            <div class="urgent-header">
+                                <p class="urgent-title">
+                                    ⚡ Cần xử lý ngay
+                                    <span class="urgent-count-badge" id="urgentCount">0</span>
+                                </p>
+                                <span style="font-size:0.78rem;color:#92400e;">Các mục đang ở trạng thái chờ duyệt</span>
+                            </div>
+                            <div id="urgentList">
+                                <div class="urgent-empty">Đang tải dữ liệu...</div>
+                            </div>
+                        </div>
+
+                        <!-- Quick actions -->
                         <div>
-                            <button class="mini-link-btn" type="button" data-jump-tab="adoption">Đi đến Adoption Requests</button>
-                            <button class="mini-link-btn" type="button" data-jump-tab="pets">Đi đến Pets</button>
-                            <button class="mini-link-btn" type="button" data-jump-tab="reports">Đi đến Reports</button>
+                            <p class="stat-label" style="margin-bottom:8px;">Truy cập nhanh</p>
+                            <div class="quick-actions">
+                                <button class="quick-action-btn" data-jump-tab="adoption">
+                                    <span class="qa-icon">🗂️</span>
+                                    <span>Nhận nuôi</span>
+                                </button>
+                                <button class="quick-action-btn" data-jump-tab="pets">
+                                    <span class="qa-icon">🐾</span>
+                                    <span>Thú cưng</span>
+                                </button>
+                                <button class="quick-action-btn" data-jump-tab="reports">
+                                    <span class="qa-icon">📣</span>
+                                    <span>Báo cáo</span>
+                                </button>
+                                <button class="quick-action-btn" data-jump-tab="news">
+                                    <span class="qa-icon">📰</span>
+                                    <span>Bài tin</span>
+                                </button>
+                            </div>
                         </div>
+
                     </div>
                 </section>
 
@@ -774,6 +1222,11 @@
                     </div>
                     <div class="panel-state" id="reportsState"></div>
                     <div class="panel-content is-hidden" id="reportsContent">
+                        <div class="report-filter-bar">
+                            <button class="report-filter-btn active" data-report-type="all">Tất cả</button>
+                            <button class="report-filter-btn" data-report-type="lost">🔴 Thất lạc</button>
+                            <button class="report-filter-btn" data-report-type="found">🟢 Tìm thấy</button>
+                        </div>
                         <div class="table-wrap">
                             <table>
                                 <thead>
@@ -787,6 +1240,35 @@
                                     </tr>
                                 </thead>
                                 <tbody id="reportsBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="panel-news" class="tab-panel">
+                    <div class="panel-head">
+                        <div>
+                            <h2>Bài tin</h2>
+                            <p class="panel-sub">Duyệt và quản lý bài đăng tin tức.</p>
+                        </div>
+                        <div class="panel-tools">
+                            <button class="tool-btn" data-refresh-tab="news" type="button">Tải lại</button>
+                        </div>
+                    </div>
+                    <div class="panel-state" id="newsState"></div>
+                    <div class="panel-content is-hidden" id="newsContent">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Tiêu đề</th>
+                                        <th>Tác giả</th>
+                                        <th>Trạng thái</th>
+                                        <th>Ngày tạo</th>
+                                        <th>Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="newsBody"></tbody>
                             </table>
                         </div>
                     </div>
@@ -894,7 +1376,7 @@
 
     <script>
         const TAB_KEY = 'admin.dashboard.activeTab';
-        const TAB_LIST = ['dashboard', 'adoption', 'pets', 'reports'];
+        const TAB_LIST = ['dashboard', 'adoption', 'pets', 'reports', 'news'];
 
         class ApiFetchError extends Error {
             constructor(message, status, code) {
@@ -918,10 +1400,13 @@
                 adoption: false,
                 pets: false,
                 reports: false,
+                news: false,
             },
             adoptionRows: [],
             petRows: [],
             reportRows: [],
+            reportFilter: 'all',
+            newsRows: [],
             pendingActions: new Set(),
         };
 
@@ -936,6 +1421,7 @@
             adoption: document.getElementById('panel-adoption'),
             pets: document.getElementById('panel-pets'),
             reports: document.getElementById('panel-reports'),
+            news: document.getElementById('panel-news'),
         };
 
         const sectionRefs = {
@@ -954,11 +1440,41 @@
                 contentEl: document.getElementById('reportsContent'),
                 bodyEl: document.getElementById('reportsBody'),
             },
+            news: {
+                stateEl: document.getElementById('newsState'),
+                contentEl: document.getElementById('newsContent'),
+                bodyEl: document.getElementById('newsBody'),
+            },
         };
 
-        const statAdoptionTotal = document.getElementById('statAdoptionTotal');
-        const statPetsTotal = document.getElementById('statPetsTotal');
-        const statReportsTotal = document.getElementById('statReportsTotal');
+        const statAdoptionTotal    = document.getElementById('statAdoptionTotal');
+        const statAdoptionPending  = document.getElementById('statAdoptionPending');
+        const statAdoptionApproved = document.getElementById('statAdoptionApproved');
+        const statAdoptionRejected = document.getElementById('statAdoptionRejected');
+
+        const statPetsTotal     = document.getElementById('statPetsTotal');
+        const statPetsAvailable = document.getElementById('statPetsAvailable');
+        const statPetsAdopted   = document.getElementById('statPetsAdopted');
+
+        const statReportsTotal       = null; // split into lost/found below
+        const statReportsPending     = null;
+        const statReportsApproved    = null;
+        const statReportsRejected    = null;
+
+        const statReportsLostTotal    = document.getElementById('statReportsLostTotal');
+        const statReportsLostPending  = document.getElementById('statReportsLostPending');
+        const statReportsLostApproved = document.getElementById('statReportsLostApproved');
+        const statReportsFoundTotal    = document.getElementById('statReportsFoundTotal');
+        const statReportsFoundPending  = document.getElementById('statReportsFoundPending');
+        const statReportsFoundApproved = document.getElementById('statReportsFoundApproved');
+
+        const statNewsTotal    = document.getElementById('statNewsTotal');
+        const statNewsPending  = document.getElementById('statNewsPending');
+        const statNewsApproved = document.getElementById('statNewsApproved');
+        const statNewsRejected = document.getElementById('statNewsRejected');
+
+        const urgentCount = document.getElementById('urgentCount');
+        const urgentList  = document.getElementById('urgentList');
 
         const detailModal = document.getElementById('detailModal');
         const detailModalTitle = document.getElementById('detailModalTitle');
@@ -1358,9 +1874,93 @@
         };
 
         const renderDashboardStats = () => {
-            statAdoptionTotal.textContent = String(state.adoptionRows.length || 0);
-            statPetsTotal.textContent = String(state.petRows.length || 0);
-            statReportsTotal.textContent = String(state.reportRows.length || 0);
+            // Adoption
+            const adoptionTotal    = state.adoptionRows.length;
+            const adoptionPending  = state.adoptionRows.filter(r => String(r.status || 'pending') === 'pending').length;
+            const adoptionApproved = state.adoptionRows.filter(r => String(r.status) === 'approved').length;
+            const adoptionRejected = state.adoptionRows.filter(r => String(r.status) === 'rejected').length;
+            statAdoptionTotal.textContent    = String(adoptionTotal || 0);
+            statAdoptionPending.textContent  = `${adoptionPending} chờ duyệt`;
+            statAdoptionApproved.textContent = `${adoptionApproved} đã duyệt`;
+            statAdoptionRejected.textContent = `${adoptionRejected} từ chối`;
+
+            // Pets
+            const petsTotal     = state.petRows.length;
+            const petsAvailable = state.petRows.filter(p => String(p.status || 'available') === 'available').length;
+            const petsAdopted   = state.petRows.filter(p => String(p.status) === 'adopted').length;
+            statPetsTotal.textContent     = String(petsTotal || 0);
+            statPetsAvailable.textContent = `${petsAvailable} sẵn sàng`;
+            statPetsAdopted.textContent   = `${petsAdopted} đã nhận nuôi`;
+
+            // Reports — split by type
+            const lostRows  = state.reportRows.filter(r => String(r.type || 'lost') === 'lost');
+            const foundRows = state.reportRows.filter(r => String(r.type) === 'found');
+
+            statReportsLostTotal.textContent    = String(lostRows.length);
+            statReportsLostPending.textContent  = `${lostRows.filter(r => String(r.status || 'pending') === 'pending').length} chờ duyệt`;
+            statReportsLostApproved.textContent = `${lostRows.filter(r => String(r.status) === 'approved').length} đã duyệt`;
+
+            statReportsFoundTotal.textContent    = String(foundRows.length);
+            statReportsFoundPending.textContent  = `${foundRows.filter(r => String(r.status || 'pending') === 'pending').length} chờ duyệt`;
+            statReportsFoundApproved.textContent = `${foundRows.filter(r => String(r.status) === 'approved').length} đã duyệt`;
+
+            // News
+            const newsTotal    = state.newsRows.length;
+            const newsPending  = state.newsRows.filter(n => String(n.status || 'pending') === 'pending').length;
+            const newsApproved = state.newsRows.filter(n => String(n.status) === 'approved').length;
+            const newsRejected = state.newsRows.filter(n => String(n.status) === 'rejected').length;
+            statNewsTotal.textContent    = String(newsTotal || 0);
+            statNewsPending.textContent  = `${newsPending} chờ duyệt`;
+            statNewsApproved.textContent = `${newsApproved} đã duyệt`;
+            statNewsRejected.textContent = `${newsRejected} từ chối`;
+
+            // Urgent table
+            renderUrgentList();
+        };
+
+        const renderUrgentList = () => {
+            const pendingAdoptions = state.fetchedTabs.adoption
+                ? state.adoptionRows.filter(r => String(r.status || 'pending') === 'pending')
+                    .slice(0, 5)
+                    .map(r => ({ type: 'adoption', label: 'Nhận nuôi', name: r.display_name || r.user_name || '—', meta: r.pet_name ? `Thú cưng: ${r.pet_name}` : formatDate(r.created_at), id: r.id }))
+                : [];
+
+            const pendingReports = state.fetchedTabs.reports
+                ? state.reportRows.filter(r => String(r.status || 'pending') === 'pending')
+                    .slice(0, 5)
+                    .map(r => ({ type: 'report', label: 'Báo cáo', name: r.reporter_name || '—', meta: r.address || r.found_location || formatDate(r.created_at), id: r.id }))
+                : [];
+
+            const pendingNews = state.fetchedTabs.news
+                ? state.newsRows.filter(n => String(n.status || 'pending') === 'pending')
+                    .slice(0, 5)
+                    .map(n => ({ type: 'news', label: 'Bài tin', name: n.title || '—', meta: n.author_name || formatDate(n.created_at), id: n.id }))
+                : [];
+
+            const allPending = [...pendingAdoptions, ...pendingReports, ...pendingNews]
+                .sort((a, b) => 0); // preserve order by type priority
+
+            urgentCount.textContent = String(allPending.length);
+
+            if (allPending.length === 0) {
+                const hasData = state.fetchedTabs.adoption || state.fetchedTabs.reports || state.fetchedTabs.news;
+                urgentList.innerHTML = `<div class="urgent-empty">${hasData ? '✅ Không có mục nào cần xử lý' : 'Đang tải dữ liệu...'}</div>`;
+                return;
+            }
+
+            const tabMap = { adoption: 'adoption', report: 'reports', news: 'news' };
+            urgentList.innerHTML = allPending.map(item => `
+                <div class="urgent-row">
+                    <div class="urgent-row-left">
+                        <span class="urgent-type-badge ${escapeHtml(item.type)}">${escapeHtml(item.label)}</span>
+                        <div class="urgent-info">
+                            <div class="urgent-name">${escapeHtml(item.name)}</div>
+                            <div class="urgent-meta">${escapeHtml(item.meta)}</div>
+                        </div>
+                    </div>
+                    <button class="urgent-go-btn" data-jump-tab="${escapeHtml(tabMap[item.type])}">Xử lý →</button>
+                </div>
+            `).join('');
         };
 
         const getSafeArray = (candidate) => (Array.isArray(candidate) ? candidate : []);
@@ -1388,6 +1988,14 @@
                 setGlobalMessage('success', `Xin chào ${meUser.display_name || meUser.name || 'Admin'}, bạn có thể quản trị dữ liệu từ dashboard này.`);
                 const initialTab = readPersistedTab();
                 switchTab(initialTab, false);
+
+                // Pre-load tất cả data cho dashboard stats
+                Promise.all([
+                    loadAdoptionRequests(false),
+                    loadPets(false),
+                    loadReports(false),
+                    loadNews(false),
+                ]).then(() => renderDashboardStats()).catch(() => {});
             } catch (error) {
                 if (error.code === 'unauthorized') {
                     setBlockedState('Vui lòng đăng nhập để truy cập trang quản trị.');
@@ -1618,9 +2226,19 @@
             }
         }
 
+        const applyReportFilterUI = (type) => {
+            document.querySelectorAll('.report-filter-btn[data-report-type]').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.reportType === type);
+            });
+        };
+
         const renderReportRows = () => {
             const body = sectionRefs.reports.bodyEl;
-            body.innerHTML = state.reportRows.map((report) => {
+            const filtered = state.reportFilter === 'all'
+                ? state.reportRows
+                : state.reportRows.filter(r => String(r.type || 'lost') === state.reportFilter);
+
+            body.innerHTML = filtered.map((report) => {
                 const key = `report:${report.id}`;
                 const pending = isPending(key);
                 const canModerate = String(report.status || 'pending') === 'pending';
@@ -1643,6 +2261,8 @@
                                 <button class="action-btn detail" data-action="detail-report" data-id="${escapeHtml(report.id)}">Chi tiết</button>
                                 <button class="action-btn approve" data-action="approve-report" data-id="${escapeHtml(report.id)}" ${(!canModerate || pending) ? 'disabled' : ''}>Duyệt</button>
                                 <button class="action-btn reject" data-action="reject-report" data-id="${escapeHtml(report.id)}" ${(!canModerate || pending) ? 'disabled' : ''}>Từ chối</button>
+                                ${String(report.status) === 'approved' && reportType === 'lost' ? `<button class="action-btn reject" data-action="close-report" data-id="${escapeHtml(report.id)}" ${pending ? 'disabled' : ''} style="background:#6366f1;border-color:#6366f1;">Đã tìm thấy</button>` : ''}
+                                ${String(report.status) === 'approved' && reportType === 'found' ? `<button class="action-btn reject" data-action="close-report" data-id="${escapeHtml(report.id)}" ${pending ? 'disabled' : ''} style="background:#6366f1;border-color:#6366f1;">Đã nhận lại</button>` : ''}
                             </div>
                         </td>
                     </tr>
@@ -1663,7 +2283,11 @@
             try {
                 const payload = await apiFetch('/api/v1/admin/reports?limit=100');
                 const reportData = payload && payload.data ? payload.data.data : [];
-                state.reportRows = getSafeArray(reportData);
+                state.reportRows = getSafeArray(reportData).map(function(r) {
+                    r.type   = String(r.TYPE   || r.type   || '').toLowerCase();
+                    r.status = String(r.STATUS || r.status || '').toLowerCase();
+                    return r;
+                });
                 state.fetchedTabs.reports = true;
                 renderDashboardStats();
 
@@ -1755,6 +2379,11 @@
 
             if (tab === 'reports') {
                 await loadReports(force);
+                return;
+            }
+
+            if (tab === 'news') {
+                await loadNews(force);
             }
         }
 
@@ -1772,6 +2401,35 @@
                 if (!nextTab) return;
                 switchTab(nextTab, true);
             });
+        });
+
+        // Stat cards are also clickable (they have data-jump-tab)
+        document.querySelectorAll('.stat-card[data-jump-tab]').forEach((card) => {
+            card.addEventListener('click', () => {
+                const nextTab = card.dataset.jumpTab;
+                if (!nextTab) return;
+                switchTab(nextTab, true);
+            });
+        });
+
+        // Split report cards — jump to reports with filter
+        document.querySelectorAll('.stat-card[data-report-filter]').forEach((card) => {
+            card.addEventListener('click', () => {
+                const filter = card.dataset.reportFilter;
+                state.reportFilter = filter;
+                applyReportFilterUI(filter);
+                switchTab('reports', true);
+            });
+        });
+
+        // Report filter toggle bar
+        document.addEventListener('click', (e) => {
+            const btn = e.target.closest('.report-filter-btn[data-report-type]');
+            if (!btn) return;
+            const type = btn.dataset.reportType;
+            state.reportFilter = type;
+            applyReportFilterUI(type);
+            renderReportRows();
         });
 
         document.addEventListener('click', async (event) => {
@@ -1830,8 +2488,40 @@
                 return;
             }
 
+            if (action === 'close-report') {
+                const row = state.reportRows.find(r => String(r.id) === String(id));
+                const label = row && row.type === 'found' ? 'Đã nhận lại' : 'Đã tìm thấy';
+                const confirmed = await Swal.fire({
+                    title: label,
+                    text: 'Xác nhận đóng báo cáo này?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Xác nhận',
+                    cancelButtonText: 'Huỷ',
+                    confirmButtonColor: '#6366f1',
+                });
+                if (!confirmed.isConfirmed) return;
+                await handleReportStatus(id, 'rejected');
+                return;
+            }
+
             if (action === 'reject-report') {
                 await handleReportStatus(id, 'rejected');
+                return;
+            }
+
+            if (action === 'approve-news') {
+                await handleNewsStatus(id, 'approved');
+                return;
+            }
+
+            if (action === 'reject-news') {
+                await handleNewsStatus(id, 'rejected');
+                return;
+            }
+
+            if (action === 'delete-news') {
+                await handleNewsDelete(id);
             }
         });
 
@@ -1863,6 +2553,7 @@
                     loadAdoptionRequests(true),
                     loadPets(true),
                     loadReports(true),
+                    loadNews(true),
                 ]);
                 renderDashboardStats();
                 if (results.every(Boolean)) {
@@ -1876,6 +2567,141 @@
                 refreshAllBtn.disabled = false;
             }
         });
+
+        const newsStatusText = (status) => {
+            if (status === 'approved') return 'Đã duyệt';
+            if (status === 'rejected') return 'Đã từ chối';
+            return 'Chờ duyệt';
+        };
+
+        const renderNewsRows = () => {
+            const body = sectionRefs.news.bodyEl;
+            body.innerHTML = state.newsRows.map((news) => {
+                const key = `news:${news.id}`;
+                const pending = isPending(key);
+                const canModerate = String(news.status || 'pending') === 'pending';
+
+                return `
+                    <tr>
+                        <td>
+                            <div class="reporter-cell">
+                                <span class="main-text">${escapeHtml(news.title || '-')}</span>
+                            </div>
+                        </td>
+                        <td>${escapeHtml(news.author_name || news.display_name || '-')}</td>
+                        <td>${renderStatusPill(news.status, 'pending')}</td>
+                        <td>${escapeHtml(formatDate(news.created_at))}</td>
+                        <td>
+                            <div class="row-actions">
+                                <button class="action-btn approve" data-action="approve-news" data-id="${escapeHtml(news.id)}" ${(!canModerate || pending) ? 'disabled' : ''}>Duyệt</button>
+                                <button class="action-btn reject" data-action="reject-news" data-id="${escapeHtml(news.id)}" ${(!canModerate || pending) ? 'disabled' : ''}>Từ chối</button>
+                                <button class="action-btn delete" data-action="delete-news" data-id="${escapeHtml(news.id)}" ${pending ? 'disabled' : ''}>Xóa</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        };
+
+        async function loadNews(force = false) {
+            if (!force && state.fetchedTabs.news) {
+                renderNewsRows();
+                setSectionState('news', 'ready');
+                return true;
+            }
+
+            setSectionState('news', 'loading', 'Đang tải danh sách bài tin...');
+            try {
+                const payload = await apiFetch('/api/v1/admin/news');
+                const raw = payload && payload.data ? (payload.data.news || payload.data.articles || payload.data) : [];
+                state.newsRows = getSafeArray(Array.isArray(raw) ? raw : []);
+                state.fetchedTabs.news = true;
+                renderDashboardStats();
+
+                if (state.newsRows.length === 0) {
+                    setSectionState('news', 'empty', 'Không có bài tin nào.');
+                    return true;
+                }
+
+                renderNewsRows();
+                setSectionState('news', 'ready');
+                return true;
+            } catch (error) {
+                if (error.code === 'unauthorized') {
+                    setSectionState('news', 'unauthorized', 'Bạn cần đăng nhập lại để truy cập dữ liệu bài tin.');
+                    return false;
+                }
+                setSectionState('news', 'error', error.message || 'Không thể tải danh sách bài tin.');
+                return false;
+            }
+        }
+
+        async function handleNewsStatus(id, nextStatus) {
+            const newsId = Number(id);
+            const rowIndex = state.newsRows.findIndex((row) => Number(row.id) === newsId);
+            if (rowIndex < 0) return;
+
+            if (nextStatus === 'rejected') {
+                const confirmed = window.confirm('Bạn có chắc muốn từ chối bài tin này?');
+                if (!confirmed) return;
+            }
+
+            const key = `news:${newsId}`;
+            const previousRow = { ...state.newsRows[rowIndex] };
+            state.pendingActions.add(key);
+            state.newsRows[rowIndex] = { ...state.newsRows[rowIndex], status: nextStatus };
+            renderNewsRows();
+
+            try {
+                const payload = await apiFetch(`/api/v1/admin/news/${newsId}/status`, {
+                    method: 'PATCH',
+                    body: { status: nextStatus },
+                });
+                const updated = payload && payload.data ? payload.data.news || payload.data.article : null;
+                if (updated && updated.status) {
+                    state.newsRows[rowIndex] = { ...state.newsRows[rowIndex], status: updated.status };
+                }
+                renderDashboardStats();
+                setGlobalMessage('success', payload.message || 'Cập nhật trạng thái bài tin thành công.');
+            } catch (error) {
+                state.newsRows[rowIndex] = previousRow;
+                setGlobalMessage('error', error.message || 'Không thể cập nhật trạng thái bài tin.');
+            } finally {
+                state.pendingActions.delete(key);
+                renderNewsRows();
+            }
+        }
+
+        async function handleNewsDelete(id) {
+            const newsId = Number(id);
+            if (!newsId) return;
+
+            const confirmed = window.confirm('Bạn có chắc muốn xóa bài tin này?');
+            if (!confirmed) return;
+
+            const key = `news:${newsId}`;
+            state.pendingActions.add(key);
+            renderNewsRows();
+
+            try {
+                const payload = await apiFetch(`/api/v1/admin/news/${newsId}`, { method: 'DELETE' });
+                state.newsRows = state.newsRows.filter((item) => Number(item.id) !== newsId);
+                renderDashboardStats();
+
+                if (state.newsRows.length === 0) {
+                    setSectionState('news', 'empty', 'Không còn bài tin nào.');
+                } else {
+                    renderNewsRows();
+                    setSectionState('news', 'ready');
+                }
+                setGlobalMessage('success', payload.message || 'Đã xóa bài tin thành công.');
+            } catch (error) {
+                setGlobalMessage('error', error.message || 'Không thể xóa bài tin.');
+            } finally {
+                state.pendingActions.delete(key);
+                renderNewsRows();
+            }
+        }
 
         bootstrapAdminAccess();
     </script>

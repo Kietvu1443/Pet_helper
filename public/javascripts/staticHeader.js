@@ -37,11 +37,10 @@ if (userDropdownBtn && userDropdown) {
             '<div class="dropdown-divider"></div>',
             '<a href="/profile" class="dropdown-item">&#128100; Tài khoản</a>',
             '<a href="/my-favorites" class="dropdown-item">&#10084;&#65039; Thú cưng đã yêu thích</a>',
-            '<a href="/my-reports" class="dropdown-item">&#128203; Báo cáo của tôi</a>',
-            '<a href="/my-adoption-requests" class="dropdown-item">&#127968; Yêu cầu nhận nuôi</a>',
+            '<a href="/my-reports" class="dropdown-item">&#128203; Hoạt động của tôi</a>',
             '<a href="/adopt/admin/add" class="dropdown-item role-staff-only is-auth-hidden">&#128062; Thêm thú cưng</a>',
             '<a href="/admin/reports" class="dropdown-item role-staff-only is-auth-hidden">&#128450;&#65039; Duyệt báo cáo</a>',
-            '<a href="/admin/adoption-requests" class="dropdown-item role-staff-only is-auth-hidden">&#127968; Xét duyệt nhận nuôi</a>',
+
             '<a href="/admin" class="dropdown-item role-admin-only is-auth-hidden">&#9881;&#65039; Quản trị</a>',
             '<div class="dropdown-divider"></div>',
             '<a href="#" class="dropdown-item logout" id="logoutBtn" onclick="handleLogout(event)">&#128682; Đăng xuất</a>',

@@ -1891,10 +1891,8 @@
                                 Thú cưng đã yêu thích</a>
                             <a href="/my-reports" class="dropdown-item">📋
                                 Báo cáo của tôi</a>
-                            <a href="/my-adoption-requests" class="dropdown-item">🏠 Yêu cầu nhận nuôi</a>
                             <a href="/adopt/admin/add" class="dropdown-item role-staff-only is-auth-hidden">🐾 Thêm thú cưng</a>
                             <a href="/admin/reports" class="dropdown-item role-staff-only is-auth-hidden">📋 Duyệt báo cáo</a>
-                            <a href="/admin/adoption-requests" class="dropdown-item role-staff-only is-auth-hidden">🏠 Xét duyệt nhận nuôi</a>
                             <a href="/admin" class="dropdown-item role-admin-only is-auth-hidden">⚙️ Quản trị</a>
                             <div class="dropdown-divider"></div>
                             <a href="#" class="dropdown-item logout" id="logoutBtn"
@@ -2027,76 +2025,28 @@
             </div>
 
             <div class="bulletin-layout">
-                <!-- Bài nổi bật -->
-                <a href="/news" class="bulletin-featured">
+                <!-- Bài nổi bật (động) -->
+                <a id="homeFeaturedCard" href="/news" class="bulletin-featured">
                     <div class="bulletin-featured-img-wrap">
                         <span class="bulletin-featured-badge">⭐ Nổi bật</span>
-                        <img
+                        <img id="homeFeaturedImg"
                             src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=700&q=80"
-                            alt="Chiến dịch cứu trợ thú cưng"
+                            alt="Bài nổi bật"
                             class="bulletin-featured-img">
                     </div>
                     <div class="bulletin-featured-body">
-                        <div class="bulletin-featured-category">🐾 Cộng đồng</div>
-                        <div class="bulletin-featured-title">Chiến dịch "Mùa Đông Ấm Áp" — Cứu trợ hơn 500 chú chó mèo vô gia cư</div>
-                        <p class="bulletin-featured-desc">Tổng kết hành trình đầy cảm xúc: những chú chó mèo được giải cứu, chăm sóc và tìm được mái ấm mới sau chiến dịch kéo dài suốt một tháng.</p>
+                        <div id="homeFeaturedCategory" class="bulletin-featured-category">🐾 Cộng đồng</div>
+                        <div id="homeFeaturedTitle" class="bulletin-featured-title">Đang tải...</div>
+                        <p id="homeFeaturedDesc" class="bulletin-featured-desc"></p>
                         <div class="bulletin-featured-meta">
-                            <span>📅 2 ngày trước</span>
-                            <span>👁 1.2k lượt xem</span>
+                            <span id="homeFeaturedDate">📅 --</span>
+                            <span id="homeFeaturedViews">👁 --</span>
                         </div>
                     </div>
                 </a>
 
-                <!-- Bài phụ 1 -->
-                <a href="/news" class="bulletin-card">
-                    <div class="bulletin-card-img-wrap">
-                        <img
-                            src="https://images.unsplash.com/photo-1574158622682-e40e69881006?auto=format&fit=crop&w=300&q=80"
-                            alt="Sức khỏe thú cưng"
-                            class="bulletin-card-img">
-                    </div>
-                    <div class="bulletin-card-body">
-                        <div>
-                            <div class="bulletin-card-category">💉 Sức khỏe</div>
-                            <div class="bulletin-card-title">Làm thế nào để bảo vệ thú cưng khỏi bệnh dại trong mùa mưa?</div>
-                        </div>
-                        <div class="bulletin-card-meta">⏱ 2 giờ trước</div>
-                    </div>
-                </a>
-
-                <!-- Bài phụ 2 -->
-                <a href="/news" class="bulletin-card">
-                    <div class="bulletin-card-img-wrap">
-                        <img
-                            src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=300&q=80"
-                            alt="Nhận nuôi mèo"
-                            class="bulletin-card-img">
-                    </div>
-                    <div class="bulletin-card-body">
-                        <div>
-                            <div class="bulletin-card-category">🏠 Nhận nuôi</div>
-                            <div class="bulletin-card-title">Bé Miu tìm được chủ nhân mới sau 3 tháng điều trị phục hồi</div>
-                        </div>
-                        <div class="bulletin-card-meta">⏱ 1 ngày trước</div>
-                    </div>
-                </a>
-
-                <!-- Bài phụ 3 -->
-                <a href="/news" class="bulletin-card">
-                    <div class="bulletin-card-img-wrap">
-                        <img
-                            src="https://images.unsplash.com/photo-1592194996308-7b43878e84a6?auto=format&fit=crop&w=300&q=80"
-                            alt="Mẹo chăm sóc"
-                            class="bulletin-card-img">
-                    </div>
-                    <div class="bulletin-card-body">
-                        <div>
-                            <div class="bulletin-card-category">📚 Kiến thức</div>
-                            <div class="bulletin-card-title">5 dấu hiệu thú cưng của bạn đang bị stress — đừng bỏ qua!</div>
-                        </div>
-                        <div class="bulletin-card-meta">⏱ 3 ngày trước</div>
-                    </div>
-                </a>
+                <!-- Bài phụ (động) -->
+                <div id="homeBulletinCards" style="display:contents"></div>
             </div>
 
             <div class="bulletin-footer">
@@ -2581,6 +2531,77 @@
         <script src="/javascripts/authOverlayLoader.js" defer></script>
         <script src="/javascripts/staticHeader.js"></script>
         <script src="/javascripts/staticFooter.js"></script>
+
+        <!-- Bảng Tin động: đồng bộ với trang /news -->
+        <script>
+        (function () {
+            const CATEGORY_LABELS = {
+                community: '🐾 Cộng đồng',
+                health: '💉 Sức khỏe',
+                adoption: '🏠 Nhận nuôi',
+                knowledge: '📚 Kiến thức',
+                rescue: '🆘 Cứu hộ',
+            };
+
+            function timeAgo(dateStr) {
+                const diff = (Date.now() - new Date(dateStr)) / 1000;
+                if (diff < 3600)  return Math.floor(diff / 60) + ' phút trước';
+                if (diff < 86400) return Math.floor(diff / 3600) + ' giờ trước';
+                if (diff < 604800) return Math.floor(diff / 86400) + ' ngày trước';
+                return new Date(dateStr).toLocaleDateString('vi-VN');
+            }
+
+            // Load bài nổi bật
+            async function loadHomeFeatured() {
+                try {
+                    const res = await fetch('/api/v1/news/featured?limit=1');
+                    const payload = await res.json();
+                    if (!payload.success) return;
+                    const n = (payload.data.news || [])[0];
+                    if (!n) return;
+                    const card = document.getElementById('homeFeaturedCard');
+                    card.href = '/news/' + n.id;
+                    document.getElementById('homeFeaturedImg').src = n.image || 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=700&q=80';
+                    document.getElementById('homeFeaturedImg').alt = n.title;
+                    document.getElementById('homeFeaturedCategory').textContent = CATEGORY_LABELS[n.category] || n.category;
+                    document.getElementById('homeFeaturedTitle').textContent = n.title;
+                    document.getElementById('homeFeaturedDate').textContent = '📅 ' + timeAgo(n.created_at);
+                    document.getElementById('homeFeaturedViews').textContent = '👁 ' + (n.view_count || 0) + ' lượt xem';
+                } catch (e) { /* giữ nguyên fallback */ }
+            }
+
+            // Load 3 bài phụ mới nhất
+            async function loadHomeBulletinCards() {
+                try {
+                    const res = await fetch('/api/v1/news?page=1&limit=3');
+                    const payload = await res.json();
+                    if (!payload.success) return;
+                    const list = payload.data.news || [];
+                    const container = document.getElementById('homeBulletinCards');
+                    container.innerHTML = list.map(n => `
+                        <a href="/news/${n.id}" class="bulletin-card">
+                            <div class="bulletin-card-img-wrap">
+                                <img src="${n.image || 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=300&q=80'}"
+                                     alt="${n.title}"
+                                     class="bulletin-card-img"
+                                     onerror="this.src='https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=300&q=80'">
+                            </div>
+                            <div class="bulletin-card-body">
+                                <div>
+                                    <div class="bulletin-card-category">${CATEGORY_LABELS[n.category] || n.category}</div>
+                                    <div class="bulletin-card-title">${n.title}</div>
+                                </div>
+                                <div class="bulletin-card-meta">⏱ ${timeAgo(n.created_at)}</div>
+                            </div>
+                        </a>
+                    `).join('');
+                } catch (e) { /* giữ nguyên nếu lỗi */ }
+            }
+
+            loadHomeFeatured();
+            loadHomeBulletinCards();
+        })();
+        </script>
 
 </body>
 

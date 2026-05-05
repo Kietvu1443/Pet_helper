@@ -64,8 +64,49 @@
         .section-tab-bar { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #d8e6dc; padding-bottom: 0; }
         .section-tab-btn { padding: 10px 24px; border: none; background: none; font-weight: 700; font-size: 1rem; color: #64748b; cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.2s; }
         .section-tab-btn.active { color: #1f5133; border-bottom-color: #2b663e; }
+        /* ── Adoption modal ── */
+        .adopt-modal { display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.45); z-index: 2000; align-items: center; justify-content: center; padding: 18px; }
+        .adopt-modal.show { display: flex; }
+        .adopt-modal-content { width: 860px; max-width: 100%; background: #fff; border-radius: 14px; overflow: hidden; max-height: 90vh; overflow-y: auto; }
+        .adopt-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-bottom: 1px solid #e6eee8; position: sticky; top: 0; background: #fff; z-index: 1; }
+        .adopt-modal-body { padding: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+        .adopt-modal-body img { width: 100%; height: 260px; object-fit: cover; border-radius: 10px; background: #f3f4f6; }
+        .adopt-meta-label { font-size: 0.78rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; margin-bottom: 2px; }
+        .adopt-meta-value { font-size: 0.95rem; color: #0f172a; margin-bottom: 12px; }
+        .adopt-modal-footer { display: flex; gap: 10px; justify-content: flex-end; padding: 14px 16px; border-top: 1px solid #e6eee8; background: #f8fcf9; }
+        .adopt-modal-footer .btn { padding: 9px 20px; border-radius: 8px; border: none; font-weight: 700; font-size: 0.92rem; cursor: pointer; }
+        .adopt-modal-footer .btn-approve { background: #16a34a; color: #fff; }
+        .adopt-modal-footer .btn-reject { background: #dc2626; color: #fff; }
+        .adopt-modal-footer .btn-close { background: #e2e8f0; color: #374151; }
+        @media (max-width: 640px) { .adopt-modal-body { grid-template-columns: 1fr; } }
         /* ── News category pill ── */
         .cat-pill { padding: 3px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 700; background: #e0f2fe; color: #0369a1; }
+
+        .search-box-wrap {
+            display: flex;
+            align-items: center;
+            background: #fff;
+            border: 1.5px solid #d1d5db;
+            border-radius: 10px;
+            padding: 8px 14px;
+            gap: 8px;
+            margin-bottom: 14px;
+            transition: border-color 0.2s;
+        }
+        .search-box-wrap:focus-within { border-color: #2b663e; box-shadow: 0 0 0 3px rgba(43,102,62,0.1); }
+        .search-box-wrap input {
+            border: none; outline: none;
+            font-size: 0.92rem; color: #333;
+            background: transparent; width: 100%;
+            font-family: inherit;
+        }
+        .search-box-wrap .search-icon { color: #aaa; font-size: 1rem; flex-shrink: 0; }
+        .search-clear-btn {
+            background: none; border: none; cursor: pointer;
+            color: #aaa; font-size: 1rem; padding: 0;
+            display: none;
+        }
+        .search-clear-btn.visible { display: block; }
     </style>
 </head>
 
@@ -166,12 +207,39 @@
 
             <!-- Section tabs -->
             <div class="section-tab-bar">
-                <button class="section-tab-btn active" id="sectionTabReports" onclick="switchSection('reports')">🐾 Báo cáo thú cưng</button>
+                <button class="section-tab-btn active" id="sectionTabAdoption" onclick="switchSection('adoption')">🏠 Xét duyệt nhận nuôi</button>
+                <button class="section-tab-btn" id="sectionTabReports" onclick="switchSection('reports')">🐾 Báo cáo thú cưng</button>
                 <button class="section-tab-btn" id="sectionTabNews" onclick="switchSection('news')">📰 Duyệt bài tin</button>
             </div>
 
+            <!-- ===== PANEL: XÉT DUYỆT NHẬN NUÔI ===== -->
+            <div id="panelAdoption">
+                <div class="tab-bar" id="adoptionTabBar">
+                    <button class="tab-btn adopt-tab active" data-adopt-status="pending">⏳ Chờ duyệt</button>
+                    <button class="tab-btn adopt-tab" data-adopt-status="approved">✅ Đã duyệt</button>
+                    <button class="tab-btn adopt-tab" data-adopt-status="rejected">🔴 Đã từ chối</button>
+                </div>
+                <div id="adoptAdminNote" class="admin-note"></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr>
+                            <th>Mã user</th>
+                            <th>Người gửi</th>
+                            <th>Mã pet</th>
+                            <th>Tên pet</th>
+                            <th>Ngày gửi</th>
+                            <th>Trạng thái</th>
+                            <th>Hành động</th>
+                        </tr></thead>
+                        <tbody id="adoptionTableBody">
+                            <tr><td colspan="7" class="table-message">Đang tải hồ sơ...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
             <!-- ===== PANEL: BÁO CÁO THÚ CƯNG ===== -->
-            <div id="panelReports">
+            <div id="panelReports" style="display:none">
                 <!-- Lọc theo trạng thái -->
                 <div class="tab-bar">
                     <button class="tab-btn active" data-status="pending">⏳ Chờ duyệt</button>
@@ -184,6 +252,13 @@
                     <button class="type-btn active-lost" data-type="lost">🔍 Thất lạc</button>
                     <button class="type-btn" data-type="found">✅ Tìm thấy</button>
                     <button class="type-btn" data-type="all">📋 Tất cả</button>
+                </div>
+
+                <!-- Tìm kiếm báo cáo -->
+                <div class="search-box-wrap">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="reportSearchInput" placeholder="Tìm theo tên, SĐT, vị trí..." oninput="renderTable()">
+                    <button class="search-clear-btn" id="reportSearchClear" onclick="clearSearch('reportSearchInput', 'reportSearchClear')">✕</button>
                 </div>
 
                 <div class="table-wrap">
@@ -214,6 +289,13 @@
                     <button class="tab-btn active" data-news-status="pending">⏳ Chờ duyệt</button>
                     <button class="tab-btn" data-news-status="approved">✅ Đã duyệt</button>
                     <button class="tab-btn" data-news-status="rejected">🔴 Đã từ chối</button>
+                </div>
+
+                <!-- Tìm kiếm bài tin -->
+                <div class="search-box-wrap">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="newsSearchInput" placeholder="Tìm theo tiêu đề, tác giả..." oninput="renderNewsTable()">
+                    <button class="search-clear-btn" id="newsSearchClear" onclick="clearSearch('newsSearchInput', 'newsSearchClear')">✕</button>
                 </div>
 
                 <div class="table-wrap">
@@ -309,14 +391,43 @@
     <script src="/javascripts/staticFooter.js"></script>
     <script>
         // Khai báo sớm để onclick trong HTML gọi được
+        function clearSearch(inputId, clearBtnId) {
+            document.getElementById(inputId).value = '';
+            document.getElementById(clearBtnId).classList.remove('visible');
+            if (inputId === 'reportSearchInput') renderTable();
+            else renderNewsTable();
+        }
+
+        // Theo dõi input search để hiện/ẩn nút clear
+        document.addEventListener('DOMContentLoaded', function() {
+            ['reportSearchInput', 'newsSearchInput'].forEach(function(id) {
+                var el = document.getElementById(id);
+                if (!el) return;
+                var clearId = id.replace('Input', 'Clear');
+                el.addEventListener('input', function() {
+                    document.getElementById(clearId).classList.toggle('visible', el.value.length > 0);
+                });
+            });
+        });
+
         function switchSection(section) {
+            document.getElementById('panelAdoption').style.display = section === 'adoption' ? '' : 'none';
             document.getElementById('panelReports').style.display = section === 'reports' ? '' : 'none';
             document.getElementById('panelNews').style.display = section === 'news' ? '' : 'none';
+            document.getElementById('sectionTabAdoption').classList.toggle('active', section === 'adoption');
             document.getElementById('sectionTabReports').classList.toggle('active', section === 'reports');
             document.getElementById('sectionTabNews').classList.toggle('active', section === 'news');
             if (section === 'news' && !window.__newsAdminLoaded) {
                 window.__newsAdminLoaded = true;
                 if (typeof loadAdminNews === 'function') loadAdminNews();
+            }
+            if (section === 'reports' && !window.__reportsAdminLoaded) {
+                window.__reportsAdminLoaded = true;
+                if (typeof loadReports === 'function') loadReports();
+            }
+            if (section === 'adoption' && !window.__adoptionAdminLoaded) {
+                window.__adoptionAdminLoaded = true;
+                if (typeof loadAdoptionRequests === 'function') loadAdoptionRequests();
             }
         }
     </script>
@@ -388,7 +499,11 @@
 
                 if (!payload.success) throw new Error(payload.message);
 
-                allReports = payload.data.reports || payload.data.data || [];
+                allReports = (payload.data.reports || payload.data.data || []).map(function(r) {
+                    r.status = (r.STATUS || r.status || '').toLowerCase();
+                    r.type   = (r.TYPE   || r.type   || '').toLowerCase();
+                    return r;
+                });
                 renderTable();
             } catch (err) {
                 setNote('error', 'Không thể tải dữ liệu: ' + err.message);
@@ -398,7 +513,16 @@
 
         // ===================== RENDER TABLE =====================
         function renderTable() {
-            const rows = allReports.filter(r => r.status === currentStatus);
+            const searchVal = (document.getElementById('reportSearchInput') ? document.getElementById('reportSearchInput').value : '').toLowerCase().trim();
+            const rows = allReports.filter(r => {
+                if (r.status !== currentStatus) return false;
+                if (currentType !== 'all' && r.type !== currentType) return false;
+                if (searchVal) {
+                    const haystack = [r.reporter_name, r.phone, r.address, r.found_location, r.species, r.color].join(' ').toLowerCase();
+                    if (!haystack.includes(searchVal)) return false;
+                }
+                return true;
+            });
             if (!rows.length) {
                 adminTableBody.innerHTML = '<tr><td colspan="8" class="table-message">Không có báo cáo nào trong mục này.</td></tr>';
                 return;
@@ -540,7 +664,8 @@
         }
 
         // ===================== INIT =====================
-        loadReports();
+        // Tab mặc định là Xét duyệt nhận nuôi - loadReports sẽ được gọi khi switchSection('reports')
+        window.__reportsAdminLoaded = false;
 
         // ===================== SECTION TABS =====================
         // (switchSection đã được khai báo ở script trên)
@@ -581,7 +706,15 @@
         }
 
         function renderNewsTable() {
-            const rows = allNews.filter(n => n.status === currentNewsStatus);
+            const searchVal = (document.getElementById('newsSearchInput') ? document.getElementById('newsSearchInput').value : '').toLowerCase().trim();
+            const rows = allNews.filter(n => {
+                if (n.status !== currentNewsStatus) return false;
+                if (searchVal) {
+                    const haystack = [n.title, n.author_name, n.category].join(' ').toLowerCase();
+                    if (!haystack.includes(searchVal)) return false;
+                }
+                return true;
+            });
             if (!rows.length) {
                 document.getElementById('newsTableBody').innerHTML = '<tr><td colspan="7" class="table-message">Không có bài tin nào.</td></tr>';
                 return;
@@ -697,5 +830,195 @@
             }
         };
     </script>
+
+
+    <!-- Modal chi tiết nhận nuôi (outside main) -->
+    <div class="adopt-modal" id="adoptDetailModal">
+        <div class="adopt-modal-content">
+            <div class="adopt-modal-header">
+                <strong style="font-size:1.05rem;color:#1f5133;">Chi tiết hồ sơ nhận nuôi</strong>
+                <button id="adoptCloseModalBtn" style="background:none;border:none;font-size:1.4rem;cursor:pointer;color:#64748b;">✕</button>
+            </div>
+            <div class="adopt-modal-body">
+                <div><img id="adoptModalPetImage" src="https://via.placeholder.com/640x360?text=No+Image" alt="Pet image"></div>
+                <div>
+                    <div class="adopt-meta-label">Lý do xin nhận nuôi</div>
+                    <div class="adopt-meta-value" id="adoptModalReason">-</div>
+                    <div class="adopt-meta-label">Người gửi</div>
+                    <div class="adopt-meta-value" id="adoptModalDisplayName">-</div>
+                    <div class="adopt-meta-label">Email</div>
+                    <div class="adopt-meta-value" id="adoptModalEmail">-</div>
+                    <div class="adopt-meta-label">Địa chỉ</div>
+                    <div class="adopt-meta-value" id="adoptModalAddress">-</div>
+                    <div class="adopt-meta-label">Tên pet</div>
+                    <div class="adopt-meta-value" id="adoptModalPetName">-</div>
+                    <div class="adopt-meta-label">Trạng thái</div>
+                    <div class="adopt-meta-value" id="adoptModalStatus">-</div>
+                </div>
+            </div>
+            <div class="adopt-modal-footer" id="adoptModalFooterActions"></div>
+        </div>
+    </div>
+    <!-- ===== SCRIPT: XÉT DUYỆT NHẬN NUÔI ===== -->
+    <script>
+        (function() {
+            let adoptAllRequests = [];
+            let adoptCurrentFilter = 'pending';
+            let adoptSelectedRequest = null;
+            let adoptHasAccess = false;
+            let adoptIsUpdating = false;
+
+            const adoptStatusLabels = { pending: 'Chờ duyệt', approved: 'Đã duyệt', rejected: 'Đã từ chối' };
+
+            const adoptEscape = (v) => String(v || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+
+            const adoptNote = (type, msg) => {
+                const el = document.getElementById('adoptAdminNote');
+                el.className = 'admin-note';
+                el.textContent = '';
+                if (!msg) return;
+                el.classList.add(type);
+                el.textContent = msg;
+            };
+
+            const adoptRenderStatusPill = (status) => {
+                const s = String(status || 'pending');
+                const label = adoptStatusLabels[s] || 'Không rõ';
+                const color = s === 'approved' ? 'approved' : s === 'rejected' ? 'rejected' : 'pending';
+                return `<span class="status-pill ${adoptEscape(color)}">${adoptEscape(label)}</span>`;
+            };
+
+            const adoptRenderTable = () => {
+                const tbody = document.getElementById('adoptionTableBody');
+                const rows = adoptAllRequests.filter(r => r.status === adoptCurrentFilter);
+                if (!rows.length) {
+                    tbody.innerHTML = '<tr><td colspan="7" class="table-message">Không có hồ sơ nào trong trạng thái này.</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = rows.map(item => {
+                    const date = item.created_at ? new Date(item.created_at).toLocaleDateString('vi-VN') : '-';
+                    return `<tr>
+                        <td>${adoptEscape(item.user_id)}</td>
+                        <td>${adoptEscape(item.display_name || item.user_name || '-')}</td>
+                        <td>${adoptEscape(item.pet_id)}</td>
+                        <td>${adoptEscape(item.pet_name || '-')}</td>
+                        <td>${adoptEscape(date)}</td>
+                        <td>${adoptRenderStatusPill(item.status)}</td>
+                        <td><button class="btn-view" data-adopt-view-id="${adoptEscape(item.id)}">Xem</button></td>
+                    </tr>`;
+                }).join('');
+            };
+
+            const adoptCloseModal = () => {
+                document.getElementById('adoptDetailModal').classList.remove('show');
+                adoptSelectedRequest = null;
+            };
+
+            const adoptOpenModal = (item) => {
+                adoptSelectedRequest = item;
+                document.getElementById('adoptModalPetImage').src = item.pet_image || 'https://via.placeholder.com/640x360?text=No+Image';
+                document.getElementById('adoptModalReason').textContent = item.message || '-';
+                document.getElementById('adoptModalDisplayName').textContent = item.display_name || item.user_name || '-';
+                document.getElementById('adoptModalEmail').textContent = item.email || '-';
+                document.getElementById('adoptModalAddress').textContent = item.address || '-';
+                document.getElementById('adoptModalPetName').textContent = item.pet_name || '-';
+                document.getElementById('adoptModalStatus').innerHTML = adoptRenderStatusPill(item.status);
+                const footer = document.getElementById('adoptModalFooterActions');
+                footer.innerHTML = '<button class="btn btn-close" data-adopt-close="1">Đóng</button>';
+                if (item.status === 'pending' && adoptHasAccess) {
+                    footer.innerHTML += '<button class="btn btn-reject" data-adopt-action="rejected">Từ chối</button>';
+                    footer.innerHTML += '<button class="btn btn-approve" data-adopt-action="approved">Phê duyệt</button>';
+                }
+                document.getElementById('adoptDetailModal').classList.add('show');
+            };
+
+            const adoptUpdateStatus = async (nextStatus) => {
+                if (!adoptSelectedRequest || adoptIsUpdating || !adoptHasAccess) return;
+                adoptIsUpdating = true;
+                try {
+                    const res = await fetch(`/api/v1/adoption-requests/${adoptSelectedRequest.id}/status`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+                        credentials: 'same-origin',
+                        body: JSON.stringify({ status: nextStatus }),
+                    });
+                    const payload = await res.json().catch(() => null);
+                    if (!res.ok) throw new Error((payload && payload.message) || 'Không thể cập nhật trạng thái.');
+                    adoptCloseModal();
+                    await window.loadAdoptionRequests();
+                    adoptNote('success', 'Đã cập nhật trạng thái hồ sơ thành công.');
+                    setTimeout(() => adoptNote('', ''), 3000);
+                } catch(err) {
+                    adoptNote('error', err.message || 'Không thể cập nhật trạng thái.');
+                } finally {
+                    adoptIsUpdating = false;
+                }
+            };
+
+            // Filter tab buttons
+            document.querySelectorAll('.adopt-tab').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.adopt-tab').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    adoptCurrentFilter = this.dataset.adoptStatus;
+                    adoptRenderTable();
+                });
+            });
+
+            // Table click -> mở modal
+            document.getElementById('adoptionTableBody').addEventListener('click', e => {
+                const btn = e.target.closest('[data-adopt-view-id]');
+                if (!btn) return;
+                const item = adoptAllRequests.find(r => String(r.id) === String(btn.dataset.adoptViewId));
+                if (item) adoptOpenModal(item);
+            });
+
+            // Đóng modal
+            document.getElementById('adoptCloseModalBtn').addEventListener('click', adoptCloseModal);
+            document.getElementById('adoptDetailModal').addEventListener('click', e => {
+                if (e.target === document.getElementById('adoptDetailModal')) adoptCloseModal();
+            });
+            document.getElementById('adoptModalFooterActions').addEventListener('click', e => {
+                if (e.target.closest('[data-adopt-close]')) { adoptCloseModal(); return; }
+                const actionBtn = e.target.closest('[data-adopt-action]');
+                if (actionBtn) adoptUpdateStatus(actionBtn.dataset.adoptAction);
+            });
+
+            // Load data
+            window.loadAdoptionRequests = async function() {
+                const tbody = document.getElementById('adoptionTableBody');
+                tbody.innerHTML = '<tr><td colspan="7" class="table-message">Đang tải hồ sơ...</td></tr>';
+                try {
+                    // Kiểm tra quyền
+                    if (!adoptHasAccess) {
+                        const meRes = await fetch('/api/v1/auth/me', { credentials: 'same-origin' });
+                        const mePayload = await meRes.json().catch(() => null);
+                        if (!meRes.ok || !mePayload?.data?.user) {
+                            tbody.innerHTML = '<tr><td colspan="7" class="table-message">Vui lòng đăng nhập để xem.</td></tr>';
+                            return;
+                        }
+                        const role = Number(mePayload.data.user.role);
+                        if (role !== 0 && role !== 1) {
+                            tbody.innerHTML = '<tr><td colspan="7" class="table-message">Bạn không có quyền truy cập.</td></tr>';
+                            return;
+                        }
+                        adoptHasAccess = true;
+                    }
+                    const res = await fetch('/api/v1/adoption-requests/admin', { credentials: 'same-origin' });
+                    const payload = await res.json().catch(() => null);
+                    if (!res.ok) throw new Error((payload && payload.message) || 'Không thể tải danh sách hồ sơ.');
+                    adoptAllRequests = (payload && payload.data && payload.data.requests) || [];
+                    adoptRenderTable();
+                } catch(err) {
+                    tbody.innerHTML = `<tr><td colspan="7" class="table-message">${adoptEscape(err.message)}</td></tr>`;
+                }
+            };
+
+            // Tự load khi trang mở (tab mặc định là adoption)
+            window.__adoptionAdminLoaded = true;
+            window.loadAdoptionRequests();
+        })();
+    </script>
+
 </body>
 </html>

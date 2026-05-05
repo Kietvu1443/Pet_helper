@@ -16,7 +16,7 @@
         <div class="top-bar">
             <a href="/" class="logo-group">
                 <div class="logo-circle">
-                    <img src="/images/the_logo.jpg" alt="logo" id="the_logo">
+                    <img src="/images/logo.svg" alt="logo" id="the_logo">
                 </div>
                 <div class="web-name">PET HELPER</div>
             </a>
@@ -71,9 +71,10 @@
                 <li>
                     <a href="#" class="has-dropdown nav-item">Thất lạc <span class="nav-arrow arrow">▼</span></a>
                     <ul class="nav-dropdown">
-                        <li><a href="/reports">Báo mất thú cưng</a></li>
-                        <li><a href="/reports">Báo tin nhặt được</a></li>
-                        <li><a href="/about">Mẹo tìm kiếm hiệu quả</a></li>
+                        <li><a href="/lost">Báo mất thú cưng</a></li>
+                        <li><a href="/found">Báo tin nhặt được</a></li>
+                        <li><a href="/tips">Mẹo tìm kiếm hiệu quả</a></li>
+                        <li><a href="/reports/list">Xem báo cáo thất lạc</a></li>
                     </ul>
                 </li>
                 <li>
@@ -627,23 +628,64 @@
                             throw new Error((data && data.message) || 'Không thể gửi yêu cầu nhận nuôi');
                         }
 
+                        // Cập nhật nút sau khi đăng ký thành công
+                        adoptBtnEl.disabled = true;
+                        adoptBtnEl.style.opacity = '0.75';
+                        adoptBtnEl.innerHTML = '⏳ Đã đăng ký — Chờ duyệt';
+                        adoptBtnEl.style.background = '#6b7280';
+                        adoptBtnEl.style.cursor = 'default';
+
                         Swal.fire({
-                            title: 'Đăng ký thành công!',
-                            text: (data && data.message) || 'Hồ sơ của bạn đã được gửi và đang chờ xét duyệt.',
+                            title: 'Đăng ký thành công! 🎉',
+                            html: `<p>${(data && data.message) || 'Hồ sơ của bạn đã được gửi và đang chờ xét duyệt.'}</p>
+                                   <p style="margin-top:10px;font-size:0.9rem;color:#6b7280">Bạn có thể theo dõi trạng thái tại trang <a href="/my-adoption-requests" style="color:#10B981;font-weight:700">Yêu cầu nhận nuôi của tôi</a></p>`,
                             icon: 'success',
                             confirmButtonColor: '#10B981',
+                            confirmButtonText: 'Xem yêu cầu của tôi',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = '/my-adoption-requests';
+                            }
                         });
                     } catch (error) {
-                        Swal.fire({
-                            title: 'Không thể gửi yêu cầu',
-                            text: error.message || 'Đã xảy ra lỗi, vui lòng thử lại.',
-                            icon: 'error',
-                            confirmButtonColor: '#EF4444',
-                        });
+                        // Nếu 409 = đã đăng ký rồi → đổi nút thay vì báo lỗi
+                        if (error.message && (
+                            error.message.includes('đã gửi') ||
+                            error.message.includes('đã đăng ký') ||
+                            error.message.includes('Conflict')
+                        )) {
+                            adoptBtnEl.disabled = true;
+                            adoptBtnEl.style.opacity = '0.75';
+                            adoptBtnEl.innerHTML = '⏳ Đã đăng ký — Chờ duyệt';
+                            adoptBtnEl.style.background = '#6b7280';
+                            adoptBtnEl.style.cursor = 'default';
+                            Swal.fire({
+                                title: 'Bạn đã đăng ký rồi!',
+                                html: `<p>Bạn đã gửi yêu cầu nhận nuôi cho thú cưng này trước đó.</p>
+                                       <p style="margin-top:10px;font-size:0.9rem;color:#6b7280">Theo dõi trạng thái tại <a href="/my-adoption-requests" style="color:#10B981;font-weight:700">Yêu cầu nhận nuôi của tôi</a></p>`,
+                                icon: 'info',
+                                confirmButtonColor: '#10B981',
+                                confirmButtonText: 'Xem yêu cầu của tôi',
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.href = '/my-adoption-requests';
+                                }
+                            });
+                        } else {
+                            Swal.fire({
+                                title: 'Không thể gửi yêu cầu',
+                                text: error.message || 'Đã xảy ra lỗi, vui lòng thử lại.',
+                                icon: 'error',
+                                confirmButtonColor: '#EF4444',
+                            });
+                        }
                     } finally {
                         isSubmittingAdoption = false;
-                        adoptBtnEl.disabled = false;
-                        adoptBtnEl.style.opacity = '1';
+                        // Không reset lại nút nếu đã đăng ký thành công
+                        if (!adoptBtnEl.innerHTML.includes('Chờ duyệt')) {
+                            adoptBtnEl.disabled = false;
+                            adoptBtnEl.style.opacity = '1';
+                        }
                     }
                 });
             });
@@ -813,6 +855,43 @@
         syncActionVisibility();
         hydrateCurrentAuthUser();
         hydratePetDetailFromApi();
+
+        // Kiểm tra xem user đã đăng ký nhận nuôi con này chưa
+        async function checkAdoptionStatus() {
+            const petId = getCurrentPetId();
+            if (!petId || !adoptBtnEl) return;
+
+            try {
+                const res = await fetch('/api/v1/adoption-requests/my', {
+                    credentials: 'same-origin',
+                    headers: { Accept: 'application/json' }
+                });
+                if (!res.ok) return; // Chưa đăng nhập hoặc lỗi → bỏ qua
+
+                const json = await res.json();
+                const requests = (json.data && json.data.requests) || (json.data && json.data.data) || [];
+
+                const existing = requests.find(r =>
+                    String(r.pet_id) === String(petId) && r.status !== 'rejected'
+                );
+
+                if (existing) {
+                    adoptBtnEl.disabled = true;
+                    adoptBtnEl.style.opacity = '0.75';
+                    adoptBtnEl.style.background = '#6b7280';
+                    adoptBtnEl.style.cursor = 'default';
+                    if (existing.status === 'approved') {
+                        adoptBtnEl.innerHTML = '✅ Đã được duyệt nhận nuôi';
+                    } else {
+                        adoptBtnEl.innerHTML = '⏳ Đã đăng ký — Chờ duyệt';
+                    }
+                }
+            } catch (e) {
+                // Bỏ qua lỗi, không ảnh hưởng trải nghiệm
+            }
+        }
+
+        checkAdoptionStatus();
     </script>
 
     <style>

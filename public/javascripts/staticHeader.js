@@ -20,84 +20,68 @@ if (userDropdownBtn && userDropdown) {
 (function () {
     const authUserState = document.getElementById('headerAuthUserState');
     const authGuestState = document.getElementById('headerAuthGuestState');
-    const displayNameText = document.getElementById('headerDisplayNameText');
-    const dropdownDisplayName = document.getElementById('headerDropdownDisplayName');
-    const userRoleText = document.getElementById('headerUserRole');
-    const managementLinkId = 'headerManagementLink';
-    const staffOnlyLinks = document.querySelectorAll('.role-staff-only');
-    const adminOnlyLinks = document.querySelectorAll('.role-admin-only');
 
     if (!authUserState || !authGuestState) {
         return;
     }
 
+    // ── BƯỚC 1: Inject dropdown chuẩn TRƯỚC — đồng bộ tất cả trang ──────
+    (function () {
+        const menu = document.getElementById('userDropdownMenu');
+        if (!menu) return;
+        menu.innerHTML = [
+            '<div class="dropdown-header">',
+            '<strong id="headerDropdownDisplayName">Tài khoản</strong>',
+            '<span class="user-role" id="headerUserRole">&#128100; User</span>',
+            '</div>',
+            '<div class="dropdown-divider"></div>',
+            '<a href="/profile" class="dropdown-item">&#128100; Tài khoản</a>',
+            '<a href="/my-favorites" class="dropdown-item">&#10084;&#65039; Thú cưng đã yêu thích</a>',
+            '<a href="/my-reports" class="dropdown-item">&#128203; Báo cáo của tôi</a>',
+            '<a href="/my-adoption-requests" class="dropdown-item">&#127968; Yêu cầu nhận nuôi</a>',
+            '<a href="/adopt/admin/add" class="dropdown-item role-staff-only is-auth-hidden">&#128062; Thêm thú cưng</a>',
+            '<a href="/admin/reports" class="dropdown-item role-staff-only is-auth-hidden">&#128450;&#65039; Duyệt báo cáo</a>',
+            '<a href="/admin/adoption-requests" class="dropdown-item role-staff-only is-auth-hidden">&#127968; Xét duyệt nhận nuôi</a>',
+            '<a href="/admin" class="dropdown-item role-admin-only is-auth-hidden">&#9881;&#65039; Quản trị</a>',
+            '<div class="dropdown-divider"></div>',
+            '<a href="#" class="dropdown-item logout" id="logoutBtn" onclick="handleLogout(event)">&#128682; Đăng xuất</a>',
+        ].join('');
+    })();
+    // ─────────────────────────────────────────────────────────────────────
+
+    // ── BƯỚC 2: Query elements SAU khi inject ────────────────────────────
+    const displayNameText     = document.getElementById('headerDisplayNameText');
+    const dropdownDisplayName = document.getElementById('headerDropdownDisplayName');
+    const userRoleText        = document.getElementById('headerUserRole');
+    // ─────────────────────────────────────────────────────────────────────
+
     const roleLabel = (role) => {
-        if (role === 0) return '👑 Admin';
-        if (role === 1) return '🛠️ Staff';
-        return '👤 User';
+        if (role === 0) return '&#128081; Admin';
+        if (role === 1) return '&#128296; Staff';
+        return '&#128100; User';
     };
 
     const hideRoleLinks = () => {
-        staffOnlyLinks.forEach((link) => {
+        document.querySelectorAll('.role-staff-only').forEach((link) => {
             link.classList.add('is-auth-hidden');
             link.classList.remove('is-auth-visible');
         });
-        adminOnlyLinks.forEach((link) => {
+        document.querySelectorAll('.role-admin-only').forEach((link) => {
             link.classList.add('is-auth-hidden');
             link.classList.remove('is-auth-visible');
         });
-
-        const managementLink = document.getElementById(managementLinkId);
-        if (managementLink) {
-            managementLink.classList.add('is-auth-hidden');
-            managementLink.classList.remove('is-auth-visible');
-        }
     };
 
     const showRoleLinksForRole = (role) => {
         hideRoleLinks();
-        const managementLink = document.getElementById(managementLinkId) || (() => {
-            const dropdownMenu = document.getElementById('userDropdownMenu');
-            if (!dropdownMenu) return null;
-
-            const profileLink = dropdownMenu.querySelector('a[href="/profile"]');
-            const link = document.createElement('a');
-            link.id = managementLinkId;
-            link.className = 'dropdown-item role-management-link is-auth-hidden';
-            link.href = '/admin';
-            if (profileLink && profileLink.nextSibling) {
-                profileLink.parentNode.insertBefore(link, profileLink.nextSibling);
-            } else if (profileLink && profileLink.parentNode) {
-                profileLink.parentNode.insertBefore(link, profileLink.nextSibling);
-            } else {
-                dropdownMenu.insertBefore(link, dropdownMenu.querySelector('.dropdown-divider'));
-            }
-            return link;
-        })();
-
-        if (managementLink) {
-            if (role === 0) {
-                managementLink.textContent = '🧭 Quản trị';
-                managementLink.href = '/admin';
-            } else if (role === 1) {
-                managementLink.textContent = '🛠️ Quản lý';
-                managementLink.href = '/admin';
-            } else {
-                managementLink.textContent = '🧭 Quản trị';
-                managementLink.href = '/admin';
-            }
-            managementLink.classList.remove('is-auth-hidden');
-            managementLink.classList.add('is-auth-visible');
-        }
-
         if (role === 0 || role === 1) {
-            staffOnlyLinks.forEach((link) => {
+            document.querySelectorAll('.role-staff-only').forEach((link) => {
                 link.classList.remove('is-auth-hidden');
                 link.classList.add('is-auth-visible');
             });
         }
         if (role === 0) {
-            adminOnlyLinks.forEach((link) => {
+            document.querySelectorAll('.role-admin-only').forEach((link) => {
                 link.classList.remove('is-auth-hidden');
                 link.classList.add('is-auth-visible');
             });
@@ -113,6 +97,28 @@ if (userDropdownBtn && userDropdown) {
         if (userDropdown) {
             userDropdown.classList.remove('active');
         }
+    };
+
+    const showUser = (user) => {
+        const safeName = (user && user.display_name) ? user.display_name : 'Tài khoản';
+        const safeRoleValue = user && typeof user.role === 'number' ? user.role : 2;
+        const safeRole = roleLabel(safeRoleValue);
+
+        if (displayNameText) {
+            displayNameText.textContent = safeName;
+        }
+        if (dropdownDisplayName) {
+            dropdownDisplayName.textContent = safeName;
+        }
+        if (userRoleText) {
+            userRoleText.innerHTML = safeRole;
+        }
+
+        authUserState.classList.remove('is-auth-hidden');
+        authUserState.classList.add('is-auth-visible');
+        authGuestState.classList.add('is-auth-hidden');
+        authGuestState.classList.remove('is-auth-visible');
+        showRoleLinksForRole(safeRoleValue);
     };
 
     const normalizeAuthTab = (tab) => {
@@ -172,7 +178,6 @@ if (userDropdownBtn && userDropdown) {
         if (!window.__pendingAuthOverlayOpen) {
             return;
         }
-
         window.__pendingAuthOverlayOpen = false;
         openAuthOverlaySafely(window.__pendingAuthOverlayTab || 'login');
     };
@@ -211,12 +216,10 @@ if (userDropdownBtn && userDropdown) {
         if (init && init.__skipUnauthorizedHandler) {
             return false;
         }
-
         const requestPath = getRequestPath(input);
         if (!requestPath.startsWith('/api/v1/')) {
             return false;
         }
-
         if (
             requestPath === '/api/v1/auth/login'
             || requestPath === '/api/v1/auth/register'
@@ -225,13 +228,11 @@ if (userDropdownBtn && userDropdown) {
         ) {
             return false;
         }
-
         return true;
     };
 
     const rejectUnauthorized = async (response, fallbackMessage) => {
         let message = fallbackMessage || 'Vui lòng đăng nhập tài khoản';
-
         try {
             const payload = await response.clone().json();
             if (payload && (payload.message || payload.error)) {
@@ -240,12 +241,10 @@ if (userDropdownBtn && userDropdown) {
         } catch (error) {
             // Keep fallback message when payload cannot be parsed.
         }
-
         showGuest();
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         openLoginOverlaySafely();
-
         throw new window.__petHelperUnauthorizedErrorClass(message);
     };
 
@@ -287,12 +286,10 @@ if (userDropdownBtn && userDropdown) {
                 credentials: 'include',
                 ...init,
             };
-
             const response = await nativeFetch(input, fetchOptions);
             if (response.status === 401 && shouldHandleUnauthorized(input, fetchOptions)) {
                 await rejectUnauthorized(response);
             }
-
             return response;
         };
     }
@@ -304,32 +301,9 @@ if (userDropdownBtn && userDropdown) {
             if (response.status === 401 && shouldHandleUnauthorized(input, init)) {
                 await rejectUnauthorized(response);
             }
-
             return response;
         };
     }
-
-    const showUser = (user) => {
-        const safeName = (user && user.display_name) ? user.display_name : 'Tài khoản';
-        const safeRoleValue = user && typeof user.role === 'number' ? user.role : 2;
-        const safeRole = roleLabel(safeRoleValue);
-
-        if (displayNameText) {
-            displayNameText.textContent = safeName;
-        }
-        if (dropdownDisplayName) {
-            dropdownDisplayName.textContent = safeName;
-        }
-        if (userRoleText) {
-            userRoleText.textContent = safeRole;
-        }
-
-        authUserState.classList.remove('is-auth-hidden');
-        authUserState.classList.add('is-auth-visible');
-        authGuestState.classList.add('is-auth-hidden');
-        authGuestState.classList.remove('is-auth-visible');
-        showRoleLinksForRole(safeRoleValue);
-    };
 
     window.applyHeaderGuestState = showGuest;
     window.applyHeaderUserState = showUser;
@@ -345,12 +319,10 @@ if (userDropdownBtn && userDropdown) {
             } catch (error) {
                 payload = null;
             }
-
             if (response.ok && payload && payload.success && payload.data && payload.data.user) {
                 showUser(payload.data.user);
                 return;
             }
-
             if (response.status === 401) {
                 showGuest();
             }

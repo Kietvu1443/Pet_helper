@@ -22,6 +22,7 @@ var adoptionRequestRouter = require("./routes/adoptionRequest");
 var reportRouter = require("./routes/report");
 var reportApiV1Router = require("./routes/api/v1/reports");
 var adminApiV1Router = require("./routes/api/v1/admin");
+var newsApiV1Router = require("./routes/api/v1/news");
 
 var app = express();
 
@@ -49,6 +50,7 @@ app.use("/auth", authRouter);
 app.use("/adopt", petRouter);
 app.use("/", adoptionRequestRouter);
 app.use("/", reportRouter);
+app.use("/api/v1", newsApiV1Router);
 
 // Catch 404 and forward to error handler
 app.use(function (req, res, next) {

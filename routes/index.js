@@ -1,8 +1,8 @@
 var express = require("express");
 var router = express.Router();
 
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
 const staticPagesRoot = path.join(__dirname, "..", "public", "pages");
 
@@ -11,6 +11,21 @@ router.get("/", function (req, res) {
   res.sendFile(path.join(staticPagesRoot, "index.html"));
 });
 
+router.get("/news", (_req, res) => {
+  res.sendFile(path.join(staticPagesRoot, "news.html"));
+});
+
+router.get("/news/:id", (_req, res) => {
+  res.sendFile(path.join(staticPagesRoot, "news-detail.html"));
+});
+
+router.get("/shop", (_req, res) => {
+  res.sendFile(path.join(staticPagesRoot, "shop.html"));
+});
+
+router.get("/booking", (_req, res) => {
+  res.sendFile(path.join(staticPagesRoot, "booking.html"));
+});
 // Favorites page shell (API-first static page)
 router.get("/favorites", (_req, res) => {
   res.redirect(302, "/my-favorites");
@@ -42,8 +57,8 @@ router.get("/api/pets/:id/local-avatar", function (req, res) {
     if (fs.existsSync(petDir)) {
       const files = fs.readdirSync(petDir);
       // Lọc ra các file ảnh
-      const imageFiles = files.filter(file => 
-        file.match(/\.(jpg|jpeg|png|webp|gif)$/i)
+      const imageFiles = files.filter((file) =>
+        file.match(/\.(jpg|jpeg|png|webp|gif)$/i),
       );
 
       if (imageFiles.length > 0) {

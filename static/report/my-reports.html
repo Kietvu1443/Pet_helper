@@ -37,13 +37,153 @@
     @keyframes shimmer { 0% { background-position: 100% 0; } 100% { background-position: 0 0; } }
     @media (max-width:980px){.my-reports-summary{grid-template-columns:repeat(2,minmax(0,1fr));}.my-reports-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
     @media (max-width:680px){.my-reports-page{padding:16px 12px 28px;}.my-reports-toolbar{grid-template-columns:1fr;}.my-reports-grid{grid-template-columns:1fr;}}
+
+    /* ── Tabs ── */
+    .page-tabs { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 2px solid #e2e8f0; padding-bottom: 0; }
+    .page-tab-btn { padding: 10px 22px; border: none; background: none; font-weight: 700; font-size: 0.95rem; color: #64748b; cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.2s; }
+    .page-tab-btn.active { color: #1f5133; border-bottom-color: #2d6a4f; }
+
+    /* ── My news cards ── */
+    .my-news-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 14px; }
+    .my-news-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 14px; overflow: hidden; }
+    .my-news-img { width: 100%; height: 160px; object-fit: cover; background: #e8f5e9; }
+    .my-news-body { padding: 12px; }
+    .my-news-pill { display: inline-flex; align-items: center; font-size: 0.75rem; border-radius: 999px; padding: 2px 8px; font-weight: 700; margin-bottom: 6px; }
+    .my-news-pill.status-pending { background: #fef3c7; color: #a16207; }
+    .my-news-pill.status-approved { background: #dcfce7; color: #166534; }
+    .my-news-pill.status-rejected { background: #fee2e2; color: #991b1b; }
+    .my-news-title { font-size: 0.92rem; font-weight: 700; color: #0f172a; line-height: 1.4; margin-bottom: 6px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .my-news-meta { font-size: 0.78rem; color: #64748b; }
+    .my-news-reason { margin-top: 6px; font-size: 0.78rem; color: #b91c1c; background: #fee2e2; padding: 6px 8px; border-radius: 6px; }
+    @media (max-width:980px){.my-news-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+    @media (max-width:680px){.my-news-grid{grid-template-columns:1fr;}}
   </style>
+    <link rel="stylesheet" href="/stylesheets/staticHeader.css">
 </head>
 <body>
-  <main class="my-reports-page"><div class="my-reports-wrap"><section class="my-reports-head"><h1>Báo cáo của tôi</h1><p>Theo dõi trạng thái tin thất lạc và tìm thấy của bạn trong một nơi.</p></section>
+<header class="header">
+        <div class="top-bar">
+            <a href="/" class="logo-group">
+                <div class="logo-circle">
+                    <img src="/images/the_logo.jpg" alt="logo" id="the_logo">
+                </div>
+                <div class="web-name">PET HELPER</div>
+            </a>
+            <div class="user-actions">
+                <div class="auth-user-actions is-auth-hidden" id="headerAuthUserState">
+                    <div class="user-dropdown" id="headerUserDropdown">
+                        <span id="userDropdownBtn" style="cursor: pointer;">
+                            <span id="headerDisplayNameText">Tài khoản</span> ▼
+                        </span>
+                        <div class="user-dropdown-menu" id="userDropdownMenu">
+                            <div class="dropdown-header">
+                                <strong id="headerDropdownDisplayName">Tài khoản</strong>
+                                <span class="user-role" id="headerUserRole">👤 User</span>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <a href="/profile" class="dropdown-item">👤 Tài khoản</a>
+                            <a href="/my-favorites" class="dropdown-item">❤️ Thú cưng đã yêu thích</a>
+                            <a href="/my-reports" class="dropdown-item">📋 Báo cáo của tôi</a>
+                            <a href="/adopt/admin/add" class="dropdown-item role-staff-only is-auth-hidden">🐾 Thêm thú cưng</a>
+                            <a href="/admin/reports" class="dropdown-item role-staff-only is-auth-hidden">📋 Duyệt báo cáo</a>
+                            <a href="/admin/adoption-requests" class="dropdown-item role-staff-only is-auth-hidden">🏠 Xét duyệt nhận nuôi</a>
+                            <a href="/admin" class="dropdown-item role-admin-only is-auth-hidden">⚙️ Quản trị</a>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" class="dropdown-item logout" id="logoutBtn" onclick="handleLogout(event)">🚪 Đăng xuất</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="auth-guest-actions is-auth-visible" id="headerAuthGuestState">
+                    <a href="#" onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('login'); } return false;"><span>Đăng nhập</span></a>
+                    <a href="#" onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('register'); } return false;"><span>Đăng ký</span></a>
+                </div>
+                <span class="lang-switch">VN / EN</span>
+            </div>
+            <button class="hamburger-btn" id="hamburgerBtn" aria-label="Mở menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+        </div>
+        <div class="mobile-nav-overlay" id="mobileNavOverlay"></div>
+        <nav class="main-nav" id="mainNav">
+            <button class="mobile-nav-close" id="mobileNavClose" aria-label="Đóng menu">✕</button>
+            <ul>
+                <li>
+                    <a href="#" class="has-dropdown nav-item">Nhận nuôi <span class="nav-arrow arrow">▼</span></a>
+                    <ul class="nav-dropdown">
+                        <li><a href="/adopt">Xem vật nuôi có thể nhận nuôi</a></li>
+                        <li><a href="/snap" style="color: #ea580c; font-weight: bold;">PetSnap (Tìm kiếm ngẫu hứng!)</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="has-dropdown nav-item">Thất lạc <span class="nav-arrow arrow">▼</span></a>
+                    <ul class="nav-dropdown">
+                        <li><a href="/lost">Báo mất thú cưng</a></li>
+                        <li><a href="/found">Báo tin nhặt được</a></li>
+                        <li><a href="/tips">Mẹo chăm sóc thú cưng</a></li>
+                        <li><a href="/reports/list">Xem báo cáo thất lạc</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="has-dropdown nav-item">Dịch vụ <span class="nav-arrow arrow">▼</span></a>
+                    <ul class="nav-dropdown">
+                        <li><a href="/booking">Đặt lịch tiêm phòng</a></li>
+                        <li><a href="/shop">Danh mục đồ ăn/ đồ dùng</a></li>
+                    </ul>
+                </li>
+                <li><a href="/news">Tin tức</a></li>
+                <li>
+                    <a href="#" class="has-dropdown nav-item">Về chúng tôi <span class="nav-arrow arrow">▼</span></a>
+                    <ul class="nav-dropdown">
+                        <li><a href="#contact-section">Liên hệ với chúng tôi</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </header>
+  <main class="my-reports-page"><div class="my-reports-wrap">
+  <section class="my-reports-head"><h1>Báo cáo & Bài tin của tôi</h1><p>Theo dõi báo cáo thú cưng và bài tin bạn đã đăng.</p></section>
+
+  <!-- Tabs -->
+  <div class="page-tabs">
+    <button class="page-tab-btn active" id="tabReports" onclick="switchTab('reports')">🐾 Báo cáo thú cưng</button>
+    <button class="page-tab-btn" id="tabNews" onclick="switchTab('news')">📰 Bài tin của tôi</button>
+  </div>
+
+  <!-- Panel: Báo cáo thú cưng -->
+  <div id="panelReports">
+  <section class="my-reports-head" style="background:none;color:#1f5133;box-shadow:none;padding:0;margin-bottom:14px;"><p style="margin:0;color:#5f6f67;">Theo dõi trạng thái tin thất lạc và tìm thấy của bạn.</p></section>
   <section class="my-reports-summary"><div class="my-reports-summary-card"><small>Tổng báo cáo</small><strong id="sum-total">0</strong></div><div class="my-reports-summary-card"><small>Chờ duyệt</small><strong id="sum-pending">0</strong></div><div class="my-reports-summary-card"><small>Đã duyệt</small><strong id="sum-approved">0</strong></div><div class="my-reports-summary-card"><small>Đã từ chối</small><strong id="sum-rejected">0</strong></div></section>
   <section class="my-reports-toolbar"><select id="filterStatus"><option value="">Tất cả trạng thái</option><option value="pending">Chờ duyệt</option><option value="approved">Đã duyệt</option><option value="rejected">Đã từ chối</option></select><select id="filterType"><option value="">Tất cả loại báo cáo</option><option value="lost">Thất lạc</option><option value="found">Tìm thấy</option></select><button id="refreshMyReportsBtn" type="button">Làm mới danh sách</button></section>
-  <div class="my-reports-status" id="myReportsStatus"></div><section class="my-reports-grid" id="myReportsGrid"></section><div class="my-reports-pagination" id="myReportsPagination"></div></div></main>
+  <div class="my-reports-status" id="myReportsStatus"></div><section class="my-reports-grid" id="myReportsGrid"></section><div class="my-reports-pagination" id="myReportsPagination"></div>
+  </div><!-- /panelReports -->
+
+  <!-- Panel: Bài tin của tôi -->
+  <div id="panelNews" style="display:none">
+    <!-- Filter tabs giống báo cáo thú cưng -->
+    <section class="my-reports-summary">
+      <div class="my-reports-summary-card"><small>Tổng bài tin</small><strong id="news-sum-total">0</strong></div>
+      <div class="my-reports-summary-card"><small>Chờ duyệt</small><strong id="news-sum-pending">0</strong></div>
+      <div class="my-reports-summary-card"><small>Đã duyệt</small><strong id="news-sum-approved">0</strong></div>
+      <div class="my-reports-summary-card"><small>Bị từ chối</small><strong id="news-sum-rejected">0</strong></div>
+    </section>
+    <section class="my-reports-toolbar" style="grid-template-columns:1fr auto;margin-bottom:16px;">
+      <select id="newsFilterStatus" onchange="filterMyNews()">
+        <option value="">Tất cả trạng thái</option>
+        <option value="pending">Chờ duyệt</option>
+        <option value="approved">Đã duyệt</option>
+        <option value="rejected">Bị từ chối</option>
+      </select>
+      <button onclick="window.loadMyNews(1)" type="button">Làm mới</button>
+    </section>
+    <div id="myNewsStatus" style="color:#64748b;font-size:0.9rem;margin-bottom:12px;min-height:20px;"></div>
+    <div id="myNewsGrid" class="my-news-grid"></div>
+    <div id="myNewsEmpty" style="display:none;text-align:center;padding:40px;color:#aaa;background:#fff;border:1px dashed #e2e8f0;border-radius:14px;">Bạn chưa đăng bài tin nào.</div>
+    <div id="myNewsPagination" style="display:flex;gap:6px;justify-content:center;margin-top:16px;flex-wrap:wrap;"></div>
+  </div><!-- /panelNews -->
+
+  </div></main>
   <script>
     (function(){
       var state={page:1,limit:12,status:'',type:''};
@@ -63,7 +203,115 @@
       document.getElementById('refreshMyReportsBtn').addEventListener('click',function(){loadReports();});
       paginationEl.addEventListener('click',function(e){var btn=e.target.closest('button[data-page]');if(!btn)return;state.page=Number(btn.getAttribute('data-page'))||1;loadReports();});
       loadReports();
+
+      // ── Tab switching (khai báo ở script riêng bên dưới) ─────────────
+
+      // ── My news ─────────────────────────────────────────────────────
+      const CAT = { community:'🐾 Cộng đồng', health:'💉 Sức khỏe', adoption:'🏠 Nhận nuôi', knowledge:'📚 Kiến thức', rescue:'🆘 Cứu hộ' };
+
+      function newsStatusLabel(s) {
+        if (s === 'pending') return 'Chờ duyệt';
+        if (s === 'approved') return 'Đã duyệt';
+        if (s === 'rejected') return 'Bị từ chối';
+        return s;
+      }
+
+      function timeAgo(d) {
+        const diff = (Date.now() - new Date(d)) / 1000;
+        if (diff < 3600) return Math.floor(diff/60) + ' phút trước';
+        if (diff < 86400) return Math.floor(diff/3600) + ' giờ trước';
+        if (diff < 604800) return Math.floor(diff/86400) + ' ngày trước';
+        return new Date(d).toLocaleDateString('vi-VN');
+      }
+
+      let allMyNews = [];
+
+      window.filterMyNews = function() {
+        const filterStatus = document.getElementById('newsFilterStatus').value;
+        const filtered = filterStatus ? allMyNews.filter(n => n.status === filterStatus) : allMyNews;
+        renderMyNewsGrid(filtered);
+        document.getElementById('myNewsStatus').textContent = 'Hiển thị ' + filtered.length + ' / ' + allMyNews.length + ' bài tin';
+      };
+
+      function renderMyNewsGrid(news) {
+        const grid = document.getElementById('myNewsGrid');
+        const empty = document.getElementById('myNewsEmpty');
+        if (!news || !news.length) {
+          grid.innerHTML = '';
+          empty.style.display = 'block';
+          return;
+        }
+        empty.style.display = 'none';
+        grid.innerHTML = news.map(n => {
+          const reason = n.status === 'rejected' && n.rejected_reason
+            ? '<div class="my-news-reason">Lý do: ' + escapeHtml(n.rejected_reason) + '</div>' : '';
+          const link = n.status === 'approved' ? '<a href="/news/' + n.id + '" style="font-size:0.8rem;color:#2d6a4f;font-weight:700;display:block;margin-top:8px;">Xem bài →</a>' : '';
+          return '<div class="my-news-card">' +
+            (n.image ? '<img class="my-news-img" src="' + escapeHtml(n.image) + '" onerror="this.style.display=\'none\'">' : '<div class="my-news-img" style="display:flex;align-items:center;justify-content:center;font-size:2.5rem;">📰</div>') +
+            '<div class="my-news-body">' +
+            '<div>' +
+            '<span class="my-news-pill status-' + escapeHtml(n.status) + '">' + newsStatusLabel(n.status) + '</span> ' +
+            '<span style="font-size:0.72rem;color:#64748b;">' + (CAT[n.category] || n.category) + '</span>' +
+            '</div>' +
+            '<div class="my-news-title">' + escapeHtml(n.title) + '</div>' +
+            '<div class="my-news-meta">📅 ' + timeAgo(n.created_at) + ' · 👁 ' + (n.view_count || 0) + '</div>' +
+            reason + link +
+            '</div></div>';
+        }).join('');
+      }
+
+      window.loadMyNews = async function loadMyNews(page) {
+        const grid = document.getElementById('myNewsGrid');
+        const empty = document.getElementById('myNewsEmpty');
+        const status = document.getElementById('myNewsStatus');
+        const pag = document.getElementById('myNewsPagination');
+
+        grid.innerHTML = '<div class="my-reports-skeleton"></div><div class="my-reports-skeleton"></div><div class="my-reports-skeleton"></div>';
+        empty.style.display = 'none';
+        pag.innerHTML = '';
+        status.textContent = 'Đang tải...';
+
+        try {
+          const res = await fetch('/api/v1/news/my?page=1&limit=100', { credentials: 'include' });
+          const payload = await res.json();
+          if (!payload.success) throw new Error(payload.message);
+
+          const { news, total } = payload.data;
+          allMyNews = news || [];
+
+          document.getElementById('news-sum-total').textContent = total || 0;
+          document.getElementById('news-sum-pending').textContent = allMyNews.filter(n => n.status === 'pending').length;
+          document.getElementById('news-sum-approved').textContent = allMyNews.filter(n => n.status === 'approved').length;
+          document.getElementById('news-sum-rejected').textContent = allMyNews.filter(n => n.status === 'rejected').length;
+
+          status.textContent = 'Bạn đã đăng ' + (total || 0) + ' bài tin';
+          document.getElementById('newsFilterStatus').value = '';
+          renderMyNewsGrid(allMyNews);
+        } catch(e) {
+          grid.innerHTML = '';
+          status.textContent = 'Không thể tải bài tin: ' + (e.message || '');
+          status.style.color = '#b91c1c';
+        }
+      }
+
     })();
+  </script>
+    <div id="auth-overlay-mount"></div>
+    <script src="/javascripts/authOverlayLoader.js" defer></script>
+    <script src="/javascripts/staticHeader.js"></script>
+    <script src="/javascripts/staticFooter.js"></script>
+  <script>
+    // Khai báo sớm để onclick trong HTML gọi được
+    function switchTab(tab) {
+      document.getElementById('panelReports').style.display = tab === 'reports' ? '' : 'none';
+      document.getElementById('panelNews').style.display = tab === 'news' ? '' : 'none';
+      document.getElementById('tabReports').classList.toggle('active', tab === 'reports');
+      document.getElementById('tabNews').classList.toggle('active', tab === 'news');
+      if (tab === 'news' && !window.__myNewsLoaded) {
+        window.__myNewsLoaded = true;
+        if (typeof loadMyNews === 'function') loadMyNews(1);
+      }
+    }
   </script>
 </body>
 </html>

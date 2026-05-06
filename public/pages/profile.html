@@ -372,6 +372,56 @@
                 width: 100%;
             }
         }
+
+        .pwd-section {
+            border: 1px solid #dbece1;
+            border-radius: 12px;
+            background: #f9fcfa;
+            padding: 14px;
+            display: grid;
+            gap: 12px;
+        }
+
+        .pwd-title {
+            margin: 0 0 4px;
+            color: #1f5133;
+            font-size: 0.98rem;
+            font-weight: 800;
+        }
+
+        .pwd-desc {
+            margin: 0;
+            color: #64748b;
+            font-size: 0.88rem;
+            line-height: 1.45;
+        }
+
+        .pwd-hint {
+            margin: 0;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #64748b;
+        }
+
+        .pwd-hint.error {
+            color: #991b1b;
+        }
+
+        .pwd-hint.success {
+            color: #166534;
+        }
+
+        .pwd-forgot-link {
+            color: #2d6a4f;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .pwd-forgot-link:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 
@@ -516,6 +566,58 @@
                             <button type="submit" id="saveBtn" class="save-btn">Lưu thay đổi</button>
                         </div>
                     </form>
+
+                    <section class="pwd-section">
+                        <div>
+                            <p class="pwd-title">Đổi mật khẩu</p>
+                            <p class="pwd-desc">Cập nhật mật khẩu đăng nhập của bạn.</p>
+                        </div>
+
+                        <!-- Mode: Old password -->
+                        <div id="pwdModeOld">
+                            <div class="form-row">
+                                <label for="inputOldPassword">Mật khẩu hiện tại</label>
+                                <input id="inputOldPassword" type="password" maxlength="255">
+                            </div>
+                            <div class="form-row" style="margin-top: 10px;">
+                                <label for="inputNewPassword">Mật khẩu mới</label>
+                                <input id="inputNewPassword" type="password" maxlength="255" placeholder="Ít nhất 8 ký tự">
+                            </div>
+                            <div class="form-row" style="margin-top: 10px;">
+                                <label for="inputConfirmNewPassword">Xác nhận mật khẩu mới</label>
+                                <input id="inputConfirmNewPassword" type="password" maxlength="255" placeholder="Nhập lại mật khẩu mới">
+                            </div>
+                            <div style="margin-top: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+                                <a href="#" class="pwd-forgot-link" id="pwdForgotLink">Quên mật khẩu? Gửi mã OTP</a>
+                                <button type="button" class="verify-btn" id="pwdChangeBtn">Đổi mật khẩu</button>
+                            </div>
+                        </div>
+
+                        <!-- Mode: OTP -->
+                        <div id="pwdModeOtp" style="display: none;">
+                            <p class="pwd-desc" style="margin-bottom: 10px;">Mã OTP sẽ được gửi tới email của bạn để xác minh.</p>
+                            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                                <button type="button" class="verify-btn" id="pwdSendOtpBtn">Gửi mã OTP</button>
+                            </div>
+                            <div class="otp-row" style="margin-top: 10px;">
+                                <input type="text" id="pwdOtpInput" class="otp-input" maxlength="6" inputmode="numeric" placeholder="Nhập mã OTP">
+                            </div>
+                            <div class="form-row" style="margin-top: 10px;">
+                                <label for="inputNewPasswordOtp">Mật khẩu mới</label>
+                                <input id="inputNewPasswordOtp" type="password" maxlength="255" placeholder="Ít nhất 8 ký tự">
+                            </div>
+                            <div class="form-row" style="margin-top: 10px;">
+                                <label for="inputConfirmNewPasswordOtp">Xác nhận mật khẩu mới</label>
+                                <input id="inputConfirmNewPasswordOtp" type="password" maxlength="255" placeholder="Nhập lại mật khẩu mới">
+                            </div>
+                            <div style="margin-top: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+                                <a href="#" class="pwd-forgot-link" id="pwdBackToOldLink">← Nhập mật khẩu cũ</a>
+                                <button type="button" class="verify-btn" id="pwdChangeOtpBtn">Đổi mật khẩu</button>
+                            </div>
+                        </div>
+
+                        <p class="pwd-hint" id="pwdHint"></p>
+                    </section>
                 </div>
             </article>
         </section>
@@ -937,6 +1039,193 @@
         });
 
         loadProfile();
+
+        // ===== Change Password Logic =====
+        const pwdModeOld = document.getElementById('pwdModeOld');
+        const pwdModeOtp = document.getElementById('pwdModeOtp');
+        const pwdForgotLink = document.getElementById('pwdForgotLink');
+        const pwdBackToOldLink = document.getElementById('pwdBackToOldLink');
+        const pwdChangeBtn = document.getElementById('pwdChangeBtn');
+        const pwdChangeOtpBtn = document.getElementById('pwdChangeOtpBtn');
+        const pwdSendOtpBtn = document.getElementById('pwdSendOtpBtn');
+        const pwdOtpInput = document.getElementById('pwdOtpInput');
+        const pwdHint = document.getElementById('pwdHint');
+
+        let pwdOtpCooldownTimer = null;
+        let pwdOtpCooldownSeconds = 0;
+
+        const setPwdHint = (type, message) => {
+            pwdHint.className = 'pwd-hint';
+            if (type === 'error' || type === 'success') pwdHint.classList.add(type);
+            pwdHint.textContent = message || '';
+        };
+
+        const updatePwdSendOtpButtonText = () => {
+            if (pwdOtpCooldownSeconds > 0) {
+                pwdSendOtpBtn.textContent = `Gửi lại sau ${pwdOtpCooldownSeconds}s`;
+                return;
+            }
+            pwdSendOtpBtn.textContent = 'Gửi mã OTP';
+        };
+
+        const startPwdOtpCooldown = (seconds) => {
+            const duration = Number(seconds) || 60;
+            if (pwdOtpCooldownTimer) window.clearInterval(pwdOtpCooldownTimer);
+            pwdOtpCooldownSeconds = duration;
+            pwdSendOtpBtn.disabled = true;
+            updatePwdSendOtpButtonText();
+            pwdOtpCooldownTimer = window.setInterval(() => {
+                pwdOtpCooldownSeconds -= 1;
+                if (pwdOtpCooldownSeconds <= 0) {
+                    window.clearInterval(pwdOtpCooldownTimer);
+                    pwdOtpCooldownTimer = null;
+                    pwdOtpCooldownSeconds = 0;
+                    pwdSendOtpBtn.disabled = false;
+                }
+                updatePwdSendOtpButtonText();
+            }, 1000);
+        };
+
+        // Switch to OTP mode
+        pwdForgotLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            pwdModeOld.style.display = 'none';
+            pwdModeOtp.style.display = 'block';
+            setPwdHint('', '');
+        });
+
+        // Switch back to old password mode
+        pwdBackToOldLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            pwdModeOtp.style.display = 'none';
+            pwdModeOld.style.display = 'block';
+            setPwdHint('', '');
+        });
+
+        // Send OTP for password change
+        pwdSendOtpBtn.addEventListener('click', async () => {
+            if (pwdSendOtpBtn.disabled) return;
+            pwdSendOtpBtn.disabled = true;
+            pwdSendOtpBtn.textContent = 'Đang gửi...';
+            setPwdHint('', 'Đang gửi mã OTP...');
+            try {
+                const response = await fetch('/auth/change-password/send-otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+                    credentials: 'include',
+                });
+                const payload = await parseJsonSafe(response);
+                if (response.status === 401) {
+                    setPwdHint('error', 'Vui lòng đăng nhập lại');
+                    openLoginOverlay();
+                    pwdSendOtpBtn.disabled = false;
+                    updatePwdSendOtpButtonText();
+                    return;
+                }
+                if (!response.ok) {
+                    if (payload && payload.waitSeconds) {
+                        startPwdOtpCooldown(payload.waitSeconds);
+                    } else {
+                        pwdSendOtpBtn.disabled = false;
+                        updatePwdSendOtpButtonText();
+                    }
+                    setPwdHint('error', (payload && payload.error) || 'Không thể gửi mã OTP');
+                    return;
+                }
+                startPwdOtpCooldown(60);
+                setPwdHint('success', (payload && payload.message) || 'Mã OTP đã được gửi, kiểm tra email');
+                pwdOtpInput.focus();
+            } catch (err) {
+                pwdSendOtpBtn.disabled = false;
+                updatePwdSendOtpButtonText();
+                setPwdHint('error', 'Đã xảy ra lỗi khi gửi OTP');
+            }
+        });
+
+        // Change password with old password
+        pwdChangeBtn.addEventListener('click', async () => {
+            const oldPassword = document.getElementById('inputOldPassword').value;
+            const newPassword = document.getElementById('inputNewPassword').value;
+            const confirmNewPassword = document.getElementById('inputConfirmNewPassword').value;
+            if (!oldPassword) { setPwdHint('error', 'Vui lòng nhập mật khẩu hiện tại'); return; }
+            if (!newPassword || newPassword.length < 8) { setPwdHint('error', 'Mật khẩu mới phải có ít nhất 8 ký tự'); return; }
+            if (newPassword !== confirmNewPassword) { setPwdHint('error', 'Mật khẩu xác nhận không khớp'); return; }
+
+            pwdChangeBtn.disabled = true;
+            pwdChangeBtn.textContent = 'Đang xử lý...';
+            setPwdHint('', '');
+            try {
+                const response = await fetch('/auth/change-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ oldPassword, newPassword }),
+                });
+                const payload = await parseJsonSafe(response);
+                if (response.status === 401 && payload && payload.error === 'Mật khẩu hiện tại không đúng.') {
+                    setPwdHint('error', payload.error);
+                } else if (response.status === 401) {
+                    setPwdHint('error', 'Vui lòng đăng nhập lại');
+                    openLoginOverlay();
+                } else if (!response.ok) {
+                    setPwdHint('error', (payload && payload.error) || 'Không thể đổi mật khẩu');
+                } else {
+                    setPwdHint('success', (payload && payload.message) || 'Đổi mật khẩu thành công!');
+                    document.getElementById('inputOldPassword').value = '';
+                    document.getElementById('inputNewPassword').value = '';
+                    document.getElementById('inputConfirmNewPassword').value = '';
+                }
+            } catch (err) {
+                setPwdHint('error', 'Đã xảy ra lỗi');
+            } finally {
+                pwdChangeBtn.disabled = false;
+                pwdChangeBtn.textContent = 'Đổi mật khẩu';
+            }
+        });
+
+        // Change password with OTP
+        pwdChangeOtpBtn.addEventListener('click', async () => {
+            const otp = String(pwdOtpInput.value || '').trim();
+            const newPassword = document.getElementById('inputNewPasswordOtp').value;
+            const confirmNewPassword = document.getElementById('inputConfirmNewPasswordOtp').value;
+            if (!/^\d{6}$/.test(otp)) { setPwdHint('error', 'Vui lòng nhập đúng mã OTP 6 chữ số'); return; }
+            if (!newPassword || newPassword.length < 8) { setPwdHint('error', 'Mật khẩu mới phải có ít nhất 8 ký tự'); return; }
+            if (newPassword !== confirmNewPassword) { setPwdHint('error', 'Mật khẩu xác nhận không khớp'); return; }
+
+            pwdChangeOtpBtn.disabled = true;
+            pwdChangeOtpBtn.textContent = 'Đang xử lý...';
+            setPwdHint('', '');
+            try {
+                const response = await fetch('/auth/change-password/with-otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ otp, newPassword }),
+                });
+                const payload = await parseJsonSafe(response);
+                if (response.status === 401) {
+                    setPwdHint('error', 'Vui lòng đăng nhập lại');
+                    openLoginOverlay();
+                } else if (!response.ok) {
+                    setPwdHint('error', (payload && payload.error) || 'Không thể đổi mật khẩu');
+                } else {
+                    setPwdHint('success', (payload && payload.message) || 'Đổi mật khẩu thành công!');
+                    pwdOtpInput.value = '';
+                    document.getElementById('inputNewPasswordOtp').value = '';
+                    document.getElementById('inputConfirmNewPasswordOtp').value = '';
+                }
+            } catch (err) {
+                setPwdHint('error', 'Đã xảy ra lỗi');
+            } finally {
+                pwdChangeOtpBtn.disabled = false;
+                pwdChangeOtpBtn.textContent = 'Đổi mật khẩu';
+            }
+        });
+
+        // OTP input: only digits
+        pwdOtpInput.addEventListener('input', () => {
+            pwdOtpInput.value = pwdOtpInput.value.replace(/\D/g, '').slice(0, 6);
+        });
     </script>
 </body>
 

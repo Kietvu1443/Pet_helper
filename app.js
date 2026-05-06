@@ -61,7 +61,7 @@ app.use(function (req, res, next) {
 app.use(function (err, req, res, next) {
   const status = err.status || 500;
 
-  if ((req.path || "").startsWith("/api")) {
+  if ((req.path || "").startsWith("/api") || req.xhr || (req.headers.accept && req.headers.accept.includes("application/json"))) {
     return res.status(status).json({
       success: false,
       message: err.message || "Đã xảy ra lỗi",

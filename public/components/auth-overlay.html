@@ -45,7 +45,7 @@
                 <label class="auth-overlay__checkbox">
                     <input type="checkbox" name="remember"> Ghi nhớ đăng nhập
                 </label>
-                <a href="#" class="auth-overlay__forgot">Quên mật khẩu?</a>
+                <a href="#" class="auth-overlay__forgot" id="overlayForgotLink" onclick="overlayShowForgotPassword(); return false;">Quên mật khẩu?</a>
             </div>
             <button type="submit" class="auth-overlay__btn">ĐĂNG NHẬP</button>
         </form>
@@ -97,6 +97,45 @@
             </div>
             <button type="submit" class="auth-overlay__btn">TẠO TÀI KHOẢN</button>
         </form>
+
+        <!-- ===== FORGOT PASSWORD FORM ===== -->
+        <div id="overlayForgotPasswordForm" class="auth-overlay__form auth-overlay__hidden">
+            <!-- Step 1: Enter email -->
+            <div id="forgotStep1">
+                <p style="font-size: 0.92rem; color: #555; margin-bottom: 16px;">Nhập email tài khoản của bạn để nhận mã OTP đặt lại mật khẩu.</p>
+                <div class="auth-overlay__field">
+                    <label for="overlayForgotEmail">Email</label>
+                    <input type="email" id="overlayForgotEmail" placeholder="email@example.com" required>
+                </div>
+                <button type="button" class="auth-overlay__btn" id="forgotSendOtpBtn" onclick="forgotSendOtp()">GỬI MÃ OTP</button>
+            </div>
+            <!-- Step 2: Enter OTP + new password -->
+            <div id="forgotStep2" style="display: none;">
+                <p style="font-size: 0.92rem; color: #555; margin-bottom: 16px;">Nhập mã OTP đã gửi về email và mật khẩu mới.</p>
+                <div class="auth-overlay__field">
+                    <label for="overlayForgotOtp">Mã OTP</label>
+                    <input type="text" id="overlayForgotOtp" maxlength="6" inputmode="numeric" placeholder="Nhập mã 6 chữ số" required>
+                </div>
+                <div class="auth-overlay__field">
+                    <label for="overlayForgotNewPassword">Mật khẩu mới</label>
+                    <div class="auth-overlay__password-wrap">
+                        <input type="password" id="overlayForgotNewPassword" placeholder="Ít nhất 8 ký tự" required minlength="8">
+                        <span class="auth-overlay__toggle-pass" onclick="overlayTogglePassword('overlayForgotNewPassword', this)">👁️</span>
+                    </div>
+                </div>
+                <div class="auth-overlay__field">
+                    <label for="overlayForgotConfirmPassword">Xác nhận mật khẩu</label>
+                    <div class="auth-overlay__password-wrap">
+                        <input type="password" id="overlayForgotConfirmPassword" placeholder="Nhập lại mật khẩu" required>
+                        <span class="auth-overlay__toggle-pass" onclick="overlayTogglePassword('overlayForgotConfirmPassword', this)">👁️</span>
+                    </div>
+                </div>
+                <button type="button" class="auth-overlay__btn" id="forgotResetBtn" onclick="forgotResetPassword()">ĐẶT LẠI MẬT KHẨU</button>
+            </div>
+            <p style="text-align: center; margin-top: 14px; font-size: 0.85rem;">
+                <a href="#" style="color: #2d6a4f; font-weight: 600; text-decoration: none;" onclick="overlayBackToLogin(); return false;">← Quay lại đăng nhập</a>
+            </p>
+        </div>
 
         <!-- Social Login -->
         <div class="auth-overlay__social">
@@ -638,6 +677,7 @@
         const tabs = document.querySelectorAll('.auth-overlay__tab');
         const loginForm = document.getElementById('overlayLoginForm');
         const registerForm = document.getElementById('overlayRegisterForm');
+        const forgotForm = document.getElementById('overlayForgotPasswordForm');
 
         tabs.forEach(function (tab) {
             tab.addEventListener('click', function () {
@@ -646,6 +686,9 @@
 
                 tabs.forEach(function (t) { t.classList.remove('active'); });
                 tab.classList.add('active');
+
+                // Always hide forgot password form when switching tabs
+                if (forgotForm) forgotForm.classList.add('auth-overlay__hidden');
 
                 if (target === 'login') {
                     loginForm.classList.remove('auth-overlay__hidden');
@@ -827,4 +870,137 @@
             }, 300);
         }
     })();
+
+    // ===== Forgot Password Flow =====
+    function overlayShowForgotPassword() {
+        overlayHideAlerts();
+        var loginForm = document.getElementById('overlayLoginForm');
+        var registerForm = document.getElementById('overlayRegisterForm');
+        var forgotForm = document.getElementById('overlayForgotPasswordForm');
+        var tabs = document.querySelector('.auth-overlay__tabs');
+        if (loginForm) loginForm.classList.add('auth-overlay__hidden');
+        if (registerForm) registerForm.classList.add('auth-overlay__hidden');
+        if (forgotForm) {
+            forgotForm.classList.remove('auth-overlay__hidden');
+            forgotForm.classList.add('auth-overlay__fade-in');
+        }
+        if (tabs) tabs.style.display = 'none';
+        // Reset to step 1
+        var step1 = document.getElementById('forgotStep1');
+        var step2 = document.getElementById('forgotStep2');
+        if (step1) step1.style.display = 'block';
+        if (step2) step2.style.display = 'none';
+    }
+
+    function overlayBackToLogin() {
+        overlayHideAlerts();
+        var loginForm = document.getElementById('overlayLoginForm');
+        var forgotForm = document.getElementById('overlayForgotPasswordForm');
+        var tabs = document.querySelector('.auth-overlay__tabs');
+        if (forgotForm) forgotForm.classList.add('auth-overlay__hidden');
+        if (loginForm) {
+            loginForm.classList.remove('auth-overlay__hidden');
+            loginForm.classList.add('auth-overlay__fade-in');
+        }
+        if (tabs) tabs.style.display = '';
+        // Re-activate login tab
+        var loginTab = document.getElementById('overlay-tab-login');
+        var regTab = document.getElementById('overlay-tab-register');
+        if (loginTab) loginTab.classList.add('active');
+        if (regTab) regTab.classList.remove('active');
+    }
+
+    var __forgotEmail = '';
+
+    async function forgotSendOtp() {
+        var btn = document.getElementById('forgotSendOtpBtn');
+        var emailInput = document.getElementById('overlayForgotEmail');
+        var email = (emailInput.value || '').trim().toLowerCase();
+        if (!email) {
+            overlayShowError('Vui lòng nhập email.');
+            return;
+        }
+        overlayHideAlerts();
+        var originalText = btn.textContent;
+        btn.textContent = 'Đang gửi...';
+        btn.classList.add('loading');
+        try {
+            var response = await fetch('/auth/forgot-password/send-otp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email }),
+            });
+            var data = null;
+            try { data = await response.json(); } catch (e) {}
+            if (!response.ok) {
+                overlayShowError((data && data.error) || 'Không thể gửi mã OTP.');
+                btn.textContent = originalText;
+                btn.classList.remove('loading');
+                return;
+            }
+            __forgotEmail = email;
+            overlayShowSuccess((data && data.message) || 'Mã OTP đã được gửi!');
+            // Move to step 2
+            var step1 = document.getElementById('forgotStep1');
+            var step2 = document.getElementById('forgotStep2');
+            if (step1) step1.style.display = 'none';
+            if (step2) step2.style.display = 'block';
+            btn.textContent = originalText;
+            btn.classList.remove('loading');
+        } catch (err) {
+            console.error('Forgot send OTP error:', err);
+            overlayShowError('Đã xảy ra lỗi kết nối.');
+            btn.textContent = originalText;
+            btn.classList.remove('loading');
+        }
+    }
+
+    async function forgotResetPassword() {
+        var btn = document.getElementById('forgotResetBtn');
+        var otp = (document.getElementById('overlayForgotOtp').value || '').trim();
+        var newPassword = document.getElementById('overlayForgotNewPassword').value;
+        var confirmPassword = document.getElementById('overlayForgotConfirmPassword').value;
+        if (!otp || otp.length !== 6) {
+            overlayShowError('Vui lòng nhập đúng mã OTP 6 chữ số.');
+            return;
+        }
+        if (!newPassword || newPassword.length < 8) {
+            overlayShowError('Mật khẩu mới phải có ít nhất 8 ký tự.');
+            return;
+        }
+        if (newPassword !== confirmPassword) {
+            overlayShowError('Mật khẩu xác nhận không khớp.');
+            return;
+        }
+        overlayHideAlerts();
+        var originalText = btn.textContent;
+        btn.textContent = 'Đang xử lý...';
+        btn.classList.add('loading');
+        try {
+            var response = await fetch('/auth/forgot-password/reset', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: __forgotEmail, otp: otp, newPassword: newPassword }),
+            });
+            var data = null;
+            try { data = await response.json(); } catch (e) {}
+            if (!response.ok) {
+                overlayShowError((data && data.error) || 'Không thể đặt lại mật khẩu.');
+                btn.textContent = originalText;
+                btn.classList.remove('loading');
+                return;
+            }
+            overlayShowSuccess((data && data.message) || 'Đặt lại mật khẩu thành công!');
+            // After 2s, go back to login
+            setTimeout(function () {
+                overlayBackToLogin();
+                overlayHideAlerts();
+            }, 2000);
+        } catch (err) {
+            console.error('Forgot reset error:', err);
+            overlayShowError('Đã xảy ra lỗi kết nối.');
+            btn.textContent = originalText;
+            btn.classList.remove('loading');
+        }
+    }
 </script>

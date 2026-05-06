@@ -433,6 +433,8 @@ img {
 .btn-green {
   background: var(--primary-color);
   color: white;
+  border-radius: 20px;
+  padding: 10px 20px;
 }
 
 .btn-green:hover {

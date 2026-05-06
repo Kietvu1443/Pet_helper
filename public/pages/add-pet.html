@@ -16,7 +16,7 @@
         <div class="top-bar">
             <a href="/" class="logo-group">
                 <div class="logo-circle">
-                    <img src="/images/the_logo.jpg" alt="logo" id="the_logo">
+                    <img src="/images/the_logo.webp" alt="logo" id="the_logo">
                 </div>
                 <div class="web-name">PET HELPER</div>
             </a>
@@ -35,16 +35,22 @@
                             <a href="/profile" class="dropdown-item">👤 Tài khoản</a>
                             <a href="/favorites" class="dropdown-item">❤️ Thú cưng đã yêu thích</a>
                             <a href="/my-reports" class="dropdown-item">📋 Báo cáo của tôi</a>
-                            <a href="/adopt/admin/add" class="dropdown-item role-staff-only is-auth-hidden">🐾 Thêm thú cưng</a>
+                            <a href="/adopt/admin/add" class="dropdown-item role-staff-only is-auth-hidden">🐾 Thêm thú
+                                cưng</a>
                             <a href="/admin" class="dropdown-item role-admin-only is-auth-hidden">⚙️ Quản trị</a>
                             <div class="dropdown-divider"></div>
-                            <a href="#" class="dropdown-item logout" id="logoutBtn" onclick="handleLogout(event)">🚪 Đăng xuất</a>
+                            <a href="#" class="dropdown-item logout" id="logoutBtn" onclick="handleLogout(event)">🚪
+                                Đăng xuất</a>
                         </div>
                     </div>
                 </div>
                 <div class="auth-guest-actions is-auth-visible" id="headerAuthGuestState">
-                    <a href="#" onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('login'); } return false;"><span>Đăng nhập</span></a>
-                    <a href="#" onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('register'); } return false;"><span>Đăng ký</span></a>
+                    <a href="#"
+                        onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('login'); } return false;"><span>Đăng
+                            nhập</span></a>
+                    <a href="#"
+                        onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('register'); } return false;"><span>Đăng
+                            ký</span></a>
                 </div>
                 <span>Giỏ hàng <span id="cart-count-display">(0)</span></span>
                 <span class="lang-switch">VN / EN</span>
@@ -65,7 +71,8 @@
                     <a href="#" class="has-dropdown nav-item">Nhận nuôi <span class="nav-arrow arrow">▼</span></a>
                     <ul class="nav-dropdown">
                         <li><a href="/adopt">Xem vật nuôi có thể nhận nuôi</a></li>
-                        <li><a href="/snap" style="color: #ea580c; font-weight: bold;">PetSnap(Tìm kiếm thú cưng ngẫu hứng!)</a></li>
+                        <li><a href="/snap" style="color: #ea580c; font-weight: bold;">PetSnap(Tìm kiếm thú cưng ngẫu
+                                hứng!)</a></li>
                     </ul>
                 </li>
                 <li>
@@ -107,7 +114,8 @@
 
             <div id="petAdminApiMessage" style="display:none; margin-bottom: 14px;"></div>
 
-            <form id="petAdminForm" class="auth-form" data-mode="create" data-pet-id="" action="#" method="POST" enctype="multipart/form-data">
+            <form id="petAdminForm" class="auth-form" data-mode="create" data-pet-id="" action="#" method="POST"
+                enctype="multipart/form-data">
                 <div class="form-row">
                     <div class="form-group">
                         <label for="name">Tên thú cưng *</label>
@@ -179,7 +187,8 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="vaccination">Tiêm phòng</label>
-                        <input type="text" id="vaccination" name="vaccination" placeholder="VD: Đã tiêm, Chưa tiêm..." value="">
+                        <input type="text" id="vaccination" name="vaccination" placeholder="VD: Đã tiêm, Chưa tiêm..."
+                            value="">
                     </div>
                     <div class="form-group">
                         <label for="contact_info">TNV liên hệ</label>
@@ -194,13 +203,15 @@
 
                 <div class="form-group">
                     <label for="description">Mô tả</label>
-                    <textarea id="description" name="description" rows="4" style="width: 100%; padding: 12px; border: 2px solid #E5E7EB; border-radius: 10px; font-size: 0.95rem; resize: vertical;"></textarea>
+                    <textarea id="description" name="description" rows="4"
+                        style="width: 100%; padding: 12px; border: 2px solid #E5E7EB; border-radius: 10px; font-size: 0.95rem; resize: vertical;"></textarea>
                 </div>
 
                 <div class="form-group">
                     <label for="image">Ảnh thú cưng</label>
                     <div id="petAdminCurrentImage" style="margin-bottom: 10px; display: none;"></div>
-                    <input type="file" id="image" name="image" accept="image/*" style="padding: 10px; border: 2px dashed #E5E7EB; border-radius: 10px; width: 100%;">
+                    <input type="file" id="image" name="image" accept="image/*"
+                        style="padding: 10px; border: 2px dashed #E5E7EB; border-radius: 10px; width: 100%;">
                     <p style="font-size: 0.8rem; color: #64748B; margin-top: 5px;">
                         Chấp nhận: JPEG, PNG, GIF, WebP (tối đa 5MB)
                     </p>
@@ -208,7 +219,8 @@
 
                 <div style="display: flex; gap: 15px; margin-top: 20px; flex-wrap: wrap;">
                     <button type="submit" class="btn btn-green btn-full" id="petAdminSubmitBtn">➕ Thêm mới</button>
-                    <button type="button" class="btn btn-outline-gray btn-full" id="petAdminDeleteBtn" style="border-color: #dc2626; color: #dc2626; display: none;">🗑️ Xóa</button>
+                    <button type="button" class="btn btn-outline-gray btn-full" id="petAdminDeleteBtn"
+                        style="border-color: #dc2626; color: #dc2626; display: none;">🗑️ Xóa</button>
                     <a href="/adopt" class="btn btn-outline-gray btn-full" style="text-align: center;">❌ Hủy</a>
                 </div>
             </form>
@@ -222,7 +234,8 @@
                     <span style="font-size: 1.5rem;">🐾</span>
                     <span>Pet Helper</span>
                 </a>
-                <p>Nền tảng hỗ trợ và bảo vệ vật nuôi hàng đầu Việt Nam. Cùng nhau xây dựng cộng đồng yêu thương động vật - Green Project 2026.</p>
+                <p>Nền tảng hỗ trợ và bảo vệ vật nuôi hàng đầu Việt Nam. Cùng nhau xây dựng cộng đồng yêu thương động
+                    vật - Green Project 2026.</p>
             </div>
 
             <div class="footer-links">

@@ -1,6 +1,6 @@
 const { pool } = require("../config/db");
 
-const DEFAULT_PLACEHOLDER_IMAGE = "/images/the_logo.jpg";
+const DEFAULT_PLACEHOLDER_IMAGE = "/images/the_logo.webp";
 
 const Report = {
   /**
@@ -80,7 +80,10 @@ const Report = {
     const params = [];
     let whereClause = "";
 
-    if (status && ["pending", "approved", "rejected", "resolved"].includes(status)) {
+    if (
+      status &&
+      ["pending", "approved", "rejected", "resolved"].includes(status)
+    ) {
       whereClause = "WHERE r.status = ?";
       params.push(status);
     }

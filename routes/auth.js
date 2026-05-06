@@ -23,4 +23,20 @@ router.post("/send-otp", isAuthenticated, authController.sendOtp);
 // POST - Verify OTP
 router.post("/verify-otp", isAuthenticated, authController.verifyOtp);
 
+// POST - Forgot password: send OTP (public)
+router.post("/forgot-password/send-otp", authController.forgotPasswordSendOtp);
+
+// POST - Forgot password: reset with OTP (public)
+router.post("/forgot-password/reset", authController.forgotPasswordReset);
+
+// POST - Change password with old password (requires auth)
+router.post("/change-password", isAuthenticated, authController.changePassword);
+
+// POST - Change password: send OTP (requires auth)
+router.post("/change-password/send-otp", isAuthenticated, authController.changePasswordSendOtp);
+
+// POST - Change password with OTP (requires auth)
+router.post("/change-password/with-otp", isAuthenticated, authController.changePasswordWithOtp);
+
 module.exports = router;
+

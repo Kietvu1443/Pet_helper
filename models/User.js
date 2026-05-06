@@ -73,6 +73,20 @@ const User = {
     return inputPassword === hashedPassword;
   },
 
+  // Update user password
+  async updatePassword(userId, newPassword) {
+    try {
+      const [result] = await pool.execute(
+        "UPDATE users SET password = ? WHERE id = ?",
+        [newPassword, userId],
+      );
+      return result.affectedRows > 0;
+    } catch (error) {
+      console.error("Error updating user password:", error);
+      throw error;
+    }
+  },
+
   // Update user role (admin only)
   async updateRole(userId, newRole) {
     try {

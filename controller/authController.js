@@ -120,7 +120,8 @@ const authController = {
       // Check if user is banned
       if (user.status === "banned") {
         return res.status(403).json({
-          error: "Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.",
+          error:
+            "Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.",
         });
       }
 
@@ -341,6 +342,345 @@ const authController = {
     } catch (error) {
       console.error("Verify OTP error:", error);
       res.status(500).json({ error: "Đã xảy ra lỗi. Vui lòng thử lại." });
+    }
+  },
+
+  // ===== Quên mật khẩu: Gửi OTP qua email (Public) =====
+  forgotPasswordSendOtp: async (req, res) => {
+    try {
+      const { email } = req.body;
+
+      if (!email) {
+        return res.status(400).json({ error: "Vui lòng nhập email." });
+      }
+
+      const user = await User.findByEmail(email);
+      if (!user) {
+        // Trả về thành công giả để tránh lộ thông tin email có tồn tại hay không
+        return res
+          .status(200)
+          .json({ message: "Nếu email tồn tại, mã OTP sẽ được gửi." });
+      }
+
+      // Rate limit
+      const recentCount = await EmailVerification.countRecentOtps(user.id, 10);
+      if (recentCount >= 3) {
+        return res.status(429).json({
+          error: "Bạn đã gửi quá nhiều yêu cầu. Vui lòng thử lại sau 10 phút.",
+        });
+      }
+
+      // Cooldown
+      const cooldown = await EmailVerification.checkCooldown(user.id, 60);
+      if (!cooldown.canSend) {
+        return res.status(429).json({
+          error: `Vui lòng chờ ${cooldown.waitSeconds} giây trước khi yêu cầu mã OTP mới.`,
+          waitSeconds: cooldown.waitSeconds,
+        });
+      }
+
+      // Xóa OTP cũ & tạo mới
+      await EmailVerification.deleteByUserId(user.id);
+      const otp = String(Math.floor(100000 + Math.random() * 900000));
+      const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
+      await EmailVerification.saveOtp(user.id, otp, expiresAt);
+
+      // Gửi email
+      const emailResult = await resend.emails.send({
+        from: "Pet Helper <noreply@mail.pethelper.app>",
+        to: user.email,
+        subject: "Đặt lại mật khẩu Pet Helper",
+        html: `
+          <div style="font-family: system-ui, sans-serif; max-width: 480px; margin: 0 auto; padding: 32px;">
+            <h2 style="color: #2b663e;">Pet Helper - Đặt lại mật khẩu</h2>
+            <p>Xin chào <b>${user.name}</b>,</p>
+            <p>Mã xác minh để đặt lại mật khẩu của bạn là:</p>
+            <div style="background: #f0fdf4; border: 2px solid #2b663e; border-radius: 12px; padding: 20px; text-align: center; margin: 24px 0;">
+              <span style="font-size: 32px; font-weight: 800; letter-spacing: 8px; color: #2b663e;">${otp}</span>
+            </div>
+            <p style="color: #666;">Mã này sẽ hết hạn sau <b>5 phút</b>.</p>
+            <p style="color: #666;">Nếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này.</p>
+            <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 24px 0;">
+            <p style="font-size: 12px; color: #999;">© Pet Helper - Hỗ Trợ & Bảo Vệ Vật Nuôi</p>
+          </div>
+        `,
+      });
+
+      if (emailResult.error) {
+        console.error("❌ Resend API error:", emailResult.error);
+        return res.status(500).json({
+          error: `Không thể gửi email: ${emailResult.error.message}.`,
+        });
+      }
+
+      console.log(
+        `✅ Password reset OTP sent to ${user.email} (OTP: ${otp} - chỉ log trong dev)`,
+      );
+      res
+        .status(200)
+        .json({ message: "Mã OTP đã được gửi tới email của bạn." });
+    } catch (error) {
+      console.error("Forgot password send OTP error:", error);
+      res
+        .status(500)
+        .json({ error: "Không thể gửi mã OTP. Vui lòng thử lại." });
+    }
+  },
+
+  // ===== Quên mật khẩu: Xác minh OTP & đặt lại mật khẩu (Public) =====
+  forgotPasswordReset: async (req, res) => {
+    try {
+      const { email, otp, newPassword } = req.body;
+
+      if (!email || !otp || !newPassword) {
+        return res
+          .status(400)
+          .json({ error: "Vui lòng nhập đầy đủ thông tin." });
+      }
+
+      if (otp.length !== 6) {
+        return res
+          .status(400)
+          .json({ error: "Vui lòng nhập đúng mã OTP 6 chữ số." });
+      }
+
+      if (newPassword.length < 8) {
+        return res
+          .status(400)
+          .json({ error: "Mật khẩu mới phải có ít nhất 8 ký tự." });
+      }
+
+      const user = await User.findByEmail(email);
+      if (!user) {
+        return res
+          .status(400)
+          .json({ error: "Email không tồn tại trong hệ thống." });
+      }
+
+      const record = await EmailVerification.findValidOtp(user.id);
+      if (!record) {
+        return res.status(400).json({
+          error:
+            "Mã OTP không tồn tại hoặc đã hết hạn. Vui lòng yêu cầu mã mới.",
+        });
+      }
+
+      if (record.attempts >= 5) {
+        await EmailVerification.deleteByUserId(user.id);
+        return res.status(429).json({
+          error: "Bạn đã nhập sai quá 5 lần. Vui lòng yêu cầu mã OTP mới.",
+        });
+      }
+
+      if (record.otp !== otp) {
+        await EmailVerification.incrementAttempts(record.id);
+        const remaining = 4 - record.attempts;
+        return res.status(400).json({
+          error: `Mã OTP không đúng. Bạn còn ${remaining > 0 ? remaining : 0} lần thử.`,
+        });
+      }
+
+      // OTP đúng → cập nhật mật khẩu
+      const isUpdated = await User.updatePassword(user.id, newPassword);
+      if (!isUpdated) {
+        return res.status(500).json({ error: "Không thể cập nhật mật khẩu." });
+      }
+
+      await EmailVerification.deleteByUserId(user.id);
+
+      res
+        .status(200)
+        .json({
+          message: "Đặt lại mật khẩu thành công! Bạn có thể đăng nhập ngay.",
+        });
+    } catch (error) {
+      console.error("Forgot password reset error:", error);
+      res.status(500).json({ error: "Đã xảy ra lỗi. Vui lòng thử lại." });
+    }
+  },
+
+  // ===== Đổi mật khẩu bằng mật khẩu cũ (Requires auth) =====
+  changePassword: async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const { oldPassword, newPassword } = req.body;
+
+      if (!oldPassword || !newPassword) {
+        return res
+          .status(400)
+          .json({ error: "Vui lòng nhập đầy đủ thông tin." });
+      }
+
+      if (newPassword.length < 8) {
+        return res
+          .status(400)
+          .json({ error: "Mật khẩu mới phải có ít nhất 8 ký tự." });
+      }
+
+      // Lấy user có password từ DB
+      const user = await User.findByEmail(req.user.email);
+      if (!user) {
+        return res.status(404).json({ error: "Không tìm thấy người dùng." });
+      }
+
+      const isMatch = await User.comparePassword(oldPassword, user.password);
+      if (!isMatch) {
+        return res.status(401).json({ error: "Mật khẩu hiện tại không đúng." });
+      }
+
+      const isUpdated = await User.updatePassword(userId, newPassword);
+      if (!isUpdated) {
+        return res.status(500).json({ error: "Không thể cập nhật mật khẩu." });
+      }
+
+      res.status(200).json({ message: "Đổi mật khẩu thành công! 🎉" });
+    } catch (error) {
+      console.error("Change password error:", error);
+      res.status(500).json({ error: "Đã xảy ra lỗi. Vui lòng thử lại." });
+    }
+  },
+
+  // ===== Đổi mật khẩu bằng OTP (Requires auth, quên mật khẩu cũ) =====
+  changePasswordWithOtp: async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const { otp, newPassword } = req.body;
+
+      if (!otp || !newPassword) {
+        return res
+          .status(400)
+          .json({ error: "Vui lòng nhập đầy đủ thông tin." });
+      }
+
+      if (otp.length !== 6) {
+        return res
+          .status(400)
+          .json({ error: "Vui lòng nhập đúng mã OTP 6 chữ số." });
+      }
+
+      if (newPassword.length < 8) {
+        return res
+          .status(400)
+          .json({ error: "Mật khẩu mới phải có ít nhất 8 ký tự." });
+      }
+
+      const record = await EmailVerification.findValidOtp(userId);
+      if (!record) {
+        return res.status(400).json({
+          error:
+            "Mã OTP không tồn tại hoặc đã hết hạn. Vui lòng yêu cầu mã mới.",
+        });
+      }
+
+      if (record.attempts >= 5) {
+        await EmailVerification.deleteByUserId(userId);
+        return res.status(429).json({
+          error: "Bạn đã nhập sai quá 5 lần. Vui lòng yêu cầu mã OTP mới.",
+        });
+      }
+
+      if (record.otp !== otp) {
+        await EmailVerification.incrementAttempts(record.id);
+        const remaining = 4 - record.attempts;
+        return res.status(400).json({
+          error: `Mã OTP không đúng. Bạn còn ${remaining > 0 ? remaining : 0} lần thử.`,
+        });
+      }
+
+      // OTP đúng → cập nhật mật khẩu
+      const isUpdated = await User.updatePassword(userId, newPassword);
+      if (!isUpdated) {
+        return res.status(500).json({ error: "Không thể cập nhật mật khẩu." });
+      }
+
+      await EmailVerification.deleteByUserId(userId);
+
+      res.status(200).json({ message: "Đổi mật khẩu thành công! 🎉" });
+    } catch (error) {
+      console.error("Change password with OTP error:", error);
+      res.status(500).json({ error: "Đã xảy ra lỗi. Vui lòng thử lại." });
+    }
+  },
+
+  // ===== Đổi mật khẩu: Gửi OTP qua email cho user đã đăng nhập (Authenticated) =====
+  changePasswordSendOtp: async (req, res) => {
+    try {
+      const userId = req.user.id;
+
+      // Lấy thông tin user đầy đủ từ DB
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({ error: "Không tìm thấy người dùng" });
+      }
+
+      // 1. Check rate limit (max 3 trong 10 phút)
+      const recentCount = await EmailVerification.countRecentOtps(userId, 10);
+      if (recentCount >= 3) {
+        return res.status(429).json({
+          error: "Bạn đã gửi quá nhiều yêu cầu. Vui lòng thử lại sau 10 phút.",
+        });
+      }
+
+      // 2. Check cooldown (60 giây)
+      const cooldown = await EmailVerification.checkCooldown(userId, 60);
+      if (!cooldown.canSend) {
+        return res.status(429).json({
+          error: `Vui lòng chờ ${cooldown.waitSeconds} giây trước khi yêu cầu mã OTP mới.`,
+          waitSeconds: cooldown.waitSeconds,
+        });
+      }
+
+      // 3. Xóa OTP cũ của user
+      await EmailVerification.deleteByUserId(userId);
+
+      // 4. Tạo OTP 6 chữ số
+      const otp = String(Math.floor(100000 + Math.random() * 900000));
+
+      // Hết hạn sau 5 phút
+      const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
+
+      // Lưu vào database
+      await EmailVerification.saveOtp(userId, otp, expiresAt);
+
+      // 5. Gửi email qua Resend
+      const emailResult = await resend.emails.send({
+        from: "Pet Helper <noreply@mail.pethelper.app>",
+        to: user.email,
+        subject: "Mã OTP đổi mật khẩu Pet Helper",
+        html: `
+          <div style="font-family: system-ui, sans-serif; max-width: 480px; margin: 0 auto; padding: 32px;">
+            <h2 style="color: #2b663e;">Pet Helper - Đổi mật khẩu</h2>
+            <p>Xin chào <b>${user.name}</b>,</p>
+            <p>Mã OTP để đổi mật khẩu của bạn là:</p>
+            <div style="background: #f0fdf4; border: 2px solid #2b663e; border-radius: 12px; padding: 20px; text-align: center; margin: 24px 0;">
+              <span style="font-size: 32px; font-weight: 800; letter-spacing: 8px; color: #2b663e;">${otp}</span>
+            </div>
+            <p style="color: #666;">Mã này sẽ hết hạn sau <b>5 phút</b>.</p>
+            <p style="color: #666;">Nếu bạn không yêu cầu mã này, vui lòng bảo mật tài khoản của mình.</p>
+            <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 24px 0;">
+            <p style="font-size: 12px; color: #999;">© Pet Helper - Hỗ Trợ & Bảo Vệ Vật Nuôi</p>
+          </div>
+        `,
+      });
+
+      if (emailResult.error) {
+        console.error("Resend API error:", emailResult.error);
+        return res.status(500).json({
+          error: `Không thể gửi email: ${emailResult.error.message}.`,
+        });
+      }
+
+      console.log(
+        `Password change OTP sent to ${user.email} (OTP: ${otp} - chỉ log trong dev)`,
+      );
+      res
+        .status(200)
+        .json({ message: "Mã OTP đã được gửi tới email của bạn." });
+    } catch (error) {
+      console.error("Change password send OTP error:", error);
+      res
+        .status(500)
+        .json({ error: "Không thể gửi mã OTP. Vui lòng thử lại." });
     }
   },
 };

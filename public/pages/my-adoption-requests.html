@@ -10,32 +10,162 @@
     <link rel="stylesheet" href="/stylesheets/staticHeader.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        body { margin: 0; }
-        .page-wrap { background: #f4fbf7; min-height: calc(100vh - 140px); padding: 36px 16px; }
-        .my-adoption-container { max-width: 1040px; margin: 0 auto; }
-        .my-adoption-header { margin-bottom: 18px; }
-        .my-adoption-header h1 { margin: 0 0 8px; color: #1f5133; }
-        .my-adoption-header p { margin: 0; color: #5f6f67; }
-        .status-note { display: none; padding: 12px 14px; border-radius: 10px; margin-bottom: 16px; font-weight: 600; }
-        .status-note.warning { display: block; background: #fff7ed; color: #9a3412; }
-        .status-note.error { display: block; background: #fef2f2; color: #991b1b; }
-        .status-note.success { display: block; background: #ecfdf3; color: #166534; }
-        .request-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
-        .request-card { background: #fff; border: 1px solid #e5efe8; border-radius: 14px; overflow: hidden; box-shadow: 0 2px 12px rgba(14, 54, 34, 0.05); }
-        .request-card img { width: 100%; height: 190px; object-fit: cover; background: #f3f4f6; }
-        .request-card-body { padding: 14px; }
-        .request-card h3 { margin: 0 0 6px; color: #1f5133; font-size: 1.07rem; }
-        .request-meta { margin: 0 0 10px; color: #64748b; font-size: 0.9rem; }
-        .request-message { margin: 0; color: #1f2937; font-size: 0.95rem; line-height: 1.45; }
-        .request-footer { margin-top: 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
-        .request-status { padding: 4px 10px; border-radius: 999px; font-size: 0.82rem; font-weight: 700; }
-        .request-status.pending { background: #fef3c7; color: #92400e; }
-        .request-status.approved { background: #dcfce7; color: #166534; }
-        .request-status.rejected { background: #fee2e2; color: #b91c1c; }
-        .request-date { color: #64748b; font-size: 0.82rem; }
-        .empty-box { display: none; background: #fff; border: 1px dashed #b9d2c0; border-radius: 14px; padding: 36px 20px; text-align: center; color: #5f6f67; }
-        .empty-box.show { display: block; }
-        .loading-box { background: #e8f5ec; color: #1f5133; border-radius: 10px; padding: 12px 14px; margin-bottom: 16px; font-weight: 600; }
+        body {
+            margin: 0;
+        }
+
+        .page-wrap {
+            background: #f4fbf7;
+            min-height: calc(100vh - 140px);
+            padding: 36px 16px;
+        }
+
+        .my-adoption-container {
+            max-width: 1040px;
+            margin: 0 auto;
+        }
+
+        .my-adoption-header {
+            margin-bottom: 18px;
+        }
+
+        .my-adoption-header h1 {
+            margin: 0 0 8px;
+            color: #1f5133;
+        }
+
+        .my-adoption-header p {
+            margin: 0;
+            color: #5f6f67;
+        }
+
+        .status-note {
+            display: none;
+            padding: 12px 14px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+
+        .status-note.warning {
+            display: block;
+            background: #fff7ed;
+            color: #9a3412;
+        }
+
+        .status-note.error {
+            display: block;
+            background: #fef2f2;
+            color: #991b1b;
+        }
+
+        .status-note.success {
+            display: block;
+            background: #ecfdf3;
+            color: #166534;
+        }
+
+        .request-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 18px;
+        }
+
+        .request-card {
+            background: #fff;
+            border: 1px solid #e5efe8;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(14, 54, 34, 0.05);
+        }
+
+        .request-card img {
+            width: 100%;
+            height: 190px;
+            object-fit: cover;
+            background: #f3f4f6;
+        }
+
+        .request-card-body {
+            padding: 14px;
+        }
+
+        .request-card h3 {
+            margin: 0 0 6px;
+            color: #1f5133;
+            font-size: 1.07rem;
+        }
+
+        .request-meta {
+            margin: 0 0 10px;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .request-message {
+            margin: 0;
+            color: #1f2937;
+            font-size: 0.95rem;
+            line-height: 1.45;
+        }
+
+        .request-footer {
+            margin-top: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .request-status {
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.82rem;
+            font-weight: 700;
+        }
+
+        .request-status.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .request-status.approved {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .request-status.rejected {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .request-date {
+            color: #64748b;
+            font-size: 0.82rem;
+        }
+
+        .empty-box {
+            display: none;
+            background: #fff;
+            border: 1px dashed #b9d2c0;
+            border-radius: 14px;
+            padding: 36px 20px;
+            text-align: center;
+            color: #5f6f67;
+        }
+
+        .empty-box.show {
+            display: block;
+        }
+
+        .loading-box {
+            background: #e8f5ec;
+            color: #1f5133;
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
     </style>
 </head>
 
@@ -44,7 +174,7 @@
         <div class="top-bar">
             <a href="/" class="logo-group">
                 <div class="logo-circle">
-                    <img src="/images/the_logo.jpg" alt="logo" id="the_logo">
+                    <img src="/images/the_logo.webp" alt="logo" id="the_logo">
                 </div>
                 <div class="web-name">PET HELPER</div>
             </a>
@@ -64,15 +194,21 @@
                             <a href="/favorites" class="dropdown-item">❤️ Thú cưng đã yêu thích</a>
                             <a href="/my-reports" class="dropdown-item">📋 Báo cáo của tôi</a>
                             <a href="/my-adoption-requests" class="dropdown-item">🏠 Yêu cầu nhận nuôi</a>
-                            <a href="/adopt/admin/add" class="dropdown-item role-staff-only is-auth-hidden">🐾 Thêm thú cưng</a>
+                            <a href="/adopt/admin/add" class="dropdown-item role-staff-only is-auth-hidden">🐾 Thêm thú
+                                cưng</a>
                             <div class="dropdown-divider"></div>
-                            <a href="#" class="dropdown-item logout" id="logoutBtn" onclick="handleLogout(event)">🚪 Đăng xuất</a>
+                            <a href="#" class="dropdown-item logout" id="logoutBtn" onclick="handleLogout(event)">🚪
+                                Đăng xuất</a>
                         </div>
                     </div>
                 </div>
                 <div class="auth-guest-actions is-auth-visible" id="headerAuthGuestState">
-                    <a href="#" onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('login'); } return false;"><span>Đăng nhập</span></a>
-                    <a href="#" onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('register'); } return false;"><span>Đăng ký</span></a>
+                    <a href="#"
+                        onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('login'); } return false;"><span>Đăng
+                            nhập</span></a>
+                    <a href="#"
+                        onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('register'); } return false;"><span>Đăng
+                            ký</span></a>
                 </div>
                 <span>Giỏ hàng <span id="cart-count-display">(0)</span></span>
                 <span class="lang-switch">VN / EN</span>
@@ -93,7 +229,8 @@
                     <a href="#" class="has-dropdown nav-item">Nhận nuôi <span class="nav-arrow arrow">▼</span></a>
                     <ul class="nav-dropdown">
                         <li><a href="/adopt">Xem vật nuôi có thể nhận nuôi</a></li>
-                        <li><a href="/snap" style="color: #ea580c; font-weight: bold;">PetSnap(Tìm kiếm thú cưng ngẫu hứng!)</a></li>
+                        <li><a href="/snap" style="color: #ea580c; font-weight: bold;">PetSnap(Tìm kiếm thú cưng ngẫu
+                                hứng!)</a></li>
                     </ul>
                 </li>
                 <li><a href="/reports">Thất lạc</a></li>
@@ -126,7 +263,8 @@
                     <span style="font-size: 1.5rem;">🐾</span>
                     <span>Pet Helper</span>
                 </a>
-                <p>Nền tảng hỗ trợ và bảo vệ vật nuôi hàng đầu Việt Nam. Cùng nhau xây dựng cộng đồng yêu thương động vật - Green Project 2026.</p>
+                <p>Nền tảng hỗ trợ và bảo vệ vật nuôi hàng đầu Việt Nam. Cùng nhau xây dựng cộng đồng yêu thương động
+                    vật - Green Project 2026.</p>
             </div>
 
             <div class="footer-links">

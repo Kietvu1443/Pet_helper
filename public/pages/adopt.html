@@ -196,7 +196,7 @@
         <div class="top-bar">
             <a href="/" class="logo-group">
                 <div class="logo-circle">
-                    <img src="/images/the_logo.jpg" alt="logo" id="the_logo">
+                    <img src="/images/the_logo.webp" alt="logo" id="the_logo">
                 </div>
                 <div class="web-name">PET HELPER</div>
             </a>
@@ -544,6 +544,7 @@
                     method: 'GET',
                     headers: { Accept: 'application/json' },
                     credentials: 'same-origin',
+                    __skipUnauthorizedHandler: true
                 });
 
                 if (!favoritesResponse.ok) {

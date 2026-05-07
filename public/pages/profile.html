@@ -430,7 +430,7 @@
         <div class="top-bar">
             <a href="/" class="logo-group">
                 <div class="logo-circle">
-                    <img src="/images/the_logo.jpg" alt="logo" id="the_logo">
+                    <img src="/images/the_logo.webp" alt="logo" id="the_logo">
                 </div>
                 <div class="web-name">PET HELPER</div>
             </a>
@@ -450,16 +450,23 @@
                             <a href="/my-favorites" class="dropdown-item">❤️ Thú cưng đã yêu thích</a>
                             <a href="/my-reports" class="dropdown-item">📋 Báo cáo của tôi</a>
                             <a href="/my-adoption-requests" class="dropdown-item">🏠 Yêu cầu nhận nuôi</a>
-                            <a href="/adopt/admin/add" class="dropdown-item role-staff-only is-auth-hidden">🐾 Thêm thú cưng</a>
-                            <a href="/admin" class="dropdown-item role-management-link is-auth-hidden" id="headerManagementLink">🛠️ Quản lý</a>
+                            <a href="/adopt/admin/add" class="dropdown-item role-staff-only is-auth-hidden">🐾 Thêm thú
+                                cưng</a>
+                            <a href="/admin" class="dropdown-item role-management-link is-auth-hidden"
+                                id="headerManagementLink">🛠️ Quản lý</a>
                             <div class="dropdown-divider"></div>
-                            <a href="#" class="dropdown-item logout" id="logoutBtn" onclick="handleLogout(event)">🚪 Đăng xuất</a>
+                            <a href="#" class="dropdown-item logout" id="logoutBtn" onclick="handleLogout(event)">🚪
+                                Đăng xuất</a>
                         </div>
                     </div>
                 </div>
                 <div class="auth-guest-actions is-auth-visible" id="headerAuthGuestState">
-                    <a href="#" onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('login'); } return false;"><span>Đăng nhập</span></a>
-                    <a href="#" onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('register'); } return false;"><span>Đăng ký</span></a>
+                    <a href="#"
+                        onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('login'); } return false;"><span>Đăng
+                            nhập</span></a>
+                    <a href="#"
+                        onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('register'); } return false;"><span>Đăng
+                            ký</span></a>
                 </div>
                 <span>Giỏ hàng <span id="cart-count-display">(0)</span></span>
                 <span class="lang-switch">VN / EN</span>
@@ -480,7 +487,8 @@
                     <a href="#" class="has-dropdown nav-item">Nhận nuôi <span class="nav-arrow arrow">▼</span></a>
                     <ul class="nav-dropdown">
                         <li><a href="/adopt">Xem vật nuôi có thể nhận nuôi</a></li>
-                        <li><a href="/snap" style="color: #ea580c; font-weight: bold;">PetSnap(Tìm kiếm thú cưng ngẫu hứng!)</a></li>
+                        <li><a href="/snap" style="color: #ea580c; font-weight: bold;">PetSnap(Tìm kiếm thú cưng ngẫu
+                                hứng!)</a></li>
                     </ul>
                 </li>
                 <li><a href="/reports">Thất lạc</a></li>
@@ -531,7 +539,8 @@
                         <div class="verify-head">
                             <div>
                                 <p class="verify-title">Xác thực email tài khoản</p>
-                                <p class="verify-desc" id="verifyDescription">Xác thực email để mở đầy đủ tính năng nhận nuôi và tăng độ tin cậy tài khoản.</p>
+                                <p class="verify-desc" id="verifyDescription">Xác thực email để mở đầy đủ tính năng nhận
+                                    nuôi và tăng độ tin cậy tài khoản.</p>
                             </div>
                             <span class="verify-badge unverified" id="verifyBadge">Chưa xác thực</span>
                         </div>
@@ -539,8 +548,10 @@
                         <div class="verify-actions" id="verifyActions">
                             <button type="button" class="verify-btn" id="sendOtpBtn">Gửi mã OTP</button>
                             <div class="otp-row">
-                                <input type="text" id="otpInput" class="otp-input" maxlength="6" inputmode="numeric" placeholder="Nhập mã OTP">
-                                <button type="button" class="verify-btn secondary" id="verifyOtpBtn">Xác thực OTP</button>
+                                <input type="text" id="otpInput" class="otp-input" maxlength="6" inputmode="numeric"
+                                    placeholder="Nhập mã OTP">
+                                <button type="button" class="verify-btn secondary" id="verifyOtpBtn">Xác thực
+                                    OTP</button>
                             </div>
                             <p class="otp-hint" id="otpHint">Mã OTP gồm 6 chữ số và có hiệu lực trong 5 phút.</p>
                         </div>
@@ -581,13 +592,16 @@
                             </div>
                             <div class="form-row" style="margin-top: 10px;">
                                 <label for="inputNewPassword">Mật khẩu mới</label>
-                                <input id="inputNewPassword" type="password" maxlength="255" placeholder="Ít nhất 8 ký tự">
+                                <input id="inputNewPassword" type="password" maxlength="255"
+                                    placeholder="Ít nhất 8 ký tự">
                             </div>
                             <div class="form-row" style="margin-top: 10px;">
                                 <label for="inputConfirmNewPassword">Xác nhận mật khẩu mới</label>
-                                <input id="inputConfirmNewPassword" type="password" maxlength="255" placeholder="Nhập lại mật khẩu mới">
+                                <input id="inputConfirmNewPassword" type="password" maxlength="255"
+                                    placeholder="Nhập lại mật khẩu mới">
                             </div>
-                            <div style="margin-top: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+                            <div
+                                style="margin-top: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
                                 <a href="#" class="pwd-forgot-link" id="pwdForgotLink">Quên mật khẩu? Gửi mã OTP</a>
                                 <button type="button" class="verify-btn" id="pwdChangeBtn">Đổi mật khẩu</button>
                             </div>
@@ -595,22 +609,27 @@
 
                         <!-- Mode: OTP -->
                         <div id="pwdModeOtp" style="display: none;">
-                            <p class="pwd-desc" style="margin-bottom: 10px;">Mã OTP sẽ được gửi tới email của bạn để xác minh.</p>
+                            <p class="pwd-desc" style="margin-bottom: 10px;">Mã OTP sẽ được gửi tới email của bạn để xác
+                                minh.</p>
                             <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
                                 <button type="button" class="verify-btn" id="pwdSendOtpBtn">Gửi mã OTP</button>
                             </div>
                             <div class="otp-row" style="margin-top: 10px;">
-                                <input type="text" id="pwdOtpInput" class="otp-input" maxlength="6" inputmode="numeric" placeholder="Nhập mã OTP">
+                                <input type="text" id="pwdOtpInput" class="otp-input" maxlength="6" inputmode="numeric"
+                                    placeholder="Nhập mã OTP">
                             </div>
                             <div class="form-row" style="margin-top: 10px;">
                                 <label for="inputNewPasswordOtp">Mật khẩu mới</label>
-                                <input id="inputNewPasswordOtp" type="password" maxlength="255" placeholder="Ít nhất 8 ký tự">
+                                <input id="inputNewPasswordOtp" type="password" maxlength="255"
+                                    placeholder="Ít nhất 8 ký tự">
                             </div>
                             <div class="form-row" style="margin-top: 10px;">
                                 <label for="inputConfirmNewPasswordOtp">Xác nhận mật khẩu mới</label>
-                                <input id="inputConfirmNewPasswordOtp" type="password" maxlength="255" placeholder="Nhập lại mật khẩu mới">
+                                <input id="inputConfirmNewPasswordOtp" type="password" maxlength="255"
+                                    placeholder="Nhập lại mật khẩu mới">
                             </div>
-                            <div style="margin-top: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+                            <div
+                                style="margin-top: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
                                 <a href="#" class="pwd-forgot-link" id="pwdBackToOldLink">← Nhập mật khẩu cũ</a>
                                 <button type="button" class="verify-btn" id="pwdChangeOtpBtn">Đổi mật khẩu</button>
                             </div>
@@ -630,7 +649,8 @@
                     <span style="font-size: 1.5rem;">🐾</span>
                     <span>Pet Helper</span>
                 </a>
-                <p>Nền tảng hỗ trợ và bảo vệ vật nuôi hàng đầu Việt Nam. Cùng nhau xây dựng cộng đồng yêu thương động vật - Green Project 2026.</p>
+                <p>Nền tảng hỗ trợ và bảo vệ vật nuôi hàng đầu Việt Nam. Cùng nhau xây dựng cộng đồng yêu thương động
+                    vật - Green Project 2026.</p>
             </div>
 
             <div class="footer-links">

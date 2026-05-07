@@ -22,7 +22,7 @@ const normalizePet = (pet) => {
     pet.avatar_image ||
     pet.image_url ||
     (Array.isArray(pet.images) && pet.images[0] && pet.images[0].image_path) ||
-    "/images/the_logo.jpg";
+    "/images/the_logo.webp";
 
   return {
     id: pet.id,
@@ -64,10 +64,15 @@ const petSnapApiV1Controller = {
 
       const next = await getNextPetBundle(userId);
 
-      return sendSuccess(res, 200, next.pet ? "Lấy thú cưng thành công" : "Đã hết thú cưng phù hợp", {
-        pet: next.pet,
-        hasMore: next.hasMore,
-      });
+      return sendSuccess(
+        res,
+        200,
+        next.pet ? "Lấy thú cưng thành công" : "Đã hết thú cưng phù hợp",
+        {
+          pet: next.pet,
+          hasMore: next.hasMore,
+        },
+      );
     } catch (error) {
       console.error("[PetSnap API v1] getNext error:", error);
       return sendError(res, 500, "Không thể tải thú cưng tiếp theo", {

@@ -811,7 +811,7 @@
         <div id="detailBackdrop" class="detail-backdrop"></div>
         <section id="detailPanel" class="detail-panel" role="dialog" aria-modal="true" aria-label="Thong tin thu cung">
             <div class="detail-image-wrap">
-                <img id="detailImage" class="detail-image" src="/images/the_logo.jpg" alt="Anh thu cung">
+                <img id="detailImage" class="detail-image" src="/images/the_logo.webp" alt="Anh thu cung">
                 <button id="detailClose" class="detail-close" type="button" aria-label="Dong thong tin">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
@@ -1018,7 +1018,7 @@
                     return [pet.image];
                 }
 
-                return ["/images/the_logo.jpg"];
+                return ["/images/the_logo.webp"];
             }
 
             function pushUniquePet(pet) {
@@ -1150,7 +1150,7 @@
 
                 var image = card.querySelector(".card-image");
                 image.addEventListener("error", function () {
-                    image.src = "/images/the_logo.jpg";
+                    image.src = "/images/the_logo.webp";
                 });
 
                 var dotButtons = card.querySelectorAll("[data-dot-index]");
@@ -1404,7 +1404,7 @@
                 likedPets.unshift({
                     id: pet.id,
                     name: pet.name || "Khong ten",
-                    image: pet.image || "/images/the_logo.jpg",
+                    image: pet.image || "/images/the_logo.webp",
                 });
 
                 // Cập nhật: Giữ đồng bộ với database thay vì chỉ giới hạn 40 cái local
@@ -1423,14 +1423,14 @@
                 likedList.innerHTML = likedPets.map(function (pet) {
                     return ""
                         + '<a class="liked-item" href="/adopt/' + escapeHtml(pet.id) + '">'
-                        + '  <img class="liked-thumb" src="' + escapeHtml(pet.image || "/images/the_logo.jpg") + '" alt="' + escapeHtml(pet.name) + '">'
+                        + '  <img class="liked-thumb" src="' + escapeHtml(pet.image || "/images/the_logo.webp") + '" alt="' + escapeHtml(pet.name) + '">'
                         + '  <span class="liked-name">' + escapeHtml(pet.name) + "</span>"
                         + "</a>";
                 }).join("");
 
                 likedList.querySelectorAll(".liked-thumb").forEach(function (img) {
                     img.addEventListener("error", function () {
-                        img.src = "/images/the_logo.jpg";
+                        img.src = "/images/the_logo.webp";
                     });
                 });
             }
@@ -1451,14 +1451,14 @@
 
             function renderDetailImage() {
                 if (!detailState.images.length) {
-                    detailImage.src = "/images/the_logo.jpg";
+                    detailImage.src = "/images/the_logo.webp";
                     detailPrev.style.display = "none";
                     detailNext.style.display = "none";
                     detailDots.innerHTML = "";
                     return;
                 }
 
-                var current = detailState.images[detailState.index] || "/images/the_logo.jpg";
+                var current = detailState.images[detailState.index] || "/images/the_logo.webp";
                 detailImage.style.opacity = "0.4";
                 window.setTimeout(function () {
                     detailImage.src = current;

@@ -51,7 +51,7 @@ router.get("/admin", (_req, res) => {
 router.get("/api/pets/:id/local-avatar", function (req, res) {
   const petId = req.params.id;
   const petDir = path.join(__dirname, "../public/images/pets", petId);
-  const defaultImage = path.join(__dirname, "../public/images/the_logo.jpg"); // hoặc default_pet.webp nếu bạn có
+  const defaultImage = path.join(__dirname, "../public/images/the_logo.webp"); // hoặc default_pet.webp nếu bạn có
 
   try {
     if (fs.existsSync(petDir)) {

@@ -10,77 +10,466 @@
     <link rel="stylesheet" href="/stylesheets/staticHeader.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        body { margin: 0; }
-        .admin-wrap { background: #f5faf7; min-height: calc(100vh - 140px); padding: 34px 16px; }
-        .admin-box { max-width: 1120px; margin: 0 auto; }
-        .admin-header h1 { margin: 0 0 6px; color: #1f5133; }
-        .admin-header p { margin: 0 0 16px; color: #64748b; }
-        .admin-note { display: none; margin-bottom: 16px; padding: 12px 14px; border-radius: 10px; font-weight: 600; }
-        .admin-note.error { display: block; background: #fee2e2; color: #991b1b; }
-        .admin-note.warning { display: block; background: #fff7ed; color: #9a3412; }
-        .admin-note.success { display: block; background: #dcfce7; color: #166534; }
-        .tab-bar { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
-        .tab-btn { border: 1px solid #cce3d5; background: #fff; color: #1f5133; border-radius: 999px; padding: 8px 14px; cursor: pointer; font-weight: 700; }
-        .tab-btn.active { background: #2b663e; border-color: #2b663e; color: #fff; }
-        .type-bar { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
-        .type-btn { border: 1px solid #d1d5db; background: #fff; color: #374151; border-radius: 999px; padding: 6px 14px; cursor: pointer; font-weight: 600; font-size: 0.88rem; }
-        .type-btn.active-lost { background: #fee2e2; border-color: #f87171; color: #b91c1c; }
-        .type-btn.active-found { background: #dcfce7; border-color: #4ade80; color: #15803d; }
-        .table-wrap { background: #fff; border: 1px solid #d8e6dc; border-radius: 14px; overflow: hidden; box-shadow: 0 2px 12px rgba(14,54,34,0.05); }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 12px 10px; border-bottom: 1px solid #edf4ef; text-align: left; }
-        th { background: #f1f8f4; color: #395f49; font-size: 0.88rem; }
-        td { color: #1f2937; font-size: 0.92rem; }
-        .status-pill { padding: 4px 10px; border-radius: 999px; font-size: 0.78rem; font-weight: 700; }
-        .status-pill.pending { background: #fef3c7; color: #92400e; }
-        .status-pill.approved { background: #dcfce7; color: #166534; }
-        .status-pill.rejected { background: #fee2e2; color: #b91c1c; }
-        .type-pill { padding: 4px 10px; border-radius: 999px; font-size: 0.78rem; font-weight: 700; }
-        .type-pill.lost { background: #fee2e2; color: #b91c1c; }
-        .type-pill.found { background: #dcfce7; color: #15803d; }
-        .btn-view { border: 1px solid #9bc7ad; background: #fff; color: #1f5133; border-radius: 8px; padding: 6px 10px; cursor: pointer; font-weight: 700; }
-        .table-message { text-align: center; color: #64748b; padding: 18px; }
-        .modal { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.45); z-index: 1000; align-items: center; justify-content: center; padding: 18px; }
-        .modal.show { display: flex; }
-        .modal-content { width: 860px; max-width: 100%; background: #fff; border-radius: 14px; overflow: hidden; max-height: 90vh; overflow-y: auto; }
-        .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-bottom: 1px solid #e6eee8; background: #f1f8f4; }
-        .modal-header h2 { margin: 0; color: #1f5133; font-size: 1.1rem; }
-        .modal-body { padding: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-        .modal-body img { width: 100%; height: 260px; object-fit: cover; border-radius: 10px; background: #f3f4f6; }
-        .meta-label { font-size: 0.78rem; text-transform: uppercase; color: #64748b; font-weight: 700; }
-        .meta-value { margin: 4px 0 12px; color: #111827; word-break: break-word; }
-        .modal-footer { display: flex; gap: 10px; justify-content: flex-end; padding: 14px 16px; border-top: 1px solid #e6eee8; background: #f8fcf9; flex-wrap: wrap; }
-        .btn { border: 1px solid transparent; border-radius: 8px; padding: 8px 14px; cursor: pointer; font-weight: 700; font-size: 0.9rem; }
-        .btn-close { border-color: #cbd5e1; background: #fff; color: #334155; }
-        .btn-approve { background: #16a34a; color: #fff; border-color: #16a34a; }
-        .btn-reject { background: #dc2626; color: #fff; border-color: #dc2626; }
-        .btn-resolve { background: #2b663e; color: #fff; border-color: #2b663e; }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        @media (max-width: 860px) {
-            .modal-body { grid-template-columns: 1fr; }
-            th:nth-child(1), td:nth-child(1) { display: none; }
+        body {
+            margin: 0;
         }
+
+        .admin-wrap {
+            background: #f5faf7;
+            min-height: calc(100vh - 140px);
+            padding: 34px 16px;
+        }
+
+        .admin-box {
+            max-width: 1120px;
+            margin: 0 auto;
+        }
+
+        .admin-header h1 {
+            margin: 0 0 6px;
+            color: #1f5133;
+        }
+
+        .admin-header p {
+            margin: 0 0 16px;
+            color: #64748b;
+        }
+
+        .admin-note {
+            display: none;
+            margin-bottom: 16px;
+            padding: 12px 14px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .admin-note.error {
+            display: block;
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .admin-note.warning {
+            display: block;
+            background: #fff7ed;
+            color: #9a3412;
+        }
+
+        .admin-note.success {
+            display: block;
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .tab-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            border: 1px solid #cce3d5;
+            background: #fff;
+            color: #1f5133;
+            border-radius: 999px;
+            padding: 8px 14px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .tab-btn.active {
+            background: #2b663e;
+            border-color: #2b663e;
+            color: #fff;
+        }
+
+        .type-bar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+
+        .type-btn {
+            border: 1px solid #d1d5db;
+            background: #fff;
+            color: #374151;
+            border-radius: 999px;
+            padding: 6px 14px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.88rem;
+        }
+
+        .type-btn.active-lost {
+            background: #fee2e2;
+            border-color: #f87171;
+            color: #b91c1c;
+        }
+
+        .type-btn.active-found {
+            background: #dcfce7;
+            border-color: #4ade80;
+            color: #15803d;
+        }
+
+        .table-wrap {
+            background: #fff;
+            border: 1px solid #d8e6dc;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(14, 54, 34, 0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #edf4ef;
+            text-align: left;
+        }
+
+        th {
+            background: #f1f8f4;
+            color: #395f49;
+            font-size: 0.88rem;
+        }
+
+        td {
+            color: #1f2937;
+            font-size: 0.92rem;
+        }
+
+        .status-pill {
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        .status-pill.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-pill.approved {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-pill.rejected {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .type-pill {
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        .type-pill.lost {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .type-pill.found {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .btn-view {
+            border: 1px solid #9bc7ad;
+            background: #fff;
+            color: #1f5133;
+            border-radius: 8px;
+            padding: 6px 10px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .table-message {
+            text-align: center;
+            color: #64748b;
+            padding: 18px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.45);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            width: 860px;
+            max-width: 100%;
+            background: #fff;
+            border-radius: 14px;
+            overflow: hidden;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            border-bottom: 1px solid #e6eee8;
+            background: #f1f8f4;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            color: #1f5133;
+            font-size: 1.1rem;
+        }
+
+        .modal-body {
+            padding: 16px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .modal-body img {
+            width: 100%;
+            height: 260px;
+            object-fit: cover;
+            border-radius: 10px;
+            background: #f3f4f6;
+        }
+
+        .meta-label {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            color: #64748b;
+            font-weight: 700;
+        }
+
+        .meta-value {
+            margin: 4px 0 12px;
+            color: #111827;
+            word-break: break-word;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            padding: 14px 16px;
+            border-top: 1px solid #e6eee8;
+            background: #f8fcf9;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            border: 1px solid transparent;
+            border-radius: 8px;
+            padding: 8px 14px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .btn-close {
+            border-color: #cbd5e1;
+            background: #fff;
+            color: #334155;
+        }
+
+        .btn-approve {
+            background: #16a34a;
+            color: #fff;
+            border-color: #16a34a;
+        }
+
+        .btn-reject {
+            background: #dc2626;
+            color: #fff;
+            border-color: #dc2626;
+        }
+
+        .btn-resolve {
+            background: #2b663e;
+            color: #fff;
+            border-color: #2b663e;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 860px) {
+            .modal-body {
+                grid-template-columns: 1fr;
+            }
+
+            th:nth-child(1),
+            td:nth-child(1) {
+                display: none;
+            }
+        }
+
         /* ── Section tabs (Báo cáo / Bài tin) ── */
-        .section-tab-bar { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #d8e6dc; padding-bottom: 0; }
-        .section-tab-btn { padding: 10px 24px; border: none; background: none; font-weight: 700; font-size: 1rem; color: #64748b; cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.2s; }
-        .section-tab-btn.active { color: #1f5133; border-bottom-color: #2b663e; }
+        .section-tab-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #d8e6dc;
+            padding-bottom: 0;
+        }
+
+        .section-tab-btn {
+            padding: 10px 24px;
+            border: none;
+            background: none;
+            font-weight: 700;
+            font-size: 1rem;
+            color: #64748b;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.2s;
+        }
+
+        .section-tab-btn.active {
+            color: #1f5133;
+            border-bottom-color: #2b663e;
+        }
+
         /* ── Adoption modal ── */
-        .adopt-modal { display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.45); z-index: 2000; align-items: center; justify-content: center; padding: 18px; }
-        .adopt-modal.show { display: flex; }
-        .adopt-modal-content { width: 860px; max-width: 100%; background: #fff; border-radius: 14px; overflow: hidden; max-height: 90vh; overflow-y: auto; }
-        .adopt-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-bottom: 1px solid #e6eee8; position: sticky; top: 0; background: #fff; z-index: 1; }
-        .adopt-modal-body { padding: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-        .adopt-modal-body img { width: 100%; height: 260px; object-fit: cover; border-radius: 10px; background: #f3f4f6; }
-        .adopt-meta-label { font-size: 0.78rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; margin-bottom: 2px; }
-        .adopt-meta-value { font-size: 0.95rem; color: #0f172a; margin-bottom: 12px; }
-        .adopt-modal-footer { display: flex; gap: 10px; justify-content: flex-end; padding: 14px 16px; border-top: 1px solid #e6eee8; background: #f8fcf9; }
-        .adopt-modal-footer .btn { padding: 9px 20px; border-radius: 8px; border: none; font-weight: 700; font-size: 0.92rem; cursor: pointer; }
-        .adopt-modal-footer .btn-approve { background: #16a34a; color: #fff; }
-        .adopt-modal-footer .btn-reject { background: #dc2626; color: #fff; }
-        .adopt-modal-footer .btn-close { background: #e2e8f0; color: #374151; }
-        @media (max-width: 640px) { .adopt-modal-body { grid-template-columns: 1fr; } }
+        .adopt-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.45);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+        }
+
+        .adopt-modal.show {
+            display: flex;
+        }
+
+        .adopt-modal-content {
+            width: 860px;
+            max-width: 100%;
+            background: #fff;
+            border-radius: 14px;
+            overflow: hidden;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .adopt-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            border-bottom: 1px solid #e6eee8;
+            position: sticky;
+            top: 0;
+            background: #fff;
+            z-index: 1;
+        }
+
+        .adopt-modal-body {
+            padding: 16px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .adopt-modal-body img {
+            width: 100%;
+            height: 260px;
+            object-fit: cover;
+            border-radius: 10px;
+            background: #f3f4f6;
+        }
+
+        .adopt-meta-label {
+            font-size: 0.78rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .adopt-meta-value {
+            font-size: 0.95rem;
+            color: #0f172a;
+            margin-bottom: 12px;
+        }
+
+        .adopt-modal-footer {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            padding: 14px 16px;
+            border-top: 1px solid #e6eee8;
+            background: #f8fcf9;
+        }
+
+        .adopt-modal-footer .btn {
+            padding: 9px 20px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 700;
+            font-size: 0.92rem;
+            cursor: pointer;
+        }
+
+        .adopt-modal-footer .btn-approve {
+            background: #16a34a;
+            color: #fff;
+        }
+
+        .adopt-modal-footer .btn-reject {
+            background: #dc2626;
+            color: #fff;
+        }
+
+        .adopt-modal-footer .btn-close {
+            background: #e2e8f0;
+            color: #374151;
+        }
+
+        @media (max-width: 640px) {
+            .adopt-modal-body {
+                grid-template-columns: 1fr;
+            }
+        }
+
         /* ── News category pill ── */
-        .cat-pill { padding: 3px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 700; background: #e0f2fe; color: #0369a1; }
+        .cat-pill {
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            background: #e0f2fe;
+            color: #0369a1;
+        }
 
         .search-box-wrap {
             display: flex;
@@ -93,20 +482,41 @@
             margin-bottom: 14px;
             transition: border-color 0.2s;
         }
-        .search-box-wrap:focus-within { border-color: #2b663e; box-shadow: 0 0 0 3px rgba(43,102,62,0.1); }
+
+        .search-box-wrap:focus-within {
+            border-color: #2b663e;
+            box-shadow: 0 0 0 3px rgba(43, 102, 62, 0.1);
+        }
+
         .search-box-wrap input {
-            border: none; outline: none;
-            font-size: 0.92rem; color: #333;
-            background: transparent; width: 100%;
+            border: none;
+            outline: none;
+            font-size: 0.92rem;
+            color: #333;
+            background: transparent;
+            width: 100%;
             font-family: inherit;
         }
-        .search-box-wrap .search-icon { color: #aaa; font-size: 1rem; flex-shrink: 0; }
+
+        .search-box-wrap .search-icon {
+            color: #aaa;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
         .search-clear-btn {
-            background: none; border: none; cursor: pointer;
-            color: #aaa; font-size: 1rem; padding: 0;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #aaa;
+            font-size: 1rem;
+            padding: 0;
             display: none;
         }
-        .search-clear-btn.visible { display: block; }
+
+        .search-clear-btn.visible {
+            display: block;
+        }
     </style>
 </head>
 
@@ -115,7 +525,7 @@
         <div class="top-bar">
             <a href="/" class="logo-group">
                 <div class="logo-circle">
-                    <img src="/images/logo.svg" alt="logo" id="the_logo">
+                    <img src="/images/the_logo.webp" alt="logo" id="the_logo">
                 </div>
                 <div class="web-name">PET HELPER</div>
             </a>
@@ -133,16 +543,23 @@
                             <div class="dropdown-divider"></div>
                             <a href="/profile" class="dropdown-item">👤 Tài khoản</a>
                             <a href="/my-reports" class="dropdown-item">🐾 Báo cáo của tôi</a>
-                            <a href="/admin/reports" class="dropdown-item role-staff-only is-auth-hidden">🗂️ Duyệt báo cáo</a>
-                            <a href="/admin/adoption-requests" class="dropdown-item role-staff-only is-auth-hidden">🏠 Xét duyệt nhận nuôi</a>
+                            <a href="/admin/reports" class="dropdown-item role-staff-only is-auth-hidden">🗂️ Duyệt báo
+                                cáo</a>
+                            <a href="/admin/adoption-requests" class="dropdown-item role-staff-only is-auth-hidden">🏠
+                                Xét duyệt nhận nuôi</a>
                             <div class="dropdown-divider"></div>
-                            <a href="#" class="dropdown-item logout" id="logoutBtn" onclick="handleLogout(event)">🚪 Đăng xuất</a>
+                            <a href="#" class="dropdown-item logout" id="logoutBtn" onclick="handleLogout(event)">🚪
+                                Đăng xuất</a>
                         </div>
                     </div>
                 </div>
                 <div class="auth-guest-actions is-auth-visible" id="headerAuthGuestState">
-                    <a href="#" onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('login'); } return false;"><span>Đăng nhập</span></a>
-                    <a href="#" onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('register'); } return false;"><span>Đăng ký</span></a>
+                    <a href="#"
+                        onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('login'); } return false;"><span>Đăng
+                            nhập</span></a>
+                    <a href="#"
+                        onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('register'); } return false;"><span>Đăng
+                            ký</span></a>
                 </div>
                 <span>Giỏ hàng <span id="cart-count-display">(0)</span></span>
                 <span class="lang-switch">VN / EN</span>
@@ -207,9 +624,12 @@
 
             <!-- Section tabs -->
             <div class="section-tab-bar">
-                <button class="section-tab-btn active" id="sectionTabAdoption" onclick="switchSection('adoption')">🏠 Xét duyệt nhận nuôi</button>
-                <button class="section-tab-btn" id="sectionTabReports" onclick="switchSection('reports')">🐾 Báo cáo thú cưng</button>
-                <button class="section-tab-btn" id="sectionTabNews" onclick="switchSection('news')">📰 Duyệt bài tin</button>
+                <button class="section-tab-btn active" id="sectionTabAdoption" onclick="switchSection('adoption')">🏠
+                    Xét duyệt nhận nuôi</button>
+                <button class="section-tab-btn" id="sectionTabReports" onclick="switchSection('reports')">🐾 Báo cáo thú
+                    cưng</button>
+                <button class="section-tab-btn" id="sectionTabNews" onclick="switchSection('news')">📰 Duyệt bài
+                    tin</button>
             </div>
 
             <!-- ===== PANEL: XÉT DUYỆT NHẬN NUÔI ===== -->
@@ -222,17 +642,21 @@
                 <div id="adoptAdminNote" class="admin-note"></div>
                 <div class="table-wrap">
                     <table>
-                        <thead><tr>
-                            <th>Mã user</th>
-                            <th>Người gửi</th>
-                            <th>Mã pet</th>
-                            <th>Tên pet</th>
-                            <th>Ngày gửi</th>
-                            <th>Trạng thái</th>
-                            <th>Hành động</th>
-                        </tr></thead>
+                        <thead>
+                            <tr>
+                                <th>Mã user</th>
+                                <th>Người gửi</th>
+                                <th>Mã pet</th>
+                                <th>Tên pet</th>
+                                <th>Ngày gửi</th>
+                                <th>Trạng thái</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
                         <tbody id="adoptionTableBody">
-                            <tr><td colspan="7" class="table-message">Đang tải hồ sơ...</td></tr>
+                            <tr>
+                                <td colspan="7" class="table-message">Đang tải hồ sơ...</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -257,8 +681,10 @@
                 <!-- Tìm kiếm báo cáo -->
                 <div class="search-box-wrap">
                     <span class="search-icon">🔍</span>
-                    <input type="text" id="reportSearchInput" placeholder="Tìm theo tên, SĐT, vị trí..." oninput="renderTable()">
-                    <button class="search-clear-btn" id="reportSearchClear" onclick="clearSearch('reportSearchInput', 'reportSearchClear')">✕</button>
+                    <input type="text" id="reportSearchInput" placeholder="Tìm theo tên, SĐT, vị trí..."
+                        oninput="renderTable()">
+                    <button class="search-clear-btn" id="reportSearchClear"
+                        onclick="clearSearch('reportSearchInput', 'reportSearchClear')">✕</button>
                 </div>
 
                 <div class="table-wrap">
@@ -276,7 +702,9 @@
                             </tr>
                         </thead>
                         <tbody id="adminTableBody">
-                            <tr><td colspan="8" class="table-message">Đang tải dữ liệu...</td></tr>
+                            <tr>
+                                <td colspan="8" class="table-message">Đang tải dữ liệu...</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -294,8 +722,10 @@
                 <!-- Tìm kiếm bài tin -->
                 <div class="search-box-wrap">
                     <span class="search-icon">🔍</span>
-                    <input type="text" id="newsSearchInput" placeholder="Tìm theo tiêu đề, tác giả..." oninput="renderNewsTable()">
-                    <button class="search-clear-btn" id="newsSearchClear" onclick="clearSearch('newsSearchInput', 'newsSearchClear')">✕</button>
+                    <input type="text" id="newsSearchInput" placeholder="Tìm theo tiêu đề, tác giả..."
+                        oninput="renderNewsTable()">
+                    <button class="search-clear-btn" id="newsSearchClear"
+                        onclick="clearSearch('newsSearchInput', 'newsSearchClear')">✕</button>
                 </div>
 
                 <div class="table-wrap">
@@ -312,7 +742,9 @@
                             </tr>
                         </thead>
                         <tbody id="newsTableBody">
-                            <tr><td colspan="7" class="table-message">Đang tải...</td></tr>
+                            <tr>
+                                <td colspan="7" class="table-message">Đang tải...</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -399,12 +831,12 @@
         }
 
         // Theo dõi input search để hiện/ẩn nút clear
-        document.addEventListener('DOMContentLoaded', function() {
-            ['reportSearchInput', 'newsSearchInput'].forEach(function(id) {
+        document.addEventListener('DOMContentLoaded', function () {
+            ['reportSearchInput', 'newsSearchInput'].forEach(function (id) {
                 var el = document.getElementById(id);
                 if (!el) return;
                 var clearId = id.replace('Input', 'Clear');
-                el.addEventListener('input', function() {
+                el.addEventListener('input', function () {
                     document.getElementById(clearId).classList.toggle('visible', el.value.length > 0);
                 });
             });
@@ -448,7 +880,7 @@
         const typeLabels = { lost: 'Thất lạc', found: 'Tìm thấy' };
         const genderLabels = { male: 'Đực', female: 'Cái', unknown: 'Chưa rõ' };
 
-        const escapeHtml = (v) => String(v || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+        const escapeHtml = (v) => String(v || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 
         const setNote = (type, message) => {
             adminNote.className = 'admin-note';
@@ -499,9 +931,9 @@
 
                 if (!payload.success) throw new Error(payload.message);
 
-                allReports = (payload.data.reports || payload.data.data || []).map(function(r) {
+                allReports = (payload.data.reports || payload.data.data || []).map(function (r) {
                     r.status = (r.STATUS || r.status || '').toLowerCase();
-                    r.type   = (r.TYPE   || r.type   || '').toLowerCase();
+                    r.type = (r.TYPE || r.type || '').toLowerCase();
                     return r;
                 });
                 renderTable();
@@ -564,7 +996,7 @@
 
             const img = document.getElementById('modalImg');
             img.src = r.image || (r.images && r.images[0] ? (r.images[0].imagePath || r.images[0].image_path) : '') || '';
-            img.onerror = function() { this.src = ''; this.style.display = 'none'; };
+            img.onerror = function () { this.src = ''; this.style.display = 'none'; };
 
             document.getElementById('modalType').innerHTML = `<span class="type-pill ${escapeHtml(r.type)}">${escapeHtml(typeLabels[r.type] || r.type)}</span>`;
             document.getElementById('modalSpecies').textContent = [r.pet_type, r.species].filter(Boolean).join(' / ') || '-';
@@ -605,7 +1037,7 @@
         }
 
         closeModalBtn.addEventListener('click', closeModal);
-        detailModal.addEventListener('click', function(e) {
+        detailModal.addEventListener('click', function (e) {
             if (e.target === detailModal) closeModal();
         });
 
@@ -671,7 +1103,7 @@
         // (switchSection đã được khai báo ở script trên)
 
         // ===================== NEWS ADMIN =====================
-        const CAT_LABELS = { community:'🐾 Cộng đồng', health:'💉 Sức khỏe', adoption:'🏠 Nhận nuôi', knowledge:'📚 Kiến thức', rescue:'🆘 Cứu hộ' };
+        const CAT_LABELS = { community: '🐾 Cộng đồng', health: '💉 Sức khỏe', adoption: '🏠 Nhận nuôi', knowledge: '📚 Kiến thức', rescue: '🆘 Cứu hộ' };
         const newsStatusLabels = { pending: 'Chờ duyệt', approved: 'Đã duyệt', rejected: 'Đã từ chối' };
 
         let allNews = [];
@@ -680,7 +1112,7 @@
 
         // News status tabs
         document.querySelectorAll('[data-news-status]').forEach(btn => {
-            btn.addEventListener('click', function() {
+            btn.addEventListener('click', function () {
                 document.querySelectorAll('[data-news-status]').forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
                 currentNewsStatus = this.dataset.newsStatus;
@@ -700,7 +1132,7 @@
                 if (!payload.success) throw new Error(payload.message);
                 allNews = payload.data.news || [];
                 renderNewsTable();
-            } catch(err) {
+            } catch (err) {
                 document.getElementById('newsTableBody').innerHTML = '<tr><td colspan="7" class="table-message">Lỗi tải dữ liệu.</td></tr>';
             }
         }
@@ -732,14 +1164,14 @@
                     '<td>' + date + '</td>' +
                     '<td>' + statusPill + '</td>' +
                     '<td><button class="btn-view" onclick="openNewsModal(' + n.id + ')">Xem</button></td>' +
-                '</tr>';
+                    '</tr>';
             }).join('');
         }
 
         // ── News modal ──────────────────────────────────────────────────
         const newsMap = {};
 
-        window.openNewsModal = function(id) {
+        window.openNewsModal = function (id) {
             allNews.forEach(n => { newsMap[n.id] = n; });
             const n = newsMap[id];
             if (!n) return;
@@ -747,7 +1179,7 @@
             document.getElementById('modalTitle').textContent = '📰 ' + (n.title || 'Bài tin');
             const img = document.getElementById('modalImg');
             if (n.image) { img.src = n.image; img.style.display = ''; } else { img.style.display = 'none'; }
-            img.onerror = function() { this.style.display = 'none'; };
+            img.onerror = function () { this.style.display = 'none'; };
 
             document.getElementById('modalType').innerHTML = '<span class="cat-pill">' + escapeHtml(CAT_LABELS[n.category] || n.category) + '</span>';
             document.getElementById('modalSpecies').textContent = n.author_name || '-';
@@ -788,7 +1220,7 @@
             footer.innerHTML = btns;
         }
 
-        window.promptRejectNews = async function(id) {
+        window.promptRejectNews = async function (id) {
             const { value: reason } = await Swal.fire({
                 title: 'Lý do từ chối',
                 input: 'textarea',
@@ -802,7 +1234,7 @@
             updateNewsStatus(id, 'rejected', reason || null);
         };
 
-        window.updateNewsStatus = async function(id, status, rejectedReason) {
+        window.updateNewsStatus = async function (id, status, rejectedReason) {
             if (isNewsUpdating) return;
             isNewsUpdating = true;
             try {
@@ -823,7 +1255,7 @@
                 renderNewsTable();
                 setNote('success', 'Cập nhật bài tin thành công!');
                 setTimeout(() => setNote('', ''), 3000);
-            } catch(err) {
+            } catch (err) {
                 setNote('error', 'Lỗi: ' + err.message);
             } finally {
                 isNewsUpdating = false;
@@ -837,10 +1269,12 @@
         <div class="adopt-modal-content">
             <div class="adopt-modal-header">
                 <strong style="font-size:1.05rem;color:#1f5133;">Chi tiết hồ sơ nhận nuôi</strong>
-                <button id="adoptCloseModalBtn" style="background:none;border:none;font-size:1.4rem;cursor:pointer;color:#64748b;">✕</button>
+                <button id="adoptCloseModalBtn"
+                    style="background:none;border:none;font-size:1.4rem;cursor:pointer;color:#64748b;">✕</button>
             </div>
             <div class="adopt-modal-body">
-                <div><img id="adoptModalPetImage" src="https://via.placeholder.com/640x360?text=No+Image" alt="Pet image"></div>
+                <div><img id="adoptModalPetImage" src="https://via.placeholder.com/640x360?text=No+Image"
+                        alt="Pet image"></div>
                 <div>
                     <div class="adopt-meta-label">Lý do xin nhận nuôi</div>
                     <div class="adopt-meta-value" id="adoptModalReason">-</div>
@@ -861,7 +1295,7 @@
     </div>
     <!-- ===== SCRIPT: XÉT DUYỆT NHẬN NUÔI ===== -->
     <script>
-        (function() {
+        (function () {
             let adoptAllRequests = [];
             let adoptCurrentFilter = 'pending';
             let adoptSelectedRequest = null;
@@ -870,7 +1304,7 @@
 
             const adoptStatusLabels = { pending: 'Chờ duyệt', approved: 'Đã duyệt', rejected: 'Đã từ chối' };
 
-            const adoptEscape = (v) => String(v || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+            const adoptEscape = (v) => String(v || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 
             const adoptNote = (type, msg) => {
                 const el = document.getElementById('adoptAdminNote');
@@ -948,7 +1382,7 @@
                     await window.loadAdoptionRequests();
                     adoptNote('success', 'Đã cập nhật trạng thái hồ sơ thành công.');
                     setTimeout(() => adoptNote('', ''), 3000);
-                } catch(err) {
+                } catch (err) {
                     adoptNote('error', err.message || 'Không thể cập nhật trạng thái.');
                 } finally {
                     adoptIsUpdating = false;
@@ -957,7 +1391,7 @@
 
             // Filter tab buttons
             document.querySelectorAll('.adopt-tab').forEach(btn => {
-                btn.addEventListener('click', function() {
+                btn.addEventListener('click', function () {
                     document.querySelectorAll('.adopt-tab').forEach(b => b.classList.remove('active'));
                     this.classList.add('active');
                     adoptCurrentFilter = this.dataset.adoptStatus;
@@ -985,7 +1419,7 @@
             });
 
             // Load data
-            window.loadAdoptionRequests = async function() {
+            window.loadAdoptionRequests = async function () {
                 const tbody = document.getElementById('adoptionTableBody');
                 tbody.innerHTML = '<tr><td colspan="7" class="table-message">Đang tải hồ sơ...</td></tr>';
                 try {
@@ -1009,7 +1443,7 @@
                     if (!res.ok) throw new Error((payload && payload.message) || 'Không thể tải danh sách hồ sơ.');
                     adoptAllRequests = (payload && payload.data && payload.data.requests) || [];
                     adoptRenderTable();
-                } catch(err) {
+                } catch (err) {
                     tbody.innerHTML = `<tr><td colspan="7" class="table-message">${adoptEscape(err.message)}</td></tr>`;
                 }
             };
@@ -1021,4 +1455,5 @@
     </script>
 
 </body>
+
 </html>

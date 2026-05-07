@@ -7,7 +7,7 @@
 
         <!-- Logo -->
         <div class="auth-overlay__logo">
-            <div class="auth-overlay__logo-circle">PET</div>
+            <img src="/images/the_logo.webp" alt="Logo" class="auth-overlay__logo-circle">
             <h2>Pet Helper</h2>
             <p>Cộng đồng yêu thú cưng</p>
         </div>
@@ -246,18 +246,17 @@
     }
 
     .auth-overlay__logo-circle {
-        width: 56px;
-        height: 56px;
-        background: linear-gradient(135deg, #2d6a4f, #40916c);
-        color: #fff;
+        width: 64px;
+        height: 64px;
+        background: #fff;
         border-radius: 50%;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        font-weight: 900;
-        font-size: 1.05rem;
         margin-bottom: 8px;
-        box-shadow: 0 4px 15px rgba(45, 106, 79, 0.35);
+        box-shadow: 0 4px 15px rgba(45, 106, 79, 0.2);
+        object-fit: cover;
+        border: 2px solid #2d6a4f;
     }
 
     .auth-overlay__logo h2 {

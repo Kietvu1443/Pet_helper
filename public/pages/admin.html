@@ -332,7 +332,7 @@
             background: #eef8f2;
         }
 
-        .stat-card-split-inner + .stat-card-split-inner {
+        .stat-card-split-inner+.stat-card-split-inner {
             border-top: 1px dashed #c6dece;
         }
 
@@ -369,9 +369,11 @@
             .stats-grid {
                 grid-template-columns: 1fr;
             }
+
             .stats-grid-row2 {
                 grid-template-columns: 1fr;
             }
+
             .quick-actions {
                 grid-template-columns: repeat(2, 1fr);
             }
@@ -473,7 +475,7 @@
 
         .stat-card:hover {
             border-color: #8fbfa4;
-            box-shadow: 0 2px 10px rgba(14,54,34,0.07);
+            box-shadow: 0 2px 10px rgba(14, 54, 34, 0.07);
         }
 
         .stat-card-header {
@@ -539,12 +541,14 @@
             color: #92400e;
         }
 
-        .stat-chip.approved, .stat-chip.available {
+        .stat-chip.approved,
+        .stat-chip.available {
             background: #dcfce7;
             color: #166534;
         }
 
-        .stat-chip.rejected, .stat-chip.closed {
+        .stat-chip.rejected,
+        .stat-chip.closed {
             background: #fee2e2;
             color: #b91c1c;
         }
@@ -723,7 +727,9 @@
             cursor: not-allowed;
         }
 
-        .qa-icon { font-size: 1.3rem; }
+        .qa-icon {
+            font-size: 1.3rem;
+        }
 
         .dash-hint {
             margin: 0;
@@ -915,7 +921,7 @@
         <div class="top-bar">
             <a href="/" class="logo-group">
                 <div class="logo-circle">
-                    <img src="/images/logo.svg" alt="logo" id="the_logo">
+                    <img src="/images/the_logo.webp" alt="logo" id="the_logo">
                 </div>
                 <div class="web-name">PET HELPER</div>
             </a>
@@ -932,17 +938,25 @@
                             </div>
                             <div class="dropdown-divider"></div>
                             <a href="/profile" class="dropdown-item">👤 Tài khoản</a>
-                            <a href="/admin" class="dropdown-item role-admin-only is-auth-hidden">🧭 Dashboard quản trị</a>
-                            <a href="/admin/adoption-requests" class="dropdown-item role-staff-only is-auth-hidden">🗂️ Xét duyệt nhận nuôi</a>
-                            <a href="/admin/reports" class="dropdown-item role-staff-only is-auth-hidden">📣 Quản lý báo cáo</a>
+                            <a href="/admin" class="dropdown-item role-admin-only is-auth-hidden">🧭 Dashboard quản
+                                trị</a>
+                            <a href="/admin/adoption-requests" class="dropdown-item role-staff-only is-auth-hidden">🗂️
+                                Xét duyệt nhận nuôi</a>
+                            <a href="/admin/reports" class="dropdown-item role-staff-only is-auth-hidden">📣 Quản lý báo
+                                cáo</a>
                             <div class="dropdown-divider"></div>
-                            <a href="#" class="dropdown-item logout" id="logoutBtn" onclick="handleLogout(event)">🚪 Đăng xuất</a>
+                            <a href="#" class="dropdown-item logout" id="logoutBtn" onclick="handleLogout(event)">🚪
+                                Đăng xuất</a>
                         </div>
                     </div>
                 </div>
                 <div class="auth-guest-actions is-auth-visible" id="headerAuthGuestState">
-                    <a href="#" onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('login'); } return false;"><span>Đăng nhập</span></a>
-                    <a href="#" onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('register'); } return false;"><span>Đăng ký</span></a>
+                    <a href="#"
+                        onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('login'); } return false;"><span>Đăng
+                            nhập</span></a>
+                    <a href="#"
+                        onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('register'); } return false;"><span>Đăng
+                            ký</span></a>
                 </div>
                 <span>Giỏ hàng <span id="cart-count-display">(0)</span></span>
                 <span class="lang-switch">VN / EN</span>
@@ -1064,7 +1078,8 @@
 
                         <!-- Hàng 2: Thất lạc + Tìm thấy + Bài tin -->
                         <div class="stats-grid-row2">
-                            <article class="stat-card" data-report-filter="lost" title="Lọc báo cáo thất lạc" style="cursor:pointer;">
+                            <article class="stat-card" data-report-filter="lost" title="Lọc báo cáo thất lạc"
+                                style="cursor:pointer;">
                                 <div class="stat-card-header">
                                     <p class="stat-label">Báo cáo thất lạc</p>
                                     <span class="stat-icon">🔴</span>
@@ -1079,7 +1094,8 @@
                                 </div>
                             </article>
 
-                            <article class="stat-card" data-report-filter="found" title="Lọc báo cáo tìm thấy" style="cursor:pointer;">
+                            <article class="stat-card" data-report-filter="found" title="Lọc báo cáo tìm thấy"
+                                style="cursor:pointer;">
                                 <div class="stat-card-header">
                                     <p class="stat-label">Báo cáo tìm thấy</p>
                                     <span class="stat-icon">🟢</span>
@@ -1118,7 +1134,8 @@
                                     ⚡ Cần xử lý ngay
                                     <span class="urgent-count-badge" id="urgentCount">0</span>
                                 </p>
-                                <span style="font-size:0.78rem;color:#92400e;">Các mục đang ở trạng thái chờ duyệt</span>
+                                <span style="font-size:0.78rem;color:#92400e;">Các mục đang ở trạng thái chờ
+                                    duyệt</span>
                             </div>
                             <div id="urgentList">
                                 <div class="urgent-empty">Đang tải dữ liệu...</div>
@@ -1447,34 +1464,34 @@
             },
         };
 
-        const statAdoptionTotal    = document.getElementById('statAdoptionTotal');
-        const statAdoptionPending  = document.getElementById('statAdoptionPending');
+        const statAdoptionTotal = document.getElementById('statAdoptionTotal');
+        const statAdoptionPending = document.getElementById('statAdoptionPending');
         const statAdoptionApproved = document.getElementById('statAdoptionApproved');
         const statAdoptionRejected = document.getElementById('statAdoptionRejected');
 
-        const statPetsTotal     = document.getElementById('statPetsTotal');
+        const statPetsTotal = document.getElementById('statPetsTotal');
         const statPetsAvailable = document.getElementById('statPetsAvailable');
-        const statPetsAdopted   = document.getElementById('statPetsAdopted');
+        const statPetsAdopted = document.getElementById('statPetsAdopted');
 
-        const statReportsTotal       = null; // split into lost/found below
-        const statReportsPending     = null;
-        const statReportsApproved    = null;
-        const statReportsRejected    = null;
+        const statReportsTotal = null; // split into lost/found below
+        const statReportsPending = null;
+        const statReportsApproved = null;
+        const statReportsRejected = null;
 
-        const statReportsLostTotal    = document.getElementById('statReportsLostTotal');
-        const statReportsLostPending  = document.getElementById('statReportsLostPending');
+        const statReportsLostTotal = document.getElementById('statReportsLostTotal');
+        const statReportsLostPending = document.getElementById('statReportsLostPending');
         const statReportsLostApproved = document.getElementById('statReportsLostApproved');
-        const statReportsFoundTotal    = document.getElementById('statReportsFoundTotal');
-        const statReportsFoundPending  = document.getElementById('statReportsFoundPending');
+        const statReportsFoundTotal = document.getElementById('statReportsFoundTotal');
+        const statReportsFoundPending = document.getElementById('statReportsFoundPending');
         const statReportsFoundApproved = document.getElementById('statReportsFoundApproved');
 
-        const statNewsTotal    = document.getElementById('statNewsTotal');
-        const statNewsPending  = document.getElementById('statNewsPending');
+        const statNewsTotal = document.getElementById('statNewsTotal');
+        const statNewsPending = document.getElementById('statNewsPending');
         const statNewsApproved = document.getElementById('statNewsApproved');
         const statNewsRejected = document.getElementById('statNewsRejected');
 
         const urgentCount = document.getElementById('urgentCount');
-        const urgentList  = document.getElementById('urgentList');
+        const urgentList = document.getElementById('urgentList');
 
         const detailModal = document.getElementById('detailModal');
         const detailModalTitle = document.getElementById('detailModalTitle');
@@ -1875,42 +1892,42 @@
 
         const renderDashboardStats = () => {
             // Adoption
-            const adoptionTotal    = state.adoptionRows.length;
-            const adoptionPending  = state.adoptionRows.filter(r => String(r.status || 'pending') === 'pending').length;
+            const adoptionTotal = state.adoptionRows.length;
+            const adoptionPending = state.adoptionRows.filter(r => String(r.status || 'pending') === 'pending').length;
             const adoptionApproved = state.adoptionRows.filter(r => String(r.status) === 'approved').length;
             const adoptionRejected = state.adoptionRows.filter(r => String(r.status) === 'rejected').length;
-            statAdoptionTotal.textContent    = String(adoptionTotal || 0);
-            statAdoptionPending.textContent  = `${adoptionPending} chờ duyệt`;
+            statAdoptionTotal.textContent = String(adoptionTotal || 0);
+            statAdoptionPending.textContent = `${adoptionPending} chờ duyệt`;
             statAdoptionApproved.textContent = `${adoptionApproved} đã duyệt`;
             statAdoptionRejected.textContent = `${adoptionRejected} từ chối`;
 
             // Pets
-            const petsTotal     = state.petRows.length;
+            const petsTotal = state.petRows.length;
             const petsAvailable = state.petRows.filter(p => String(p.status || 'available') === 'available').length;
-            const petsAdopted   = state.petRows.filter(p => String(p.status) === 'adopted').length;
-            statPetsTotal.textContent     = String(petsTotal || 0);
+            const petsAdopted = state.petRows.filter(p => String(p.status) === 'adopted').length;
+            statPetsTotal.textContent = String(petsTotal || 0);
             statPetsAvailable.textContent = `${petsAvailable} sẵn sàng`;
-            statPetsAdopted.textContent   = `${petsAdopted} đã nhận nuôi`;
+            statPetsAdopted.textContent = `${petsAdopted} đã nhận nuôi`;
 
             // Reports — split by type
-            const lostRows  = state.reportRows.filter(r => String(r.type || 'lost') === 'lost');
+            const lostRows = state.reportRows.filter(r => String(r.type || 'lost') === 'lost');
             const foundRows = state.reportRows.filter(r => String(r.type) === 'found');
 
-            statReportsLostTotal.textContent    = String(lostRows.length);
-            statReportsLostPending.textContent  = `${lostRows.filter(r => String(r.status || 'pending') === 'pending').length} chờ duyệt`;
+            statReportsLostTotal.textContent = String(lostRows.length);
+            statReportsLostPending.textContent = `${lostRows.filter(r => String(r.status || 'pending') === 'pending').length} chờ duyệt`;
             statReportsLostApproved.textContent = `${lostRows.filter(r => String(r.status) === 'approved').length} đã duyệt`;
 
-            statReportsFoundTotal.textContent    = String(foundRows.length);
-            statReportsFoundPending.textContent  = `${foundRows.filter(r => String(r.status || 'pending') === 'pending').length} chờ duyệt`;
+            statReportsFoundTotal.textContent = String(foundRows.length);
+            statReportsFoundPending.textContent = `${foundRows.filter(r => String(r.status || 'pending') === 'pending').length} chờ duyệt`;
             statReportsFoundApproved.textContent = `${foundRows.filter(r => String(r.status) === 'approved').length} đã duyệt`;
 
             // News
-            const newsTotal    = state.newsRows.length;
-            const newsPending  = state.newsRows.filter(n => String(n.status || 'pending') === 'pending').length;
+            const newsTotal = state.newsRows.length;
+            const newsPending = state.newsRows.filter(n => String(n.status || 'pending') === 'pending').length;
             const newsApproved = state.newsRows.filter(n => String(n.status) === 'approved').length;
             const newsRejected = state.newsRows.filter(n => String(n.status) === 'rejected').length;
-            statNewsTotal.textContent    = String(newsTotal || 0);
-            statNewsPending.textContent  = `${newsPending} chờ duyệt`;
+            statNewsTotal.textContent = String(newsTotal || 0);
+            statNewsPending.textContent = `${newsPending} chờ duyệt`;
             statNewsApproved.textContent = `${newsApproved} đã duyệt`;
             statNewsRejected.textContent = `${newsRejected} từ chối`;
 
@@ -1995,7 +2012,7 @@
                     loadPets(false),
                     loadReports(false),
                     loadNews(false),
-                ]).then(() => renderDashboardStats()).catch(() => {});
+                ]).then(() => renderDashboardStats()).catch(() => { });
             } catch (error) {
                 if (error.code === 'unauthorized') {
                     setBlockedState('Vui lòng đăng nhập để truy cập trang quản trị.');
@@ -2283,8 +2300,8 @@
             try {
                 const payload = await apiFetch('/api/v1/admin/reports?limit=100');
                 const reportData = payload && payload.data ? payload.data.data : [];
-                state.reportRows = getSafeArray(reportData).map(function(r) {
-                    r.type   = String(r.TYPE   || r.type   || '').toLowerCase();
+                state.reportRows = getSafeArray(reportData).map(function (r) {
+                    r.type = String(r.TYPE || r.type || '').toLowerCase();
                     r.status = String(r.STATUS || r.status || '').toLowerCase();
                     return r;
                 });

@@ -35,6 +35,12 @@ html {
   --container-max: 1200px;
   --radius-lg: 20px;
   --gradient-hero: linear-gradient(135deg, #2d6a4f 0%, #40916c 100%);
+
+  /* Responsive Breakpoints */
+  --bp-desktop: 1200px;
+  --bp-tablet: 992px;
+  --bp-mobile-lg: 768px;
+  --bp-mobile: 480px;
 }
 
 body {
@@ -122,7 +128,8 @@ img {
   background: rgba(255, 255, 255, 0.2);
   padding: 8px 20px;
   border-radius: 30px;
-  width: 400px;
+  width: 100%;
+  max-width: 400px;
   display: flex;
   align-items: center;
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -1363,6 +1370,27 @@ img {
     flex: 1;
     width: 100%;
   }
+
+  /* Bulletin layout: stack on tablet */
+  .bulletin-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .bulletin-featured {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  /* Contact section */
+  .contact-section {
+    flex-direction: column;
+    padding: 40px 20px;
+  }
+
+  /* Card grid */
+  .card-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
 }
 
 @media (max-width: 768px) {
@@ -1644,6 +1672,38 @@ img {
 
   .contact-info h2 {
     font-size: 1.2rem;
+  }
+
+  /* Card grid: single column on small mobile */
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Footer: single column */
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  /* Bulletin cards: stack image */
+  .bulletin-card {
+    flex-direction: column;
+  }
+
+  .bulletin-card-img-wrap {
+    width: 100%;
+    height: 140px;
+  }
+
+  /* Buttons: full width */
+  .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Container tighter padding */
+  .container {
+    padding: 0 10px;
   }
 }
 

@@ -188,6 +188,74 @@
         .empty-state p {
             color: #64748B;
         }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .adopt-hero {
+                padding: 40px 16px;
+            }
+
+            .adopt-hero h1 {
+                font-size: 1.8rem;
+            }
+
+            .adopt-filters {
+                max-width: 100%;
+            }
+
+            .filter-group select,
+            .filter-group input {
+                min-width: 0;
+                width: 100%;
+            }
+
+            .pets-section {
+                padding: 30px 12px;
+            }
+
+            .card-grid {
+                grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+                gap: 16px;
+            }
+
+            .card-image {
+                height: 190px;
+            }
+
+            .card-body {
+                padding: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .adopt-hero {
+                padding: 30px 12px;
+            }
+
+            .adopt-hero h1 {
+                font-size: 1.5rem;
+            }
+
+            .adopt-hero p {
+                font-size: 0.9rem;
+            }
+
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card-image {
+                height: 200px;
+            }
+
+            .empty-state {
+                padding: 50px 16px;
+            }
+
+            .empty-icon {
+                font-size: 3rem;
+            }
+        }
     </style>
 </head>
 

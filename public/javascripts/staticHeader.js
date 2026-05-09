@@ -453,3 +453,16 @@ async function handleLogout(e) {
   window.addEventListener("scroll", updateScrolledState, { passive: true });
   updateScrolledState();
 })();
+  if (window.__headerScrollFxInitialized) return;
+  window.__headerScrollFxInitialized = true;
+
+  const headerEl = document.querySelector("header.header");
+  if (!headerEl) return;
+
+  const updateScrolledState = () => {
+    headerEl.classList.toggle("header-scrolled", window.scrollY > 20);
+  };
+
+  window.addEventListener("scroll", updateScrolledState, { passive: true });
+  updateScrolledState();
+})();

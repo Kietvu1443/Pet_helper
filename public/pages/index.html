@@ -1126,6 +1126,23 @@
         }
 
         /* --- RESPONSIVE --- */
+        @media (max-width: 992px) {
+            .news-grid {
+                grid-template-columns: repeat(2, 1fr);
+                grid-template-rows: auto;
+            }
+
+            .adopt-layout {
+                flex-direction: column;
+            }
+
+            .contact-container {
+                flex-direction: column;
+                padding: 40px 20px;
+                gap: 25px;
+            }
+        }
+
         @media (max-width: 768px) {
             body {
                 padding-top: 0;
@@ -1236,7 +1253,7 @@
             }
 
             .news-grid {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: 1fr 1fr;
                 grid-template-rows: auto;
             }
 
@@ -1244,12 +1261,16 @@
                 grid-column: span 2;
             }
 
-            .adopt-layout {
-                flex-direction: column;
-            }
-
             .adopt-slider-container {
                 height: 280px;
+            }
+
+            .slider-caption-box {
+                padding: 30px 16px 16px;
+            }
+
+            .slider-caption-box h3 {
+                font-size: 1.1rem;
             }
 
             .contact-container {
@@ -1273,6 +1294,78 @@
             .cart-overlay {
                 width: 100%;
                 right: -100%;
+            }
+
+            .hero-news img {
+                height: 250px;
+            }
+
+            .hero-title {
+                font-size: 1.4rem;
+            }
+
+            .news-list-item {
+                flex-direction: column;
+            }
+
+            .news-thumb {
+                width: 100%;
+                height: 180px;
+            }
+
+            .adopt-filter-bar {
+                flex-wrap: wrap;
+                gap: 10px;
+                padding: 12px 16px;
+                border-radius: 15px;
+                justify-content: center;
+            }
+
+            section {
+                padding: 30px 0;
+            }
+
+            .overlay-header {
+                padding: 12px 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .news-grid {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto;
+            }
+
+            .item-large {
+                grid-column: span 1;
+            }
+
+            .shop-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .adopt-slider-container {
+                height: 220px;
+            }
+
+            .hero-news img {
+                height: 200px;
+            }
+
+            .hero-title {
+                font-size: 1.2rem;
+            }
+
+            .news-headline {
+                font-size: 1.05rem;
+            }
+
+            .slider-caption-box h3 {
+                font-size: 0.95rem;
+            }
+
+            .slider-caption-box p {
+                font-size: 0.8rem;
             }
         }
 
@@ -2224,7 +2317,7 @@
         function fallbackPetImage(img, id) {
             img.onerror = function () {
                 img.onerror = null;
-                img.src = "/images/logo.svg";
+                img.src = "/images/the_logo.webp";
             };
             img.src = "/api/pets/" + id + "/local-avatar";
         }
@@ -2608,4 +2701,55 @@
 
 </body>
 
-</html>
+</html> const CATEGORY_LABELS = {
+community: '🐾 Cộng đồng',
+health: '💉 Sức khỏe',
+adoption: '🏠 Nhận nuôi',
+knowledge: '📚 Kiến thức',
+rescue: '🆘 Cứu hộ',
+};
+
+function timeAgo(dateStr) {
+const diff = (Date.now() - new Date(dateStr)) / 1000;
+if (diff < 3600) return Math.floor(diff / 60) + ' phút trước' ; if (diff < 86400) return Math.floor(diff / 3600)
+    + ' giờ trước' ; if (diff < 604800) return Math.floor(diff / 86400) + ' ngày trước' ; return new
+    Date(dateStr).toLocaleDateString('vi-VN'); } // Load bài nổi bật async function loadHomeFeatured() { try { const
+    res=await fetch('/api/v1/news/featured?limit=1'); const payload=await res.json(); if (!payload.success) return;
+    const n=(payload.data.news || [])[0]; if (!n) return; const card=document.getElementById('homeFeaturedCard');
+    card.href='/news/' + n.id; document.getElementById('homeFeaturedImg').src=n.image
+    || 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=700&q=80' ;
+    document.getElementById('homeFeaturedImg').alt=n.title;
+    document.getElementById('homeFeaturedCategory').textContent=CATEGORY_LABELS[n.category] || n.category;
+    document.getElementById('homeFeaturedTitle').textContent=n.title;
+    document.getElementById('homeFeaturedDate').textContent='📅 ' + timeAgo(n.created_at);
+    document.getElementById('homeFeaturedViews').textContent='👁 ' + (n.view_count || 0) + ' lượt xem' ; } catch (e) {
+    /* giữ nguyên fallback */ } } // Load 3 bài phụ mới nhất async function loadHomeBulletinCards() { try { const
+    res=await fetch('/api/v1/news?page=1&limit=3'); const payload=await res.json(); if (!payload.success) return; const
+    list=payload.data.news || []; const container=document.getElementById('homeBulletinCards');
+    container.innerHTML=list.map(n=> `
+    <a href="/news/${n.id}" class="bulletin-card">
+        <div class="bulletin-card-img-wrap">
+            <img src="${n.image || 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=300&q=80'}"
+                alt="${n.title}" class="bulletin-card-img"
+                onerror="this.src='https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=300&q=80'">
+        </div>
+        <div class="bulletin-card-body">
+            <div>
+                <div class="bulletin-card-category">${CATEGORY_LABELS[n.category] || n.category}</div>
+                <div class="bulletin-card-title">${n.title}</div>
+            </div>
+            <div class="bulletin-card-meta">⏱ ${timeAgo(n.created_at)}</div>
+        </div>
+    </a>
+    `).join('');
+    } catch (e) { /* giữ nguyên nếu lỗi */ }
+    }
+
+    loadHomeFeatured();
+    loadHomeBulletinCards();
+    })();
+    </script>
+
+    </body>
+
+    </html>

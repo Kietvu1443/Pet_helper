@@ -16,7 +16,7 @@
         <div class="top-bar">
             <a href="/" class="logo-group">
                 <div class="logo-circle">
-                    <img src="/images/logo.svg" alt="logo" id="the_logo">
+                    <img src="/images/the_logo.webp" alt="logo" id="the_logo">
                 </div>
                 <div class="web-name">PET HELPER</div>
             </a>
@@ -35,16 +35,22 @@
                             <a href="/profile" class="dropdown-item">👤 Tài khoản</a>
                             <a href="/my-favorites" class="dropdown-item">❤️ Thú cưng đã yêu thích</a>
                             <a href="/my-reports" class="dropdown-item">📋 Báo cáo của tôi</a>
-                            <a href="/adopt/admin/add" class="dropdown-item role-staff-only is-auth-hidden">🐾 Thêm thú cưng</a>
+                            <a href="/adopt/admin/add" class="dropdown-item role-staff-only is-auth-hidden">🐾 Thêm thú
+                                cưng</a>
                             <a href="/admin" class="dropdown-item role-admin-only is-auth-hidden">⚙️ Quản trị</a>
                             <div class="dropdown-divider"></div>
-                            <a href="#" class="dropdown-item logout" id="logoutBtn" onclick="handleLogout(event)">🚪 Đăng xuất</a>
+                            <a href="#" class="dropdown-item logout" id="logoutBtn" onclick="handleLogout(event)">🚪
+                                Đăng xuất</a>
                         </div>
                     </div>
                 </div>
                 <div class="auth-guest-actions is-auth-visible" id="headerAuthGuestState">
-                    <a href="#" onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('login'); } return false;"><span>Đăng nhập</span></a>
-                    <a href="#" onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('register'); } return false;"><span>Đăng ký</span></a>
+                    <a href="#"
+                        onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('login'); } return false;"><span>Đăng
+                            nhập</span></a>
+                    <a href="#"
+                        onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('register'); } return false;"><span>Đăng
+                            ký</span></a>
                 </div>
                 <span>Giỏ hàng <span id="cart-count-display">(0)</span></span>
                 <span class="lang-switch">VN / EN</span>
@@ -65,7 +71,8 @@
                     <a href="#" class="has-dropdown nav-item">Nhận nuôi <span class="nav-arrow arrow">▼</span></a>
                     <ul class="nav-dropdown">
                         <li><a href="/adopt">Xem vật nuôi có thể nhận nuôi</a></li>
-                        <li><a href="/snap" style="color: #ea580c; font-weight: bold;">PetSnap(Tìm kiếm thú cưng ngẫu hứng!)</a></li>
+                        <li><a href="/snap" style="color: #ea580c; font-weight: bold;">PetSnap(Tìm kiếm thú cưng ngẫu
+                                hứng!)</a></li>
                     </ul>
                 </li>
                 <li>
@@ -102,16 +109,19 @@
     <main class="pet-detail-page">
         <div class="container">
             <a href="/adopt" class="back-link">← Quay lại danh sách</a>
-            <div id="petDetailApiLoading" style="display:none; text-align:center; padding:12px; margin-bottom:16px; background:#e7f5ec; color:#1b4332; border-radius:10px;">
+            <div id="petDetailApiLoading"
+                style="display:none; text-align:center; padding:12px; margin-bottom:16px; background:#e7f5ec; color:#1b4332; border-radius:10px;">
                 Đang tải thông tin thú cưng mới nhất...
             </div>
-            <div id="petDetailApiError" style="display:none; text-align:center; padding:12px; margin-bottom:16px; background:#fff4e5; color:#9a3412; border-radius:10px;">
+            <div id="petDetailApiError"
+                style="display:none; text-align:center; padding:12px; margin-bottom:16px; background:#fff4e5; color:#9a3412; border-radius:10px;">
                 Không thể tải dữ liệu thú cưng từ API. Vui lòng thử lại sau.
             </div>
 
             <div class="pet-detail-grid">
                 <div class="pet-image-section">
-                    <img src="https://via.placeholder.com/600x400?text=No+Image" alt="Pet image" class="pet-main-image" id="mainImage" data-pet-id="" onerror="fallbackPetImage(this, this.dataset.petId)">
+                    <img src="https://via.placeholder.com/600x400?text=No+Image" alt="Pet image" class="pet-main-image"
+                        id="mainImage" data-pet-id="" onerror="fallbackPetImage(this, this.dataset.petId)">
                     <div class="pet-status-badge available" id="petStatusBadge">
                         🟢 Sẵn sàng nhận nuôi
                     </div>
@@ -124,7 +134,8 @@
 
                     <h1 class="pet-name" id="petNameTitle">Đang tải...</h1>
 
-                    <p id="petCodeText" style="color: #2d6a4f; font-weight: 600; margin-bottom: 15px; display:none;"></p>
+                    <p id="petCodeText" style="color: #2d6a4f; font-weight: 600; margin-bottom: 15px; display:none;">
+                    </p>
 
                     <p class="pet-description" id="petDescriptionText"></p>
 
@@ -147,7 +158,8 @@
                         <button class="btn btn-green btn-lg" id="adoptBtn" data-pet-id="" style="display:none;">
                             🐾 Đăng ký nhận nuôi
                         </button>
-                        <a href="#" class="btn btn-green btn-lg" id="adoptLoginBtn" onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('login'); } return false;">
+                        <a href="#" class="btn btn-green btn-lg" id="adoptLoginBtn"
+                            onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('login'); } return false;">
                             🔐 Đăng nhập để nhận nuôi
                         </a>
 
@@ -155,7 +167,8 @@
                             <span class="like-heart">🤍</span>
                         </button>
 
-                        <button class="btn btn-outline-gray" id="shareBtn" data-share-title="Pet Helper" data-share-text="">
+                        <button class="btn btn-outline-gray" id="shareBtn" data-share-title="Pet Helper"
+                            data-share-text="">
                             📤 Chia sẻ
                         </button>
                     </div>
@@ -171,7 +184,8 @@
                     <span style="font-size: 1.5rem;">🐾</span>
                     <span>Pet Helper</span>
                 </a>
-                <p>Nền tảng hỗ trợ và bảo vệ vật nuôi hàng đầu Việt Nam. Cùng nhau xây dựng cộng đồng yêu thương động vật - Green Project 2026.</p>
+                <p>Nền tảng hỗ trợ và bảo vệ vật nuôi hàng đầu Việt Nam. Cùng nhau xây dựng cộng đồng yêu thương động
+                    vật - Green Project 2026.</p>
             </div>
 
             <div class="footer-links">
@@ -303,13 +317,13 @@
                         <summary>Xem thêm ${extraImages.length} ảnh</summary>
                         <div class="pet-gallery pet-gallery-extra">
                             ${extraImages.map((image, index) => {
-                                const imagePath = escapeHtml(image.image_path || '');
-                                return `
+                    const imagePath = escapeHtml(image.image_path || '');
+                    return `
                                     <div class="gallery-thumb" data-image-path="${imagePath}" onclick="changeMainImage(this.dataset.imagePath, this)">
                                         <img src="${imagePath}" alt="${escapeHtml(petName)} - Ảnh ${index + previewImages.length + 1}" data-pet-id="${escapeHtml(petId)}" loading="lazy" onerror="fallbackPetImage(this, this.dataset.petId)">
                                     </div>
                                 `;
-                            }).join('')}
+                }).join('')}
                         </div>
                     </details>
                 `
@@ -1151,9 +1165,11 @@
             0% {
                 transform: scale(1);
             }
+
             50% {
                 transform: scale(1.3);
             }
+
             100% {
                 transform: scale(1);
             }

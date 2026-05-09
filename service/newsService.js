@@ -36,6 +36,7 @@ const newsService = {
         n.created_at, n.updated_at,
         u.display_name AS author_name, u.name AS author_full_name,
         u.email AS author_email, u.role AS author_role,
+        u.avatar AS author_avatar,
         (SELECT COUNT(*) FROM news_likes nl WHERE nl.news_id = n.id) AS like_count,
         (SELECT COUNT(*) FROM news_comments nc WHERE nc.news_id = n.id) AS comment_count,
         (SELECT COUNT(*) FROM news_follows nf WHERE nf.news_id = n.id) AS follow_count
@@ -61,6 +62,7 @@ const newsService = {
         n.*,
         u.display_name AS author_name, u.name AS author_full_name,
         u.email AS author_email, u.role AS author_role,
+        u.avatar AS author_avatar,
         (SELECT COUNT(*) FROM news_likes nl WHERE nl.news_id = n.id) AS like_count,
         (SELECT COUNT(*) FROM news_comments nc WHERE nc.news_id = n.id) AS comment_count,
         (SELECT COUNT(*) FROM news_follows nf WHERE nf.news_id = n.id) AS follow_count
@@ -100,6 +102,7 @@ const newsService = {
       `SELECT n.id, n.title, n.image, n.category, n.created_at,
               u.display_name AS author_name, u.name AS author_full_name,
               u.email AS author_email, u.role AS author_role,
+              u.avatar AS author_avatar,
               (SELECT COUNT(*) FROM news_likes nl WHERE nl.news_id = n.id) AS like_count
        FROM news n
        INNER JOIN users u ON u.id = n.author_id
@@ -119,6 +122,7 @@ const newsService = {
         nc.id, nc.news_id, nc.user_id, nc.parent_id, nc.content,
         nc.created_at, nc.updated_at,
         u.display_name AS author_name,
+        u.avatar AS author_avatar,
         (SELECT COUNT(*) FROM news_comment_likes ncl WHERE ncl.comment_id = nc.id) AS like_count
        FROM news_comments nc
        INNER JOIN users u ON u.id = nc.user_id
@@ -140,16 +144,31 @@ const newsService = {
       rows.forEach(r => { r.is_liked = false; });
     }
 
-    // Tổ chức thành tree: comments gốc + replies
-    const comments = rows.filter(r => !r.parent_id);
-    const repliesMap = {};
-    rows.filter(r => r.parent_id).forEach(r => {
-      if (!repliesMap[r.parent_id]) repliesMap[r.parent_id] = [];
-      repliesMap[r.parent_id].push(r);
-    });
-    comments.forEach(c => { c.replies = repliesMap[c.id] || []; });
+    // Build cây đúng:
+    // Cấp 1: comment gốc (parent_id = null)
+    // Cấp 2: reply trực tiếp vào comment gốc → gắn vào replies của cấp 1
+    // Cấp 3: reply vào cấp 2 → gắn vào replies của cấp 2 đó
+    // Cấp 4+: reply vào cấp 3+ → gắn vào replies của cha trực tiếp (frontend sẽ giới hạn hiển thị)
 
-    return comments;
+    const rowMap = {};
+    rows.forEach(r => { r.replies = []; rowMap[r.id] = r; });
+
+    const rootComments = [];
+    rows.forEach(r => {
+      if (!r.parent_id) {
+        // Cấp 1 — comment gốc
+        rootComments.push(r);
+      } else {
+        const parent = rowMap[r.parent_id];
+        if (parent) {
+          // Gắn vào replies của cha trực tiếp — giữ đúng cây
+          parent.replies.push(r);
+        }
+        // Nếu không tìm thấy cha (bị xóa chẳng hạn) → bỏ qua
+      }
+    });
+
+    return rootComments;
   },
 
   async addComment({ newsId, userId, parentId, content }) {
@@ -243,6 +262,7 @@ const newsService = {
       `SELECT n.id, n.title, n.image, n.category, n.created_at,
               u.display_name AS author_name, u.name AS author_full_name,
               u.email AS author_email, u.role AS author_role,
+              u.avatar AS author_avatar,
               (SELECT COUNT(*) FROM news_likes nl WHERE nl.news_id = n.id) AS like_count
        FROM news_follows nf
        INNER JOIN news n ON n.id = nf.news_id AND n.status = 'approved'
@@ -314,7 +334,8 @@ const newsService = {
       `SELECT n.id, n.title, n.image, n.category, n.status,
               n.rejected_reason, n.view_count, n.created_at, n.updated_at,
               u.display_name AS author_name, u.name AS author_full_name,
-              u.email AS author_email, u.role AS author_role
+              u.email AS author_email, u.role AS author_role,
+              u.avatar AS author_avatar
        FROM news n
        INNER JOIN users u ON u.id = n.author_id
        ${where}

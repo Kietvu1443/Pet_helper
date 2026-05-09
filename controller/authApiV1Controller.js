@@ -2,6 +2,59 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const { JWT_SECRET } = require("../middleware/authMiddleware");
 const { sendSuccess, sendError } = require("../utils/apiResponse");
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
+
+// Cấu hình multer upload avatar
+const avatarStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const dir = path.join(__dirname, "../public/uploads/avatars");
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    cb(null, dir);
+  },
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname).toLowerCase();
+    cb(null, `avatar_${req.user.id}_${Date.now()}${ext}`);
+  },
+});
+const uploadAvatar = multer({
+  storage: avatarStorage,
+  limits: { fileSize: 3 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    const allowed = /jpeg|jpg|png|gif|webp/;
+    if (allowed.test(path.extname(file.originalname).toLowerCase()) && allowed.test(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error("Chỉ chấp nhận file ảnh"));
+    }
+  },
+}).single("avatar");
+
+// Cấu hình multer upload background
+const bgStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const dir = path.join(__dirname, "../public/uploads/backgrounds");
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    cb(null, dir);
+  },
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname).toLowerCase();
+    cb(null, `bg_${req.user.id}_${Date.now()}${ext}`);
+  },
+});
+const uploadBg = multer({
+  storage: bgStorage,
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    const allowed = /jpeg|jpg|png|gif|webp/;
+    if (allowed.test(path.extname(file.originalname).toLowerCase()) && allowed.test(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error("Chỉ chấp nhận file ảnh"));
+    }
+  },
+}).single("background");
 
 const MAX_DISPLAY_NAME_LENGTH = 100;
 const MAX_NAME_LENGTH = 100;
@@ -151,25 +204,31 @@ const authApiV1Controller = {
 
   async me(req, res) {
     try {
-      if (!req.user) {
-        return sendError(res, 401, "Vui lòng đăng nhập tài khoản");
-      }
+        if (!req.user || !req.user.id) {
+            return sendError(res, 401, "Vui lòng đăng nhập tài khoản");
+        }
 
-      return sendSuccess(res, 200, "Lấy thông tin người dùng thành công", {
-        user: {
-          id: req.user.id,
-          display_name: req.user.display_name,
-          name: req.user.name,
-          email: req.user.email,
-          role: req.user.role,
-          verify: req.user.verify || 0,
-        },
-      });
+    
+        const user = await User.findById(req.user.id);
+        if (!user) return sendError(res, 404, "Không tìm thấy người dùng");
+
+        return sendSuccess(res, 200, "Lấy thông tin người dùng thành công", {
+            user: {
+                id: user.id,
+                display_name: user.display_name,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+                verify: user.verify || 0,
+                avatar: user.avatar || null,       
+                bg_preference: user.bg_preference || null,
+            },
+        });
     } catch (error) {
-      console.error("[Auth API v1] me error:", error);
-      return sendError(res, 500, "Đã xảy ra lỗi, vui lòng thử lại");
+        console.error("[Auth API v1] me error:", error);
+        return sendError(res, 500, "Đã xảy ra lỗi, vui lòng thử lại");
     }
-  },
+},
 
   async logout(req, res) {
     try {
@@ -296,6 +355,77 @@ const authApiV1Controller = {
       console.error("[Auth API v1] updateProfile error:", error);
       return sendError(res, 500, "Đã xảy ra lỗi, vui lòng thử lại");
     }
+  },
+  // Upload avatar
+  uploadAvatar(req, res) {
+    uploadAvatar(req, res, async (err) => {
+      try {
+        if (err) return sendError(res, 400, err.message || "Lỗi upload ảnh");
+        if (!req.file) return sendError(res, 400, "Vui lòng chọn ảnh avatar");
+
+        const avatarPath = `/uploads/avatars/${req.file.filename}`;
+
+        // Xóa avatar cũ nếu có
+        const [[user]] = await require("../config/db").pool.query(
+          "SELECT avatar FROM users WHERE id = ?", [req.user.id]
+        );
+        if (user && user.avatar && user.avatar.startsWith("/uploads/")) {
+          const oldPath = path.join(__dirname, "../public", user.avatar);
+          if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+        }
+
+        await require("../config/db").pool.query(
+          "UPDATE users SET avatar = ? WHERE id = ?",
+          [avatarPath, req.user.id]
+        );
+
+        return sendSuccess(res, 200, "Cập nhật avatar thành công", { avatar: avatarPath });
+      } catch (error) {
+        console.error("[Auth API v1] uploadAvatar error:", error);
+        return sendError(res, 500, "Đã xảy ra lỗi");
+      }
+    });
+  },
+
+  // Cập nhật background
+  async updateBackground(req, res) {
+    uploadBg(req, res, async (err) => {
+      try {
+        if (err) return sendError(res, 400, err.message || "Lỗi upload ảnh");
+
+        let bgValue = null;
+
+        if (req.file) {
+          // Upload ảnh background
+          bgValue = `/uploads/backgrounds/${req.file.filename}`;
+
+          // Xóa background ảnh cũ nếu có
+          const [[user]] = await require("../config/db").pool.query(
+            "SELECT bg_preference FROM users WHERE id = ?", [req.user.id]
+          );
+          if (user && user.bg_preference && user.bg_preference.startsWith("/uploads/")) {
+            const oldPath = path.join(__dirname, "../public", user.bg_preference);
+            if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+          }
+        } else if (req.body && req.body.bg_color) {
+          // Chọn màu
+          bgValue = req.body.bg_color;
+        } else if (req.body && req.body.reset) {
+          // Reset về mặc định
+          bgValue = null;
+        }
+
+        await require("../config/db").pool.query(
+          "UPDATE users SET bg_preference = ? WHERE id = ?",
+          [bgValue, req.user.id]
+        );
+
+        return sendSuccess(res, 200, "Cập nhật background thành công", { bg_preference: bgValue });
+      } catch (error) {
+        console.error("[Auth API v1] updateBackground error:", error);
+        return sendError(res, 500, "Đã xảy ra lỗi");
+      }
+    });
   },
 };
 

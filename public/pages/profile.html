@@ -373,6 +373,118 @@
             }
         }
     </style>
+    <style id="avatar-bg-css">
+        .media-section { margin-top: 32px; }
+        .media-section-title {
+            font-size: 13px; font-weight: 700; color: #64748b;
+            text-transform: uppercase; letter-spacing: .5px; margin-bottom: 16px;
+            padding-bottom: 8px; border-bottom: 1px solid #e2e8f0;
+        }
+        .avatar-wrap { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+        .avatar-preview {
+            width: 80px; height: 80px; border-radius: 50%;
+            object-fit: cover; border: 3px solid #2d6a4f; background: #f1f5f9;
+        }
+        .avatar-placeholder {
+            width: 80px; height: 80px; border-radius: 50%;
+            background: #e2e8f0; display: flex; align-items: center;
+            justify-content: center; font-size: 32px; flex-shrink: 0;
+            border: 3px solid #2d6a4f;
+        }
+        .avatar-actions { display: flex; flex-direction: column; gap: 8px; }
+        .btn-upload {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: #2d6a4f; color: #fff; border: none;
+            border-radius: 8px; padding: 8px 16px; font-size: 13px;
+            font-weight: 600; cursor: pointer; font-family: inherit; transition: background .2s;
+        }
+        .btn-upload:hover { background: #1b4332; }
+        .btn-secondary-sm {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0;
+            border-radius: 8px; padding: 7px 14px; font-size: 13px;
+            font-weight: 600; cursor: pointer; font-family: inherit; transition: background .2s;
+        }
+        .btn-secondary-sm:hover { background: #e2e8f0; }
+        .bg-palette { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+        .bg-swatch {
+            width: 44px; height: 44px; border-radius: 10px; cursor: pointer;
+            border: 3px solid transparent; transition: transform .15s, border-color .15s; flex-shrink: 0;
+        }
+        .bg-swatch:hover { transform: scale(1.1); }
+        .bg-swatch.selected { border-color: #2d6a4f; box-shadow: 0 0 0 2px #fff, 0 0 0 4px #2d6a4f; }
+        .bg-swatch.reset-swatch { background: #fff; border: 2px dashed #cbd5e1; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .bg-upload-label {
+            display: inline-flex; align-items: center; gap: 6px;
+            border: 2px dashed #cbd5e1; border-radius: 10px; padding: 9px 16px;
+            color: #64748b; font-size: 13px; font-weight: 600; cursor: pointer; transition: border-color .2s, color .2s;
+        }
+        .bg-upload-label:hover { border-color: #2d6a4f; color: #2d6a4f; }
+        .bg-preview-bar {
+            height: 56px; border-radius: 10px; margin-top: 12px;
+            border: 1px solid #e2e8f0; display: flex; align-items: center;
+            justify-content: center; font-size: 12px; color: #94a3b8; overflow: hidden; transition: all .3s;
+        }
+        .bg-preview-bar img { width: 100%; height: 100%; object-fit: cover; }
+        .media-save-btn {
+            margin-top: 14px; background: #2d6a4f; color: #fff; border: none;
+            border-radius: 8px; padding: 9px 20px; font-size: 13px; font-weight: 600;
+            cursor: pointer; font-family: inherit; transition: background .2s;
+        }
+        .media-save-btn:hover { background: #1b4332; }
+        .media-save-btn:disabled { background: #94a3b8; cursor: not-allowed; }
+    </style>
+    <style id="gtranslate-css">
+    /* Custom language switcher */
+    .lang-switcher { position:relative; display:inline-flex; align-items:center; }
+    .lang-switcher-btn {
+        display: flex; align-items: center; gap: 6px;
+        background: rgba(255,255,255,0.15);
+        border: 1px solid rgba(255,255,255,0.35);
+        border-radius: 8px;
+        padding: 5px 10px;
+        color: #fff;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: inherit;
+        transition: background 0.18s;
+        white-space: nowrap;
+    }
+    .lang-switcher-btn:hover { background: rgba(255,255,255,0.25); }
+    .lang-switcher-btn svg { width:14px; height:14px; opacity:.8; }
+    .lang-switcher-dropdown {
+        display: none;
+        position: absolute;
+        top: calc(100% + 6px);
+        right: 0;
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        min-width: 140px;
+        z-index: 9999;
+        overflow: hidden;
+    }
+    .lang-switcher-dropdown.open { display:block; }
+    .lang-option {
+        display: flex; align-items: center; gap: 8px;
+        padding: 10px 14px;
+        font-size: 13px;
+        color: #374151;
+        cursor: pointer;
+        transition: background 0.15s;
+        border: none; background: none; width: 100%; text-align: left;
+        font-family: inherit;
+    }
+    .lang-option:hover { background: #f1f5f9; }
+    .lang-option.active { background: #f0fdf4; color: #166534; font-weight: 600; }
+    .lang-option .flag { font-size: 16px; }
+    /* Ẩn thanh Google Translate */
+    .goog-te-banner-frame, .skiptranslate { display:none!important; }
+    body { top: 0!important; }
+    iframe.skiptranslate { display:none!important; }
+    </style>
 </head>
 
 <body>
@@ -411,8 +523,19 @@
                     <a href="#" onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('register'); } return false;"><span>Đăng ký</span></a>
                 </div>
                 <span>Giỏ hàng <span id="cart-count-display">(0)</span></span>
-                <span class="lang-switch">VN / EN</span>
-            </div>
+                <div class="lang-switcher" id="langSwitcher">
+                    <button class="lang-switcher-btn" onclick="toggleLangDropdown(event)" id="langBtn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg>
+                        <span id="langBtnLabel">VI</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:10px"><path d="M6 9l6 6 6-6"/></svg>
+                    </button>
+                    <div class="lang-switcher-dropdown" id="langDropdown">
+                        <button class="lang-option active" onclick="setLang('vi','VI')" data-lang="vi"><span class="flag">🇻🇳</span> Tiếng Việt</button>
+                        <button class="lang-option" onclick="setLang('/en','EN')" data-lang="en"><span class="flag">🇺🇸</span> English</button>
+                        <button class="lang-option" onclick="setLang('/zh-TW','中文')" data-lang="zh-TW"><span class="flag">🇹🇼</span> 中文</button>
+                        <button class="lang-option" onclick="setLang('/ja','日本語')" data-lang="ja"><span class="flag">🇯🇵</span> 日本語</button>
+                    </div>
+                </div>
             <button class="hamburger-btn" id="hamburgerBtn" aria-label="Mở menu">
                 <span class="hamburger-line"></span>
                 <span class="hamburger-line"></span>
@@ -437,8 +560,9 @@
                     <ul class="nav-dropdown">
                         <li><a href="/lost">Báo mất thú cưng</a></li>
                         <li><a href="/found">Báo tin nhặt được</a></li>
-                        <li><a href="/tips">Mẹo tìm kiếm hiệu quả</a></li>
                         <li><a href="/reports/list">Xem báo cáo thất lạc</a></li>
+                        <li><a href="/tips">Mẹo tìm kiếm hiệu quả</a></li>
+                        
                     </ul>
                 </li>
                 <li>
@@ -536,6 +660,46 @@
                             <button type="submit" id="saveBtn" class="save-btn">Lưu thay đổi</button>
                         </div>
                     </form>
+
+                    <!-- ── Avatar ── -->
+                    <div class="media-section">
+                        <div class="media-section-title">📷 Ảnh đại diện</div>
+                        <div class="avatar-wrap">
+                            <div id="avatarPreviewWrap">
+                                <div class="avatar-placeholder" id="avatarPlaceholder">🐾</div>
+                            </div>
+                            <div class="avatar-actions">
+                                <label class="btn-upload" for="avatarFileInput">
+                                    📤 Chọn ảnh
+                                </label>
+                                <input type="file" id="avatarFileInput" accept="image/*" style="display:none">
+                                <button type="button" class="btn-secondary-sm" id="removeAvatarBtn" style="display:none">🗑️ Xóa avatar</button>
+                            </div>
+                        </div>
+                        <div id="avatarStatus" style="margin-top:10px;font-size:13px;color:#64748b;min-height:18px;"></div>
+                    </div>
+
+                    <!-- ── Background ── -->
+                    <div class="media-section">
+                        <div class="media-section-title">🎨 Tùy chỉnh nền trang web</div>
+                        <div class="bg-palette" id="bgPalette">
+                            <div class="bg-swatch reset-swatch" data-bg="" title="Mặc định">↩</div>
+                            <div class="bg-swatch" data-bg="#f0fdf4" style="background:#f0fdf4" title="Xanh lá nhạt"></div>
+                            <div class="bg-swatch" data-bg="#fef3c7" style="background:#fef3c7" title="Vàng kem"></div>
+                            <div class="bg-swatch" data-bg="#ffe4e6" style="background:#ffe4e6" title="Hồng nhạt"></div>
+                            <div class="bg-swatch" data-bg="#e0f2fe" style="background:#e0f2fe" title="Xanh dương nhạt"></div>
+                            <div class="bg-swatch" data-bg="#f5f3ff" style="background:#f5f3ff" title="Tím nhạt"></div>
+                            <div class="bg-swatch" data-bg="#1a1a2e" style="background:#1a1a2e" title="Tối"></div>
+                        </div>
+                        <label class="bg-upload-label" for="bgFileInput">
+                            🖼️ Hoặc tải ảnh nền lên
+                        </label>
+                        <input type="file" id="bgFileInput" accept="image/*" style="display:none">
+                        <div class="bg-preview-bar" id="bgPreviewBar">Chưa chọn nền</div>
+                        <button type="button" class="media-save-btn" id="saveBgBtn">💾 Lưu nền trang web</button>
+                        <div id="bgStatus" style="margin-top:10px;font-size:13px;color:#64748b;min-height:18px;"></div>
+                    </div>
+
                 </div>
             </article>
         </section>
@@ -957,6 +1121,272 @@
         });
 
         loadProfile();
+    </script>
+    <!-- Google Translate engine -->
+    <div id="google_translate_element" style="display:none"></div>
+    <script>
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({ pageLanguage: 'vi', includedLanguages: 'vi,en,zh-TW,ja', autoDisplay: false }, 'google_translate_element');
+    }
+    function setLang(lang, label) {
+        document.getElementById('langBtnLabel').textContent = label;
+        document.querySelectorAll('.lang-option').forEach(function(el) {
+            el.classList.toggle('active', el.dataset.lang === (lang === 'vi' ? 'vi' : lang.replace('/','')) );
+        });
+        document.getElementById('langDropdown').classList.remove('open');
+        if (lang === 'vi') {
+            document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=' + location.hostname;
+            location.reload(); return;
+        }
+        var val = '/vi' + lang;
+        document.cookie = 'googtrans=' + val + '; path=/';
+        document.cookie = 'googtrans=' + val + '; path=/; domain=' + location.hostname;
+        location.reload();
+    }
+    function toggleLangDropdown(e) {
+        e.stopPropagation();
+        document.getElementById('langDropdown').classList.toggle('open');
+    }
+    document.addEventListener('click', function() {
+        var dd = document.getElementById('langDropdown');
+        if (dd) dd.classList.remove('open');
+    });
+    (function() {
+        var m = document.cookie.match(/googtrans=\/vi\/([^;]+)/);
+        if (!m) return;
+        var map = { 'en': 'EN', 'zh-TW': '中文', 'ja': '日本語' };
+        if (map[m[1]]) {
+            document.getElementById('langBtnLabel').textContent = map[m[1]];
+            document.querySelectorAll('.lang-option').forEach(function(el) {
+                el.classList.toggle('active', el.dataset.lang === m[1]);
+            });
+        }
+    })();
+    </script>
+    <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>    <script>
+    // ── Avatar & Background Logic ──────────────────────────
+    (function() {
+        var avatarFileInput = document.getElementById('avatarFileInput');
+        var avatarPlaceholder = document.getElementById('avatarPlaceholder');
+        var avatarPreviewWrap = document.getElementById('avatarPreviewWrap');
+        var removeAvatarBtn = document.getElementById('removeAvatarBtn');
+        var avatarStatus = document.getElementById('avatarStatus');
+
+        var bgPalette = document.getElementById('bgPalette');
+        var bgFileInput = document.getElementById('bgFileInput');
+        var bgPreviewBar = document.getElementById('bgPreviewBar');
+        var saveBgBtn = document.getElementById('saveBgBtn');
+        var bgStatus = document.getElementById('bgStatus');
+
+        var selectedBgColor = null;
+        var selectedBgFile = null;
+        var resetBg = false;
+
+        // Load avatar hiện tại từ /api/v1/auth/me
+        fetch('/api/v1/auth/me', { credentials: 'include' })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (!data.success) return;
+                var user = data.data.user;
+                if (user.avatar) {
+                    setAvatarPreview(user.avatar);
+                }
+                if (user.bg_preference) {
+                    applyBgPreview(user.bg_preference);
+                    // Đánh dấu swatch đang active
+                    document.querySelectorAll('.bg-swatch').forEach(function(s) {
+                        s.classList.toggle('selected', s.dataset.bg === user.bg_preference);
+                    });
+                } else {
+                    document.querySelector('.bg-swatch.reset-swatch').classList.add('selected');
+                }
+            }).catch(function() {});
+
+        function setAvatarPreview(src) {
+            avatarPreviewWrap.innerHTML = '<img class="avatar-preview" src="' + src + '" alt="Avatar">';
+            if (removeAvatarBtn) removeAvatarBtn.style.display = 'inline-flex';
+        }
+
+        // Chọn file avatar
+        avatarFileInput.addEventListener('change', function() {
+            var file = this.files[0];
+            if (!file) return;
+            var reader = new FileReader();
+            reader.onload = function(e) { setAvatarPreview(e.target.result); };
+            reader.readAsDataURL(file);
+            uploadAvatar(file);
+        });
+
+        // Upload avatar ngay khi chọn
+        async function uploadAvatar(file) {
+            avatarStatus.textContent = 'Đang tải lên...';
+            avatarStatus.style.color = '#64748b';
+            var formData = new FormData();
+            formData.append('avatar', file);
+            try {
+                var res = await fetch('/api/v1/auth/avatar', {
+                    method: 'POST',
+                    credentials: 'include',
+                    body: formData
+                });
+                var data = await res.json();
+                if (data.success) {
+                    avatarStatus.textContent = '✅ Cập nhật avatar thành công!';
+                    avatarStatus.style.color = '#16a34a';
+                    if (removeAvatarBtn) removeAvatarBtn.style.display = 'inline-flex';
+                    // Cập nhật avatar trên header nếu có
+                    if (window.applyHeaderAvatar) window.applyHeaderAvatar(data.data.avatar);
+                } else {
+                    avatarStatus.textContent = '❌ ' + (data.message || 'Lỗi upload');
+                    avatarStatus.style.color = '#dc2626';
+                }
+            } catch(e) {
+                avatarStatus.textContent = '❌ Lỗi kết nối';
+                avatarStatus.style.color = '#dc2626';
+            }
+        }
+
+        // Xóa avatar
+        if (removeAvatarBtn) {
+            removeAvatarBtn.addEventListener('click', async function() {
+                try {
+                    var res = await fetch('/api/v1/auth/avatar', {
+                        method: 'POST',
+                        credentials: 'include',
+                        body: new FormData() // empty = reset
+                    });
+                    avatarPreviewWrap.innerHTML = '<div class="avatar-placeholder" id="avatarPlaceholder">🐾</div>';
+                    removeAvatarBtn.style.display = 'none';
+                    avatarStatus.textContent = 'Đã xóa avatar';
+                    avatarStatus.style.color = '#64748b';
+                } catch(e) {}
+            });
+        }
+
+        // Chọn màu background
+        bgPalette.addEventListener('click', function(e) {
+            var swatch = e.target.closest('.bg-swatch');
+            if (!swatch) return;
+            document.querySelectorAll('.bg-swatch').forEach(function(s) { s.classList.remove('selected'); });
+            swatch.classList.add('selected');
+            selectedBgColor = swatch.dataset.bg;
+            selectedBgFile = null;
+            bgFileInput.value = '';
+            resetBg = (selectedBgColor === '');
+            applyBgPreview(selectedBgColor);
+        });
+
+        // Upload ảnh background
+        bgFileInput.addEventListener('change', function() {
+            var file = this.files[0];
+            if (!file) return;
+            selectedBgFile = file;
+            selectedBgColor = null;
+            resetBg = false;
+            document.querySelectorAll('.bg-swatch').forEach(function(s) { s.classList.remove('selected'); });
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                bgPreviewBar.innerHTML = '<img src="' + e.target.result + '" alt="Preview">';
+            };
+            reader.readAsDataURL(file);
+        });
+
+        function applyBgPreview(val) {
+            if (!val) {
+                bgPreviewBar.innerHTML = 'Mặc định (không có nền)';
+                bgPreviewBar.style.background = '#fff';
+            } else if (val.startsWith('/uploads/')) {
+                bgPreviewBar.innerHTML = '<img src="' + val + '" alt="Preview">';
+            } else {
+                bgPreviewBar.innerHTML = '';
+                bgPreviewBar.style.background = val;
+            }
+        }
+
+        // Lưu background
+        saveBgBtn.addEventListener('click', async function() {
+            saveBgBtn.disabled = true;
+            bgStatus.textContent = 'Đang lưu...';
+            bgStatus.style.color = '#64748b';
+
+            try {
+                var formData = new FormData();
+                if (selectedBgFile) {
+                    formData.append('background', selectedBgFile);
+                } else if (resetBg || selectedBgColor === '') {
+                    formData.append('reset', '1');
+                } else if (selectedBgColor) {
+                    formData.append('bg_color', selectedBgColor);
+                } else {
+                    bgStatus.textContent = 'Vui lòng chọn màu hoặc ảnh nền';
+                    bgStatus.style.color = '#dc2626';
+                    saveBgBtn.disabled = false;
+                    return;
+                }
+
+                var res = await fetch('/api/v1/auth/background', {
+                    method: 'POST',
+                    credentials: 'include',
+                    body: formData
+                });
+                var data = await res.json();
+                if (data.success) {
+                    bgStatus.textContent = '✅ Lưu nền thành công! Reload để xem hiệu ứng.';
+                    bgStatus.style.color = '#16a34a';
+                    // Apply ngay
+                    if (window.applyUserBackground) window.applyUserBackground(data.data.bg_preference);
+                } else {
+                    bgStatus.textContent = '❌ ' + (data.message || 'Lỗi lưu');
+                    bgStatus.style.color = '#dc2626';
+                }
+            } catch(e) {
+                bgStatus.textContent = '❌ Lỗi kết nối';
+                bgStatus.style.color = '#dc2626';
+            }
+            saveBgBtn.disabled = false;
+        });
+    })();
+    </script>
+    <script>
+    /* ── User Background Apply ── */
+    (function() {
+        function applyBg(val) {
+            var styleId = '__user_bg_style';
+            var el = document.getElementById(styleId);
+            if (!el) {
+                el = document.createElement('style');
+                el.id = styleId;
+                document.head.appendChild(el);
+            }
+            if (!val) { el.textContent = ''; return; }
+            var bgRule = val.startsWith('/uploads/')
+                ? 'background-image:url("' + val + '")!important;background-size:cover!important;background-attachment:fixed!important;background-repeat:no-repeat!important;background-position:center!important;background-color:transparent!important;'
+                : 'background-color:' + val + '!important;background-image:none!important;';
+            el.textContent = [
+                'body{' + bgRule + '}',
+                'main,#main,.main,.profile-page,.page-wrapper,.page-body,.content-wrapper,.container-fluid,.app-content,.site-content,.page-content,.adopt-page,.admin-page,.reports-page,.favorites-page{background:transparent!important;}'
+            ].join('');
+        }
+
+        window.applyUserBackground = applyBg;
+
+        var _orig = window.applyHeaderUserState;
+        window.applyHeaderUserState = function(user) {
+            if (_orig) _orig(user);
+            if (user && user.bg_preference) applyBg(user.bg_preference);
+        };
+
+        window.addEventListener('load', function() {
+            fetch('/api/v1/auth/me', { credentials: 'include' })
+                .then(function(r) { return r.ok ? r.json() : null; })
+                .then(function(data) {
+                    if (data && data.success && data.data && data.data.user && data.data.user.bg_preference) {
+                        applyBg(data.data.user.bg_preference);
+                    }
+                }).catch(function() {});
+        });
+    })();
     </script>
 </body>
 

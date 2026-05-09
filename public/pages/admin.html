@@ -1008,6 +1008,7 @@
                     <button class="nav-btn" data-tab="pets">🐾 Thú cưng</button>
                     <button class="nav-btn" data-tab="reports">📣 Báo cáo</button>
                     <button class="nav-btn" data-tab="news">📰 Bài tin</button>
+                    <a href="/admin-shop" class="nav-btn" style="text-decoration:none;display:block;text-align:left;">🛒 Quản lý cửa hàng</a>
                 </nav>
             </aside>
 
@@ -2704,6 +2705,46 @@
         }
 
         bootstrapAdminAccess();
+    </script>
+    <script>
+    /* ── User Background Apply ── */
+    (function() {
+        function applyBg(val) {
+            var styleId = '__user_bg_style';
+            var el = document.getElementById(styleId);
+            if (!el) {
+                el = document.createElement('style');
+                el.id = styleId;
+                document.head.appendChild(el);
+            }
+            if (!val) { el.textContent = ''; return; }
+            var bgRule = val.startsWith('/uploads/')
+                ? 'background-image:url("' + val + '")!important;background-size:cover!important;background-attachment:fixed!important;background-repeat:no-repeat!important;background-position:center!important;background-color:transparent!important;'
+                : 'background-color:' + val + '!important;background-image:none!important;';
+            el.textContent = [
+                'body{' + bgRule + '}',
+                'main,#main,.main,.profile-page,.page-wrapper,.page-body,.content-wrapper,.container-fluid,.app-content,.site-content,.page-content,.adopt-page,.admin-page,.reports-page,.favorites-page{background:transparent!important;}'
+            ].join('');
+        }
+
+        window.applyUserBackground = applyBg;
+
+        var _orig = window.applyHeaderUserState;
+        window.applyHeaderUserState = function(user) {
+            if (_orig) _orig(user);
+            if (user && user.bg_preference) applyBg(user.bg_preference);
+        };
+
+        window.addEventListener('load', function() {
+            fetch('/api/v1/auth/me', { credentials: 'include' })
+                .then(function(r) { return r.ok ? r.json() : null; })
+                .then(function(data) {
+                    if (data && data.success && data.data && data.data.user && data.data.user.bg_preference) {
+                        applyBg(data.data.user.bg_preference);
+                    }
+                }).catch(function() {});
+        });
+    })();
     </script>
 </body>
 

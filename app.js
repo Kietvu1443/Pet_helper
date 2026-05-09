@@ -50,6 +50,14 @@ app.use("/adopt", petRouter);
 app.use("/", adoptionRequestRouter);
 app.use("/", reportRouter);
 
+// Shop routes
+app.get('/admin-shop', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'pages', 'admin-shop.html'));
+});
+app.use('/api/products', require('./routes/api/v1/products'));
+app.use('/api/orders', require('./routes/api/v1/orders'));
+app.use('/api/reviews', require('./routes/api/v1/reviews'));
+
 // Catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));

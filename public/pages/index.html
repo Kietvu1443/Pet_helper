@@ -506,124 +506,169 @@
             border-radius: 50px;
         }
 
-        /* --- STYLE CHO GIỎ HÀNG --- */
-        .cart-overlay {
+        /* --- STYLE CHO GIỎ HÀNG (đồng bộ với shop) --- */
+        .cart-overlay-bg {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.35);
+            z-index: 1100;
+        }
+        .cart-overlay-bg.open { display: block; }
+
+        .cart-sidebar {
             position: fixed;
             top: 0;
-            right: -400px;
-            width: 400px;
+            right: -440px;
+            width: 420px;
+            max-width: 100vw;
             height: 100%;
             background: #fff;
-            z-index: 3000;
-            box-shadow: -5px 0 20px rgba(0, 0, 0, 0.1);
-            transition: 0.3s ease;
+            z-index: 1200;
+            transition: right 0.28s cubic-bezier(.4,0,.2,1);
             display: flex;
             flex-direction: column;
+            box-shadow: -4px 0 24px rgba(0,0,0,0.12);
         }
+        .cart-sidebar.open { right: 0; }
 
-        .cart-overlay.open {
-            right: 0;
-        }
-
-        .cart-header {
-            padding: 20px;
+        .cart-head {
             background: var(--primary-color);
             color: #fff;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .cart-items {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-        }
-
-        .cart-item-row {
-            border-bottom: 1px solid #eee;
-            padding-bottom: 15px;
-            margin-bottom: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .cart-item-top {
-            display: flex;
-            justify-content: space-between;
-            font-weight: bold;
-            font-size: 1rem;
-            color: #333;
-        }
-
-        .cart-item-bottom {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .qty-control {
+            padding: 16px 20px;
             display: flex;
             align-items: center;
-            gap: 8px;
-            background: #f0f0f0;
-            border-radius: 5px;
-            padding: 2px 5px;
+            justify-content: space-between;
+            flex-shrink: 0;
         }
+        .cart-head h3 { font-size: 1.05rem; font-weight: 800; margin: 0; }
 
-        .qty-btn {
-            width: 25px;
-            height: 25px;
+        .cart-close-btn {
+            background: rgba(255,255,255,0.2);
             border: none;
-            background: #fff;
+            color: #fff;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 1.1rem;
             cursor: pointer;
-            border-radius: 3px;
-            font-weight: bold;
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: background 0.15s;
+        }
+        .cart-close-btn:hover { background: #e74c3c; }
+
+        .cart-items-wrap {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
         }
 
-        .qty-btn:hover {
-            background: #ddd;
+        .cart-empty-msg {
+            text-align: center;
+            color: #aaa;
+            padding: 40px 20px;
+            font-size: 0.95rem;
         }
 
-        .cart-remove-btn {
-            color: #d90429;
-            font-size: 0.85rem;
+        .cart-item-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 8px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .cart-item-img {
+            width: 52px;
+            height: 52px;
+            object-fit: cover;
+            border-radius: 8px;
+            background: #eee;
+            flex-shrink: 0;
+        }
+
+        .cart-item-info { flex: 1; min-width: 0; }
+
+        .cart-item-name {
+            font-weight: 700;
+            font-size: 0.88rem;
+            color: #1b4332;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .cart-item-price {
+            font-size: 0.82rem;
+            color: #c0392b;
+            font-weight: 700;
+        }
+
+        .cart-qty-control {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .qty-btn {
+            width: 26px;
+            height: 26px;
+            border: 1px solid #c8e6c9;
+            background: #f8fcf9;
+            border-radius: 6px;
             cursor: pointer;
-            text-decoration: underline;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.15s;
         }
+        .qty-btn:hover { background: var(--accent-color, #b7e4c7); }
 
-        .cart-remove-btn:hover {
-            color: red;
+        .qty-num {
+            font-weight: 700;
+            font-size: 0.9rem;
+            min-width: 20px;
+            text-align: center;
         }
 
         .cart-footer {
-            padding: 20px;
-            border-top: 1px solid #ddd;
-            background: #f9f9f9;
+            border-top: 1px solid #eee;
+            padding: 16px 18px;
+            flex-shrink: 0;
         }
 
-        .total-price {
-            font-size: 1.2rem;
-            font-weight: bold;
+        .cart-total-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 15px;
+            font-weight: 800;
+            font-size: 1.05rem;
+            margin-bottom: 14px;
         }
 
-        .checkout-btn {
+        .cart-total-price { color: #c0392b; }
+
+        .btn-checkout {
             width: 100%;
             padding: 12px;
-            background: #d90429;
+            background: var(--primary-color);
             color: #fff;
             border: none;
-            font-weight: bold;
+            border-radius: 9px;
+            font-weight: 800;
+            font-size: 1rem;
             cursor: pointer;
-            border-radius: 8px;
+            transition: background 0.15s;
         }
+        .btn-checkout:hover { background: #1b4332; }
+        .btn-checkout:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        @media (max-width: 480px) { .cart-sidebar { width: 100vw; } }
 
         /* --- CSS CHO SLIDER --- */
         .adopt-slider-container {
@@ -1268,11 +1313,6 @@
             .booking-img {
                 height: 200px;
             }
-
-            .cart-overlay {
-                width: 100%;
-                right: -100%;
-            }
         }
 
         /* ============ REPORT OVERLAY STYLES ============ */
@@ -1673,6 +1713,148 @@
         .report-toast--error {
             background: #991b1b;
         }
+
+        /* ── CHECKOUT MODAL ── */
+        .modal-bg {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            overflow-y: auto;
+        }
+        .modal-bg.open { display: flex; align-items: flex-start; justify-content: center; padding: 40px 16px; }
+        .modal-box {
+            background: #fff;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 520px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            animation: modalIn 0.28s cubic-bezier(.34,1.26,.64,1);
+        }
+        @keyframes modalIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .modal-head {
+            background: var(--primary-color);
+            color: #fff;
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .modal-head h3 { font-size: 1rem; font-weight: 800; margin: 0; }
+        .modal-close {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: #fff;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-close:hover { background: #e74c3c; }
+        .modal-body { padding: 20px; }
+        .checkout-form-wrap { padding: 0; }
+        .checkout-field { margin-bottom: 12px; }
+        .checkout-field label { display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 4px; color: #1b4332; }
+        .checkout-field input {
+            width: 100%;
+            border: 1px solid #c8e6c9;
+            border-radius: 8px;
+            padding: 9px 12px;
+            font-size: 0.9rem;
+            outline: none;
+            box-sizing: border-box;
+        }
+        .checkout-field input:focus { border-color: #52b788; }
+        .btn-submit-order {
+            background: var(--primary-color);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 28px;
+            font-weight: 800;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .btn-submit-order:hover { background: #1b4332; }
+
+        /* ── BILL FLIP ── */
+        .bill-overlay {
+            position: fixed; inset: 0; z-index: 3000;
+            display: flex; align-items: center; justify-content: center; padding: 20px;
+            background: rgba(0,0,0,0);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s ease, background 0.35s ease;
+        }
+        .bill-overlay.open { opacity: 1; pointer-events: all; background: rgba(0,0,0,0.55); }
+        .bill-scene { width: 440px; max-width: 100%; height: 520px; perspective: 1000px; }
+        .bill-card {
+            width: 100%; height: 100%; position: relative;
+            transform-style: preserve-3d;
+            transform: scale(0.85) translateY(30px);
+            opacity: 0;
+            transition: transform 0.45s cubic-bezier(.34,1.56,.64,1), opacity 0.35s ease;
+        }
+        .bill-overlay.open .bill-card { transform: scale(1) translateY(0); opacity: 1; }
+        .bill-card.flipped { transform: rotateY(180deg) scale(1) !important; transition: transform 0.7s cubic-bezier(.4,0,.2,1) !important; }
+        .bill-face, .bill-back { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 18px; overflow: hidden; }
+        .bill-face { background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 40px; text-align: center; }
+        .bill-face .bill-icon { font-size: 3.5rem; }
+        .bill-face h2 { font-size: 1.4rem; font-weight: 900; color: #1f5133; margin: 0; }
+        .bill-face p { color: #666; font-size: 0.95rem; margin: 0; }
+        .bill-face .bill-flip-btn { padding: 10px 28px; background: var(--primary-color); color: #fff; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 0.95rem; margin-top: 8px; }
+        .bill-back { background: #fff; transform: rotateY(180deg); display: flex; flex-direction: column; }
+        .bill-back-head { background: var(--primary-color); color: #fff; padding: 18px 24px; display: flex; justify-content: space-between; align-items: center; border-radius: 18px 18px 0 0; }
+        .bill-back-head h3 { margin: 0; font-size: 1.05rem; font-weight: 800; }
+        .bill-back-body { flex: 1; overflow-y: auto; padding: 18px 24px; }
+        .bill-info-row { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px dashed #f0f0f0; font-size: 0.88rem; color: #444; }
+        .bill-info-row:last-child { border-bottom: none; }
+        .bill-info-row span:first-child { color: #888; font-weight: 600; }
+        .bill-info-row span:last-child { font-weight: 700; color: #222; text-align: right; max-width: 60%; }
+        .bill-items-title { font-size: 0.85rem; font-weight: 800; color: #1f5133; margin: 12px 0 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .bill-item-row { display: flex; justify-content: space-between; font-size: 0.85rem; padding: 5px 0; color: #444; }
+        .bill-total-row { display: flex; justify-content: space-between; font-size: 1rem; font-weight: 800; color: #d90429; border-top: 2px solid #f0f0f0; padding-top: 10px; margin-top: 6px; }
+        .bill-note { font-size: 0.75rem; color: #e67e22; text-align: center; margin-top: 10px; font-weight: 700; padding: 8px; background: #fef9ec; border-radius: 8px; }
+        .bill-close-btn { padding: 10px; background: #f3f4f6; color: #555; border: none; border-radius: 0 0 18px 18px; font-weight: 700; cursor: pointer; font-size: 0.88rem; text-align: center; width: 100%; }
+        .bill-close-btn:hover { background: #e5e7eb; }
+    </style>
+    <style id="gtranslate-css">
+    .lang-switcher { position:relative; display:inline-flex; align-items:center; }
+    .lang-switcher-btn {
+        display:flex; align-items:center; gap:6px;
+        background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.35);
+        border-radius:8px; padding:5px 10px; color:#fff; font-size:13px;
+        font-weight:600; cursor:pointer; font-family:inherit;
+        transition:background 0.18s; white-space:nowrap;
+    }
+    .lang-switcher-btn:hover { background:rgba(255,255,255,0.25); }
+    .lang-switcher-btn svg { width:14px; height:14px; opacity:.8; }
+    .lang-switcher-dropdown {
+        display:none; position:absolute; top:calc(100% + 6px); right:0;
+        background:#fff; border:1px solid #e2e8f0; border-radius:10px;
+        box-shadow:0 8px 24px rgba(0,0,0,0.12); min-width:140px; z-index:9999; overflow:hidden;
+    }
+    .lang-switcher-dropdown.open { display:block; }
+    .lang-option {
+        display:flex; align-items:center; gap:8px; padding:10px 14px;
+        font-size:13px; color:#374151; cursor:pointer; transition:background 0.15s;
+        border:none; background:none; width:100%; text-align:left; font-family:inherit;
+    }
+    .lang-option:hover { background:#f1f5f9; }
+    .lang-option.active { background:#f0fdf4; color:#166534; font-weight:600; }
+    .lang-option .flag { font-size:16px; }
+    .goog-te-banner-frame, .skiptranslate { display:none!important; }
+    body { top:0!important; }
     </style>
 </head>
 
@@ -1844,17 +2026,90 @@
         </div>
     </div>
 
-    <!-- ============ CART SIDEBAR ============ -->
-    <div id="cart-sidebar" class="cart-overlay">
-        <div class="cart-header">
-            <div>GIỎ HÀNG CỦA BẠN</div>
-            <div style="cursor: pointer;" onclick="toggleCart()">✕ Đóng</div>
+    <!-- CART OVERLAY BG (click ngoài để đóng) -->
+    <div class="cart-overlay-bg" id="cartOverlayBg" onclick="closeCart()"></div>
+
+    <!-- CART SIDEBAR -->
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-head">
+            <h3>🛒 Giỏ hàng</h3>
+            <button class="cart-close-btn" onclick="closeCart()">✕</button>
         </div>
-        <div class="cart-items" id="cart-items-container"></div>
+        <div class="cart-items-wrap" id="cartItemsWrap">
+            <div class="cart-empty-msg">🛒 Giỏ hàng trống</div>
+        </div>
         <div class="cart-footer">
-            <div class="total-price"><span>Tổng cộng:</span><span id="cart-total">0đ</span></div>
-            <button class="checkout-btn"
-                onclick="Swal.fire('Thông báo', 'Chức năng thanh toán đang phát triển!', 'info')">THANH TOÁN</button>
+            <div class="cart-total-row">
+                <span>Tổng cộng:</span>
+                <span class="cart-total-price" id="cartTotal">0đ</span>
+            </div>
+            <button class="btn-checkout" id="checkoutBtn" onclick="openCheckout()" disabled>Thanh toán</button>
+        </div>
+    </div>
+
+    <!-- CHECKOUT MODAL -->
+    <div class="modal-bg" id="checkoutModal">
+        <div class="modal-box">
+            <div class="modal-head">
+                <h3>📦 Thông tin đặt hàng</h3>
+                <button class="modal-close" onclick="closeCheckout()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="checkout-form-wrap">
+                    <div class="checkout-field">
+                        <label>Họ tên *</label>
+                        <input type="text" id="coName" placeholder="Nguyễn Văn A">
+                    </div>
+                    <div class="checkout-field">
+                        <label>Số điện thoại *</label>
+                        <input type="tel" id="coPhone" placeholder="0901234567">
+                    </div>
+                    <div class="checkout-field">
+                        <label>Địa chỉ giao hàng *</label>
+                        <input type="text" id="coAddress" placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành">
+                    </div>
+                    <div class="checkout-field">
+                        <label>Ghi chú</label>
+                        <input type="text" id="coNote" placeholder="Giao giờ hành chính, gọi trước khi giao...">
+                    </div>
+                    <div style="border-top:1px solid #eee;padding-top:12px;margin-top:4px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+                        <span style="font-weight:800;font-size:1rem;">Tổng tiền: <span style="color:#c0392b" id="checkoutTotal"></span></span>
+                        <button class="btn-submit-order" onclick="submitOrder()">Xác nhận đặt hàng</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BILL FLIP -->
+    <div class="bill-overlay" id="billOverlay">
+        <div class="bill-scene">
+            <div class="bill-card" id="billCard">
+                <div class="bill-face">
+                    <div class="bill-icon">🎉</div>
+                    <h2>Đặt hàng thành công!</h2>
+                    <p>Mã đơn: <strong id="billOrderId">#0</strong></p>
+                    <p>Chúng tôi sẽ liên hệ xác nhận sớm nhất.</p>
+                    <button class="bill-flip-btn" onclick="flipBill()">Xem chi tiết đơn hàng →</button>
+                </div>
+                <div class="bill-back">
+                    <div class="bill-back-head">
+                        <h3>🧾 Hóa đơn đặt hàng</h3>
+                        <span style="font-size:0.8rem;opacity:0.8" id="billDate"></span>
+                    </div>
+                    <div class="bill-back-body">
+                        <div class="bill-info-row"><span>Mã đơn hàng</span><span id="billIdBack">#0</span></div>
+                        <div class="bill-info-row"><span>Họ tên</span><span id="billName">-</span></div>
+                        <div class="bill-info-row"><span>Số điện thoại</span><span id="billPhone">-</span></div>
+                        <div class="bill-info-row"><span>Địa chỉ</span><span id="billAddress">-</span></div>
+                        <div class="bill-items-title">Sản phẩm đặt hàng</div>
+                        <div id="billItems"></div>
+                        <div class="bill-total-row"><span>Tổng cộng</span><span id="billTotal">0đ</span></div>
+                        <div class="bill-note">⚠️ Vui lòng chụp lại hoặc lưu bill này — chỉ hiển thị một lần!</div>
+                    </div>
+                    <button class="bill-close-btn" onclick="closeBill()">✓ Đã lưu, đóng</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1894,6 +2149,7 @@
                             <a href="/adopt/admin/add" class="dropdown-item role-staff-only is-auth-hidden">🐾 Thêm thú cưng</a>
                             <a href="/admin/reports" class="dropdown-item role-staff-only is-auth-hidden">📋 Duyệt báo cáo</a>
                             <a href="/admin" class="dropdown-item role-admin-only is-auth-hidden">⚙️ Quản trị</a>
+                            <a href="/admin-shop" class="dropdown-item role-admin-only is-auth-hidden">🛒 Quản lý cửa hàng</a>
                             <div class="dropdown-divider"></div>
                             <a href="#" class="dropdown-item logout" id="logoutBtn"
                                 onclick="handleLogout(event)">🚪 Đăng xuất</a>
@@ -1907,8 +2163,20 @@
                     <a href="#" onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('login'); } return false;"><span>Đăng nhập</span></a>
                     <a href="#" onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('register'); } return false;"><span>Đăng ký</span></a>
                 </div>
-                <span>Giỏ hàng <span id="cart-count-display">(0)</span></span>
-                <span class="lang-switch">VN / EN</span>
+                <span onclick="toggleCart()" style="cursor:pointer;">Giỏ hàng <span id="cart-count-display">(0)</span></span>
+                <div class="lang-switcher" id="langSwitcher">
+                    <button class="lang-switcher-btn" onclick="toggleLangDropdown(event)" id="langBtn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg>
+                        <span id="langBtnLabel">VI</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:10px"><path d="M6 9l6 6 6-6"/></svg>
+                    </button>
+                    <div class="lang-switcher-dropdown" id="langDropdown">
+                        <button class="lang-option active" onclick="setLang('vi','VI')" data-lang="vi"><span class="flag">🇻🇳</span> Tiếng Việt</button>
+                        <button class="lang-option" onclick="setLang('/en','EN')" data-lang="en"><span class="flag">🇺🇸</span> English</button>
+                        <button class="lang-option" onclick="setLang('/zh-TW','中文')" data-lang="zh-TW"><span class="flag">🇹🇼</span> 中文</button>
+                        <button class="lang-option" onclick="setLang('/ja','日本語')" data-lang="ja"><span class="flag">🇯🇵</span> 日本語</button>
+                    </div>
+                </div>
             </div>
             <button class="hamburger-btn" id="hamburgerBtn" aria-label="Mở menu">
                 <span class="hamburger-line"></span><span class="hamburger-line"></span><span
@@ -1936,11 +2204,12 @@
                         </li>
                         <li><a href="/found" onclick="window.location.href='/found'; return false;">Báo tin nhặt được</a>
                         </li>
+                        <li><a href="/reports/list" onclick="window.location.href='/reports/list'; return false;">Xem báo cáo thất lạc</a>
+                        </li>
                         <li><a href="/tips" onclick="window.location.href='/tips'; return false;">Mẹo chăm sóc thú
                                 cưng</a>
                         </li>
-                        <li><a href="/reports/list" onclick="window.location.href='/reports/list'; return false;">Xem báo cáo thất lạc</a>
-                        </li>
+                      
                     </ul>
                 </li>
                 <li>
@@ -2278,51 +2547,199 @@
                 }
             });
 
-            // --- LOGIC GIỎ HÀNG ---
-            let cart = [];
-            function toggleCart() { document.getElementById('cart-sidebar').classList.toggle('open'); }
-            function addToCart(name, price) {
-                let existingItem = cart.find(item => item.name === name);
-                if (existingItem) { existingItem.quantity++; } else { cart.push({ name, price, quantity: 1 }); }
+            // --- LOGIC GIỎ HÀNG (đồng bộ với shop, dùng ph_cart localStorage) ---
+            function getCart() { try { return JSON.parse(localStorage.getItem('ph_cart') || '[]'); } catch(e) { return []; } }
+            function saveCart(c) {
+                localStorage.setItem('ph_cart', JSON.stringify(c));
                 updateCartUI();
-            }
-            function removeItem(index) { cart.splice(index, 1); updateCartUI(); }
-            function changeQty(index, delta) {
-                cart[index].quantity += delta;
-                if (cart[index].quantity <= 0) cart.splice(index, 1);
-                updateCartUI();
-            }
-            function updateCartUI() {
-                const totalCount = cart.reduce((acc, item) => acc + item.quantity, 0);
-                document.getElementById('cart-count-display').innerText = `(${totalCount})`;
-                const container = document.getElementById('cart-items-container');
-                const totalDisplay = document.getElementById('cart-total');
-                if (cart.length === 0) {
-                    container.innerHTML = '<div style="text-align: center; color: #777; margin-top: 20px;">Giỏ hàng trống</div>';
-                    totalDisplay.innerText = '0đ'; return;
-                }
-                let html = ''; let totalPrice = 0;
-                cart.forEach((item, index) => {
-                    totalPrice += item.price * item.quantity;
-                    html += `<div class="cart-item-row">
-                    <div class="cart-item-top"><span>${item.name}</span><span class="cart-remove-btn" onclick="removeItem(${index})">Xóa</span></div>
-                    <div class="cart-item-bottom">
-                        <div class="qty-control"><button class="qty-btn" onclick="changeQty(${index}, -1)">-</button><span>${item.quantity}</span><button class="qty-btn" onclick="changeQty(${index}, 1)">+</button></div>
-                        <div style="font-weight:bold;">${(item.price * item.quantity).toLocaleString()}đ</div>
-                    </div>
-                </div>`;
-                });
-                container.innerHTML = html;
-                totalDisplay.innerText = totalPrice.toLocaleString() + 'đ';
+                if (typeof window.phCartUpdateUI === 'function') window.phCartUpdateUI();
             }
 
-            // --- USER DROPDOWN ---
-            const userDropdownBtn = document.getElementById('userDropdownBtn');
-            const userDropdown = document.getElementById('headerUserDropdown') || document.querySelector('.user-dropdown') || document.getElementById('userDropdown');
-            if (userDropdownBtn && userDropdown) {
-                userDropdownBtn.addEventListener('click', (e) => { e.stopPropagation(); userDropdown.classList.toggle('active'); });
-                document.addEventListener('click', () => { userDropdown.classList.remove('active'); });
+            function openCart() {
+                document.getElementById('cartSidebar').classList.add('open');
+                document.getElementById('cartOverlayBg').classList.add('open');
+                document.body.style.overflow = 'hidden';
             }
+            function closeCart() {
+                document.getElementById('cartSidebar').classList.remove('open');
+                document.getElementById('cartOverlayBg').classList.remove('open');
+                document.body.style.overflow = '';
+            }
+            // Giữ toggleCart để các nút cũ vẫn hoạt động
+            function toggleCart() {
+                const sidebar = document.getElementById('cartSidebar');
+                if (sidebar.classList.contains('open')) closeCart(); else openCart();
+            }
+
+            function addToCart(name, price, image) {
+                const cart = getCart();
+                const exist = cart.find(i => i.name === name);
+                if (exist) exist.qty++;
+                else cart.push({ id: Date.now(), name, price, image: image || '', qty: 1 });
+                saveCart(cart);
+                openCart();
+            }
+            function removeItem(id) {
+                saveCart(getCart().filter(i => i.id !== id));
+            }
+            function changeQty(id, delta) {
+                const cart = getCart();
+                const item = cart.find(i => i.id === id);
+                if (!item) return;
+                item.qty += delta;
+                saveCart(item.qty <= 0 ? cart.filter(i => i.id !== id) : cart);
+            }
+
+            function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+            function updateCartUI() {
+                const cart = getCart();
+                const totalCount = cart.reduce((s, i) => s + i.qty, 0);
+                const totalPrice = cart.reduce((s, i) => s + i.price * i.qty, 0);
+
+                // Badge header
+                const badge = document.getElementById('cart-count-display');
+                if (badge) badge.textContent = '(' + totalCount + ')';
+
+                // Tổng tiền
+                const totalEl = document.getElementById('cartTotal');
+                if (totalEl) totalEl.textContent = totalPrice.toLocaleString('vi-VN') + 'đ';
+
+                // Nút thanh toán
+                const checkoutBtn = document.getElementById('checkoutBtn');
+                if (checkoutBtn) checkoutBtn.disabled = cart.length === 0;
+
+                // Danh sách sản phẩm
+                const wrap = document.getElementById('cartItemsWrap');
+                if (!wrap) return;
+                if (cart.length === 0) {
+                    wrap.innerHTML = '<div class="cart-empty-msg">🛒 Giỏ hàng trống</div>';
+                    return;
+                }
+                wrap.innerHTML = cart.map(item => `
+                    <div class="cart-item-row">
+                        <img class="cart-item-img"
+                             src="${esc(item.image || '')}"
+                             alt="${esc(item.name)}"
+                             onerror="this.src='https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=100&q=80'">
+                        <div class="cart-item-info">
+                            <div class="cart-item-name">${esc(item.name)}</div>
+                            <div class="cart-item-price">${(item.price * item.qty).toLocaleString('vi-VN')}đ</div>
+                        </div>
+                        <div class="cart-qty-control">
+                            <button class="qty-btn" onclick="changeQty(${item.id}, -1)">−</button>
+                            <span class="qty-num">${item.qty}</span>
+                            <button class="qty-btn" onclick="changeQty(${item.id}, 1)">+</button>
+                        </div>
+                    </div>`).join('');
+            }
+
+            // ── CHECKOUT & BILL ──────────────────────────────────────────
+            function openCheckout() {
+                const cart = getCart();
+                if (cart.length === 0) return;
+                const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+                document.getElementById('checkoutTotal').textContent = total.toLocaleString('vi-VN') + 'đ';
+
+                // Pre-fill tên nếu đang đăng nhập
+                try {
+                    const stored = JSON.parse(localStorage.getItem('user') || 'null');
+                    if (stored && stored.display_name) {
+                        document.getElementById('coName').value = stored.display_name;
+                    }
+                } catch(e) {}
+
+                closeCart();
+                document.getElementById('checkoutModal').classList.add('open');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeCheckout() {
+                document.getElementById('checkoutModal').classList.remove('open');
+                document.body.style.overflow = '';
+            }
+
+            // Đóng modal khi click vào nền
+            document.getElementById('checkoutModal').addEventListener('click', function(e) {
+                if (e.target === this) closeCheckout();
+            });
+
+            async function submitOrder() {
+                const name    = document.getElementById('coName').value.trim();
+                const phone   = document.getElementById('coPhone').value.trim();
+                const address = document.getElementById('coAddress').value.trim();
+                const note    = document.getElementById('coNote').value.trim();
+
+                if (!name || !phone || !address) {
+                    Swal.fire({ icon: 'warning', title: 'Thiếu thông tin', text: 'Vui lòng điền đủ họ tên, SĐT và địa chỉ.', confirmButtonColor: '#2d6a4f' });
+                    return;
+                }
+
+                const cartSnapshot = [...getCart()];
+                const total = cartSnapshot.reduce((s, i) => s + i.price * i.qty, 0);
+
+                try {
+                    const res = await fetch('/api/orders', {
+                        method: 'POST',
+                        credentials: 'include',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            customer: { name, phone, address, note },
+                            items: cartSnapshot.map(i => ({ id: i.id, qty: i.qty, price: i.price })),
+                        }),
+                    });
+                    const result = await res.json();
+                    if (!res.ok) throw new Error(result.message || 'Đặt hàng thất bại');
+
+                    closeCheckout();
+                    saveCart([]);
+                    showBill({ orderId: result.orderId || result.id || '???', name, phone, address, items: cartSnapshot, total });
+                } catch (err) {
+                    Swal.fire({ icon: 'error', title: 'Đặt hàng thất bại', text: err.message, confirmButtonColor: '#2d6a4f' });
+                }
+            }
+
+            function showBill({ orderId, name, phone, address, items, total }) {
+                document.getElementById('billOrderId').textContent = '#' + orderId;
+                document.getElementById('billIdBack').textContent  = '#' + orderId;
+                document.getElementById('billName').textContent    = name;
+                document.getElementById('billPhone').textContent   = phone;
+                document.getElementById('billAddress').textContent = address;
+                document.getElementById('billDate').textContent    = new Date().toLocaleString('vi-VN');
+                document.getElementById('billTotal').textContent   = total.toLocaleString('vi-VN') + 'đ';
+                document.getElementById('billItems').innerHTML = items.map(i =>
+                    `<div class="bill-item-row"><span>${esc(i.name)} x${i.qty}</span><span>${(i.price * i.qty).toLocaleString('vi-VN')}đ</span></div>`
+                ).join('');
+                document.getElementById('billCard').classList.remove('flipped');
+                document.getElementById('billOverlay').classList.add('open');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function flipBill() {
+                document.getElementById('billCard').classList.add('flipped');
+            }
+
+            function closeBill() {
+                document.getElementById('billOverlay').classList.remove('open');
+                setTimeout(() => { document.body.style.overflow = ''; }, 350);
+            }
+            // ─────────────────────────────────────────────────────────────
+
+            // Lắng nghe thay đổi từ tab shop
+            window.addEventListener('storage', e => {
+                if (e.key === 'ph_cart') {
+                    updateCartUI();
+                    if (typeof window.phCartUpdateUI === 'function') window.phCartUpdateUI();
+                }
+            });
+
+            // Expose để staticHeader.js có thể trigger re-render
+            window.indexUpdateCartUI = updateCartUI;
+
+            // Load lần đầu
+            updateCartUI();
+
+            // --- USER DROPDOWN handled by staticHeader.js ---
 
             // Progressive enhancement: sync auth state from /api/v1/auth/me
             (function () {
@@ -2603,6 +3020,48 @@
         })();
         </script>
 
+    <div id="google_translate_element" style="display:none"></div>
+    <script>
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({ pageLanguage: 'vi', includedLanguages: 'vi,en,zh-TW,ja', autoDisplay: false }, 'google_translate_element');
+    }
+    function setLang(lang, label) {
+        document.getElementById('langBtnLabel').textContent = label;
+        document.querySelectorAll('.lang-option').forEach(function(el) {
+            el.classList.toggle('active', el.dataset.lang === (lang === 'vi' ? 'vi' : lang.replace('/','')) );
+        });
+        document.getElementById('langDropdown').classList.remove('open');
+        if (lang === 'vi') {
+            document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=' + location.hostname;
+            location.reload(); return;
+        }
+        var val = '/vi' + lang;
+        document.cookie = 'googtrans=' + val + '; path=/';
+        document.cookie = 'googtrans=' + val + '; path=/; domain=' + location.hostname;
+        location.reload();
+    }
+    function toggleLangDropdown(e) {
+        e.stopPropagation();
+        document.getElementById('langDropdown').classList.toggle('open');
+    }
+    document.addEventListener('click', function() {
+        var dd = document.getElementById('langDropdown');
+        if (dd) dd.classList.remove('open');
+    });
+    (function() {
+        var m = document.cookie.match(/googtrans=\/vi\/([^;]+)/);
+        if (!m) return;
+        var map = { 'en':'EN', 'zh-TW':'中文', 'ja':'日本語' };
+        if (map[m[1]]) {
+            document.getElementById('langBtnLabel').textContent = map[m[1]];
+            document.querySelectorAll('.lang-option').forEach(function(el) {
+                el.classList.toggle('active', el.dataset.lang === m[1]);
+            });
+        }
+    })();
+    </script>
+    <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 
 </html>

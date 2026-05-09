@@ -8,5 +8,7 @@ router.post("/login", authApiV1Controller.login);
 router.post("/logout", authApiV1Controller.logout);
 router.get("/me", requireApiAuth, authApiV1Controller.me);
 router.patch("/profile", requireApiAuth, authApiV1Controller.updateProfile);
+router.post("/avatar", requireApiAuth, authApiV1Controller.uploadAvatar);
+router.post("/background", requireApiAuth, authApiV1Controller.updateBackground);
 
 module.exports = router;

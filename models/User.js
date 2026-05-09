@@ -32,7 +32,7 @@ const User = {
   async findById(id) {
     try {
       const [rows] = await pool.execute(
-        "SELECT id, display_name, name, email, role, verify, birthday, address, created_at FROM users WHERE id = ?",
+        "SELECT id, display_name, name, email, role, verify, birthday, address, avatar, bg_preference, created_at FROM users WHERE id = ?",
         [id],
       );
       return rows[0] || null;

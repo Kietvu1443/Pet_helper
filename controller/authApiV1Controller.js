@@ -112,7 +112,10 @@ const authApiV1Controller = {
   uploadAvatar(req, res) {
     avatarUpload.single("avatar")(req, res, async (err) => {
       try {
-        if (err) return sendError(res, 400, err.message || "Lỗi upload ảnh");
+        if (err) {
+          console.error("[Multer Avatar Error]:", err);
+          return sendError(res, 400, err.message || "Lỗi upload ảnh");
+        }
         if (!req.file) return sendError(res, 400, "Vui lòng chọn ảnh avatar");
 
         const avatarPath = getAvatarUrl(req.file);
@@ -145,7 +148,10 @@ const authApiV1Controller = {
   updateBackground(req, res) {
     bgUpload.single("background")(req, res, async (err) => {
       try {
-        if (err) return sendError(res, 400, err.message || "Lỗi upload ảnh");
+        if (err) {
+          console.error("[Multer Background Error]:", err);
+          return sendError(res, 400, err.message || "Lỗi upload ảnh");
+        }
 
         let bgValue = null;
 

@@ -11,6 +11,12 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+console.log("☁️ Cloudinary Config Check:", {
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME ? "PRESENT" : "MISSING",
+  api_key: process.env.CLOUDINARY_API_KEY ? "PRESENT" : "MISSING",
+  api_secret: process.env.CLOUDINARY_API_SECRET ? "PRESENT" : "MISSING",
+});
+
 // ========== Cấu hình chung ==========
 const isProduction = process.env.NODE_ENV === "production";
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB

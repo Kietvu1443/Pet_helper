@@ -103,25 +103,10 @@
             display: block;
         }
 
-        .global-note.info {
-            background: #e8f5ec;
-            color: #1f5133;
-        }
-
-        .global-note.success {
-            background: #ecfdf3;
-            color: #166534;
-        }
-
-        .global-note.warning {
-            background: #fff7ed;
-            color: #9a3412;
-        }
-
-        .global-note.error {
-            background: #fef2f2;
-            color: #991b1b;
-        }
+        .global-note.info { background: #e8f5ec; color: #1f5133; }
+        .global-note.success { background: #ecfdf3; color: #166534; }
+        .global-note.warning { background: #fff7ed; color: #9a3412; }
+        .global-note.error { background: #fef2f2; color: #991b1b; }
 
         .blocked-state {
             display: none;
@@ -207,25 +192,10 @@
             display: block;
         }
 
-        .panel-state.loading {
-            background: #e8f5ec;
-            color: #1f5133;
-        }
-
-        .panel-state.empty {
-            background: #f8fafc;
-            color: #475569;
-        }
-
-        .panel-state.error {
-            background: #fef2f2;
-            color: #991b1b;
-        }
-
-        .panel-state.unauthorized {
-            background: #fff7ed;
-            color: #9a3412;
-        }
+        .panel-state.loading { background: #e8f5ec; color: #1f5133; }
+        .panel-state.empty { background: #f8fafc; color: #475569; }
+        .panel-state.error { background: #fef2f2; color: #991b1b; }
+        .panel-state.unauthorized { background: #fff7ed; color: #9a3412; }
 
         .panel-content.is-hidden {
             display: none;
@@ -234,6 +204,25 @@
         .table-wrap {
             overflow-x: auto;
             padding: 0 16px 16px;
+            position: relative;
+        }
+
+        .table-loading-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            font-weight: 700;
+            color: #2b663e;
+            font-size: 0.9rem;
+            backdrop-filter: blur(2px);
+        }
+
+        .is-loading .table-loading-overlay {
+            display: flex;
         }
 
         table {
@@ -242,8 +231,7 @@
             min-width: 780px;
         }
 
-        th,
-        td {
+        th, td {
             padding: 11px 10px;
             border-bottom: 1px solid #edf3ee;
             text-align: left;
@@ -271,45 +259,15 @@
             white-space: nowrap;
         }
 
-        .status-pill.pending {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .status-pill.approved {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .status-pill.rejected {
-            background: #fee2e2;
-            color: #b91c1c;
-        }
-
-        .status-pill.available {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .status-pill.adopted {
-            background: #dbeafe;
-            color: #1d4ed8;
-        }
-
-        .status-pill.published {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .status-pill.lost {
-            background: #fee2e2;
-            color: #b91c1c;
-        }
-
-        .status-pill.found {
-            background: #dcfce7;
-            color: #166534;
-        }
+        .status-pill.pending { background: #fef3c7; color: #92400e; }
+        .status-pill.approved { background: #dcfce7; color: #166534; }
+        .status-pill.rejected { background: #fee2e2; color: #b91c1c; }
+        .status-pill.available { background: #dcfce7; color: #166534; }
+        .status-pill.adopted { background: #dbeafe; color: #1d4ed8; }
+        .status-pill.published { background: #dcfce7; color: #166534; }
+        .status-pill.lost { background: #fee2e2; color: #b91c1c; }
+        .status-pill.found { background: #dcfce7; color: #166534; }
+        .status-pill.closed { background: #f1f5f9; color: #475569; }
 
         /* Split report card — 2 sub-cards inside 1 grid cell */
         .stat-card-split {
@@ -365,19 +323,20 @@
             color: #ffffff;
         }
 
-        @media (max-width: 640px) {
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .stats-grid-row2 {
-                grid-template-columns: 1fr;
-            }
-
-            .quick-actions {
-                grid-template-columns: repeat(2, 1fr);
-            }
+        .role-badge {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 6px;
+            padding: 3px 8px;
+            font-size: 0.76rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
         }
+
+        .role-badge.admin { background: #fef2f2; color: #991b1b; border: 1px solid #fee2e2; }
+        .role-badge.staff { background: #fff7ed; color: #9a3412; border: 1px solid #ffedd5; }
+        .role-badge.user { background: #f0fdf4; color: #166534; border: 1px solid #dcfce7; }
 
         .row-actions {
             display: inline-flex;
@@ -395,75 +354,91 @@
             font-size: 0.82rem;
         }
 
-        .action-btn.approve {
-            background: #16a34a;
-            color: #ffffff;
+        .action-btn.approve { background: #16a34a; color: #ffffff; }
+        .action-btn.reject { background: #dc2626; color: #ffffff; }
+        .action-btn.detail { background: #f8fafc; color: #334155; border-color: #cbd5e1; }
+        .action-btn.detail:hover { background: #f1f5f9; }
+        .action-btn.delete { background: #7f1d1d; color: #ffffff; }
+        .action-btn.info { background: #f0f9ff; color: #0369a1; border: 1px solid #bae6fd; }
+        .action-btn.info:hover { background: #e0f2fe; }
+        .action-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+        /* ── Users Panel Styles ── */
+        .user-cell {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 200px;
         }
 
-        .action-btn.reject {
-            background: #dc2626;
-            color: #ffffff;
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #d8e7dc;
+            flex-shrink: 0;
+            background: #f3f4f6;
         }
 
-        .action-btn.edit {
-            background: #2b663e;
-            color: #ffffff;
-        }
-
-        .action-btn.detail {
-            background: #f8fafc;
-            color: #334155;
-            border-color: #cbd5e1;
-        }
-
-        .action-btn.detail:hover {
-            background: #f1f5f9;
-        }
-
-        .action-btn.delete {
-            background: #7f1d1d;
-            color: #ffffff;
-        }
-
-        .action-btn:disabled {
-            opacity: 0.55;
-            cursor: not-allowed;
-        }
-
-        .reporter-cell,
-        .pet-cell {
-            display: grid;
-            gap: 2px;
-        }
-
-        .main-text {
-            color: #111827;
+        .user-name {
             font-weight: 700;
+            color: #1f2937;
+            font-size: 0.88rem;
+            line-height: 1.3;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 180px;
         }
 
-        .sub-text {
-            color: #64748b;
-            font-size: 0.82rem;
+        .user-email {
+            font-size: 0.78rem;
+            color: #6b7280;
+            line-height: 1.3;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 180px;
         }
 
-        .dashboard-body {
-            padding: 16px;
-            display: grid;
-            gap: 14px;
+        .role-select {
+            appearance: none;
+            -webkit-appearance: none;
+            border: 1px solid #d4e4d9;
+            border-radius: 8px;
+            background: #f8fcfa url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M2 4l4 4 4-4'/%3E%3C/svg%3E") no-repeat right 8px center;
+            color: #1f5133;
+            font-weight: 700;
+            font-size: 0.8rem;
+            padding: 6px 28px 6px 10px;
+            cursor: pointer;
+            transition: border-color 0.15s, box-shadow 0.15s;
+            min-width: 90px;
         }
 
-        .stats-grid {
-            display: grid;
-            gap: 12px;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
+        .role-select:hover {
+            border-color: #8fbfa4;
         }
 
-        .stats-grid-row2 {
-            display: grid;
-            gap: 12px;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
+        .role-select:focus {
+            outline: none;
+            border-color: #2b663e;
+            box-shadow: 0 0 0 3px rgba(43, 102, 62, 0.12);
         }
 
+        .status-pill.active { background: #dcfce7; color: #166534; }
+        .status-pill.banned { background: #fee2e2; color: #b91c1c; }
+
+        .action-btn.ban { background: #dc2626; color: #ffffff; }
+        .action-btn.ban:hover { background: #b91c1c; }
+        .action-btn.unban { background: #16a34a; color: #ffffff; }
+        .action-btn.unban:hover { background: #15803d; }
+
+        .dashboard-body { padding: 16px; display: grid; gap: 14px; }
+        .stats-grid { display: grid; gap: 12px; grid-template-columns: repeat(2, 1fr); }
+        .stats-grid-row2 { display: grid; gap: 12px; grid-template-columns: repeat(3, 1fr); }
+        
         .stat-card {
             border: 1px solid #dbe9df;
             border-radius: 12px;
@@ -494,11 +469,8 @@
             letter-spacing: 0.3px;
         }
 
-        .stat-icon {
-            font-size: 1.2rem;
-            line-height: 1;
-        }
-
+        .stat-icon { font-size: 1.2rem; line-height: 1; }
+        
         .stat-main {
             display: flex;
             align-items: baseline;
@@ -536,506 +508,66 @@
             font-weight: 700;
         }
 
-        .stat-chip.pending {
-            background: #fef3c7;
-            color: #92400e;
-        }
+        .stat-chip.pending { background: #fef3c7; color: #92400e; }
+        .stat-chip.approved, .stat-chip.available { background: #dcfce7; color: #166534; }
+        .stat-chip.rejected, .stat-chip.closed { background: #fee2e2; color: #b91c1c; }
+        .stat-chip.adopted { background: #dbeafe; color: #1d4ed8; }
+        .stat-chip.neutral { background: #f1f5f9; color: #475569; }
 
-        .stat-chip.approved,
-        .stat-chip.available {
-            background: #dcfce7;
-            color: #166534;
-        }
+        .urgent-section { border: 1px solid #fde68a; border-radius: 12px; overflow: hidden; background: #fffbeb; }
+        .urgent-header { display: flex; align-items: center; justify-content: space-between; padding: 11px 14px; border-bottom: 1px solid #fde68a; background: #fef9c3; }
+        .urgent-title { margin: 0; color: #78350f; font-size: 0.88rem; font-weight: 800; display: flex; align-items: center; gap: 6px; }
+        .urgent-count-badge { display: inline-flex; align-items: center; justify-content: center; background: #f59e0b; color: #ffffff; border-radius: 999px; min-width: 20px; height: 20px; font-size: 0.72rem; font-weight: 800; }
+        .urgent-empty { padding: 16px 14px; color: #6b7280; text-align: center; }
+        .urgent-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 14px; border-bottom: 1px solid #fde68a; font-size: 0.88rem; }
+        .urgent-row:last-child { border-bottom: none; }
+        .urgent-type-badge { border-radius: 6px; padding: 2px 8px; font-size: 0.73rem; font-weight: 800; }
+        .urgent-type-badge.adoption { background: #ede9fe; color: #5b21b6; }
+        .urgent-type-badge.report { background: #fee2e2; color: #b91c1c; }
+        .urgent-type-badge.news { background: #e0f2fe; color: #0369a1; }
 
-        .stat-chip.rejected,
-        .stat-chip.closed {
-            background: #fee2e2;
-            color: #b91c1c;
-        }
+        .quick-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        .quick-action-btn { border: 1px solid #d4e4d9; border-radius: 10px; background: #ffffff; color: #1f5133; font-weight: 700; padding: 10px 8px; cursor: pointer; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+        .quick-action-btn:hover { background: #eef8f2; border-color: #8fbfa4; }
 
-        .stat-chip.adopted {
-            background: #dbeafe;
-            color: #1d4ed8;
-        }
+        .pagination-bar { padding: 12px 16px; border-top: 1px solid #edf3ee; display: flex; align-items: center; justify-content: space-between; background: #ffffff; }
+        .pagination-summary { color: #64748b; font-size: 0.84rem; }
+        .pagination-controls { display: flex; align-items: center; gap: 6px; }
+        .pagination-btn { border: 1px solid #d4e4d9; border-radius: 8px; background: #f8fcfa; color: #1f5133; font-weight: 700; padding: 6px 12px; cursor: pointer; }
+        .pagination-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        .stat-chip.neutral {
-            background: #f1f5f9;
-            color: #475569;
-        }
-
-        /* Urgent table */
-        .urgent-section {
-            border: 1px solid #fde68a;
-            border-radius: 12px;
-            overflow: hidden;
-            background: #fffbeb;
-        }
-
-        .urgent-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 11px 14px;
-            border-bottom: 1px solid #fde68a;
-            background: #fef9c3;
-        }
-
-        .urgent-title {
-            margin: 0;
-            color: #78350f;
-            font-size: 0.88rem;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .urgent-count-badge {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            background: #f59e0b;
-            color: #ffffff;
-            border-radius: 999px;
-            min-width: 20px;
-            height: 20px;
-            font-size: 0.72rem;
-            font-weight: 800;
-            padding: 0 5px;
-        }
-
-        .urgent-empty {
-            padding: 16px 14px;
-            color: #6b7280;
-            font-size: 0.88rem;
-            text-align: center;
-        }
-
-        .urgent-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            padding: 9px 14px;
-            border-bottom: 1px solid #fde68a;
-            font-size: 0.88rem;
-        }
-
-        .urgent-row:last-child {
-            border-bottom: none;
-        }
-
-        .urgent-row-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            min-width: 0;
-            flex: 1;
-        }
-
-        .urgent-type-badge {
-            display: inline-flex;
-            align-items: center;
-            border-radius: 6px;
-            padding: 2px 8px;
-            font-size: 0.73rem;
-            font-weight: 800;
-            white-space: nowrap;
-            flex-shrink: 0;
-        }
-
-        .urgent-type-badge.adoption {
-            background: #ede9fe;
-            color: #5b21b6;
-        }
-
-        .urgent-type-badge.report {
-            background: #fee2e2;
-            color: #b91c1c;
-        }
-
-        .urgent-type-badge.news {
-            background: #e0f2fe;
-            color: #0369a1;
-        }
-
-        .urgent-info {
-            min-width: 0;
-        }
-
-        .urgent-name {
-            font-weight: 700;
-            color: #111827;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .urgent-meta {
-            color: #6b7280;
-            font-size: 0.78rem;
-        }
-
-        .urgent-go-btn {
-            flex-shrink: 0;
-            border: 1px solid #d4e4d9;
-            background: #ffffff;
-            color: #2b663e;
-            border-radius: 7px;
-            padding: 4px 10px;
-            font-size: 0.78rem;
-            font-weight: 700;
-            cursor: pointer;
-            white-space: nowrap;
-        }
-
-        .urgent-go-btn:hover {
-            background: #f0faf4;
-        }
-
-        /* Quick actions */
-        .quick-actions {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-        }
-
-        .quick-action-btn {
-            border: 1px solid #d4e4d9;
-            border-radius: 10px;
-            background: #ffffff;
-            color: #1f5133;
-            font-weight: 700;
-            font-size: 0.84rem;
-            padding: 10px 8px;
-            cursor: pointer;
-            text-align: center;
-            transition: background 0.15s, border-color 0.15s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .quick-action-btn:hover {
-            background: #eef8f2;
-            border-color: #8fbfa4;
-        }
-
-        .quick-action-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .qa-icon {
-            font-size: 1.3rem;
-        }
-
-        .dash-hint {
-            margin: 0;
-            color: #475569;
-            line-height: 1.5;
-            font-size: 0.92rem;
-        }
-
-        .mini-link-btn {
-            border: 1px solid #bfd6c8;
-            background: #ffffff;
-            color: #2b663e;
-            border-radius: 8px;
-            padding: 8px 10px;
-            cursor: pointer;
-            font-weight: 700;
-            font-size: 0.84rem;
-        }
-
-        .mini-link-btn:hover {
-            background: #f1f8f4;
-        }
-
-        .detail-modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(15, 23, 42, 0.52);
-            z-index: 1300;
-            align-items: center;
-            justify-content: center;
-            padding: 16px;
-        }
-
-        .detail-modal.show {
-            display: flex;
-        }
-
-        .detail-modal-card {
-            width: 920px;
-            max-width: 100%;
-            background: #ffffff;
-            border-radius: 14px;
-            border: 1px solid #dbe7df;
-            overflow: hidden;
-            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.28);
-        }
-
-        .detail-modal-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            padding: 14px 16px;
-            border-bottom: 1px solid #e6efe9;
-            background: #f8fcfa;
-        }
-
-        .detail-modal-title {
-            margin: 0;
-            color: #1f5133;
-            font-size: 1.08rem;
-            font-weight: 800;
-        }
-
-        .detail-modal-close {
-            border: 1px solid #cbd5e1;
-            background: #ffffff;
-            color: #334155;
-            border-radius: 8px;
-            padding: 6px 10px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        .detail-modal-body {
-            padding: 16px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 18px;
-        }
-
-        .detail-preview {
-            display: grid;
-            gap: 12px;
-        }
-
-        .detail-preview img {
-            width: 100%;
-            height: 260px;
-            object-fit: cover;
-            border-radius: 10px;
-            background: #f3f4f6;
-            border: 1px solid #e2e8f0;
-        }
-
-        .detail-image-placeholder {
-            min-height: 260px;
-            border-radius: 10px;
-            border: 1px dashed #cbd5e1;
-            background: #f8fafc;
-            color: #64748b;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            text-align: center;
-            padding: 12px;
-        }
-
-        .detail-image-placeholder.show {
-            display: flex;
-        }
-
-        .detail-groups {
-            display: grid;
-            gap: 12px;
-        }
-
-        .detail-group {
-            display: none;
-        }
-
-        .detail-group.show {
-            display: block;
-        }
-
-        .detail-label {
-            margin: 0;
-            color: #64748b;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            font-weight: 800;
-            letter-spacing: 0.2px;
-        }
-
-        .detail-value {
-            margin: 4px 0 0;
-            color: #0f172a;
-            font-size: 0.94rem;
-            font-weight: 600;
-            word-break: break-word;
-            line-height: 1.45;
-        }
-
-        .detail-value.italic {
-            font-style: italic;
-            font-weight: 500;
-            color: #334155;
-        }
-
-        .detail-modal-footer {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            padding: 14px 16px;
-            border-top: 1px solid #e6efe9;
-            background: #f8fcfa;
-        }
+        .detail-modal { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.52); z-index: 1300; align-items: center; justify-content: center; padding: 16px; }
+        .detail-modal.show { display: flex; }
+        .detail-modal-card { width: 920px; max-width: 100%; background: #ffffff; border-radius: 14px; border: 1px solid #dbe7df; overflow: hidden; box-shadow: 0 18px 45px rgba(15, 23, 42, 0.28); }
+        .detail-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-bottom: 1px solid #e6efe9; background: #f8fcfa; }
+        .detail-modal-title { margin: 0; color: #1f5133; font-size: 1.08rem; font-weight: 800; }
+        .detail-modal-close { border: 1px solid #cbd5e1; background: #ffffff; color: #334155; border-radius: 8px; padding: 6px 10px; font-weight: 700; cursor: pointer; }
+        .detail-modal-body { padding: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+        .detail-preview img { width: 100%; height: 260px; object-fit: cover; border-radius: 10px; background: #f3f4f6; border: 1px solid #e2e8f0; }
+        .detail-image-placeholder { min-height: 260px; border-radius: 10px; border: 1px dashed #cbd5e1; background: #f8fafc; color: #64748b; display: none; align-items: center; justify-content: center; font-weight: 700; }
+        .detail-image-placeholder.show { display: flex; }
+        .detail-groups { display: grid; gap: 12px; }
+        .detail-group { display: none; }
+        .detail-group.show { display: block; }
+        .detail-label { margin: 0; color: #64748b; font-size: 0.8rem; text-transform: uppercase; font-weight: 800; }
+        .detail-value { margin: 4px 0 0; color: #0f172a; font-size: 0.94rem; font-weight: 600; word-break: break-word; line-height: 1.45; }
 
         @media (max-width: 1024px) {
-            .admin-shell {
-                grid-template-columns: 1fr;
-            }
-
-            .sidebar {
-                position: static;
-            }
-
-            .sidebar-nav {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 6px;
-            }
-
-            .nav-btn {
-                width: auto;
-                flex: 1 1 auto;
-                text-align: center;
-                min-width: 120px;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .detail-modal-body {
-                grid-template-columns: 1fr;
-            }
-
-            .detail-preview img,
-            .detail-image-placeholder {
-                min-height: 220px;
-                height: 220px;
-            }
+            .admin-shell { grid-template-columns: 1fr; }
+            .sidebar { position: static; }
+            .sidebar-nav { display: flex; flex-wrap: wrap; gap: 6px; }
+            .nav-btn { width: auto; flex: 1 1 auto; text-align: center; min-width: 120px; }
+            .stats-grid, .stats-grid-row2 { grid-template-columns: repeat(2, 1fr); }
+            .detail-modal-body { grid-template-columns: 1fr; }
         }
 
         @media (max-width: 768px) {
-            .admin-page {
-                padding: 16px 10px;
-            }
-
-            .sidebar {
-                padding: 12px;
-                border-radius: 10px;
-            }
-
-            .sidebar-title {
-                font-size: 0.95rem;
-            }
-
-            .sidebar-desc {
-                font-size: 0.82rem;
-            }
-
-            .sidebar-nav {
-                overflow-x: auto;
-                flex-wrap: nowrap;
-                -webkit-overflow-scrolling: touch;
-                gap: 6px;
-                padding-bottom: 4px;
-            }
-
-            .nav-btn {
-                flex-shrink: 0;
-                min-width: 100px;
-                font-size: 0.82rem;
-                padding: 8px 10px;
-            }
-
-            .panel-head {
-                padding: 12px 14px;
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .panel-tools {
-                width: 100%;
-            }
-
-            .tool-btn {
-                flex: 1;
-                text-align: center;
-            }
-
-            th,
-            td {
-                padding: 8px 6px;
-                font-size: 0.8rem;
-            }
-
-            .stats-grid-row2 {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .quick-actions {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .quick-action-btn {
-                font-size: 0.78rem;
-                padding: 8px 6px;
-            }
-
-            .urgent-row {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 6px;
-            }
-
-            .detail-modal-card {
-                width: 100%;
-                border-radius: 10px;
-            }
-
-            .report-filter-bar {
-                flex-wrap: wrap;
-            }
+            .stats-grid, .stats-grid-row2 { grid-template-columns: 1fr; }
+            .quick-actions { grid-template-columns: repeat(2, 1fr); }
         }
 
         @media (max-width: 480px) {
-            .stats-grid-row2 {
-                grid-template-columns: 1fr;
-            }
-
-            .stat-value {
-                font-size: 1.4rem;
-            }
-
-            .stat-breakdown {
-                gap: 6px;
-            }
-
-            .stat-chip {
-                font-size: 0.72rem;
-            }
-
-            .row-actions {
-                flex-direction: column;
-                width: 100%;
-            }
-
-            .action-btn {
-                width: 100%;
-                text-align: center;
-            }
+            .stats-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -1062,25 +594,15 @@
                             </div>
                             <div class="dropdown-divider"></div>
                             <a href="/profile" class="dropdown-item">👤 Tài khoản</a>
-                            <a href="/admin" class="dropdown-item role-admin-only is-auth-hidden">🧭 Dashboard quản
-                                trị</a>
-                            <a href="/admin/adoption-requests" class="dropdown-item role-staff-only is-auth-hidden">🗂️
-                                Xét duyệt nhận nuôi</a>
-                            <a href="/admin/reports" class="dropdown-item role-staff-only is-auth-hidden">📣 Quản lý báo
-                                cáo</a>
+                            <a href="/admin" class="dropdown-item" id="headerManagementLink">🧭 Dashboard quản trị</a>
                             <div class="dropdown-divider"></div>
-                            <a href="#" class="dropdown-item logout" id="logoutBtn" onclick="handleLogout(event)">🚪
-                                Đăng xuất</a>
+                            <a href="#" class="dropdown-item logout" id="logoutBtn" onclick="handleLogout(event)">🚪 Đăng xuất</a>
                         </div>
                     </div>
                 </div>
                 <div class="auth-guest-actions is-auth-visible" id="headerAuthGuestState">
-                    <a href="#"
-                        onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('login'); } return false;"><span>Đăng
-                            nhập</span></a>
-                    <a href="#"
-                        onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('register'); } return false;"><span>Đăng
-                            ký</span></a>
+                    <a href="#" onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('login'); } return false;"><span>Đăng nhập</span></a>
+                    <a href="#" onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('register'); } return false;"><span>Đăng ký</span></a>
                 </div>
                 <span>Giỏ hàng <span id="cart-count-display">(0)</span></span>
                 <span class="lang-switch">VN / EN</span>
@@ -1091,42 +613,14 @@
                 <span class="hamburger-line"></span>
             </button>
         </div>
-
-        <div class="mobile-nav-overlay" id="mobileNavOverlay"></div>
-
         <nav class="main-nav" id="mainNav">
             <button class="mobile-nav-close" id="mobileNavClose" aria-label="Đóng menu">✕</button>
             <ul>
-                <li>
-                    <a href="#" class="has-dropdown nav-item">Nhận nuôi <span class="nav-arrow">▼</span></a>
-                    <ul class="nav-dropdown">
-                        <li><a href="/adopt">Xem vật nuôi có thể nhận nuôi</a></li>
-                        <li><a href="/snap" style="color:#ea580c;font-weight:bold;">PetSnap</a></li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="#" class="has-dropdown nav-item">Thất lạc <span class="nav-arrow">▼</span></a>
-                    <ul class="nav-dropdown">
-                        <li><a href="/lost">Báo mất thú cưng</a></li>
-                        <li><a href="/found">Báo tin nhặt được</a></li>
-                        <li><a href="/tips">Mẹo chăm sóc thú cưng</a></li>
-                        <li><a href="/reports/list">Xem báo cáo thất lạc</a></li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="#" class="has-dropdown nav-item">Dịch vụ <span class="nav-arrow">▼</span></a>
-                    <ul class="nav-dropdown">
-                        <li><a href="/booking">Đặt lịch tiêm phòng</a></li>
-                        <li><a href="/shop">Danh mục đồ dùng</a></li>
-                    </ul>
-                </li>
+                <li><a href="/adopt">Nhận nuôi</a></li>
+                <li><a href="/lost">Báo mất</a></li>
+                <li><a href="/found">Nhặt được</a></li>
                 <li><a href="/news">Tin tức</a></li>
-                <li>
-                    <a href="#" class="has-dropdown nav-item">Về chúng tôi <span class="nav-arrow">▼</span></a>
-                    <ul class="nav-dropdown">
-                        <li><a href="#contact-section">Liên hệ với chúng tôi</a></li>
-                    </ul>
-                </li>
+                <li><a href="/shop">Cửa hàng</a></li>
             </ul>
         </nav>
     </header>
@@ -1138,16 +632,15 @@
         <section class="admin-shell">
             <aside class="sidebar">
                 <h1 class="sidebar-title">Admin Dashboard</h1>
-                <p class="sidebar-desc">Quản lý yêu cầu nhận nuôi, thú cưng và báo cáo trong một màn hình duy nhất.</p>
-
+                <p class="sidebar-desc">Quản lý hồ sơ nhận nuôi, thú cưng, báo cáo và tin tức trong một màn hình duy nhất.</p>
                 <nav class="sidebar-nav">
                     <button class="nav-btn" data-tab="dashboard">📊 Dashboard</button>
                     <button class="nav-btn" data-tab="adoption">🗂️ Hồ sơ nhận nuôi</button>
                     <button class="nav-btn" data-tab="pets">🐾 Thú cưng</button>
                     <button class="nav-btn" data-tab="reports">📣 Báo cáo</button>
                     <button class="nav-btn" data-tab="news">📰 Bài tin</button>
-                    <a href="/admin-shop" class="nav-btn" style="text-decoration:none;display:block;text-align:left;">🛒
-                        Quản lý cửa hàng</a>
+                    <button class="nav-btn" data-tab="users" data-admin-only="true">👥 Quản lý tài khoản</button>
+                    <a href="/admin-shop" class="nav-btn" style="text-decoration:none;display:block;">🛒 Quản lý cửa hàng</a>
                 </nav>
             </aside>
 
@@ -1155,6 +648,7 @@
                 <div id="globalNote" class="global-note"></div>
                 <div id="blockedState" class="blocked-state"></div>
 
+                <!-- DASHBOARD PANEL -->
                 <section id="panel-dashboard" class="tab-panel">
                     <div class="panel-head">
                         <div>
@@ -1162,11 +656,10 @@
                             <p class="panel-sub">Số liệu thực từ toàn bộ hệ thống.</p>
                         </div>
                         <div class="panel-tools">
-                            <button class="tool-btn" id="refreshAllBtn" type="button">🔄 Làm mới số liệu</button>
+                            <button class="tool-btn" id="refreshAllBtn">🔄 Làm mới số liệu</button>
                         </div>
                     </div>
                     <div class="dashboard-body">
-
                         <!-- Hàng 1: Hồ sơ nhận nuôi + Thú cưng -->
                         <div class="stats-grid">
                             <article class="stat-card" data-jump-tab="adoption" title="Đi đến Hồ sơ nhận nuôi">
@@ -1175,7 +668,7 @@
                                     <span class="stat-icon">🗂️</span>
                                 </div>
                                 <div class="stat-main">
-                                    <p class="stat-value" id="statAdoptionTotal">-</p>
+                                    <p class="stat-value" id="statAdoptionTotal">0</p>
                                     <span class="stat-unit">hồ sơ</span>
                                 </div>
                                 <div class="stat-breakdown">
@@ -1191,7 +684,7 @@
                                     <span class="stat-icon">🐾</span>
                                 </div>
                                 <div class="stat-main">
-                                    <p class="stat-value" id="statPetsTotal">-</p>
+                                    <p class="stat-value" id="statPetsTotal">0</p>
                                     <span class="stat-unit">thú cưng</span>
                                 </div>
                                 <div class="stat-breakdown">
@@ -1199,40 +692,38 @@
                                     <span class="stat-chip adopted" id="statPetsAdopted">– đã nhận nuôi</span>
                                 </div>
                             </article>
-
                         </div>
 
                         <!-- Hàng 2: Thất lạc + Tìm thấy + Bài tin -->
                         <div class="stats-grid-row2">
-                            <article class="stat-card" data-report-filter="lost" title="Lọc báo cáo thất lạc"
-                                style="cursor:pointer;">
-                                <div class="stat-card-header">
-                                    <p class="stat-label">Báo cáo thất lạc</p>
-                                    <span class="stat-icon">🔴</span>
+                            <article class="stat-card-split">
+                                <div class="stat-card-split-inner" data-report-filter="lost" title="Lọc báo cáo thất lạc">
+                                    <div class="stat-card-header">
+                                        <p class="stat-label">Báo cáo thất lạc</p>
+                                        <span class="stat-icon">🔴</span>
+                                    </div>
+                                    <div class="stat-main">
+                                        <p class="stat-value" id="statReportsLostTotal">0</p>
+                                        <span class="stat-unit">báo cáo</span>
+                                    </div>
+                                    <div class="stat-breakdown">
+                                        <span class="stat-chip pending" id="statReportsLostPending">– chờ</span>
+                                        <span class="stat-chip approved" id="statReportsLostApproved">– duyệt</span>
+                                    </div>
                                 </div>
-                                <div class="stat-main">
-                                    <p class="stat-value" id="statReportsLostTotal">-</p>
-                                    <span class="stat-unit">báo cáo</span>
-                                </div>
-                                <div class="stat-breakdown">
-                                    <span class="stat-chip pending" id="statReportsLostPending">– chờ duyệt</span>
-                                    <span class="stat-chip approved" id="statReportsLostApproved">– đã duyệt</span>
-                                </div>
-                            </article>
-
-                            <article class="stat-card" data-report-filter="found" title="Lọc báo cáo tìm thấy"
-                                style="cursor:pointer;">
-                                <div class="stat-card-header">
-                                    <p class="stat-label">Báo cáo tìm thấy</p>
-                                    <span class="stat-icon">🟢</span>
-                                </div>
-                                <div class="stat-main">
-                                    <p class="stat-value" id="statReportsFoundTotal">-</p>
-                                    <span class="stat-unit">báo cáo</span>
-                                </div>
-                                <div class="stat-breakdown">
-                                    <span class="stat-chip pending" id="statReportsFoundPending">– chờ duyệt</span>
-                                    <span class="stat-chip approved" id="statReportsFoundApproved">– đã duyệt</span>
+                                <div class="stat-card-split-inner" data-report-filter="found" title="Lọc báo cáo tìm thấy">
+                                    <div class="stat-card-header">
+                                        <p class="stat-label">Báo cáo tìm thấy</p>
+                                        <span class="stat-icon">🟢</span>
+                                    </div>
+                                    <div class="stat-main">
+                                        <p class="stat-value" id="statReportsFoundTotal">0</p>
+                                        <span class="stat-unit">báo cáo</span>
+                                    </div>
+                                    <div class="stat-breakdown">
+                                        <span class="stat-chip pending" id="statReportsFoundPending">– chờ</span>
+                                        <span class="stat-chip approved" id="statReportsFoundApproved">– duyệt</span>
+                                    </div>
                                 </div>
                             </article>
 
@@ -1242,126 +733,107 @@
                                     <span class="stat-icon">📰</span>
                                 </div>
                                 <div class="stat-main">
-                                    <p class="stat-value" id="statNewsTotal">-</p>
+                                    <p class="stat-value" id="statNewsTotal">0</p>
                                     <span class="stat-unit">bài tin</span>
                                 </div>
                                 <div class="stat-breakdown">
-                                    <span class="stat-chip pending" id="statNewsPending">– chờ duyệt</span>
-                                    <span class="stat-chip approved" id="statNewsApproved">– đã duyệt</span>
+                                    <span class="stat-chip pending" id="statNewsPending">– chờ</span>
+                                    <span class="stat-chip approved" id="statNewsApproved">– duyệt</span>
                                     <span class="stat-chip rejected" id="statNewsRejected">– từ chối</span>
                                 </div>
                             </article>
-                        </div>
 
-                        <!-- Urgent table -->
+                            <!-- Thêm cột trống hoặc người dùng nếu admin -->
+                            <article class="stat-card" data-jump-tab="users" data-admin-only="true">
+                                <div class="stat-card-header">
+                                    <p class="stat-label">Người dùng</p>
+                                    <span class="stat-icon">👥</span>
+                                </div>
+                                <div class="stat-main">
+                                    <p class="stat-value" id="statUsersTotal">0</p>
+                                    <span class="stat-unit">tài khoản</span>
+                                </div>
+                                <div class="stat-breakdown">
+                                    <span class="stat-chip neutral">Quản trị hệ thống</span>
+                                </div>
+                            </article>
+                        </div>
+                    </div>
+
                         <div class="urgent-section">
                             <div class="urgent-header">
-                                <p class="urgent-title">
-                                    ⚡ Cần xử lý ngay
-                                    <span class="urgent-count-badge" id="urgentCount">0</span>
-                                </p>
-                                <span style="font-size:0.78rem;color:#92400e;">Các mục đang ở trạng thái chờ
-                                    duyệt</span>
+                                <p class="urgent-title">⚡ Cần xử lý ngay <span class="urgent-count-badge" id="urgentCount">0</span></p>
                             </div>
                             <div id="urgentList">
                                 <div class="urgent-empty">Đang tải dữ liệu...</div>
                             </div>
                         </div>
 
-                        <!-- Quick actions -->
                         <div>
                             <p class="stat-label" style="margin-bottom:8px;">Truy cập nhanh</p>
                             <div class="quick-actions">
-                                <button class="quick-action-btn" data-jump-tab="adoption">
-                                    <span class="qa-icon">🗂️</span>
-                                    <span>Nhận nuôi</span>
-                                </button>
-                                <button class="quick-action-btn" data-jump-tab="pets">
-                                    <span class="qa-icon">🐾</span>
-                                    <span>Thú cưng</span>
-                                </button>
-                                <button class="quick-action-btn" data-jump-tab="reports">
-                                    <span class="qa-icon">📣</span>
-                                    <span>Báo cáo</span>
-                                </button>
-                                <button class="quick-action-btn" data-jump-tab="news">
-                                    <span class="qa-icon">📰</span>
-                                    <span>Bài tin</span>
-                                </button>
+                                <button class="quick-action-btn" data-jump-tab="adoption"><span class="qa-icon">🗂️</span><span>Nhận nuôi</span></button>
+                                <button class="quick-action-btn" data-jump-tab="pets"><span class="qa-icon">🐾</span><span>Thú cưng</span></button>
+                                <button class="quick-action-btn" data-jump-tab="reports"><span class="qa-icon">📣</span><span>Báo cáo</span></button>
+                                <button class="quick-action-btn" data-jump-tab="news"><span class="qa-icon">📰</span><span>Bài tin</span></button>
                             </div>
                         </div>
-
                     </div>
                 </section>
 
+                <!-- ADOPTION PANEL -->
                 <section id="panel-adoption" class="tab-panel">
                     <div class="panel-head">
-                        <div>
-                            <h2>Adoption Requests</h2>
-                            <p class="panel-sub">Danh sách hồ sơ nhận nuôi và trạng thái xử lý.</p>
-                        </div>
-                        <div class="panel-tools">
-                            <button class="tool-btn" data-refresh-tab="adoption" type="button">Tải lại</button>
-                        </div>
+                        <div><h2>Adoption Requests</h2><p class="panel-sub">Hồ sơ nhận nuôi.</p></div>
+                        <div class="panel-tools"><button class="tool-btn" data-refresh-tab="adoption">Tải lại</button></div>
                     </div>
                     <div class="panel-state" id="adoptionState"></div>
                     <div class="panel-content is-hidden" id="adoptionContent">
                         <div class="table-wrap">
                             <table>
-                                <thead>
-                                    <tr>
-                                        <th>Người dùng</th>
-                                        <th>Thú cưng</th>
-                                        <th>Trạng thái</th>
-                                        <th>Ngày tạo</th>
-                                        <th>Hành động</th>
-                                    </tr>
-                                </thead>
+                                <thead><tr><th>Người dùng</th><th>Thú cưng</th><th>Trạng thái</th><th>Ngày tạo</th><th>Hành động</th></tr></thead>
                                 <tbody id="adoptionBody"></tbody>
                             </table>
+                        </div>
+                        <div class="pagination-bar" id="adoptionPagination">
+                            <div class="pagination-summary" id="adoptionPaginationSummary">0-0 of 0</div>
+                            <div class="pagination-controls">
+                                <button class="pagination-btn" data-page-nav="prev" data-page-tab="adoption">Trước</button>
+                                <button class="pagination-btn" data-page-nav="next" data-page-tab="adoption">Tiếp</button>
+                            </div>
                         </div>
                     </div>
                 </section>
 
+                <!-- PETS PANEL -->
                 <section id="panel-pets" class="tab-panel">
                     <div class="panel-head">
-                        <div>
-                            <h2>Pets</h2>
-                            <p class="panel-sub">Quản lý danh sách thú cưng có trong hệ thống.</p>
-                        </div>
-                        <div class="panel-tools">
-                            <button class="tool-btn" data-refresh-tab="pets" type="button">Tải lại</button>
-                        </div>
+                        <div><h2>Pets</h2><p class="panel-sub">Danh sách thú cưng.</p></div>
+                        <div class="panel-tools"><button class="tool-btn" data-refresh-tab="pets">Tải lại</button></div>
                     </div>
                     <div class="panel-state" id="petsState"></div>
                     <div class="panel-content is-hidden" id="petsContent">
                         <div class="table-wrap">
                             <table>
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Tên</th>
-                                        <th>Loại</th>
-                                        <th>Trạng thái</th>
-                                        <th>Cập nhật</th>
-                                        <th>Hành động</th>
-                                    </tr>
-                                </thead>
+                                <thead><tr><th>ID</th><th>Tên</th><th>Loại</th><th>Trạng thái</th><th>Cập nhật</th><th>Hành động</th></tr></thead>
                                 <tbody id="petsBody"></tbody>
                             </table>
+                        </div>
+                        <div class="pagination-bar" id="petsPagination">
+                            <div class="pagination-summary" id="petsPaginationSummary">0-0 of 0</div>
+                            <div class="pagination-controls">
+                                <button class="pagination-btn" data-page-nav="prev" data-page-tab="pets">Trước</button>
+                                <button class="pagination-btn" data-page-nav="next" data-page-tab="pets">Tiếp</button>
+                            </div>
                         </div>
                     </div>
                 </section>
 
+                <!-- REPORTS PANEL -->
                 <section id="panel-reports" class="tab-panel">
                     <div class="panel-head">
-                        <div>
-                            <h2>Reports</h2>
-                            <p class="panel-sub">Kiểm duyệt báo cáo thất lạc và tìm thấy.</p>
-                        </div>
-                        <div class="panel-tools">
-                            <button class="tool-btn" data-refresh-tab="reports" type="button">Tải lại</button>
-                        </div>
+                        <div><h2>Reports</h2><p class="panel-sub">Báo cáo thất lạc.</p></div>
+                        <div class="panel-tools"><button class="tool-btn" data-refresh-tab="reports">Tải lại</button></div>
                     </div>
                     <div class="panel-state" id="reportsState"></div>
                     <div class="panel-content is-hidden" id="reportsContent">
@@ -1372,47 +844,65 @@
                         </div>
                         <div class="table-wrap">
                             <table>
-                                <thead>
-                                    <tr>
-                                        <th>Người báo cáo</th>
-                                        <th>Loại</th>
-                                        <th>Vị trí</th>
-                                        <th>Trạng thái</th>
-                                        <th>Ngày tạo</th>
-                                        <th>Hành động</th>
-                                    </tr>
-                                </thead>
+                                <thead><tr><th>Người báo cáo</th><th>Loại</th><th>Vị trí</th><th>Trạng thái</th><th>Ngày tạo</th><th>Hành động</th></tr></thead>
                                 <tbody id="reportsBody"></tbody>
                             </table>
+                        </div>
+                        <div class="pagination-bar" id="reportsPagination">
+                            <div class="pagination-summary" id="reportsPaginationSummary">0-0 of 0</div>
+                            <div class="pagination-controls">
+                                <button class="pagination-btn" data-page-nav="prev" data-page-tab="reports">Trước</button>
+                                <button class="pagination-btn" data-page-nav="next" data-page-tab="reports">Tiếp</button>
+                            </div>
                         </div>
                     </div>
                 </section>
 
+                <!-- USERS PANEL -->
+                <section id="panel-users" class="tab-panel" data-admin-only="true">
+                    <div class="panel-head">
+                        <div><h2>👥 Quản lý tài khoản</h2><p class="panel-sub">Phân quyền, trạng thái và quản lý người dùng.</p></div>
+                        <div class="panel-tools"><button class="tool-btn" data-refresh-tab="users">🔄 Tải lại</button></div>
+                    </div>
+                    <div class="panel-state" id="usersState"></div>
+                    <div class="panel-content is-hidden" id="usersContent">
+                        <div class="table-wrap">
+                            <div class="table-loading-overlay" id="usersTableLoading">Đang tải...</div>
+                            <table>
+                                <thead><tr><th>ID</th><th>Tài khoản</th><th>Vai trò</th><th>Trạng thái</th><th>Ngày tham gia</th><th>Hành động</th></tr></thead>
+                                <tbody id="usersBody"></tbody>
+                            </table>
+                        </div>
+                        <div class="pagination-bar" id="usersPagination">
+                            <div class="pagination-summary" id="usersPaginationSummary">0-0 of 0</div>
+                            <div class="pagination-controls">
+                                <button class="pagination-btn" data-page-nav="prev" data-page-tab="users">Trước</button>
+                                <button class="pagination-btn" data-page-nav="next" data-page-tab="users">Tiếp</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- NEWS PANEL -->
                 <section id="panel-news" class="tab-panel">
                     <div class="panel-head">
-                        <div>
-                            <h2>Bài tin</h2>
-                            <p class="panel-sub">Duyệt và quản lý bài đăng tin tức.</p>
-                        </div>
-                        <div class="panel-tools">
-                            <button class="tool-btn" data-refresh-tab="news" type="button">Tải lại</button>
-                        </div>
+                        <div><h2>Bài tin</h2><p class="panel-sub">Duyệt tin tức.</p></div>
+                        <div class="panel-tools"><button class="tool-btn" data-refresh-tab="news">Tải lại</button></div>
                     </div>
                     <div class="panel-state" id="newsState"></div>
                     <div class="panel-content is-hidden" id="newsContent">
                         <div class="table-wrap">
                             <table>
-                                <thead>
-                                    <tr>
-                                        <th>Tiêu đề</th>
-                                        <th>Tác giả</th>
-                                        <th>Trạng thái</th>
-                                        <th>Ngày tạo</th>
-                                        <th>Hành động</th>
-                                    </tr>
-                                </thead>
+                                <thead><tr><th>Tiêu đề</th><th>Tác giả</th><th>Trạng thái</th><th>Ngày tạo</th><th>Hành động</th></tr></thead>
                                 <tbody id="newsBody"></tbody>
                             </table>
+                        </div>
+                        <div class="pagination-bar" id="newsPagination">
+                            <div class="pagination-summary" id="newsPaginationSummary">0-0 of 0</div>
+                            <div class="pagination-controls">
+                                <button class="pagination-btn" data-page-nav="prev" data-page-tab="news">Trước</button>
+                                <button class="pagination-btn" data-page-nav="next" data-page-tab="news">Tiếp</button>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -1420,137 +910,69 @@
         </section>
     </main>
 
+    <!-- DETAIL MODAL -->
     <div class="detail-modal" id="detailModal" aria-hidden="true">
-        <div class="detail-modal-card" role="dialog" aria-modal="true" aria-labelledby="detailModalTitle">
+        <div class="detail-modal-card">
             <div class="detail-modal-header">
                 <h2 class="detail-modal-title" id="detailModalTitle">Chi tiết</h2>
-                <button type="button" class="detail-modal-close" id="detailModalCloseBtn">Đóng</button>
+                <button class="detail-modal-close" id="detailModalCloseBtn">Đóng</button>
             </div>
-
             <div class="detail-modal-body">
                 <div class="detail-preview">
-                    <img id="detailModalImage" src="" alt="Ảnh chi tiết">
-                    <div class="detail-image-placeholder" id="detailImagePlaceholder">Không có hình ảnh</div>
-
+                    <img id="detailModalImage" src="">
+                    <div class="detail-image-placeholder" id="detailImagePlaceholder">Không có ảnh</div>
                     <div class="detail-group" id="detailDescriptionGroup">
                         <p class="detail-label">Mô tả</p>
                         <p class="detail-value italic" id="detailDescriptionValue">-</p>
                     </div>
-
-                    <div class="detail-group" id="detailReasonGroup">
-                        <p class="detail-label">Lý do nhận nuôi</p>
-                        <p class="detail-value" id="detailReasonValue">-</p>
-                    </div>
                 </div>
-
                 <div class="detail-groups">
-                    <div class="detail-group" id="detailUserGroup">
-                        <p class="detail-label">Thông tin người dùng</p>
-                        <p class="detail-value" id="detailUserValue">-</p>
-                    </div>
-
-                    <div class="detail-group show" id="detailEmailGroup">
-                        <p class="detail-label">Email</p>
-                        <p class="detail-value" id="detailEmailValue">-</p>
-                    </div>
-
-                    <div class="detail-group" id="detailPhoneGroup">
-                        <p class="detail-label">Số điện thoại</p>
-                        <p class="detail-value" id="detailPhoneValue">-</p>
-                    </div>
-
-                    <div class="detail-group" id="detailPetGroup">
-                        <p class="detail-label">Thú cưng</p>
-                        <p class="detail-value" id="detailPetValue">-</p>
-                    </div>
-
-                    <div class="detail-group" id="detailTypeGroup">
-                        <p class="detail-label">Loại</p>
-                        <p class="detail-value" id="detailTypeValue">-</p>
-                    </div>
-
-                    <div class="detail-group" id="detailLocationGroup">
-                        <p class="detail-label">Vị trí</p>
-                        <p class="detail-value" id="detailLocationValue">-</p>
-                    </div>
-
-                    <div class="detail-group show" id="detailStatusGroup">
-                        <p class="detail-label">Trạng thái</p>
-                        <p class="detail-value" id="detailStatusValue">-</p>
-                    </div>
-
-                    <div class="detail-group show" id="detailDateGroup">
-                        <p class="detail-label">Ngày tạo</p>
-                        <p class="detail-value" id="detailDateValue">-</p>
-                    </div>
+                    <div class="detail-group" id="detailUserGroup"><p class="detail-label">Người dùng</p><p class="detail-value" id="detailUserValue">-</p></div>
+                    <div class="detail-group" id="detailEmailGroup"><p class="detail-label">Email</p><p class="detail-value" id="detailEmailValue">-</p></div>
+                    <div class="detail-group" id="detailPhoneGroup"><p class="detail-label">SĐT</p><p class="detail-value" id="detailPhoneValue">-</p></div>
+                    <div class="detail-group" id="detailPetGroup"><p class="detail-label">Thú cưng</p><p class="detail-value" id="detailPetValue">-</p></div>
+                    <div class="detail-group" id="detailTypeGroup"><p class="detail-label">Loại</p><p class="detail-value" id="detailTypeValue">-</p></div>
+                    <div class="detail-group" id="detailLocationGroup"><p class="detail-label">Vị trí</p><p class="detail-value" id="detailLocationValue">-</p></div>
+                    <div class="detail-group show"><p class="detail-label">Trạng thái</p><p class="detail-value" id="detailStatusValue">-</p></div>
+                    <div class="detail-group show"><p class="detail-label">Ngày tạo</p><p class="detail-value" id="detailDateValue">-</p></div>
                 </div>
             </div>
-
-            <div class="detail-modal-footer">
-                <button type="button" class="tool-btn" id="detailModalCloseFooterBtn">Đóng</button>
-            </div>
+            <div class="detail-modal-footer"><button class="tool-btn" id="detailModalCloseFooterBtn">Đóng</button></div>
         </div>
     </div>
 
     <footer class="footer">
-        <div class="footer-grid">
-            <div class="footer-brand">
-                <a href="/" class="logo">
-                    <span style="font-size: 1.5rem;">🐾</span>
-                    <span>Pet Helper</span>
-                </a>
-                <p>Nền tảng hỗ trợ và bảo vệ vật nuôi hàng đầu Việt Nam.</p>
-            </div>
-            <div class="footer-links">
-                <h4>Liên hệ</h4>
-                <ul>
-                    <li>📧 support@pethelper.vn</li>
-                    <li>📞 1900-XXXX</li>
-                </ul>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>© 2026 Pet Helper Green Project. All rights reserved.</p>
-        </div>
+        <div class="footer-bottom"><p>© 2026 Pet Helper. All rights reserved.</p></div>
     </footer>
 
     <script src="/javascripts/staticHeader.js"></script>
-    <script src="/javascripts/staticFooter.js"></script>
+<script src="/javascripts/staticFooter.js"></script>
 
     <script>
-        const TAB_KEY = 'admin.dashboard.activeTab';
-        const TAB_LIST = ['dashboard', 'adoption', 'pets', 'reports', 'news'];
+        const TAB_KEY = 'pet_helper_admin_tab';
+        const TAB_LIST = ['dashboard', 'adoption', 'pets', 'reports', 'news', 'users'];
+        const PAGINATED_TABS = ['adoption', 'pets', 'reports', 'news', 'users'];
+        const PAGE_SIZE = 10;
 
-        class ApiFetchError extends Error {
-            constructor(message, status, code) {
-                super(message);
-                this.name = 'ApiFetchError';
-                this.status = status || 0;
-                this.code = code || 'api';
-            }
-        }
+        const TAB_ROWS_KEYS = { adoption: 'adoptionRows', pets: 'petRows', reports: 'reportRows', news: 'newsRows', users: 'userRows' };
 
         const state = {
             currentUser: null,
-            activeTab: 'dashboard',
+            currentRole: null,
             isBlocked: false,
-            detail: {
-                isOpen: false,
-                context: null,
-                id: null,
-            },
-            fetchedTabs: {
-                adoption: false,
-                pets: false,
-                reports: false,
-                news: false,
-            },
-            adoptionRows: [],
-            petRows: [],
-            reportRows: [],
+            activeTab: 'dashboard',
             reportFilter: 'all',
-            newsRows: [],
-            pendingActions: new Set(),
+            detail: { isOpen: false, context: null, id: null },
+            pagination: {
+                adoption: { page: 1, pageSize: PAGE_SIZE, total: 0, totalPages: 0, loading: false, cache: {} },
+                pets: { page: 1, pageSize: PAGE_SIZE, total: 0, totalPages: 0, loading: false, cache: {} },
+                reports: { page: 1, pageSize: PAGE_SIZE, total: 0, totalPages: 0, loading: false, cache: {} },
+                news: { page: 1, pageSize: PAGE_SIZE, total: 0, totalPages: 0, loading: false, cache: {} },
+                users: { page: 1, pageSize: PAGE_SIZE, total: 0, totalPages: 0, loading: false, cache: {} },
+            },
+            fetchedTabs: { dashboard: false, adoption: false, pets: false, reports: false, news: false, users: false },
+            adoptionRows: [], petRows: [], reportRows: [], newsRows: [], userRows: [],
+            pendingActions: new Set()
         };
 
         const globalNote = document.getElementById('globalNote');
@@ -1560,1335 +982,370 @@
         const refreshAllBtn = document.getElementById('refreshAllBtn');
 
         const panelEls = {
-            dashboard: document.getElementById('panel-dashboard'),
-            adoption: document.getElementById('panel-adoption'),
-            pets: document.getElementById('panel-pets'),
-            reports: document.getElementById('panel-reports'),
-            news: document.getElementById('panel-news'),
+            dashboard: document.getElementById('panel-dashboard'), adoption: document.getElementById('panel-adoption'),
+            pets: document.getElementById('panel-pets'), reports: document.getElementById('panel-reports'),
+            news: document.getElementById('panel-news'), users: document.getElementById('panel-users')
         };
 
         const sectionRefs = {
-            adoption: {
-                stateEl: document.getElementById('adoptionState'),
-                contentEl: document.getElementById('adoptionContent'),
-                bodyEl: document.getElementById('adoptionBody'),
-            },
-            pets: {
-                stateEl: document.getElementById('petsState'),
-                contentEl: document.getElementById('petsContent'),
-                bodyEl: document.getElementById('petsBody'),
-            },
-            reports: {
-                stateEl: document.getElementById('reportsState'),
-                contentEl: document.getElementById('reportsContent'),
-                bodyEl: document.getElementById('reportsBody'),
-            },
-            news: {
-                stateEl: document.getElementById('newsState'),
-                contentEl: document.getElementById('newsContent'),
-                bodyEl: document.getElementById('newsBody'),
-            },
+            adoption: { stateEl: document.getElementById('adoptionState'), contentEl: document.getElementById('adoptionContent'), bodyEl: document.getElementById('adoptionBody') },
+            pets: { stateEl: document.getElementById('petsState'), contentEl: document.getElementById('petsContent'), bodyEl: document.getElementById('petsBody') },
+            reports: { stateEl: document.getElementById('reportsState'), contentEl: document.getElementById('reportsContent'), bodyEl: document.getElementById('reportsBody') },
+            news: { stateEl: document.getElementById('newsState'), contentEl: document.getElementById('newsContent'), bodyEl: document.getElementById('newsBody') },
+            users: { stateEl: document.getElementById('usersState'), contentEl: document.getElementById('usersContent'), bodyEl: document.getElementById('usersBody') }
         };
 
-        const statAdoptionTotal = document.getElementById('statAdoptionTotal');
-        const statAdoptionPending = document.getElementById('statAdoptionPending');
-        const statAdoptionApproved = document.getElementById('statAdoptionApproved');
-        const statAdoptionRejected = document.getElementById('statAdoptionRejected');
-
-        const statPetsTotal = document.getElementById('statPetsTotal');
-        const statPetsAvailable = document.getElementById('statPetsAvailable');
-        const statPetsAdopted = document.getElementById('statPetsAdopted');
-
-        const statReportsTotal = null; // split into lost/found below
-        const statReportsPending = null;
-        const statReportsApproved = null;
-        const statReportsRejected = null;
-
-        const statReportsLostTotal = document.getElementById('statReportsLostTotal');
-        const statReportsLostPending = document.getElementById('statReportsLostPending');
-        const statReportsLostApproved = document.getElementById('statReportsLostApproved');
-        const statReportsFoundTotal = document.getElementById('statReportsFoundTotal');
-        const statReportsFoundPending = document.getElementById('statReportsFoundPending');
-        const statReportsFoundApproved = document.getElementById('statReportsFoundApproved');
-
-        const statNewsTotal = document.getElementById('statNewsTotal');
-        const statNewsPending = document.getElementById('statNewsPending');
-        const statNewsApproved = document.getElementById('statNewsApproved');
-        const statNewsRejected = document.getElementById('statNewsRejected');
-
-        const urgentCount = document.getElementById('urgentCount');
-        const urgentList = document.getElementById('urgentList');
-
-        const detailModal = document.getElementById('detailModal');
-        const detailModalTitle = document.getElementById('detailModalTitle');
-        const detailModalCloseBtn = document.getElementById('detailModalCloseBtn');
-        const detailModalCloseFooterBtn = document.getElementById('detailModalCloseFooterBtn');
-        const detailModalImage = document.getElementById('detailModalImage');
-        const detailImagePlaceholder = document.getElementById('detailImagePlaceholder');
-
-        const detailDescriptionGroup = document.getElementById('detailDescriptionGroup');
-        const detailDescriptionValue = document.getElementById('detailDescriptionValue');
-        const detailReasonGroup = document.getElementById('detailReasonGroup');
-        const detailReasonValue = document.getElementById('detailReasonValue');
-        const detailUserGroup = document.getElementById('detailUserGroup');
-        const detailUserValue = document.getElementById('detailUserValue');
-        const detailEmailGroup = document.getElementById('detailEmailGroup');
-        const detailEmailValue = document.getElementById('detailEmailValue');
-        const detailPhoneGroup = document.getElementById('detailPhoneGroup');
-        const detailPhoneValue = document.getElementById('detailPhoneValue');
-        const detailPetGroup = document.getElementById('detailPetGroup');
-        const detailPetValue = document.getElementById('detailPetValue');
-        const detailTypeGroup = document.getElementById('detailTypeGroup');
-        const detailTypeValue = document.getElementById('detailTypeValue');
-        const detailLocationGroup = document.getElementById('detailLocationGroup');
-        const detailLocationValue = document.getElementById('detailLocationValue');
-        const detailStatusValue = document.getElementById('detailStatusValue');
-        const detailDateValue = document.getElementById('detailDateValue');
-
-        const escapeHtml = (value) => String(value || '')
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#39;');
-
-        const hasValue = (value) => {
-            if (value === null || value === undefined) {
-                return false;
-            }
-            return String(value).trim() !== '';
+        const paginationRefs = {
+            users: { wrapEl: document.getElementById('usersPagination'), summaryEl: document.getElementById('usersPaginationSummary'), loadingEl: document.getElementById('usersTableLoading') }
         };
 
-        const formatDate = (value) => {
-            if (!value) return '-';
-            const date = new Date(value);
-            if (Number.isNaN(date.getTime())) return '-';
-            return date.toLocaleDateString('vi-VN');
+        const adminOnlyElements = Array.from(document.querySelectorAll('[data-admin-only="true"]'));
+
+        const escapeHtml = (v) => String(v || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        const formatDate = (v) => v ? new Date(v).toLocaleDateString('vi-VN') : '-';
+        const isAdmin = () => Number(state.currentRole) === 0;
+
+        const setGlobalMessage = (type, msg) => {
+            globalNote.className = `global-note show ${type || 'info'}`;
+            globalNote.textContent = msg || '';
+            if (!msg) globalNote.classList.remove('show');
         };
 
-        const openLoginOverlay = () => {
-            if (typeof window.openLoginOverlaySafely === 'function') {
-                window.openLoginOverlaySafely();
-                return;
-            }
-            if (typeof openOverlay === 'function') {
-                openOverlay('auth-overlay');
-            }
-            if (typeof overlayActivateTab === 'function') {
-                overlayActivateTab('login');
-            }
-        };
-
-        const parseJsonSafe = async (response) => {
-            try {
-                return await response.json();
-            } catch (error) {
-                return null;
-            }
-        };
-
-        const setGlobalMessage = (type, message) => {
-            globalNote.className = 'global-note';
-            globalNote.textContent = '';
-            if (!message) {
-                return;
-            }
-            globalNote.classList.add('show', type || 'info');
-            globalNote.textContent = message;
-        };
-
-        const setBlockedState = (message) => {
-            state.isBlocked = true;
-            blockedState.classList.add('show');
-            blockedState.textContent = message;
-
-            navButtons.forEach((button) => {
-                button.disabled = button.dataset.tab !== 'dashboard';
-            });
-
-            jumpButtons.forEach((button) => {
-                button.disabled = true;
-            });
-
-            refreshAllBtn.disabled = true;
-            switchTab('dashboard', false);
-        };
-
-        const setSectionState = (sectionKey, status, message) => {
-            const ref = sectionRefs[sectionKey];
-            if (!ref) return;
-
-            if (status === 'ready') {
-                ref.stateEl.className = 'panel-state';
-                ref.stateEl.textContent = '';
-                ref.contentEl.classList.remove('is-hidden');
-                return;
-            }
-
-            if (state.detail.isOpen && state.detail.context === sectionKey) {
-                closeDetailModal();
-            }
-
+        const setSectionState = (key, status, msg) => {
+            const ref = sectionRefs[key]; if (!ref) return;
+            if (status === 'ready') { ref.stateEl.className = 'panel-state'; ref.contentEl.classList.remove('is-hidden'); return; }
             ref.contentEl.classList.add('is-hidden');
             ref.stateEl.className = `panel-state show ${status}`;
-            ref.stateEl.textContent = message || '';
+            ref.stateEl.textContent = msg || '';
         };
 
-        const statusText = (status) => {
-            if (status === 'approved') return 'Đã duyệt';
-            if (status === 'rejected') return 'Đã từ chối';
-            if (status === 'adopted') return 'Đã nhận nuôi';
-            if (status === 'available') return 'Sẵn sàng';
-            return 'Chờ duyệt';
-        };
+        const toastSuccess = (msg) => { if (typeof Swal !== 'undefined') Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: msg, showConfirmButton: false, timer: 3000 }); };
 
-        const typeText = (type) => {
-            if (type === 'lost') return 'Thất lạc';
-            if (type === 'found') return 'Tìm thấy';
-            return 'Không rõ';
-        };
-
-        const renderStatusPill = (status, fallback) => {
-            const normalized = String(status || fallback || 'pending');
-            return `<span class="status-pill ${escapeHtml(normalized)}">${escapeHtml(statusText(normalized))}</span>`;
-        };
-
-        const setDetailGroupText = (groupEl, valueEl, value, useFallback = false, fallbackText = '-') => {
-            if (!groupEl || !valueEl) return;
-
-            if (hasValue(value)) {
-                groupEl.classList.add('show');
-                valueEl.textContent = String(value);
-                return;
-            }
-
-            if (useFallback) {
-                groupEl.classList.add('show');
-                valueEl.textContent = fallbackText;
-                return;
-            }
-
-            groupEl.classList.remove('show');
-            valueEl.textContent = fallbackText;
-        };
-
-        const setDetailImage = (imagePath) => {
-            const hasImage = hasValue(imagePath);
-            if (hasImage) {
-                detailModalImage.style.display = 'block';
-                detailImagePlaceholder.classList.remove('show');
-                detailModalImage.src = String(imagePath);
-                return;
-            }
-
-            detailModalImage.style.display = 'none';
-            detailImagePlaceholder.classList.add('show');
-            detailModalImage.removeAttribute('src');
-        };
-
-        const getItemByContext = (context, id) => {
-            const targetId = Number(id);
-            if (!targetId) {
-                return null;
-            }
-
-            if (context === 'adoption') {
-                return state.adoptionRows.find((item) => Number(item.id) === targetId) || null;
-            }
-
-            if (context === 'pets') {
-                return state.petRows.find((item) => Number(item.id) === targetId) || null;
-            }
-
-            if (context === 'reports') {
-                return state.reportRows.find((item) => Number(item.id) === targetId) || null;
-            }
-
-            return null;
-        };
-
-        const buildDetailPayload = (context, item) => {
-            if (context === 'adoption') {
-                return {
-                    title: 'Chi tiết hồ sơ nhận nuôi',
-                    image: item.pet_image || null,
-                    description: item.description || null,
-                    adoptionReason: item.message || null,
-                    userInfo: item.display_name || item.user_name || null,
-                    email: item.email || null,
-                    phone: item.phone || null,
-                    petInfo: item.pet_name || item.pet_id ? `${item.pet_name || '-'} (#${item.pet_id || '-'})` : null,
-                    typeInfo: item.pet_type || null,
-                    location: item.address || null,
-                    status: item.status || 'pending',
-                    createdAt: formatDate(item.created_at),
-                };
-            }
-
-            if (context === 'pets') {
-                return {
-                    title: 'Chi tiết thú cưng',
-                    image: item.avatar_image || item.image_url || null,
-                    description: item.description || null,
-                    adoptionReason: null,
-                    userInfo: item.contact_info || null,
-                    email: null,
-                    phone: null,
-                    petInfo: item.name ? `${item.name} (#${item.id || '-'})` : null,
-                    typeInfo: item.pet_type || null,
-                    location: item.source_url || null,
-                    status: item.status || 'available',
-                    createdAt: formatDate(item.created_at),
-                };
-            }
-
-            return {
-                title: 'Chi tiết báo cáo',
-                image: item.image || null,
-                description: item.description || null,
-                adoptionReason: null,
-                userInfo: item.reporter_name || null,
-                email: item.email || null,
-                phone: item.phone || null,
-                petInfo: null,
-                typeInfo: typeText(item.type || ''),
-                location: item.address || item.found_location || null,
-                status: item.status || 'pending',
-                createdAt: formatDate(item.created_at),
-            };
-        };
-
-        const applyDetailPayload = (context, payload) => {
-            detailModalTitle.textContent = payload.title || 'Chi tiết';
-            setDetailImage(payload.image);
-
-            setDetailGroupText(detailDescriptionGroup, detailDescriptionValue, payload.description);
-            setDetailGroupText(detailReasonGroup, detailReasonValue, payload.adoptionReason);
-            setDetailGroupText(detailUserGroup, detailUserValue, payload.userInfo);
-            setDetailGroupText(detailEmailGroup, detailEmailValue, payload.email);
-            setDetailGroupText(detailPhoneGroup, detailPhoneValue, payload.phone);
-            setDetailGroupText(detailPetGroup, detailPetValue, payload.petInfo);
-            setDetailGroupText(detailTypeGroup, detailTypeValue, payload.typeInfo);
-            setDetailGroupText(detailLocationGroup, detailLocationValue, payload.location);
-
-            detailStatusValue.innerHTML = renderStatusPill(payload.status || 'pending', 'pending');
-            detailDateValue.textContent = hasValue(payload.createdAt) ? String(payload.createdAt) : '-';
-
-            detailModalImage.onerror = () => {
-                setDetailImage(null);
-            };
-        };
-
-        const closeDetailModal = () => {
-            state.detail = {
-                isOpen: false,
-                context: null,
-                id: null,
-            };
-            detailModal.classList.remove('show');
-            detailModal.setAttribute('aria-hidden', 'true');
-            document.body.style.overflow = '';
-        };
-
-        const openDetailModal = (context, id) => {
-            const item = getItemByContext(context, id);
-            if (!item) {
-                setGlobalMessage('warning', 'Không tìm thấy dữ liệu chi tiết cho mục đã chọn.');
-                return;
-            }
-
-            state.detail = {
-                isOpen: true,
-                context,
-                id: Number(id),
-            };
-
-            const payload = buildDetailPayload(context, item);
-            applyDetailPayload(context, payload);
-
-            detailModal.classList.add('show');
-            detailModal.setAttribute('aria-hidden', 'false');
-            document.body.style.overflow = 'hidden';
-        };
-
-        const refreshOpenedDetailModal = () => {
-            if (!state.detail.isOpen) {
-                return;
-            }
-
-            const item = getItemByContext(state.detail.context, state.detail.id);
-            if (!item) {
-                closeDetailModal();
-                return;
-            }
-
-            const payload = buildDetailPayload(state.detail.context, item);
-            applyDetailPayload(state.detail.context, payload);
-        };
-
-        const isPending = (key) => state.pendingActions.has(key);
-
-        async function apiFetch(path, options = {}, context = {}) {
-            const method = options.method || 'GET';
-            const headers = {
-                Accept: 'application/json',
-                ...(options.headers || {}),
-            };
-
-            const fetchOptions = {
-                method,
-                credentials: 'include',
-                headers,
-            };
-
-            if (options.body !== undefined) {
-                const isFormData = typeof FormData !== 'undefined' && options.body instanceof FormData;
-                if (isFormData) {
-                    fetchOptions.body = options.body;
-                } else {
-                    fetchOptions.body = JSON.stringify(options.body);
-                    if (!fetchOptions.headers['Content-Type']) {
-                        fetchOptions.headers['Content-Type'] = 'application/json';
-                    }
-                }
-            }
-
-            const response = await fetch(path, fetchOptions);
-            const payload = await parseJsonSafe(response);
-            const message = (payload && (payload.message || payload.error)) || 'Không thể xử lý yêu cầu';
-
-            if (response.status === 401) {
-                if (!context.suppressAuthOverlay) {
-                    openLoginOverlay();
-                }
-                throw new ApiFetchError(message || 'Vui lòng đăng nhập tài khoản', 401, 'unauthorized');
-            }
-
-            if (!response.ok) {
-                throw new ApiFetchError(message, response.status, 'http');
-            }
-
-            if (payload && payload.success === false) {
-                throw new ApiFetchError(payload.message || 'Yêu cầu thất bại', response.status || 400, 'api');
-            }
-
-            return payload || { success: true, message: '', data: null };
+        async function adminApiFetch(path, opts = {}) {
+            console.log(`[Admin] Fetching: ${path}`);
+            const res = await fetch(path, { method: opts.method || 'GET', credentials: 'include', headers: { 'Content-Type': 'application/json', ...(opts.headers || {}) }, body: opts.body ? JSON.stringify(opts.body) : undefined });
+            const payload = await res.json().catch(() => ({ success: false, message: 'Lỗi server' }));
+            console.log(`[Admin] Payload:`, payload);
+            if (res.status === 401) { if (typeof openLoginOverlaySafely === 'function') openLoginOverlaySafely(); throw { code: 'unauthorized', message: payload.message }; }
+            if (!res.ok || payload.success === false) throw { code: 'api', message: payload.message || 'Yêu cầu thất bại' };
+            return payload;
         }
 
-        const readPersistedTab = () => {
-            try {
-                const raw = localStorage.getItem(TAB_KEY);
-                if (!raw) return 'dashboard';
-                return TAB_LIST.includes(raw) ? raw : 'dashboard';
-            } catch (error) {
-                return 'dashboard';
-            }
-        };
-
-        const persistTab = (tab) => {
-            try {
-                localStorage.setItem(TAB_KEY, tab);
-            } catch (error) {
-                // Ignore storage errors.
-            }
-        };
-
         const switchTab = (tab, persist = true) => {
-            if (!TAB_LIST.includes(tab)) {
-                return;
-            }
-
+            if (!TAB_LIST.includes(tab)) return;
             state.activeTab = tab;
-            navButtons.forEach((button) => {
-                button.classList.toggle('active', button.dataset.tab === tab);
-            });
+            navButtons.forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+            Object.entries(panelEls).forEach(([k, v]) => v.classList.toggle('active', k === tab));
+            if (persist) localStorage.setItem(TAB_KEY, tab);
+            loadTabData(tab);
+        };
 
-            Object.entries(panelEls).forEach(([key, panel]) => {
-                panel.classList.toggle('active', key === tab);
-            });
+        const loadTabData = async (tab, force = false) => {
+            if (tab === 'dashboard') return loadDashboardData(force);
+            if (PAGINATED_TABS.includes(tab)) return loadPagedTab(tab, force);
+        };
 
-            if (persist) {
-                persistTab(tab);
+        const loadDashboardData = async (force) => {
+            setSectionState('dashboard', 'loading', 'Đang tải...');
+            try {
+                const [a, p, r, n, u] = await Promise.all([
+                    adminApiFetch('/api/v1/adoption-requests/admin'), adminApiFetch('/api/v1/pets'),
+                    adminApiFetch('/api/v1/admin/reports'), adminApiFetch('/api/v1/admin/news'),
+                    isAdmin() ? adminApiFetch('/api/v1/admin/users?limit=1') : Promise.resolve({ data: { total: 0 } })
+                ]);
+                state.adoptionRows = a.data?.data || a.data?.requests || [];
+                state.petRows = p.data?.pets || [];
+                state.reportRows = (r.data?.data || r.data?.reports || []).map(row => {
+                    row.type = String(row.type || '').toLowerCase();
+                    row.status = String(row.status || '').toLowerCase();
+                    return row;
+                });
+                state.newsRows = n.data?.news || [];
+                state.pagination.users.total = u.data?.total || 0;
+                
+                state.fetchedTabs.adoption = true;
+                state.fetchedTabs.pets = true;
+                state.fetchedTabs.reports = true;
+                state.fetchedTabs.news = true;
+
+                renderDashboardStats();
+                setSectionState('dashboard', 'ready');
+            } catch (e) { 
+                console.error('[Dashboard] Error:', e);
+                setSectionState('dashboard', 'error', 'Lỗi tải dữ liệu'); 
             }
-
-            loadTabData(tab).catch((error) => {
-                setGlobalMessage('error', error.message || 'Không thể tải dữ liệu tab');
-            });
         };
 
         const renderDashboardStats = () => {
             // Adoption
-            const adoptionTotal = state.adoptionRows.length;
-            const adoptionPending = state.adoptionRows.filter(r => String(r.status || 'pending') === 'pending').length;
-            const adoptionApproved = state.adoptionRows.filter(r => String(r.status) === 'approved').length;
-            const adoptionRejected = state.adoptionRows.filter(r => String(r.status) === 'rejected').length;
-            statAdoptionTotal.textContent = String(adoptionTotal || 0);
-            statAdoptionPending.textContent = `${adoptionPending} chờ duyệt`;
-            statAdoptionApproved.textContent = `${adoptionApproved} đã duyệt`;
-            statAdoptionRejected.textContent = `${adoptionRejected} từ chối`;
+            const aTotal = state.adoptionRows.length;
+            document.getElementById('statAdoptionTotal').textContent = aTotal;
+            document.getElementById('statAdoptionPending').textContent = `${state.adoptionRows.filter(r => r.status === 'pending').length} chờ duyệt`;
+            document.getElementById('statAdoptionApproved').textContent = `${state.adoptionRows.filter(r => r.status === 'approved').length} đã duyệt`;
+            document.getElementById('statAdoptionRejected').textContent = `${state.adoptionRows.filter(r => r.status === 'rejected').length} từ chối`;
 
             // Pets
-            const petsTotal = state.petRows.length;
-            const petsAvailable = state.petRows.filter(p => String(p.status || 'available') === 'available').length;
-            const petsAdopted = state.petRows.filter(p => String(p.status) === 'adopted').length;
-            statPetsTotal.textContent = String(petsTotal || 0);
-            statPetsAvailable.textContent = `${petsAvailable} sẵn sàng`;
-            statPetsAdopted.textContent = `${petsAdopted} đã nhận nuôi`;
+            const pTotal = state.petRows.length;
+            document.getElementById('statPetsTotal').textContent = pTotal;
+            document.getElementById('statPetsAvailable').textContent = `${state.petRows.filter(p => p.status === 'available').length} sẵn sàng`;
+            document.getElementById('statPetsAdopted').textContent = `${state.petRows.filter(p => p.status === 'adopted').length} đã nhận nuôi`;
 
-            // Reports — split by type
-            const lostRows = state.reportRows.filter(r => String(r.type || 'lost') === 'lost');
-            const foundRows = state.reportRows.filter(r => String(r.type) === 'found');
-
-            statReportsLostTotal.textContent = String(lostRows.length);
-            statReportsLostPending.textContent = `${lostRows.filter(r => String(r.status || 'pending') === 'pending').length} chờ duyệt`;
-            statReportsLostApproved.textContent = `${lostRows.filter(r => String(r.status) === 'approved').length} đã duyệt`;
-
-            statReportsFoundTotal.textContent = String(foundRows.length);
-            statReportsFoundPending.textContent = `${foundRows.filter(r => String(r.status || 'pending') === 'pending').length} chờ duyệt`;
-            statReportsFoundApproved.textContent = `${foundRows.filter(r => String(r.status) === 'approved').length} đã duyệt`;
+            // Reports
+            const lost = state.reportRows.filter(r => r.type === 'lost');
+            const found = state.reportRows.filter(r => r.type === 'found');
+            document.getElementById('statReportsLostTotal').textContent = lost.length;
+            document.getElementById('statReportsLostPending').textContent = `${lost.filter(r => r.status === 'pending').length} chờ`;
+            document.getElementById('statReportsLostApproved').textContent = `${lost.filter(r => r.status === 'approved').length} duyệt`;
+            
+            document.getElementById('statReportsFoundTotal').textContent = found.length;
+            document.getElementById('statReportsFoundPending').textContent = `${found.filter(r => r.status === 'pending').length} chờ`;
+            document.getElementById('statReportsFoundApproved').textContent = `${found.filter(r => r.status === 'approved').length} duyệt`;
 
             // News
-            const newsTotal = state.newsRows.length;
-            const newsPending = state.newsRows.filter(n => String(n.status || 'pending') === 'pending').length;
-            const newsApproved = state.newsRows.filter(n => String(n.status) === 'approved').length;
-            const newsRejected = state.newsRows.filter(n => String(n.status) === 'rejected').length;
-            statNewsTotal.textContent = String(newsTotal || 0);
-            statNewsPending.textContent = `${newsPending} chờ duyệt`;
-            statNewsApproved.textContent = `${newsApproved} đã duyệt`;
-            statNewsRejected.textContent = `${newsRejected} từ chối`;
+            document.getElementById('statNewsTotal').textContent = state.newsRows.length;
+            document.getElementById('statNewsPending').textContent = `${state.newsRows.filter(n => n.status === 'pending').length} chờ`;
+            document.getElementById('statNewsApproved').textContent = `${state.newsRows.filter(n => n.status === 'approved').length} duyệt`;
+            document.getElementById('statNewsRejected').textContent = `${state.newsRows.filter(n => n.status === 'rejected').length} từ chối`;
 
-            // Urgent table
+            if (isAdmin()) {
+                const el = document.getElementById('statUsersTotal');
+                if (el) el.textContent = state.pagination.users.total;
+            }
+
             renderUrgentList();
         };
 
         const renderUrgentList = () => {
-            const pendingAdoptions = state.fetchedTabs.adoption
-                ? state.adoptionRows.filter(r => String(r.status || 'pending') === 'pending')
-                    .slice(0, 5)
-                    .map(r => ({ type: 'adoption', label: 'Nhận nuôi', name: r.display_name || r.user_name || '—', meta: r.pet_name ? `Thú cưng: ${r.pet_name}` : formatDate(r.created_at), id: r.id }))
-                : [];
-
-            const pendingReports = state.fetchedTabs.reports
-                ? state.reportRows.filter(r => String(r.status || 'pending') === 'pending')
-                    .slice(0, 5)
-                    .map(r => ({ type: 'report', label: 'Báo cáo', name: r.reporter_name || '—', meta: r.address || r.found_location || formatDate(r.created_at), id: r.id }))
-                : [];
-
-            const pendingNews = state.fetchedTabs.news
-                ? state.newsRows.filter(n => String(n.status || 'pending') === 'pending')
-                    .slice(0, 5)
-                    .map(n => ({ type: 'news', label: 'Bài tin', name: n.title || '—', meta: n.author_name || formatDate(n.created_at), id: n.id }))
-                : [];
-
-            const allPending = [...pendingAdoptions, ...pendingReports, ...pendingNews]
-                .sort((a, b) => 0); // preserve order by type priority
-
-            urgentCount.textContent = String(allPending.length);
-
-            if (allPending.length === 0) {
-                const hasData = state.fetchedTabs.adoption || state.fetchedTabs.reports || state.fetchedTabs.news;
-                urgentList.innerHTML = `<div class="urgent-empty">${hasData ? '✅ Không có mục nào cần xử lý' : 'Đang tải dữ liệu...'}</div>`;
-                return;
-            }
-
-            const tabMap = { adoption: 'adoption', report: 'reports', news: 'news' };
-            urgentList.innerHTML = allPending.map(item => `
-                <div class="urgent-row">
-                    <div class="urgent-row-left">
-                        <span class="urgent-type-badge ${escapeHtml(item.type)}">${escapeHtml(item.label)}</span>
-                        <div class="urgent-info">
-                            <div class="urgent-name">${escapeHtml(item.name)}</div>
-                            <div class="urgent-meta">${escapeHtml(item.meta)}</div>
+            const list = [
+                ...state.adoptionRows.filter(r => r.status === 'pending').map(r => ({ type: 'adoption', label: 'Nhận nuôi', name: r.display_name || r.user_name, meta: r.pet_name ? `Thú cưng: ${r.pet_name}` : '', id: r.id })),
+                ...state.reportRows.filter(r => r.status === 'pending').map(r => ({ type: 'report', label: 'Báo cáo', name: r.reporter_name || r.name, meta: r.found_location || '', id: r.id })),
+                ...state.newsRows.filter(r => r.status === 'pending').map(r => ({ type: 'news', label: 'Bài tin', name: r.title, meta: r.author_name || '', id: r.id }))
+            ].slice(0, 5);
+            
+            const countEl = document.getElementById('urgentCount');
+            const listEl = document.getElementById('urgentList');
+            if (countEl) countEl.textContent = list.length;
+            if (listEl) {
+                listEl.innerHTML = list.length ? list.map(i => `
+                    <div class="urgent-row">
+                        <div class="urgent-row-left" style="display:flex;align-items:center;gap:10px;flex:1;min-width:0;">
+                            <div class="urgent-type-badge ${i.type}" style="flex-shrink:0;">${i.label}</div>
+                            <div style="min-width:0;">
+                                <div style="font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(i.name)}</div>
+                                <div style="font-size:0.78rem;color:#6b7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(i.meta)}</div>
+                            </div>
                         </div>
+                        <button class="tool-btn" data-jump-tab="${i.type === 'report' ? 'reports' : i.type}">Xử lý</button>
                     </div>
-                    <button class="urgent-go-btn" data-jump-tab="${escapeHtml(tabMap[item.type])}">Xử lý →</button>
-                </div>
-            `).join('');
+                `).join('') : '<div class="urgent-empty">✅ Tất cả đã được xử lý!</div>';
+            }
         };
 
-        const getSafeArray = (candidate) => (Array.isArray(candidate) ? candidate : []);
-
-        async function bootstrapAdminAccess() {
-            setGlobalMessage('info', 'Đang xác thực quyền truy cập quản trị...');
-
+        const loadPagedTab = async (tab, force) => {
+            const p = state.pagination[tab];
+            setSectionState(tab, 'loading', 'Đang tải...');
             try {
-                const mePayload = await apiFetch('/api/v1/auth/me');
-                const meUser = mePayload && mePayload.data ? mePayload.data.user : null;
-
-                if (!meUser) {
-                    setBlockedState('Không thể xác định thông tin tài khoản.');
-                    setGlobalMessage('error', 'Không thể tải thông tin người dùng hiện tại.');
-                    return;
-                }
-
-                state.currentUser = meUser;
-                if (Number(meUser.role) !== 0) {
-                    setBlockedState('Không có quyền truy cập');
-                    setGlobalMessage('warning', 'Tài khoản hiện tại không có quyền admin.');
-                    return;
-                }
-
-                setGlobalMessage('success', `Xin chào ${meUser.display_name || meUser.name || 'Admin'}, bạn có thể quản trị dữ liệu từ dashboard này.`);
-                const initialTab = readPersistedTab();
-                switchTab(initialTab, false);
-
-                // Pre-load tất cả data cho dashboard stats
-                Promise.all([
-                    loadAdoptionRequests(false),
-                    loadPets(false),
-                    loadReports(false),
-                    loadNews(false),
-                ]).then(() => renderDashboardStats()).catch(() => { });
-            } catch (error) {
-                if (error.code === 'unauthorized') {
-                    setBlockedState('Vui lòng đăng nhập để truy cập trang quản trị.');
-                    setGlobalMessage('warning', 'Phiên đăng nhập đã hết hạn hoặc chưa đăng nhập.');
-                    return;
-                }
-
-                setBlockedState('Không thể truy cập dashboard quản trị ở thời điểm hiện tại.');
-                setGlobalMessage('error', error.message || 'Lỗi không xác định khi xác thực quyền truy cập.');
-            }
-        }
-
-        const renderAdoptionRows = () => {
-            const body = sectionRefs.adoption.bodyEl;
-            body.innerHTML = state.adoptionRows.map((item) => {
-                const key = `adoption:${item.id}`;
-                const pending = isPending(key);
-                const canModerate = String(item.status || 'pending') === 'pending';
-
-                return `
-                    <tr>
-                        <td>
-                            <div class="reporter-cell">
-                                <span class="main-text">${escapeHtml(item.display_name || item.user_name || '-')}</span>
-                                <span class="sub-text">${escapeHtml(item.email || '-')}</span>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="pet-cell">
-                                <span class="main-text">${escapeHtml(item.pet_name || '-')}</span>
-                                <span class="sub-text">#${escapeHtml(item.pet_id || '-')}</span>
-                            </div>
-                        </td>
-                        <td>${renderStatusPill(item.status, 'pending')}</td>
-                        <td>${escapeHtml(formatDate(item.created_at))}</td>
-                        <td>
-                            <div class="row-actions">
-                                <button class="action-btn detail" data-action="detail-adoption" data-id="${escapeHtml(item.id)}">Chi tiết</button>
-                                <button class="action-btn approve" data-action="approve-adoption" data-id="${escapeHtml(item.id)}" ${(!canModerate || pending) ? 'disabled' : ''}>Duyệt</button>
-                                <button class="action-btn reject" data-action="reject-adoption" data-id="${escapeHtml(item.id)}" ${(!canModerate || pending) ? 'disabled' : ''}>Từ chối</button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-
-            refreshOpenedDetailModal();
+                const urlMap = { 
+                    adoption: `/api/v1/adoption-requests/admin?page=${p.page}&limit=${p.pageSize}`, 
+                    pets: `/api/v1/pets?page=${p.page}&limit=${p.pageSize}`, 
+                    reports: `/api/v1/admin/reports?page=${p.page}&limit=${p.pageSize}`, 
+                    news: `/api/v1/admin/news?page=${p.page}&limit=${p.pageSize}`, 
+                    users: `/api/v1/admin/users?page=${p.page}&limit=${p.pageSize}` 
+                };
+                const payload = await adminApiFetch(urlMap[tab]);
+                const data = payload.data || {};
+                const rows = data.requests || data.pets || data.reports || data.news || data.users || data.data || [];
+                state[TAB_ROWS_KEYS[tab]] = rows;
+                p.total = data.total || rows.length;
+                p.totalPages = data.totalPages || 1;
+                updatePagination(tab);
+                renderTabRows(tab);
+                setSectionState(tab, rows.length ? 'ready' : 'empty', 'Không có dữ liệu');
+            } catch (e) { setSectionState(tab, 'error', e.message); }
         };
 
-        async function loadAdoptionRequests(force = false) {
-            if (!force && state.fetchedTabs.adoption) {
-                renderAdoptionRows();
-                setSectionState('adoption', 'ready');
-                return true;
+        const renderTabRows = (tab) => {
+            const rows = state[TAB_ROWS_KEYS[tab]] || [];
+            const container = document.getElementById(`${tab}Body`);
+            if (!container) return;
+
+            let filteredRows = rows;
+            if (tab === 'reports' && state.reportFilter !== 'all') {
+                filteredRows = rows.filter(r => r.type === state.reportFilter);
             }
 
-            setSectionState('adoption', 'loading', 'Đang tải danh sách hồ sơ nhận nuôi...');
-            try {
-                const payload = await apiFetch('/api/v1/adoption-requests/admin');
-                state.adoptionRows = getSafeArray(payload && payload.data ? payload.data.requests : []);
-                state.fetchedTabs.adoption = true;
-                renderDashboardStats();
-
-                if (state.adoptionRows.length === 0) {
-                    setSectionState('adoption', 'empty', 'Không có hồ sơ nhận nuôi nào.');
-                    return true;
+            container.innerHTML = filteredRows.map(row => {
+                if (tab === 'adoption') return `<tr><td>${escapeHtml(row.user_name || row.display_name || 'User')}</td><td>${escapeHtml(row.pet_name || 'Pet')}</td><td><span class="status-pill ${row.status}">${row.status}</span></td><td>${formatDate(row.created_at)}</td><td><button class="action-btn approve" data-action="status-adoption" data-id="${row.id}" data-next="approved">Duyệt</button> <button class="action-btn info" data-action="detail-adoption" data-id="${row.id}">Chi tiết</button></td></tr>`;
+                if (tab === 'pets') return `<tr><td>${row.id}</td><td>${escapeHtml(row.name)}</td><td>${row.pet_type}</td><td><span class="status-pill ${row.status}">${row.status}</span></td><td>${formatDate(row.updated_at)}</td><td><button class="action-btn delete" data-action="delete-pet" data-id="${row.id}">Xóa</button></td></tr>`;
+                if (tab === 'reports') return `<tr><td>${escapeHtml(row.reporter_name || row.name || 'User')}</td><td>${row.type}</td><td>${escapeHtml(row.found_location || '-')}</td><td><span class="status-pill ${row.status}">${row.status}</span></td><td>${formatDate(row.created_at)}</td><td><button class="action-btn approve" data-action="status-report" data-id="${row.id}" data-next="resolved">Xong</button> <button class="action-btn info" data-action="detail-reports" data-id="${row.id}">Chi tiết</button></td></tr>`;
+                if (tab === 'news') return `<tr><td>${escapeHtml(row.title)}</td><td>${escapeHtml(row.author_name)}</td><td><span class="status-pill ${row.status}">${row.status}</span></td><td>${formatDate(row.created_at)}</td><td><button class="action-btn approve" data-action="status-news" data-id="${row.id}" data-next="approved">Duyệt</button> <button class="action-btn delete" data-action="delete-news" data-id="${row.id}">Xóa</button></td></tr>`;
+                if (tab === 'users') {
+                    const roleName = { 0: 'Admin', 1: 'Staff', 2: 'User' };
+                    const roleClass = { 0: 'admin', 1: 'staff', 2: 'user' };
+                    const statusLabel = row.status === 'active' ? 'Hoạt động' : row.status === 'banned' ? 'Bị khóa' : row.status;
+                    const avatarSrc = row.avatar || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Ccircle cx='18' cy='18' r='18' fill='%23e2e8f0'/%3E%3Ccircle cx='18' cy='14' r='6' fill='%2394a3b8'/%3E%3Cpath d='M6 32c0-6.6 5.4-12 12-12s12 5.4 12 12' fill='%2394a3b8'/%3E%3C/svg%3E";
+                    return `<tr>
+                        <td><span style="font-weight:600;color:#64748b;font-size:0.82rem;">#${row.id}</span></td>
+                        <td><div class="user-cell">
+                            <img src="${avatarSrc}" class="user-avatar" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 36 36%27%3E%3Ccircle cx=%2718%27 cy=%2718%27 r=%2718%27 fill=%27%23e2e8f0%27/%3E%3Ccircle cx=%2718%27 cy=%2714%27 r=%276%27 fill=%27%2394a3b8%27/%3E%3Cpath d=%27M6 32c0-6.6 5.4-12 12-12s12 5.4 12 12%27 fill=%27%2394a3b8%27/%3E%3C/svg%3E'">
+                            <div><div class="user-name">${escapeHtml(row.display_name || row.name || 'Unknown')}</div><div class="user-email">${escapeHtml(row.email || '')}</div></div>
+                        </div></td>
+                        <td><span class="role-badge ${roleClass[row.role] || 'user'}">${roleName[row.role] ?? 'User'}</span></td>
+                        <td><span class="status-pill ${row.status}">${statusLabel}</span></td>
+                        <td>${formatDate(row.created_at)}</td>
+                        <td><div class="row-actions">
+                            <select class="role-select" data-action="user-role" data-id="${row.id}">
+                                <option value="0" ${row.role === 0 ? 'selected' : ''}>Admin</option>
+                                <option value="1" ${row.role === 1 ? 'selected' : ''}>Staff</option>
+                                <option value="2" ${row.role === 2 ? 'selected' : ''}>User</option>
+                            </select>
+                            <button class="action-btn ${row.status === 'active' ? 'ban' : 'unban'}" data-action="user-status" data-id="${row.id}" data-next="${row.status === 'active' ? 'banned' : 'active'}">${row.status === 'active' ? '🔒 Khóa' : '🔓 Mở'}</button>
+                        </div></td>
+                    </tr>`;
                 }
-
-                renderAdoptionRows();
-                setSectionState('adoption', 'ready');
-                return true;
-            } catch (error) {
-                if (error.code === 'unauthorized') {
-                    setSectionState('adoption', 'unauthorized', 'Vui lòng đăng nhập để truy cập dữ liệu nhận nuôi.');
-                    return false;
-                }
-                setSectionState('adoption', 'error', error.message || 'Không thể tải dữ liệu nhận nuôi.');
-                return false;
-            }
-        }
-
-        async function handleAdoptionStatus(id, nextStatus) {
-            const requestId = Number(id);
-            const rowIndex = state.adoptionRows.findIndex((row) => Number(row.id) === requestId);
-            if (rowIndex < 0) {
-                return;
-            }
-
-            if (nextStatus === 'rejected') {
-                const confirmed = window.confirm('Bạn có chắc muốn từ chối hồ sơ nhận nuôi này?');
-                if (!confirmed) {
-                    return;
-                }
-            }
-
-            const key = `adoption:${requestId}`;
-            const previousRow = { ...state.adoptionRows[rowIndex] };
-            state.pendingActions.add(key);
-            state.adoptionRows[rowIndex] = {
-                ...state.adoptionRows[rowIndex],
-                status: nextStatus,
-            };
-            renderAdoptionRows();
-
-            try {
-                const payload = await apiFetch(`/api/v1/adoption-requests/${requestId}/status`, {
-                    method: 'PATCH',
-                    body: { status: nextStatus },
-                });
-
-                const updated = payload && payload.data ? payload.data.request : null;
-                if (updated && updated.status) {
-                    state.adoptionRows[rowIndex] = {
-                        ...state.adoptionRows[rowIndex],
-                        status: updated.status,
-                    };
-                }
-
-                state.fetchedTabs.pets = false;
-                renderDashboardStats();
-                setGlobalMessage('success', payload.message || 'Cập nhật trạng thái hồ sơ thành công.');
-            } catch (error) {
-                state.adoptionRows[rowIndex] = previousRow;
-                setGlobalMessage('error', error.message || 'Không thể cập nhật trạng thái hồ sơ.');
-            } finally {
-                state.pendingActions.delete(key);
-                renderAdoptionRows();
-            }
-        }
-
-        const renderPetRows = () => {
-            const body = sectionRefs.pets.bodyEl;
-            body.innerHTML = state.petRows.map((pet) => {
-                const key = `pet:${pet.id}`;
-                const pending = isPending(key);
-
-                return `
-                    <tr>
-                        <td>#${escapeHtml(pet.id)}</td>
-                        <td>${escapeHtml(pet.name || '-')}</td>
-                        <td>${escapeHtml(pet.pet_type || '-')}</td>
-                        <td>${renderStatusPill(pet.status || 'available', 'available')}</td>
-                        <td>${escapeHtml(formatDate(pet.updated_at || pet.created_at))}</td>
-                        <td>
-                            <div class="row-actions">
-                                <button class="action-btn detail" data-action="detail-pet" data-id="${escapeHtml(pet.id)}">Chi tiết</button>
-                                <button class="action-btn edit" data-action="edit-pet" data-id="${escapeHtml(pet.id)}">Sửa</button>
-                                <button class="action-btn delete" data-action="delete-pet" data-id="${escapeHtml(pet.id)}" ${pending ? 'disabled' : ''}>Xóa</button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-
-            refreshOpenedDetailModal();
-        };
-
-        async function loadPets(force = false) {
-            if (!force && state.fetchedTabs.pets) {
-                renderPetRows();
-                setSectionState('pets', 'ready');
-                return true;
-            }
-
-            setSectionState('pets', 'loading', 'Đang tải danh sách thú cưng...');
-            try {
-                const payload = await apiFetch('/api/v1/pets');
-                state.petRows = getSafeArray(payload && payload.data ? payload.data.pets : []);
-                state.fetchedTabs.pets = true;
-                renderDashboardStats();
-
-                if (state.petRows.length === 0) {
-                    setSectionState('pets', 'empty', 'Hiện chưa có thú cưng nào trong hệ thống.');
-                    return true;
-                }
-
-                renderPetRows();
-                setSectionState('pets', 'ready');
-                return true;
-            } catch (error) {
-                if (error.code === 'unauthorized') {
-                    setSectionState('pets', 'unauthorized', 'Bạn cần đăng nhập lại để quản lý thú cưng.');
-                    return false;
-                }
-                setSectionState('pets', 'error', error.message || 'Không thể tải danh sách thú cưng.');
-                return false;
-            }
-        }
-
-        const handlePetEdit = (id) => {
-            window.location.href = `/adopt/admin/edit/${id}`;
-        };
-
-        async function handlePetDelete(id) {
-            const petId = Number(id);
-            if (!petId) return;
-
-            const confirmed = window.confirm('Bạn có chắc muốn xóa thú cưng này khỏi hệ thống?');
-            if (!confirmed) {
-                return;
-            }
-
-            const key = `pet:${petId}`;
-            state.pendingActions.add(key);
-            renderPetRows();
-
-            try {
-                const payload = await apiFetch(`/api/v1/pets/${petId}`, {
-                    method: 'DELETE',
-                });
-
-                state.petRows = state.petRows.filter((item) => Number(item.id) !== petId);
-                renderDashboardStats();
-
-                if (state.petRows.length === 0) {
-                    setSectionState('pets', 'empty', 'Hiện chưa còn thú cưng nào trong hệ thống.');
-                } else {
-                    renderPetRows();
-                    setSectionState('pets', 'ready');
-                }
-
-                setGlobalMessage('success', payload.message || 'Đã xóa thú cưng thành công.');
-            } catch (error) {
-                setGlobalMessage('error', error.message || 'Không thể xóa thú cưng.');
-            } finally {
-                state.pendingActions.delete(key);
-                renderPetRows();
-            }
-        }
-
-        const applyReportFilterUI = (type) => {
-            document.querySelectorAll('.report-filter-btn[data-report-type]').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.reportType === type);
-            });
-        };
-
-        const renderReportRows = () => {
-            const body = sectionRefs.reports.bodyEl;
-            const filtered = state.reportFilter === 'all'
-                ? state.reportRows
-                : state.reportRows.filter(r => String(r.type || 'lost') === state.reportFilter);
-
-            body.innerHTML = filtered.map((report) => {
-                const key = `report:${report.id}`;
-                const pending = isPending(key);
-                const canModerate = String(report.status || 'pending') === 'pending';
-                const reportType = String(report.type || 'lost');
-
-                return `
-                    <tr>
-                        <td>
-                            <div class="reporter-cell">
-                                <span class="main-text">${escapeHtml(report.reporter_name || '-')}</span>
-                                <span class="sub-text">${escapeHtml(report.email || '-')}</span>
-                            </div>
-                        </td>
-                        <td><span class="status-pill ${escapeHtml(reportType)}">${escapeHtml(typeText(reportType))}</span></td>
-                        <td>${escapeHtml(report.address || report.found_location || '-')}</td>
-                        <td>${renderStatusPill(report.status, 'pending')}</td>
-                        <td>${escapeHtml(formatDate(report.created_at))}</td>
-                        <td>
-                            <div class="row-actions">
-                                <button class="action-btn detail" data-action="detail-report" data-id="${escapeHtml(report.id)}">Chi tiết</button>
-                                <button class="action-btn approve" data-action="approve-report" data-id="${escapeHtml(report.id)}" ${(!canModerate || pending) ? 'disabled' : ''}>Duyệt</button>
-                                <button class="action-btn reject" data-action="reject-report" data-id="${escapeHtml(report.id)}" ${(!canModerate || pending) ? 'disabled' : ''}>Từ chối</button>
-                                ${String(report.status) === 'approved' && reportType === 'lost' ? `<button class="action-btn reject" data-action="close-report" data-id="${escapeHtml(report.id)}" ${pending ? 'disabled' : ''} style="background:#6366f1;border-color:#6366f1;">Đã tìm thấy</button>` : ''}
-                                ${String(report.status) === 'approved' && reportType === 'found' ? `<button class="action-btn reject" data-action="close-report" data-id="${escapeHtml(report.id)}" ${pending ? 'disabled' : ''} style="background:#6366f1;border-color:#6366f1;">Đã nhận lại</button>` : ''}
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-
-            refreshOpenedDetailModal();
-        };
-
-        async function loadReports(force = false) {
-            if (!force && state.fetchedTabs.reports) {
-                renderReportRows();
-                setSectionState('reports', 'ready');
-                return true;
-            }
-
-            setSectionState('reports', 'loading', 'Đang tải danh sách báo cáo...');
-            try {
-                const payload = await apiFetch('/api/v1/admin/reports?limit=100');
-                const reportData = payload && payload.data ? payload.data.data : [];
-                state.reportRows = getSafeArray(reportData).map(function (r) {
-                    r.type = String(r.TYPE || r.type || '').toLowerCase();
-                    r.status = String(r.STATUS || r.status || '').toLowerCase();
-                    return r;
-                });
-                state.fetchedTabs.reports = true;
-                renderDashboardStats();
-
-                if (state.reportRows.length === 0) {
-                    setSectionState('reports', 'empty', 'Không có báo cáo nào cần xử lý.');
-                    return true;
-                }
-
-                renderReportRows();
-                setSectionState('reports', 'ready');
-                return true;
-            } catch (error) {
-                if (error.code === 'unauthorized') {
-                    setSectionState('reports', 'unauthorized', 'Bạn cần đăng nhập lại để truy cập dữ liệu báo cáo.');
-                    return false;
-                }
-                setSectionState('reports', 'error', error.message || 'Không thể tải danh sách báo cáo.');
-                return false;
-            }
-        }
-
-        async function handleReportStatus(id, nextStatus) {
-            const reportId = Number(id);
-            const rowIndex = state.reportRows.findIndex((row) => Number(row.id) === reportId);
-            if (rowIndex < 0) {
-                return;
-            }
-
-            if (nextStatus === 'rejected') {
-                const confirmed = window.confirm('Bạn có chắc muốn từ chối báo cáo này?');
-                if (!confirmed) {
-                    return;
-                }
-            }
-
-            const key = `report:${reportId}`;
-            const previousRow = { ...state.reportRows[rowIndex] };
-            state.pendingActions.add(key);
-            state.reportRows[rowIndex] = {
-                ...state.reportRows[rowIndex],
-                status: nextStatus,
-            };
-            renderReportRows();
-
-            try {
-                const payload = await apiFetch(`/api/v1/admin/reports/${reportId}/status`, {
-                    method: 'PATCH',
-                    body: { status: nextStatus },
-                });
-
-                const updated = payload && payload.data ? payload.data.report : null;
-                if (updated && updated.status) {
-                    state.reportRows[rowIndex] = {
-                        ...state.reportRows[rowIndex],
-                        status: updated.status,
-                    };
-                }
-
-                renderDashboardStats();
-                setGlobalMessage('success', payload.message || 'Cập nhật trạng thái báo cáo thành công.');
-            } catch (error) {
-                state.reportRows[rowIndex] = previousRow;
-                setGlobalMessage('error', error.message || 'Không thể cập nhật trạng thái báo cáo.');
-            } finally {
-                state.pendingActions.delete(key);
-                renderReportRows();
-            }
-        }
-
-        async function loadTabData(tab, force = false) {
-            if (state.isBlocked && tab !== 'dashboard') {
-                return;
-            }
-
-            if (tab === 'dashboard') {
-                renderDashboardStats();
-                return;
-            }
-
-            if (tab === 'adoption') {
-                await loadAdoptionRequests(force);
-                return;
-            }
-
-            if (tab === 'pets') {
-                await loadPets(force);
-                return;
-            }
-
-            if (tab === 'reports') {
-                await loadReports(force);
-                return;
-            }
-
-            if (tab === 'news') {
-                await loadNews(force);
-            }
-        }
-
-        navButtons.forEach((button) => {
-            button.addEventListener('click', () => {
-                const nextTab = button.dataset.tab;
-                if (!nextTab) return;
-                switchTab(nextTab, true);
-            });
-        });
-
-        jumpButtons.forEach((button) => {
-            button.addEventListener('click', () => {
-                const nextTab = button.dataset.jumpTab;
-                if (!nextTab) return;
-                switchTab(nextTab, true);
-            });
-        });
-
-        // Stat cards are also clickable (they have data-jump-tab)
-        document.querySelectorAll('.stat-card[data-jump-tab]').forEach((card) => {
-            card.addEventListener('click', () => {
-                const nextTab = card.dataset.jumpTab;
-                if (!nextTab) return;
-                switchTab(nextTab, true);
-            });
-        });
-
-        // Split report cards — jump to reports with filter
-        document.querySelectorAll('.stat-card[data-report-filter]').forEach((card) => {
-            card.addEventListener('click', () => {
-                const filter = card.dataset.reportFilter;
-                state.reportFilter = filter;
-                applyReportFilterUI(filter);
-                switchTab('reports', true);
-            });
-        });
-
-        // Report filter toggle bar
-        document.addEventListener('click', (e) => {
-            const btn = e.target.closest('.report-filter-btn[data-report-type]');
-            if (!btn) return;
-            const type = btn.dataset.reportType;
-            state.reportFilter = type;
-            applyReportFilterUI(type);
-            renderReportRows();
-        });
-
-        document.addEventListener('click', async (event) => {
-            const refreshBtn = event.target.closest('[data-refresh-tab]');
-            if (refreshBtn) {
-                const targetTab = refreshBtn.dataset.refreshTab;
-                await loadTabData(targetTab, true);
-                return;
-            }
-
-            const actionBtn = event.target.closest('button[data-action]');
-            if (!actionBtn) {
-                return;
-            }
-
-            const action = actionBtn.dataset.action;
-            const id = actionBtn.dataset.id;
-
-            if (action === 'detail-adoption') {
-                openDetailModal('adoption', id);
-                return;
-            }
-
-            if (action === 'detail-pet') {
-                openDetailModal('pets', id);
-                return;
-            }
-
-            if (action === 'detail-report') {
-                openDetailModal('reports', id);
-                return;
-            }
-
-            if (action === 'approve-adoption') {
-                await handleAdoptionStatus(id, 'approved');
-                return;
-            }
-
-            if (action === 'reject-adoption') {
-                await handleAdoptionStatus(id, 'rejected');
-                return;
-            }
-
-            if (action === 'edit-pet') {
-                handlePetEdit(id);
-                return;
-            }
-
-            if (action === 'delete-pet') {
-                await handlePetDelete(id);
-                return;
-            }
-
-            if (action === 'approve-report') {
-                await handleReportStatus(id, 'approved');
-                return;
-            }
-
-            if (action === 'close-report') {
-                const row = state.reportRows.find(r => String(r.id) === String(id));
-                const label = row && row.type === 'found' ? 'Đã nhận lại' : 'Đã tìm thấy';
-                const confirmed = await Swal.fire({
-                    title: label,
-                    text: 'Xác nhận đóng báo cáo này?',
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonText: 'Xác nhận',
-                    cancelButtonText: 'Huỷ',
-                    confirmButtonColor: '#6366f1',
-                });
-                if (!confirmed.isConfirmed) return;
-                await handleReportStatus(id, 'rejected');
-                return;
-            }
-
-            if (action === 'reject-report') {
-                await handleReportStatus(id, 'rejected');
-                return;
-            }
-
-            if (action === 'approve-news') {
-                await handleNewsStatus(id, 'approved');
-                return;
-            }
-
-            if (action === 'reject-news') {
-                await handleNewsStatus(id, 'rejected');
-                return;
-            }
-
-            if (action === 'delete-news') {
-                await handleNewsDelete(id);
-            }
-        });
-
-        detailModalCloseBtn.addEventListener('click', closeDetailModal);
-        detailModalCloseFooterBtn.addEventListener('click', closeDetailModal);
-
-        detailModal.addEventListener('click', (event) => {
-            if (event.target === detailModal) {
-                closeDetailModal();
-            }
-        });
-
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'Escape' && state.detail.isOpen) {
-                closeDetailModal();
-            }
-        });
-
-        refreshAllBtn.addEventListener('click', async () => {
-            if (state.isBlocked) {
-                return;
-            }
-
-            refreshAllBtn.disabled = true;
-            setGlobalMessage('info', 'Đang làm mới toàn bộ dữ liệu dashboard...');
-
-            try {
-                const results = await Promise.all([
-                    loadAdoptionRequests(true),
-                    loadPets(true),
-                    loadReports(true),
-                    loadNews(true),
-                ]);
-                renderDashboardStats();
-                if (results.every(Boolean)) {
-                    setGlobalMessage('success', 'Đã làm mới số liệu dashboard thành công.');
-                } else {
-                    setGlobalMessage('warning', 'Đã làm mới một phần dữ liệu. Kiểm tra lại các tab đang báo lỗi.');
-                }
-            } catch (error) {
-                setGlobalMessage('error', error.message || 'Không thể làm mới dữ liệu dashboard.');
-            } finally {
-                refreshAllBtn.disabled = false;
-            }
-        });
-
-        const newsStatusText = (status) => {
-            if (status === 'approved') return 'Đã duyệt';
-            if (status === 'rejected') return 'Đã từ chối';
-            return 'Chờ duyệt';
-        };
-
-        const renderNewsRows = () => {
-            const body = sectionRefs.news.bodyEl;
-            body.innerHTML = state.newsRows.map((news) => {
-                const key = `news:${news.id}`;
-                const pending = isPending(key);
-                const canModerate = String(news.status || 'pending') === 'pending';
-
-                return `
-                    <tr>
-                        <td>
-                            <div class="reporter-cell">
-                                <span class="main-text">${escapeHtml(news.title || '-')}</span>
-                            </div>
-                        </td>
-                        <td>${escapeHtml(news.author_name || news.display_name || '-')}</td>
-                        <td>${renderStatusPill(news.status, 'pending')}</td>
-                        <td>${escapeHtml(formatDate(news.created_at))}</td>
-                        <td>
-                            <div class="row-actions">
-                                <button class="action-btn approve" data-action="approve-news" data-id="${escapeHtml(news.id)}" ${(!canModerate || pending) ? 'disabled' : ''}>Duyệt</button>
-                                <button class="action-btn reject" data-action="reject-news" data-id="${escapeHtml(news.id)}" ${(!canModerate || pending) ? 'disabled' : ''}>Từ chối</button>
-                                <button class="action-btn delete" data-action="delete-news" data-id="${escapeHtml(news.id)}" ${pending ? 'disabled' : ''}>Xóa</button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
+                return '';
             }).join('');
         };
 
-        async function loadNews(force = false) {
-            if (!force && state.fetchedTabs.news) {
-                renderNewsRows();
-                setSectionState('news', 'ready');
-                return true;
-            }
+        const openDetailModal = (context, id) => {
+            const list = state[TAB_ROWS_KEYS[context]];
+            const item = list.find(i => Number(i.id) === Number(id));
+            if (!item) return;
 
-            setSectionState('news', 'loading', 'Đang tải danh sách bài tin...');
+            const modal = document.getElementById('detailModal');
+            document.getElementById('detailModalTitle').textContent = `Chi tiết ${context}`;
+            
+            const img = document.getElementById('detailModalImage');
+            const placeholder = document.getElementById('detailImagePlaceholder');
+            const src = item.pet_image || item.avatar_image || item.image_url || item.image;
+            
+            if (src) { img.src = src; img.style.display = 'block'; placeholder.classList.remove('show'); }
+            else { img.style.display = 'none'; placeholder.classList.add('show'); }
+
+            document.getElementById('detailDescriptionValue').textContent = item.description || item.message || '-';
+            document.getElementById('detailUserValue').textContent = item.display_name || item.user_name || item.reporter_name || item.name || '-';
+            document.getElementById('detailEmailValue').textContent = item.email || '-';
+            document.getElementById('detailPhoneValue').textContent = item.phone || '-';
+            document.getElementById('detailPetValue').textContent = item.pet_name || '-';
+            document.getElementById('detailTypeValue').textContent = item.pet_type || item.type || '-';
+            document.getElementById('detailLocationValue').textContent = item.address || item.found_location || '-';
+            document.getElementById('detailStatusValue').innerHTML = `<span class="status-pill ${item.status}">${item.status}</span>`;
+            document.getElementById('detailDateValue').textContent = formatDate(item.created_at);
+
+            // Show relevant groups
+            ['Description', 'User', 'Email', 'Phone', 'Pet', 'Type', 'Location'].forEach(g => {
+                const el = document.getElementById(`detail${g}Group`);
+                if (el) el.classList.add('show');
+            });
+
+            modal.classList.add('show');
+        };
+
+        const updatePagination = (tab) => {
+            const p = state.pagination[tab];
+            const summaryEl = document.getElementById(`${tab}PaginationSummary`);
+            if (summaryEl && p) {
+                summaryEl.textContent = `Trang ${p.page} / ${p.totalPages} (Tổng ${p.total})`;
+            }
+        };
+
+        async function bootstrap() {
             try {
-                const payload = await apiFetch('/api/v1/admin/news');
-                const raw = payload && payload.data ? (payload.data.news || payload.data.articles || payload.data) : [];
-                state.newsRows = getSafeArray(Array.isArray(raw) ? raw : []);
-                state.fetchedTabs.news = true;
-                renderDashboardStats();
-
-                if (state.newsRows.length === 0) {
-                    setSectionState('news', 'empty', 'Không có bài tin nào.');
-                    return true;
-                }
-
-                renderNewsRows();
-                setSectionState('news', 'ready');
-                return true;
-            } catch (error) {
-                if (error.code === 'unauthorized') {
-                    setSectionState('news', 'unauthorized', 'Bạn cần đăng nhập lại để truy cập dữ liệu bài tin.');
-                    return false;
-                }
-                setSectionState('news', 'error', error.message || 'Không thể tải danh sách bài tin.');
-                return false;
-            }
+                const res = await adminApiFetch('/api/v1/auth/me');
+                state.currentUser = res.data.user;
+                state.currentRole = Number(state.currentUser.role);
+                if (state.currentRole > 1) { document.body.innerHTML = '<h1>403 Forbidden</h1>'; return; }
+                adminOnlyElements.forEach(el => el.style.display = isAdmin() ? '' : 'none');
+                const saved = localStorage.getItem(TAB_KEY);
+                switchTab(saved && TAB_LIST.includes(saved) ? saved : 'dashboard', false);
+            } catch (e) { document.location.href = '/'; }
         }
 
-        async function handleNewsStatus(id, nextStatus) {
-            const newsId = Number(id);
-            const rowIndex = state.newsRows.findIndex((row) => Number(row.id) === newsId);
-            if (rowIndex < 0) return;
+        document.addEventListener('click', async (e) => {
+            const t = e.target.closest('[data-action], [data-tab], [data-jump-tab], [data-page-nav], [data-refresh-tab], [data-report-type], [data-report-filter]');
+            if (!t) return;
 
-            if (nextStatus === 'rejected') {
-                const confirmed = window.confirm('Bạn có chắc muốn từ chối bài tin này?');
-                if (!confirmed) return;
+            const act = t.dataset.action;
+            const id = t.dataset.id;
+            const tab = t.dataset.tab;
+            const jump = t.dataset.jumpTab;
+            const pageNav = t.dataset.pageNav;
+            const refresh = t.dataset.refreshTab;
+            const reportType = t.dataset.reportType;
+            const reportFilter = t.dataset.reportFilter;
+
+            if (tab) switchTab(tab);
+            if (jump) switchTab(jump);
+            if (refresh) loadTabData(refresh, true);
+            
+            if (reportType) {
+                state.reportFilter = reportType;
+                document.querySelectorAll('.report-filter-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.reportType === reportType));
+                renderTabRows('reports');
             }
 
-            const key = `news:${newsId}`;
-            const previousRow = { ...state.newsRows[rowIndex] };
-            state.pendingActions.add(key);
-            state.newsRows[rowIndex] = { ...state.newsRows[rowIndex], status: nextStatus };
-            renderNewsRows();
+            if (reportFilter) {
+                state.reportFilter = reportFilter;
+                document.querySelectorAll('.report-filter-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.reportType === reportFilter));
+                switchTab('reports');
+            }
 
-            try {
-                const payload = await apiFetch(`/api/v1/admin/news/${newsId}/status`, {
-                    method: 'PATCH',
-                    body: { status: nextStatus },
-                });
-                const updated = payload && payload.data ? payload.data.news || payload.data.article : null;
-                if (updated && updated.status) {
-                    state.newsRows[rowIndex] = { ...state.newsRows[rowIndex], status: updated.status };
+            if (pageNav) {
+                const pTab = t.dataset.pageTab;
+                const p = state.pagination[pTab];
+                if (p) {
+                    p.page = pageNav === 'prev' ? Math.max(1, p.page - 1) : Math.min(p.totalPages, p.page + 1);
+                    loadPagedTab(pTab);
                 }
-                renderDashboardStats();
-                setGlobalMessage('success', payload.message || 'Cập nhật trạng thái bài tin thành công.');
-            } catch (error) {
-                state.newsRows[rowIndex] = previousRow;
-                setGlobalMessage('error', error.message || 'Không thể cập nhật trạng thái bài tin.');
-            } finally {
-                state.pendingActions.delete(key);
-                renderNewsRows();
             }
-        }
 
-        async function handleNewsDelete(id) {
-            const newsId = Number(id);
-            if (!newsId) return;
-
-            const confirmed = window.confirm('Bạn có chắc muốn xóa bài tin này?');
-            if (!confirmed) return;
-
-            const key = `news:${newsId}`;
-            state.pendingActions.add(key);
-            renderNewsRows();
-
-            try {
-                const payload = await apiFetch(`/api/v1/admin/news/${newsId}`, { method: 'DELETE' });
-                state.newsRows = state.newsRows.filter((item) => Number(item.id) !== newsId);
-                renderDashboardStats();
-
-                if (state.newsRows.length === 0) {
-                    setSectionState('news', 'empty', 'Không còn bài tin nào.');
-                } else {
-                    renderNewsRows();
-                    setSectionState('news', 'ready');
+            if (act && id) {
+                if (act.startsWith('detail-')) { openDetailModal(act.replace('detail-', ''), id); }
+                else if (act === 'user-role') {
+                    const { value: role } = await Swal.fire({ title: 'Đổi quyền', input: 'select', inputOptions: { 0: 'Admin', 1: 'Staff', 2: 'User' }, showCancelButton: true });
+                    if (role) { await adminApiFetch(`/api/v1/admin/users/${id}/role`, { method: 'PATCH', body: { role } }); loadPagedTab('users', true); }
                 }
-                setGlobalMessage('success', payload.message || 'Đã xóa bài tin thành công.');
-            } catch (error) {
-                setGlobalMessage('error', error.message || 'Không thể xóa bài tin.');
-            } finally {
-                state.pendingActions.delete(key);
-                renderNewsRows();
+                else if (act === 'user-status') { await adminApiFetch(`/api/v1/admin/users/${id}/status`, { method: 'PATCH', body: { status: t.dataset.next } }); loadPagedTab('users', true); }
+                else if (act === 'status-adoption') { await adminApiFetch(`/api/v1/adoption-requests/${id}/status`, { method: 'PATCH', body: { status: t.dataset.next } }); loadPagedTab('adoption', true); }
+                else if (act === 'delete-pet') { if (confirm('Xóa?')) { await adminApiFetch(`/api/v1/pets/${id}`, { method: 'DELETE' }); loadPagedTab('pets', true); } }
+                else if (act === 'status-report') { await adminApiFetch(`/api/v1/admin/reports/${id}/status`, { method: 'PATCH', body: { status: t.dataset.next } }); loadPagedTab('reports', true); }
+                else if (act === 'delete-report') { await adminApiFetch(`/api/v1/admin/reports/${id}`, { method: 'DELETE' }); loadPagedTab('reports', true); }
+                else if (act === 'status-news') { await adminApiFetch(`/api/v1/admin/news/${id}/status`, { method: 'PATCH', body: { status: t.dataset.next } }); loadPagedTab('news', true); }
+                else if (act === 'delete-news') { await adminApiFetch(`/api/v1/admin/news/${id}`, { method: 'DELETE' }); loadPagedTab('news', true); }
             }
-        }
+        });
 
-        bootstrapAdminAccess();
-    </script>
+        document.getElementById('refreshAllBtn').onclick = () => loadDashboardData(true);
+        document.getElementById('detailModalCloseBtn').onclick = () => document.getElementById('detailModal').classList.remove('show');
+        document.getElementById('detailModalCloseFooterBtn').onclick = () => document.getElementById('detailModal').classList.remove('show');
 
-    <script>
-        /* ── User Background Apply ── */
+        // User Background script
         (function () {
             function applyBg(val) {
                 var styleId = '__user_bg_style';
                 var el = document.getElementById(styleId);
-                if (!el) {
-                    el = document.createElement('style');
-                    el.id = styleId;
-                    document.head.appendChild(el);
-                }
+                if (!el) { el = document.createElement('style'); el.id = styleId; document.head.appendChild(el); }
                 if (!val) { el.textContent = ''; return; }
                 var bgRule = val.startsWith('/uploads/')
                     ? 'background-image:url("' + val + '")!important;background-size:cover!important;background-attachment:fixed!important;background-repeat:no-repeat!important;background-position:center!important;background-color:transparent!important;'
                     : 'background-color:' + val + '!important;background-image:none!important;';
-                el.textContent = [
-                    'body{' + bgRule + '}',
-                    'main,#main,.main,.profile-page,.page-wrapper,.page-body,.content-wrapper,.container-fluid,.app-content,.site-content,.page-content,.adopt-page,.admin-page,.reports-page,.favorites-page{background:transparent!important;}'
-                ].join('');
+                el.textContent = 'body{' + bgRule + '} main,#main,.main,.profile-page,.page-wrapper,.page-body,.content-wrapper,.container-fluid,.app-content,.site-content,.page-content,.adopt-page,.admin-page,.reports-page,.favorites-page{background:transparent!important;}';
             }
-
             window.applyUserBackground = applyBg;
-
             var _orig = window.applyHeaderUserState;
             window.applyHeaderUserState = function (user) {
                 if (_orig) _orig(user);
                 if (user && user.bg_preference) applyBg(user.bg_preference);
             };
-
             window.addEventListener('load', function () {
                 fetch('/api/v1/auth/me', { credentials: 'include' })
-                    .then(function (r) { return r.ok ? r.json() : null; })
-                    .then(function (data) {
-                        if (data && data.success && data.data && data.data.user && data.data.user.bg_preference) {
-                            applyBg(data.data.user.bg_preference);
-                        }
-                    }).catch(function () { });
+                    .then(r => r.ok ? r.json() : null)
+                    .then(data => { if (data?.success && data.data?.user?.bg_preference) applyBg(data.data.user.bg_preference); })
+                    .catch(() => { });
             });
         })();
+
+        bootstrap();
     </script>
 </body>
-
 </html>

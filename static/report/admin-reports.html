@@ -525,7 +525,7 @@
         <div class="top-bar">
             <a href="/" class="logo-group">
                 <div class="logo-circle">
-                    <img src="/images/logo.svg" alt="logo" id="the_logo">
+                    <img src="/images/the_logo.webp" alt="logo" id="the_logo">
                 </div>
                 <div class="web-name">PET HELPER</div>
             </a>
@@ -843,13 +843,34 @@
             });
         });
 
+        const adminApiFetch = async (path, opts = {}) => {
+            console.log(`[AdminReports] Fetching: ${path}`);
+            const res = await fetch(path, { 
+                method: opts.method || 'GET', 
+                credentials: 'include', 
+                headers: { 'Content-Type': 'application/json', ...(opts.headers || {}) }, 
+                body: opts.body ? JSON.stringify(opts.body) : undefined 
+            });
+            const payload = await res.json().catch(() => ({ success: false, message: 'Lỗi server' }));
+            console.log(`[AdminReports] Payload:`, payload);
+            if (!res.ok || payload.success === false) throw new Error(payload.message || 'Yêu cầu thất bại');
+            return payload;
+        };
+
         function switchSection(section) {
-            document.getElementById('panelAdoption').style.display = section === 'adoption' ? '' : 'none';
-            document.getElementById('panelReports').style.display = section === 'reports' ? '' : 'none';
-            document.getElementById('panelNews').style.display = section === 'news' ? '' : 'none';
-            document.getElementById('sectionTabAdoption').classList.toggle('active', section === 'adoption');
-            document.getElementById('sectionTabReports').classList.toggle('active', section === 'reports');
-            document.getElementById('sectionTabNews').classList.toggle('active', section === 'news');
+            const panels = { 'adoption': 'panelAdoption', 'reports': 'panelReports', 'news': 'panelNews' };
+            const tabs = { 'adoption': 'sectionTabAdoption', 'reports': 'sectionTabReports', 'news': 'sectionTabNews' };
+            
+            Object.keys(panels).forEach(k => {
+                const el = document.getElementById(panels[k]);
+                if (el) el.style.display = k === section ? '' : 'none';
+            });
+            
+            Object.keys(tabs).forEach(k => {
+                const el = document.getElementById(tabs[k]);
+                if (el) el.classList.toggle('active', k === section);
+            });
+
             if (section === 'news' && !window.__newsAdminLoaded) {
                 window.__newsAdminLoaded = true;
                 if (typeof loadAdminNews === 'function') loadAdminNews();
@@ -921,18 +942,9 @@
             setNote('', '');
             try {
                 const typeParam = currentType === 'all' ? '' : '&type=' + currentType;
-                const res = await fetch('/api/v1/admin/reports?limit=100' + typeParam, { credentials: 'include' });
-                const payload = await res.json();
-
-                if (res.status === 401 || res.status === 403) {
-                    setNote('error', 'Bạn không có quyền truy cập trang này.');
-                    adminTableBody.innerHTML = '<tr><td colspan="8" class="table-message">Không có quyền.</td></tr>';
-                    return;
-                }
-
-                if (!payload.success) throw new Error(payload.message);
-
-                allReports = (payload.data.reports || payload.data.data || []).map(function (r) {
+                const payload = await adminApiFetch('/api/v1/admin/reports?limit=100' + typeParam);
+                
+                allReports = (payload?.data?.data || payload?.data?.reports || []).map(function (r) {
                     r.status = (r.STATUS || r.status || '').toLowerCase();
                     r.type = (r.TYPE || r.type || '').toLowerCase();
                     return r;
@@ -1071,14 +1083,10 @@
 
             isUpdating = true;
             try {
-                const res = await fetch(`/api/v1/admin/reports/${id}/status`, {
+                const payload = await adminApiFetch(`/api/v1/admin/reports/${id}/status`, {
                     method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include',
-                    body: JSON.stringify({ status })
+                    body: { status }
                 });
-                const payload = await res.json();
-                if (!payload.success) throw new Error(payload.message);
 
                 // Cập nhật local
                 const idx = allReports.findIndex(r => r.id === id);
@@ -1124,14 +1132,8 @@
         async function loadAdminNews() {
             document.getElementById('newsTableBody').innerHTML = '<tr><td colspan="7" class="table-message">Đang tải...</td></tr>';
             try {
-                const res = await fetch('/api/v1/admin/news?limit=100', { credentials: 'include' });
-                const payload = await res.json();
-                if (res.status === 401 || res.status === 403) {
-                    document.getElementById('newsTableBody').innerHTML = '<tr><td colspan="7" class="table-message">Không có quyền.</td></tr>';
-                    return;
-                }
-                if (!payload.success) throw new Error(payload.message);
-                allNews = payload.data.news || [];
+                const payload = await adminApiFetch('/api/v1/admin/news?limit=100');
+                allNews = payload?.data?.data || payload?.data?.news || [];
                 renderNewsTable();
             } catch (err) {
                 document.getElementById('newsTableBody').innerHTML = '<tr><td colspan="7" class="table-message">Lỗi tải dữ liệu.</td></tr>';
@@ -1239,19 +1241,14 @@
             if (isNewsUpdating) return;
             isNewsUpdating = true;
             try {
-                const res = await fetch('/api/v1/admin/news/' + id + '/status', {
+                await adminApiFetch(`/api/v1/admin/news/${id}/status`, {
                     method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include',
-                    body: JSON.stringify({ status, rejected_reason: rejectedReason || null })
+                    body: { status, rejected_reason: rejectedReason || null }
                 });
-                const payload = await res.json();
-                if (!payload.success) throw new Error(payload.message);
 
                 const idx = allNews.findIndex(n => n.id === id);
                 if (idx !== -1) { allNews[idx].status = status; allNews[idx].rejected_reason = rejectedReason || null; }
-                if (newsMap[id]) { newsMap[id].status = status; newsMap[id].rejected_reason = rejectedReason || null; }
-
+                
                 closeModal();
                 renderNewsTable();
                 setNote('success', 'Cập nhật bài tin thành công!');
@@ -1371,14 +1368,10 @@
                 if (!adoptSelectedRequest || adoptIsUpdating || !adoptHasAccess) return;
                 adoptIsUpdating = true;
                 try {
-                    const res = await fetch(`/api/v1/adoption-requests/${adoptSelectedRequest.id}/status`, {
+                    const payload = await adminApiFetch(`/api/v1/adoption-requests/${adoptSelectedRequest.id}/status`, {
                         method: 'PATCH',
-                        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-                        credentials: 'same-origin',
-                        body: JSON.stringify({ status: nextStatus }),
+                        body: { status: nextStatus }
                     });
-                    const payload = await res.json().catch(() => null);
-                    if (!res.ok) throw new Error((payload && payload.message) || 'Không thể cập nhật trạng thái.');
                     adoptCloseModal();
                     await window.loadAdoptionRequests();
                     adoptNote('success', 'Đã cập nhật trạng thái hồ sơ thành công.');
@@ -1426,9 +1419,8 @@
                 try {
                     // Kiểm tra quyền
                     if (!adoptHasAccess) {
-                        const meRes = await fetch('/api/v1/auth/me', { credentials: 'same-origin' });
-                        const mePayload = await meRes.json().catch(() => null);
-                        if (!meRes.ok || !mePayload?.data?.user) {
+                        const mePayload = await adminApiFetch('/api/v1/auth/me');
+                        if (!mePayload?.data?.user) {
                             tbody.innerHTML = '<tr><td colspan="7" class="table-message">Vui lòng đăng nhập để xem.</td></tr>';
                             return;
                         }
@@ -1439,10 +1431,8 @@
                         }
                         adoptHasAccess = true;
                     }
-                    const res = await fetch('/api/v1/adoption-requests/admin', { credentials: 'same-origin' });
-                    const payload = await res.json().catch(() => null);
-                    if (!res.ok) throw new Error((payload && payload.message) || 'Không thể tải danh sách hồ sơ.');
-                    adoptAllRequests = (payload && payload.data && payload.data.requests) || [];
+                    const payload = await adminApiFetch('/api/v1/adoption-requests/admin');
+                    adoptAllRequests = payload?.data?.data || payload?.data?.requests || [];
                     adoptRenderTable();
                 } catch (err) {
                     tbody.innerHTML = `<tr><td colspan="7" class="table-message">${adoptEscape(err.message)}</td></tr>`;

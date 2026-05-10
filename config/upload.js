@@ -87,8 +87,52 @@ const cloudPetStorage = new CloudinaryStorage({
   },
 });
 
+// ========== AVATAR & BACKGROUND STORAGE ==========
+const avatarUploadDir = path.join(__dirname, "../public/uploads/avatars");
+if (!fs.existsSync(avatarUploadDir)) {
+  fs.mkdirSync(avatarUploadDir, { recursive: true });
+}
+const bgUploadDir = path.join(__dirname, "../public/uploads/backgrounds");
+if (!fs.existsSync(bgUploadDir)) {
+  fs.mkdirSync(bgUploadDir, { recursive: true });
+}
+
+const localAvatarStorage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, avatarUploadDir),
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname).toLowerCase();
+    cb(null, `avatar_${req.user.id}_${Date.now()}${ext}`);
+  },
+});
+
+const localBgStorage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, bgUploadDir),
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname).toLowerCase();
+    cb(null, `bg_${req.user.id}_${Date.now()}${ext}`);
+  },
+});
+
+const cloudAvatarStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "avatars",
+    allowed_formats: ["jpg", "png", "webp", "jpeg", "gif"],
+    transformation: [{ quality: "auto", width: 400, height: 400, crop: "limit" }],
+  },
+});
+
+const cloudBgStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "backgrounds",
+    allowed_formats: ["jpg", "png", "webp", "jpeg", "gif"],
+    transformation: [{ quality: "auto" }],
+  },
+});
+
 // ========== Tạo Multer Instances dựa theo NODE_ENV ==========
-let upload, petUpload;
+let upload, petUpload, avatarUpload, bgUpload;
 
 if (isProduction) {
   // PRODUCTION: Upload lên Cloudinary
@@ -103,6 +147,16 @@ if (isProduction) {
     fileFilter: fileFilter,
     limits: { fileSize: MAX_FILE_SIZE },
   });
+  avatarUpload = multer({
+    storage: cloudAvatarStorage,
+    fileFilter: fileFilter,
+    limits: { fileSize: 3 * 1024 * 1024 },
+  });
+  bgUpload = multer({
+    storage: cloudBgStorage,
+    fileFilter: fileFilter,
+    limits: { fileSize: 5 * 1024 * 1024 },
+  });
 } else {
   // DEVELOPMENT: Lưu xuống ổ cứng
   console.log("📷 Upload mode: LOCAL DISK (Development)");
@@ -115,6 +169,16 @@ if (isProduction) {
     storage: localPetStorage,
     fileFilter: fileFilter,
     limits: { fileSize: MAX_FILE_SIZE },
+  });
+  avatarUpload = multer({
+    storage: localAvatarStorage,
+    fileFilter: fileFilter,
+    limits: { fileSize: 3 * 1024 * 1024 },
+  });
+  bgUpload = multer({
+    storage: localBgStorage,
+    fileFilter: fileFilter,
+    limits: { fileSize: 5 * 1024 * 1024 },
   });
 }
 
@@ -134,6 +198,22 @@ const getImageUrlForPet = (file, petId) => {
     return file.path; // Cloudinary trả về URL đầy đủ
   }
   return `/images/pets/${petId}/${file.filename}`; // Local path
+};
+
+// Lấy URL avatar từ file đã upload
+const getAvatarUrl = (file) => {
+  if (isProduction) {
+    return file.path; // Cloudinary trả về URL đầy đủ
+  }
+  return `/uploads/avatars/${file.filename}`; // Local path
+};
+
+// Lấy URL background từ file đã upload
+const getBgUrl = (file) => {
+  if (isProduction) {
+    return file.path; // Cloudinary trả về URL đầy đủ
+  }
+  return `/uploads/backgrounds/${file.filename}`; // Local path
 };
 
 // Lấy cloudinary_id từ file (chỉ có khi Production)
@@ -206,10 +286,14 @@ const deleteImage = async (imageUrl, cloudinaryId) => {
 module.exports = {
   upload,
   petUpload,
+  avatarUpload,
+  bgUpload,
   cloudinary,
   isProduction,
   getImageUrl,
   getImageUrlForPet,
+  getAvatarUrl,
+  getBgUrl,
   getCloudinaryId,
   ensurePetFolder,
   saveFileToPetFolder,

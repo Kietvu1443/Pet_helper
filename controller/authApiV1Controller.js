@@ -2,70 +2,24 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const { JWT_SECRET } = require("../middleware/authMiddleware");
 const { sendSuccess, sendError } = require("../utils/apiResponse");
-const multer = require("multer");
-const path = require("path");
-const fs = require("fs");
+const { avatarUpload, bgUpload, getAvatarUrl, getBgUrl, deleteImage } = require("../config/upload");
+
+// Trích xuất Cloudinary public_id từ URL (VD: https://res.cloudinary.com/.../avatars/avatar_1_123.jpg)
+// Trả về null nếu không phải URL Cloudinary
+const extractCloudinaryId = (url) => {
+  if (!url || !url.startsWith("http")) return null;
+  try {
+    const match = url.match(/\/upload\/(?:v\d+\/)?(.*?)(?:\.[a-z]+)?$/i);
+    return match ? match[1] : null;
+  } catch (e) {
+    return null;
+  }
+};
 
 const MAX_DISPLAY_NAME_LENGTH = 100;
 const MAX_NAME_LENGTH = 100;
 const MAX_EMAIL_LENGTH = 255;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-// Cấu hình mutler
-const avatarStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const dir = path.join(__dirname, "../public/uploads/avatars");
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    cb(null, dir);
-  },
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname).toLowerCase();
-    cb(null, `avatar_${req.user.id}_${Date.now()}${ext}`);
-  },
-});
-const uploadAvatar = multer({
-  storage: avatarStorage,
-  limits: { fileSize: 3 * 1024 * 1024 },
-  fileFilter: (req, file, cb) => {
-    const allowed = /jpeg|jpg|png|gif|webp/;
-    if (
-      allowed.test(path.extname(file.originalname).toLowerCase()) &&
-      allowed.test(file.mimetype)
-    ) {
-      cb(null, true);
-    } else {
-      cb(new Error("Chỉ chấp nhận file ảnh"));
-    }
-  },
-}).single("avatar");
-
-// Cấu hình multer upload background
-const bgStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const dir = path.join(__dirname, "../public/uploads/backgrounds");
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    cb(null, dir);
-  },
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname).toLowerCase();
-    cb(null, `bg_${req.user.id}_${Date.now()}${ext}`);
-  },
-});
-const uploadBg = multer({
-  storage: bgStorage,
-  limits: { fileSize: 5 * 1024 * 1024 },
-  fileFilter: (req, file, cb) => {
-    const allowed = /jpeg|jpg|png|gif|webp/;
-    if (
-      allowed.test(path.extname(file.originalname).toLowerCase()) &&
-      allowed.test(file.mimetype)
-    ) {
-      cb(null, true);
-    } else {
-      cb(new Error("Chỉ chấp nhận file ảnh"));
-    }
-  },
-}).single("background");
 
 const authApiV1Controller = {
   async register(req, res) {
@@ -156,21 +110,20 @@ const authApiV1Controller = {
 
   // Upload avatar
   uploadAvatar(req, res) {
-    uploadAvatar(req, res, async (err) => {
+    avatarUpload.single("avatar")(req, res, async (err) => {
       try {
         if (err) return sendError(res, 400, err.message || "Lỗi upload ảnh");
         if (!req.file) return sendError(res, 400, "Vui lòng chọn ảnh avatar");
 
-        const avatarPath = `/uploads/avatars/${req.file.filename}`;
+        const avatarPath = getAvatarUrl(req.file);
 
         // Xóa avatar cũ nếu có
         const [[user]] = await require("../config/db").pool.query(
           "SELECT avatar FROM users WHERE id = ?",
           [req.user.id],
         );
-        if (user && user.avatar && user.avatar.startsWith("/uploads/")) {
-          const oldPath = path.join(__dirname, "../public", user.avatar);
-          if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+        if (user && user.avatar) {
+          await deleteImage(user.avatar, extractCloudinaryId(user.avatar));
         }
 
         await require("../config/db").pool.query(
@@ -189,8 +142,8 @@ const authApiV1Controller = {
   },
 
   // Cập nhật background
-  async updateBackground(req, res) {
-    uploadBg(req, res, async (err) => {
+  updateBackground(req, res) {
+    bgUpload.single("background")(req, res, async (err) => {
       try {
         if (err) return sendError(res, 400, err.message || "Lỗi upload ảnh");
 
@@ -198,24 +151,15 @@ const authApiV1Controller = {
 
         if (req.file) {
           // Upload ảnh background
-          bgValue = `/uploads/backgrounds/${req.file.filename}`;
+          bgValue = getBgUrl(req.file);
 
           // Xóa background ảnh cũ nếu có
           const [[user]] = await require("../config/db").pool.query(
             "SELECT bg_preference FROM users WHERE id = ?",
             [req.user.id],
           );
-          if (
-            user &&
-            user.bg_preference &&
-            user.bg_preference.startsWith("/uploads/")
-          ) {
-            const oldPath = path.join(
-              __dirname,
-              "../public",
-              user.bg_preference,
-            );
-            if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+          if (user && user.bg_preference) {
+            await deleteImage(user.bg_preference, extractCloudinaryId(user.bg_preference));
           }
         } else if (req.body && req.body.bg_color) {
           // Chọn màu

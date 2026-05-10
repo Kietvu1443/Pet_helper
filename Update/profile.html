@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thong Tin Tai Khoan - Pet Helper</title>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <link rel="stylesheet" href="/stylesheets/auth.css">
+    <link rel="stylesheet" href="/stylesheets/staticHeader.css">
+    <style>
+        body {
+            margin: 0;
+        }
+
+        .profile-page {
+            min-height: calc(100vh - 140px);
+            background: linear-gradient(180deg, #f5fbf7 0%, #eef8f1 100%);
+            padding: 32px 16px;
+        }
+
+        .profile-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .profile-heading {
+            margin-bottom: 18px;
+        }
+
+        .profile-heading h1 {
+            margin: 0 0 8px;
+            color: #1f5133;
+            font-size: clamp(1.45rem, 2.6vw, 2rem);
+        }
+
+        .profile-heading p {
+            margin: 0;
+            color: #4b5563;
+        }
+
+        .status-note {
+            display: none;
+            padding: 12px 14px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            line-height: 1.45;
+        }
+
+        .status-note.warning {
+            display: block;
+            background: #fff7ed;
+            color: #9a3412;
+        }
+
+        .status-note.error {
+            display: block;
+            background: #fef2f2;
+            color: #991b1b;
+        }
+
+        .status-note.success {
+            display: block;
+            background: #ecfdf3;
+            color: #166534;
+        }
+
+        .loading-box {
+            display: none;
+            background: #e8f5ec;
+            color: #1f5133;
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+
+        .loading-box.show {
+            display: block;
+        }
+
+        .profile-card {
+            background: #ffffff;
+            border: 1px solid #dfeee4;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(31, 81, 51, 0.08);
+            overflow: hidden;
+        }
+
+        .profile-card-body {
+            padding: 24px;
+            display: grid;
+            gap: 22px;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .summary-item {
+            background: #f7fbf8;
+            border: 1px solid #e1efe7;
+            border-radius: 12px;
+            padding: 12px;
+        }
+
+        .summary-value.verify-state {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 999px;
+            padding: 4px 10px;
+            font-size: 0.86rem;
+            font-weight: 700;
+            width: fit-content;
+        }
+
+        .summary-value.verify-state.verified {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .summary-value.verify-state.unverified {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .summary-label {
+            margin: 0 0 6px;
+            color: #64748b;
+            font-size: 0.84rem;
+            font-weight: 700;
+            letter-spacing: 0.2px;
+            text-transform: uppercase;
+        }
+
+        .summary-value {
+            margin: 0;
+            color: #1f2937;
+            font-size: 1rem;
+            font-weight: 700;
+            word-break: break-word;
+        }
+
+        .profile-form {
+            display: grid;
+            gap: 14px;
+        }
+
+        .verify-panel {
+            border: 1px solid #dbece1;
+            border-radius: 12px;
+            background: #f9fcfa;
+            padding: 14px;
+            display: grid;
+            gap: 12px;
+        }
+
+        .verify-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .verify-title {
+            margin: 0 0 4px;
+            color: #1f5133;
+            font-size: 0.98rem;
+            font-weight: 800;
+        }
+
+        .verify-desc {
+            margin: 0;
+            color: #64748b;
+            font-size: 0.88rem;
+            line-height: 1.45;
+        }
+
+        .verify-badge {
+            border-radius: 999px;
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .verify-badge.verified {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .verify-badge.unverified {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .verify-actions {
+            display: grid;
+            gap: 10px;
+        }
+
+        .verify-actions.hidden {
+            display: none;
+        }
+
+        .verify-btn {
+            border: 0;
+            border-radius: 10px;
+            background: #2d6a4f;
+            color: #ffffff;
+            font-weight: 700;
+            padding: 9px 14px;
+            cursor: pointer;
+            width: fit-content;
+            transition: background 0.2s ease;
+        }
+
+        .verify-btn:hover {
+            background: #1b4332;
+        }
+
+        .verify-btn.secondary {
+            background: #334155;
+        }
+
+        .verify-btn.secondary:hover {
+            background: #1f2937;
+        }
+
+        .verify-btn:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        .otp-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .otp-input {
+            border: 1px solid #cfe2d7;
+            border-radius: 10px;
+            padding: 9px 12px;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            font-weight: 700;
+            width: 180px;
+            text-align: center;
+            outline: none;
+        }
+
+        .otp-input:focus {
+            border-color: #2d6a4f;
+            box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.16);
+        }
+
+        .otp-hint {
+            margin: 0;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #64748b;
+        }
+
+        .otp-hint.error {
+            color: #991b1b;
+        }
+
+        .otp-hint.success {
+            color: #166534;
+        }
+
+        .form-row {
+            display: grid;
+            gap: 7px;
+        }
+
+        .form-row label {
+            color: #1f5133;
+            font-weight: 700;
+            font-size: 0.92rem;
+        }
+
+        .form-row input {
+            border: 1px solid #cfe2d7;
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .form-row input:focus {
+            border-color: #2d6a4f;
+            box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.16);
+        }
+
+        .form-row input:disabled {
+            background: #f8fafc;
+            cursor: not-allowed;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 4px;
+        }
+
+        .save-btn {
+            border: 0;
+            border-radius: 999px;
+            background: #2d6a4f;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 0.95rem;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+
+        .save-btn:hover {
+            background: #1b4332;
+            transform: translateY(-1px);
+        }
+
+        .save-btn:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        @media (max-width: 768px) {
+            .profile-page {
+                padding: 24px 12px;
+            }
+
+            .profile-card-body {
+                padding: 18px;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-actions {
+                justify-content: stretch;
+            }
+
+            .save-btn {
+                width: 100%;
+            }
+
+            .verify-head {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .verify-btn {
+                width: 100%;
+            }
+
+            .otp-row {
+                width: 100%;
+            }
+
+            .otp-input {
+                width: 100%;
+            }
+        }
+    </style>
+    <style id="avatar-bg-css">
+        .media-section { margin-top: 32px; }
+        .media-section-title {
+            font-size: 13px; font-weight: 700; color: #64748b;
+            text-transform: uppercase; letter-spacing: .5px; margin-bottom: 16px;
+            padding-bottom: 8px; border-bottom: 1px solid #e2e8f0;
+        }
+        .avatar-wrap { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+        .avatar-preview {
+            width: 80px; height: 80px; border-radius: 50%;
+            object-fit: cover; border: 3px solid #2d6a4f; background: #f1f5f9;
+        }
+        .avatar-placeholder {
+            width: 80px; height: 80px; border-radius: 50%;
+            background: #e2e8f0; display: flex; align-items: center;
+            justify-content: center; font-size: 32px; flex-shrink: 0;
+            border: 3px solid #2d6a4f;
+        }
+        .avatar-actions { display: flex; flex-direction: column; gap: 8px; }
+        .btn-upload {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: #2d6a4f; color: #fff; border: none;
+            border-radius: 8px; padding: 8px 16px; font-size: 13px;
+            font-weight: 600; cursor: pointer; font-family: inherit; transition: background .2s;
+        }
+        .btn-upload:hover { background: #1b4332; }
+        .btn-secondary-sm {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0;
+            border-radius: 8px; padding: 7px 14px; font-size: 13px;
+            font-weight: 600; cursor: pointer; font-family: inherit; transition: background .2s;
+        }
+        .btn-secondary-sm:hover { background: #e2e8f0; }
+        .bg-palette { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+        .bg-swatch {
+            width: 44px; height: 44px; border-radius: 10px; cursor: pointer;
+            border: 3px solid transparent; transition: transform .15s, border-color .15s; flex-shrink: 0;
+        }
+        .bg-swatch:hover { transform: scale(1.1); }
+        .bg-swatch.selected { border-color: #2d6a4f; box-shadow: 0 0 0 2px #fff, 0 0 0 4px #2d6a4f; }
+        .bg-swatch.reset-swatch { background: #fff; border: 2px dashed #cbd5e1; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .bg-upload-label {
+            display: inline-flex; align-items: center; gap: 6px;
+            border: 2px dashed #cbd5e1; border-radius: 10px; padding: 9px 16px;
+            color: #64748b; font-size: 13px; font-weight: 600; cursor: pointer; transition: border-color .2s, color .2s;
+        }
+        .bg-upload-label:hover { border-color: #2d6a4f; color: #2d6a4f; }
+        .bg-preview-bar {
+            height: 56px; border-radius: 10px; margin-top: 12px;
+            border: 1px solid #e2e8f0; display: flex; align-items: center;
+            justify-content: center; font-size: 12px; color: #94a3b8; overflow: hidden; transition: all .3s;
+        }
+        .bg-preview-bar img { width: 100%; height: 100%; object-fit: cover; }
+        .media-save-btn {
+            margin-top: 14px; background: #2d6a4f; color: #fff; border: none;
+            border-radius: 8px; padding: 9px 20px; font-size: 13px; font-weight: 600;
+            cursor: pointer; font-family: inherit; transition: background .2s;
+        }
+        .media-save-btn:hover { background: #1b4332; }
+        .media-save-btn:disabled { background: #94a3b8; cursor: not-allowed; }
+    </style>
+    <style id="gtranslate-css">
+    /* Custom language switcher */
+    .lang-switcher { position:relative; display:inline-flex; align-items:center; }
+    .lang-switcher-btn {
+        display: flex; align-items: center; gap: 6px;
+        background: rgba(255,255,255,0.15);
+        border: 1px solid rgba(255,255,255,0.35);
+        border-radius: 8px;
+        padding: 5px 10px;
+        color: #fff;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: inherit;
+        transition: background 0.18s;
+        white-space: nowrap;
+    }
+    .lang-switcher-btn:hover { background: rgba(255,255,255,0.25); }
+    .lang-switcher-btn svg { width:14px; height:14px; opacity:.8; }
+    .lang-switcher-dropdown {
+        display: none;
+        position: absolute;
+        top: calc(100% + 6px);
+        right: 0;
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        min-width: 140px;
+        z-index: 9999;
+        overflow: hidden;
+    }
+    .lang-switcher-dropdown.open { display:block; }
+    .lang-option {
+        display: flex; align-items: center; gap: 8px;
+        padding: 10px 14px;
+        font-size: 13px;
+        color: #374151;
+        cursor: pointer;
+        transition: background 0.15s;
+        border: none; background: none; width: 100%; text-align: left;
+        font-family: inherit;
+    }
+    .lang-option:hover { background: #f1f5f9; }
+    .lang-option.active { background: #f0fdf4; color: #166534; font-weight: 600; }
+    .lang-option .flag { font-size: 16px; }
+    /* Ẩn thanh Google Translate */
+    .goog-te-banner-frame, .skiptranslate { display:none!important; }
+    body { top: 0!important; }
+    iframe.skiptranslate { display:none!important; }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="top-bar">
+            <a href="/" class="logo-group">
+                <div class="logo-circle">
+                    <img src="/images/logo.svg" alt="logo" id="the_logo">
+                </div>
+                <div class="web-name">PET HELPER</div>
+            </a>
+            <div class="user-actions">
+                <div class="auth-user-actions is-auth-hidden" id="headerAuthUserState">
+                    <div class="user-dropdown" id="headerUserDropdown">
+                        <span id="userDropdownBtn" style="cursor: pointer;">
+                            <span id="headerDisplayNameText">Tài khoản</span> ▼
+                        </span>
+                        <div class="user-dropdown-menu" id="userDropdownMenu">
+                            <div class="dropdown-header">
+                                <strong id="headerDropdownDisplayName">Tài khoản</strong>
+                                <span class="user-role" id="headerUserRole">👤 User</span>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <a href="/profile" class="dropdown-item">👤 Tài khoản</a>
+                            <a href="/my-favorites" class="dropdown-item">❤️ Thú cưng đã yêu thích</a>
+                            <a href="/my-reports" class="dropdown-item">📋 Báo cáo của tôi</a>
+                            <a href="/my-adoption-requests" class="dropdown-item">🏠 Yêu cầu nhận nuôi</a>
+                            <a href="/adopt/admin/add" class="dropdown-item role-staff-only is-auth-hidden">🐾 Thêm thú cưng</a>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" class="dropdown-item logout" id="logoutBtn" onclick="handleLogout(event)">🚪 Đăng xuất</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="auth-guest-actions is-auth-visible" id="headerAuthGuestState">
+                    <a href="#" onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('login'); } return false;"><span>Đăng nhập</span></a>
+                    <a href="#" onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('register'); } return false;"><span>Đăng ký</span></a>
+                </div>
+                <span>Giỏ hàng <span id="cart-count-display">(0)</span></span>
+                <div class="lang-switcher" id="langSwitcher">
+                    <button class="lang-switcher-btn" onclick="toggleLangDropdown(event)" id="langBtn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg>
+                        <span id="langBtnLabel">VI</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:10px"><path d="M6 9l6 6 6-6"/></svg>
+                    </button>
+                    <div class="lang-switcher-dropdown" id="langDropdown">
+                        <button class="lang-option active" onclick="setLang('vi','VI')" data-lang="vi"><span class="flag">🇻🇳</span> Tiếng Việt</button>
+                        <button class="lang-option" onclick="setLang('/en','EN')" data-lang="en"><span class="flag">🇺🇸</span> English</button>
+                        <button class="lang-option" onclick="setLang('/zh-TW','中文')" data-lang="zh-TW"><span class="flag">🇹🇼</span> 中文</button>
+                        <button class="lang-option" onclick="setLang('/ja','日本語')" data-lang="ja"><span class="flag">🇯🇵</span> 日本語</button>
+                    </div>
+                </div>
+            <button class="hamburger-btn" id="hamburgerBtn" aria-label="Mở menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+        </div>
+
+        <div class="mobile-nav-overlay" id="mobileNavOverlay"></div>
+
+        <nav class="main-nav" id="mainNav">
+            <button class="mobile-nav-close" id="mobileNavClose" aria-label="Đóng menu">✕</button>
+                        <ul>
+                <li>
+                    <a href="#" class="has-dropdown nav-item">Nhận nuôi <span class="nav-arrow arrow">▼</span></a>
+                    <ul class="nav-dropdown">
+                        <li><a href="/adopt">Xem vật nuôi có thể nhận nuôi</a></li>
+                        <li><a href="/snap" style="color: #ea580c; font-weight: bold;">PetSnap (Tìm kiếm ngẫu hứng!)</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="has-dropdown nav-item">Thất lạc <span class="nav-arrow arrow">▼</span></a>
+                    <ul class="nav-dropdown">
+                        <li><a href="/lost">Báo mất thú cưng</a></li>
+                        <li><a href="/found">Báo tin nhặt được</a></li>
+                        <li><a href="/reports/list">Xem báo cáo thất lạc</a></li>
+                        <li><a href="/tips">Mẹo tìm kiếm hiệu quả</a></li>
+                        
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="has-dropdown nav-item">Dịch vụ <span class="nav-arrow arrow">▼</span></a>
+                    <ul class="nav-dropdown">
+                        <li><a href="/booking">Đặt lịch tiêm phòng</a></li>
+                        <li><a href="/shop">Danh mục đồ ăn/ đồ dùng</a></li>
+                    </ul>
+                </li>
+                <li><a href="/news">Tin tức</a></li>
+                <li>
+                    <a href="#" class="has-dropdown nav-item">Về chúng tôi <span class="nav-arrow arrow">▼</span></a>
+                    <ul class="nav-dropdown">
+                        <li><a href="#contact-section">Liên hệ với chúng tôi</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <div id="auth-overlay-mount"></div>
+    <script src="/javascripts/authOverlayLoader.js" defer></script>
+
+    <main class="profile-page">
+        <section class="profile-container">
+            <div class="profile-heading">
+                <h1>Thông Tin Tài Khoản</h1>
+                <p>Cập nhật các thông tin cơ bản của tài khoản của bạn.</p>
+            </div>
+
+            <div id="statusNote" class="status-note" aria-live="polite"></div>
+            <div id="loadingBox" class="loading-box show">Đang tải thông tin tài khoản...</div>
+
+            <article class="profile-card">
+                <div class="profile-card-body">
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <p class="summary-label">Tên đăng nhập</p>
+                            <p class="summary-value" id="summaryDisplayName">-</p>
+                        </div>
+                        <div class="summary-item">
+                            <p class="summary-label">Họ và tên</p>
+                            <p class="summary-value" id="summaryName">-</p>
+                        </div>
+                        <div class="summary-item">
+                            <p class="summary-label">Email</p>
+                            <p class="summary-value" id="summaryEmail">-</p>
+                        </div>
+                        <div class="summary-item">
+                            <p class="summary-label">Vai trò</p>
+                            <p class="summary-value" id="summaryRole">-</p>
+                        </div>
+                        <div class="summary-item">
+                            <p class="summary-label">Trạng thái xác thực</p>
+                            <p class="summary-value verify-state unverified" id="summaryVerify">Chưa xác thực</p>
+                        </div>
+                    </div>
+
+                    <section class="verify-panel">
+                        <div class="verify-head">
+                            <div>
+                                <p class="verify-title">Xác thực email tài khoản</p>
+                                <p class="verify-desc" id="verifyDescription">Xác thực email để mở đầy đủ tính năng nhận nuôi và tăng độ tin cậy tài khoản.</p>
+                            </div>
+                            <span class="verify-badge unverified" id="verifyBadge">Chưa xác thực</span>
+                        </div>
+
+                        <div class="verify-actions" id="verifyActions">
+                            <button type="button" class="verify-btn" id="sendOtpBtn">Gửi mã OTP</button>
+                            <div class="otp-row">
+                                <input type="text" id="otpInput" class="otp-input" maxlength="6" inputmode="numeric" placeholder="Nhập mã OTP">
+                                <button type="button" class="verify-btn secondary" id="verifyOtpBtn">Xác thực OTP</button>
+                            </div>
+                            <p class="otp-hint" id="otpHint">Mã OTP gồm 6 chữ số và có hiệu lực trong 5 phút.</p>
+                        </div>
+                    </section>
+
+                    <form id="profileForm" class="profile-form">
+                        <div class="form-row">
+                            <label for="inputDisplayName">Tên đăng nhập</label>
+                            <input id="inputDisplayName" name="display_name" type="text" maxlength="100" required>
+                        </div>
+
+                        <div class="form-row">
+                            <label for="inputName">Họ và tên</label>
+                            <input id="inputName" name="name" type="text" maxlength="100" required>
+                        </div>
+
+                        <div class="form-row">
+                            <label for="inputEmail">Email</label>
+                            <input id="inputEmail" name="email" type="email" maxlength="255" required>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" id="saveBtn" class="save-btn">Lưu thay đổi</button>
+                        </div>
+                    </form>
+
+                    <!-- ── Avatar ── -->
+                    <div class="media-section">
+                        <div class="media-section-title">📷 Ảnh đại diện</div>
+                        <div class="avatar-wrap">
+                            <div id="avatarPreviewWrap">
+                                <div class="avatar-placeholder" id="avatarPlaceholder">🐾</div>
+                            </div>
+                            <div class="avatar-actions">
+                                <label class="btn-upload" for="avatarFileInput">
+                                    📤 Chọn ảnh
+                                </label>
+                                <input type="file" id="avatarFileInput" accept="image/*" style="display:none">
+                                <button type="button" class="btn-secondary-sm" id="removeAvatarBtn" style="display:none">🗑️ Xóa avatar</button>
+                            </div>
+                        </div>
+                        <div id="avatarStatus" style="margin-top:10px;font-size:13px;color:#64748b;min-height:18px;"></div>
+                    </div>
+
+                    <!-- ── Background ── -->
+                    <div class="media-section">
+                        <div class="media-section-title">🎨 Tùy chỉnh nền trang web</div>
+                        <div class="bg-palette" id="bgPalette">
+                            <div class="bg-swatch reset-swatch" data-bg="" title="Mặc định">↩</div>
+                            <div class="bg-swatch" data-bg="#f0fdf4" style="background:#f0fdf4" title="Xanh lá nhạt"></div>
+                            <div class="bg-swatch" data-bg="#fef3c7" style="background:#fef3c7" title="Vàng kem"></div>
+                            <div class="bg-swatch" data-bg="#ffe4e6" style="background:#ffe4e6" title="Hồng nhạt"></div>
+                            <div class="bg-swatch" data-bg="#e0f2fe" style="background:#e0f2fe" title="Xanh dương nhạt"></div>
+                            <div class="bg-swatch" data-bg="#f5f3ff" style="background:#f5f3ff" title="Tím nhạt"></div>
+                            <div class="bg-swatch" data-bg="#1a1a2e" style="background:#1a1a2e" title="Tối"></div>
+                        </div>
+                        <label class="bg-upload-label" for="bgFileInput">
+                            🖼️ Hoặc tải ảnh nền lên
+                        </label>
+                        <input type="file" id="bgFileInput" accept="image/*" style="display:none">
+                        <div class="bg-preview-bar" id="bgPreviewBar">Chưa chọn nền</div>
+                        <button type="button" class="media-save-btn" id="saveBgBtn">💾 Lưu nền trang web</button>
+                        <div id="bgStatus" style="margin-top:10px;font-size:13px;color:#64748b;min-height:18px;"></div>
+                    </div>
+
+                </div>
+            </article>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <a href="/" class="logo">
+                    <span style="font-size: 1.5rem;">🐾</span>
+                    <span>Pet Helper</span>
+                </a>
+                <p>Nền tảng hỗ trợ và bảo vệ vật nuôi hàng đầu Việt Nam. Cùng nhau xây dựng cộng đồng yêu thương động vật - Green Project 2026.</p>
+            </div>
+
+            <div class="footer-links">
+                <h4>Dịch vụ</h4>
+                <ul>
+                    <li><a href="/adopt">Nhận nuôi thú cưng</a></li>
+                    <li><a href="/reports">Báo cáo thất lạc</a></li>
+                    <li><a href="/shop">Cửa hàng</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-links">
+                <h4>Liên hệ</h4>
+                <ul>
+                    <li>📧 support@pethelper.vn</li>
+                    <li>📞 1900-XXXX</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 Pet Helper Green Project. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="/javascripts/staticHeader.js"></script>
+    <script src="/javascripts/staticFooter.js"></script>
+
+    <script>
+        const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const MAX_DISPLAY_NAME_LENGTH = 100;
+        const MAX_NAME_LENGTH = 100;
+        const MAX_EMAIL_LENGTH = 255;
+
+        const statusNote = document.getElementById('statusNote');
+        const loadingBox = document.getElementById('loadingBox');
+        const profileForm = document.getElementById('profileForm');
+        const saveBtn = document.getElementById('saveBtn');
+        const sendOtpBtn = document.getElementById('sendOtpBtn');
+        const verifyOtpBtn = document.getElementById('verifyOtpBtn');
+        const otpInput = document.getElementById('otpInput');
+        const otpHint = document.getElementById('otpHint');
+        const verifyBadge = document.getElementById('verifyBadge');
+        const verifyDescription = document.getElementById('verifyDescription');
+        const verifyActions = document.getElementById('verifyActions');
+
+        const summaryDisplayName = document.getElementById('summaryDisplayName');
+        const summaryName = document.getElementById('summaryName');
+        const summaryEmail = document.getElementById('summaryEmail');
+        const summaryRole = document.getElementById('summaryRole');
+        const summaryVerify = document.getElementById('summaryVerify');
+
+        const inputDisplayName = document.getElementById('inputDisplayName');
+        const inputName = document.getElementById('inputName');
+        const inputEmail = document.getElementById('inputEmail');
+
+        let otpCooldownTimer = null;
+        let otpCooldownSeconds = 0;
+
+        const roleLabel = (role) => {
+            if (role === 0) return 'Admin';
+            if (role === 1) return 'Staff';
+            return 'User';
+        };
+
+        const setNote = (type, message) => {
+            statusNote.className = 'status-note';
+            statusNote.textContent = '';
+            if (!message) return;
+            statusNote.classList.add(type);
+            statusNote.textContent = message;
+        };
+
+        const setLoading = (isLoading) => {
+            loadingBox.classList.toggle('show', Boolean(isLoading));
+        };
+
+        const setFormBusy = (isBusy) => {
+            const busy = Boolean(isBusy);
+            saveBtn.disabled = busy;
+            saveBtn.textContent = busy ? 'Đang lưu...' : 'Lưu thay đổi';
+            inputDisplayName.disabled = busy;
+            inputName.disabled = busy;
+            inputEmail.disabled = busy;
+        };
+
+        const setOtpHint = (type, message) => {
+            otpHint.className = 'otp-hint';
+            if (type === 'error' || type === 'success') {
+                otpHint.classList.add(type);
+            }
+            otpHint.textContent = message || 'Mã OTP gồm 6 chữ số và có hiệu lực trong 5 phút.';
+        };
+
+        const clearOtpCooldown = () => {
+            if (otpCooldownTimer) {
+                window.clearInterval(otpCooldownTimer);
+                otpCooldownTimer = null;
+            }
+            otpCooldownSeconds = 0;
+        };
+
+        const updateSendOtpButtonText = () => {
+            if (otpCooldownSeconds > 0) {
+                sendOtpBtn.textContent = `Gửi lại sau ${otpCooldownSeconds}s`;
+                return;
+            }
+            sendOtpBtn.textContent = 'Gửi mã OTP';
+        };
+
+        const startOtpCooldown = (seconds) => {
+            const duration = Number(seconds) || 60;
+            clearOtpCooldown();
+            otpCooldownSeconds = duration;
+            sendOtpBtn.disabled = true;
+            updateSendOtpButtonText();
+
+            otpCooldownTimer = window.setInterval(() => {
+                otpCooldownSeconds -= 1;
+                if (otpCooldownSeconds <= 0) {
+                    clearOtpCooldown();
+                    sendOtpBtn.disabled = false;
+                }
+                updateSendOtpButtonText();
+            }, 1000);
+        };
+
+        const setVerifiedUi = (isVerified) => {
+            const verified = Number(isVerified) === 1;
+
+            summaryVerify.className = `summary-value verify-state ${verified ? 'verified' : 'unverified'}`;
+            summaryVerify.textContent = verified ? 'Đã xác thực' : 'Chưa xác thực';
+
+            verifyBadge.className = `verify-badge ${verified ? 'verified' : 'unverified'}`;
+            verifyBadge.textContent = verified ? 'Đã xác thực' : 'Chưa xác thực';
+
+            verifyDescription.textContent = verified
+                ? 'Email của bạn đã được xác thực. Tài khoản đã đủ điều kiện thực hiện đầy đủ tính năng.'
+                : 'Xác thực email để mở đầy đủ tính năng nhận nuôi và tăng độ tin cậy tài khoản.';
+
+            if (verified) {
+                verifyActions.classList.add('hidden');
+                clearOtpCooldown();
+                otpInput.value = '';
+            } else {
+                verifyActions.classList.remove('hidden');
+                if (!otpCooldownTimer) {
+                    sendOtpBtn.disabled = false;
+                    updateSendOtpButtonText();
+                }
+            }
+        };
+
+        const openLoginOverlay = () => {
+            if (typeof window.openLoginOverlaySafely === 'function') {
+                window.openLoginOverlaySafely();
+                return;
+            }
+            if (typeof openOverlay === 'function') {
+                openOverlay('auth-overlay');
+            }
+            if (typeof overlayActivateTab === 'function') {
+                overlayActivateTab('login');
+            }
+        };
+
+        const parseJsonSafe = async (response) => {
+            try {
+                return await response.json();
+            } catch (error) {
+                return null;
+            }
+        };
+
+        const normalizeFormValues = () => {
+            return {
+                display_name: String(inputDisplayName.value || '').trim(),
+                name: String(inputName.value || '').trim(),
+                email: String(inputEmail.value || '').trim().toLowerCase(),
+            };
+        };
+
+        const validateProfileValues = (values) => {
+            if (!values.display_name || !values.name || !values.email) {
+                return 'Vui lòng điền đầy đủ thông tin';
+            }
+
+            if (!EMAIL_REGEX.test(values.email)) {
+                return 'Email không đúng định dạng';
+            }
+
+            if (values.display_name.length > MAX_DISPLAY_NAME_LENGTH) {
+                return `Tên đăng nhập không được vượt quá ${MAX_DISPLAY_NAME_LENGTH} ký tự`;
+            }
+
+            if (values.name.length > MAX_NAME_LENGTH) {
+                return `Tên hiển thị không được vượt quá ${MAX_NAME_LENGTH} ký tự`;
+            }
+
+            if (values.email.length > MAX_EMAIL_LENGTH) {
+                return `Email không được vượt quá ${MAX_EMAIL_LENGTH} ký tự`;
+            }
+
+            return '';
+        };
+
+        const renderUser = (user) => {
+            const displayName = user && user.display_name ? user.display_name : '-';
+            const name = user && user.name ? user.name : '-';
+            const email = user && user.email ? user.email : '-';
+            const role = user && typeof user.role === 'number' ? roleLabel(user.role) : '-';
+
+            summaryDisplayName.textContent = displayName;
+            summaryName.textContent = name;
+            summaryEmail.textContent = email;
+            summaryRole.textContent = role;
+
+            inputDisplayName.value = user && user.display_name ? user.display_name : '';
+            inputName.value = user && user.name ? user.name : '';
+            inputEmail.value = user && user.email ? user.email : '';
+
+            setVerifiedUi(user && Number(user.verify) === 1 ? 1 : 0);
+        };
+
+        async function sendOtp() {
+            if (sendOtpBtn.disabled) {
+                return;
+            }
+
+            sendOtpBtn.disabled = true;
+            sendOtpBtn.textContent = 'Đang gửi...';
+            setOtpHint('', 'Đang gửi mã OTP...');
+
+            try {
+                const response = await fetch('/auth/send-otp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                    },
+                    credentials: 'include',
+                });
+
+                const payload = await parseJsonSafe(response);
+
+                if (response.status === 401) {
+                    setOtpHint('error', 'Vui lòng đăng nhập để xác thực tài khoản');
+                    sendOtpBtn.disabled = false;
+                    updateSendOtpButtonText();
+                    openLoginOverlay();
+                    return;
+                }
+
+                if (!response.ok) {
+                    if (payload && payload.waitSeconds) {
+                        startOtpCooldown(payload.waitSeconds);
+                    } else {
+                        sendOtpBtn.disabled = false;
+                        updateSendOtpButtonText();
+                    }
+                    setOtpHint('error', (payload && payload.error) || 'Không thể gửi mã OTP');
+                    return;
+                }
+
+                startOtpCooldown(60);
+                setOtpHint('success', (payload && payload.message) || 'Mã OTP đã được gửi, vui lòng kiểm tra email');
+                otpInput.focus();
+            } catch (error) {
+                sendOtpBtn.disabled = false;
+                updateSendOtpButtonText();
+                setOtpHint('error', 'Đã xảy ra lỗi khi gửi OTP');
+            }
+        }
+
+        async function verifyOtp() {
+            const otp = String(otpInput.value || '').trim();
+            if (!/^\d{6}$/.test(otp)) {
+                setOtpHint('error', 'Vui lòng nhập đúng mã OTP gồm 6 chữ số');
+                return;
+            }
+
+            verifyOtpBtn.disabled = true;
+            verifyOtpBtn.textContent = 'Đang xác thực...';
+
+            try {
+                const response = await fetch('/auth/verify-otp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({ otp }),
+                });
+
+                const payload = await parseJsonSafe(response);
+
+                if (response.status === 401) {
+                    setOtpHint('error', 'Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại');
+                    openLoginOverlay();
+                    return;
+                }
+
+                if (!response.ok) {
+                    setOtpHint('error', (payload && payload.error) || 'Xác thực OTP thất bại');
+                    return;
+                }
+
+                setOtpHint('success', (payload && payload.message) || 'Xác thực email thành công');
+                setNote('success', 'Tài khoản đã được xác thực email thành công');
+                otpInput.value = '';
+                await loadProfile();
+            } catch (error) {
+                setOtpHint('error', 'Đã xảy ra lỗi khi xác thực OTP');
+            } finally {
+                verifyOtpBtn.disabled = false;
+                verifyOtpBtn.textContent = 'Xác thực OTP';
+            }
+        }
+
+        async function loadProfile() {
+            setLoading(true);
+
+            try {
+                const response = await fetch('/api/v1/auth/me', {
+                    method: 'GET',
+                    headers: { Accept: 'application/json' },
+                    credentials: 'include',
+                });
+
+                const payload = await parseJsonSafe(response);
+
+                if (response.status === 401) {
+                    setNote('warning', 'Vui lòng đăng nhập để xem thông tin tài khoản');
+                    openLoginOverlay();
+                    return;
+                }
+
+                if (!response.ok || !payload || !payload.success || !payload.data || !payload.data.user) {
+                    throw new Error((payload && payload.message) || 'Không thể tải thông tin tài khoản');
+                }
+
+                renderUser(payload.data.user);
+            } catch (error) {
+                setNote('error', error.message || 'Đã xảy ra lỗi, vui lòng thử lại');
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        async function submitProfile(event) {
+            event.preventDefault();
+            setNote('', '');
+
+            const values = normalizeFormValues();
+            const validationMessage = validateProfileValues(values);
+            if (validationMessage) {
+                setNote('error', validationMessage);
+                return;
+            }
+
+            setFormBusy(true);
+
+            try {
+                const response = await fetch('/api/v1/auth/profile', {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(values),
+                });
+
+                const payload = await parseJsonSafe(response);
+
+                if (response.status === 401) {
+                    setNote('warning', 'Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại');
+                    openLoginOverlay();
+                    return;
+                }
+
+                if (!response.ok || !payload || !payload.success) {
+                    throw new Error((payload && payload.message) || 'Không thể cập nhật thông tin tài khoản');
+                }
+
+                setNote('success', payload.message || 'Cập nhật thông tin tài khoản thành công');
+                await loadProfile();
+            } catch (error) {
+                setNote('error', error.message || 'Đã xảy ra lỗi, vui lòng thử lại');
+            } finally {
+                setFormBusy(false);
+            }
+        }
+
+        profileForm.addEventListener('submit', submitProfile);
+        sendOtpBtn.addEventListener('click', sendOtp);
+        verifyOtpBtn.addEventListener('click', verifyOtp);
+        otpInput.addEventListener('input', () => {
+            otpInput.value = otpInput.value.replace(/\D/g, '').slice(0, 6);
+        });
+        otpInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                verifyOtp();
+            }
+        });
+
+        loadProfile();
+    </script>
+    <!-- Google Translate engine -->
+    <div id="google_translate_element" style="display:none"></div>
+    <script>
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({ pageLanguage: 'vi', includedLanguages: 'vi,en,zh-TW,ja', autoDisplay: false }, 'google_translate_element');
+    }
+    function setLang(lang, label) {
+        document.getElementById('langBtnLabel').textContent = label;
+        document.querySelectorAll('.lang-option').forEach(function(el) {
+            el.classList.toggle('active', el.dataset.lang === (lang === 'vi' ? 'vi' : lang.replace('/','')) );
+        });
+        document.getElementById('langDropdown').classList.remove('open');
+        if (lang === 'vi') {
+            document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=' + location.hostname;
+            location.reload(); return;
+        }
+        var val = '/vi' + lang;
+        document.cookie = 'googtrans=' + val + '; path=/';
+        document.cookie = 'googtrans=' + val + '; path=/; domain=' + location.hostname;
+        location.reload();
+    }
+    function toggleLangDropdown(e) {
+        e.stopPropagation();
+        document.getElementById('langDropdown').classList.toggle('open');
+    }
+    document.addEventListener('click', function() {
+        var dd = document.getElementById('langDropdown');
+        if (dd) dd.classList.remove('open');
+    });
+    (function() {
+        var m = document.cookie.match(/googtrans=\/vi\/([^;]+)/);
+        if (!m) return;
+        var map = { 'en': 'EN', 'zh-TW': '中文', 'ja': '日本語' };
+        if (map[m[1]]) {
+            document.getElementById('langBtnLabel').textContent = map[m[1]];
+            document.querySelectorAll('.lang-option').forEach(function(el) {
+                el.classList.toggle('active', el.dataset.lang === m[1]);
+            });
+        }
+    })();
+    </script>
+    <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>    <script>
+    // ── Avatar & Background Logic ──────────────────────────
+    (function() {
+        var avatarFileInput = document.getElementById('avatarFileInput');
+        var avatarPlaceholder = document.getElementById('avatarPlaceholder');
+        var avatarPreviewWrap = document.getElementById('avatarPreviewWrap');
+        var removeAvatarBtn = document.getElementById('removeAvatarBtn');
+        var avatarStatus = document.getElementById('avatarStatus');
+
+        var bgPalette = document.getElementById('bgPalette');
+        var bgFileInput = document.getElementById('bgFileInput');
+        var bgPreviewBar = document.getElementById('bgPreviewBar');
+        var saveBgBtn = document.getElementById('saveBgBtn');
+        var bgStatus = document.getElementById('bgStatus');
+
+        var selectedBgColor = null;
+        var selectedBgFile = null;
+        var resetBg = false;
+
+        // Load avatar hiện tại từ /api/v1/auth/me
+        fetch('/api/v1/auth/me', { credentials: 'include' })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (!data.success) return;
+                var user = data.data.user;
+                if (user.avatar) {
+                    setAvatarPreview(user.avatar);
+                }
+                if (user.bg_preference) {
+                    applyBgPreview(user.bg_preference);
+                    // Đánh dấu swatch đang active
+                    document.querySelectorAll('.bg-swatch').forEach(function(s) {
+                        s.classList.toggle('selected', s.dataset.bg === user.bg_preference);
+                    });
+                } else {
+                    document.querySelector('.bg-swatch.reset-swatch').classList.add('selected');
+                }
+            }).catch(function() {});
+
+        function setAvatarPreview(src) {
+            avatarPreviewWrap.innerHTML = '<img class="avatar-preview" src="' + src + '" alt="Avatar">';
+            if (removeAvatarBtn) removeAvatarBtn.style.display = 'inline-flex';
+        }
+
+        // Chọn file avatar
+        avatarFileInput.addEventListener('change', function() {
+            var file = this.files[0];
+            if (!file) return;
+            var reader = new FileReader();
+            reader.onload = function(e) { setAvatarPreview(e.target.result); };
+            reader.readAsDataURL(file);
+            uploadAvatar(file);
+        });
+
+        // Upload avatar ngay khi chọn
+        async function uploadAvatar(file) {
+            avatarStatus.textContent = 'Đang tải lên...';
+            avatarStatus.style.color = '#64748b';
+            var formData = new FormData();
+            formData.append('avatar', file);
+            try {
+                var res = await fetch('/api/v1/auth/avatar', {
+                    method: 'POST',
+                    credentials: 'include',
+                    body: formData
+                });
+                var data = await res.json();
+                if (data.success) {
+                    avatarStatus.textContent = '✅ Cập nhật avatar thành công!';
+                    avatarStatus.style.color = '#16a34a';
+                    if (removeAvatarBtn) removeAvatarBtn.style.display = 'inline-flex';
+                    // Cập nhật avatar trên header nếu có
+                    if (window.applyHeaderAvatar) window.applyHeaderAvatar(data.data.avatar);
+                } else {
+                    avatarStatus.textContent = '❌ ' + (data.message || 'Lỗi upload');
+                    avatarStatus.style.color = '#dc2626';
+                }
+            } catch(e) {
+                avatarStatus.textContent = '❌ Lỗi kết nối';
+                avatarStatus.style.color = '#dc2626';
+            }
+        }
+
+        // Xóa avatar
+        if (removeAvatarBtn) {
+            removeAvatarBtn.addEventListener('click', async function() {
+                try {
+                    var res = await fetch('/api/v1/auth/avatar', {
+                        method: 'POST',
+                        credentials: 'include',
+                        body: new FormData() // empty = reset
+                    });
+                    avatarPreviewWrap.innerHTML = '<div class="avatar-placeholder" id="avatarPlaceholder">🐾</div>';
+                    removeAvatarBtn.style.display = 'none';
+                    avatarStatus.textContent = 'Đã xóa avatar';
+                    avatarStatus.style.color = '#64748b';
+                } catch(e) {}
+            });
+        }
+
+        // Chọn màu background
+        bgPalette.addEventListener('click', function(e) {
+            var swatch = e.target.closest('.bg-swatch');
+            if (!swatch) return;
+            document.querySelectorAll('.bg-swatch').forEach(function(s) { s.classList.remove('selected'); });
+            swatch.classList.add('selected');
+            selectedBgColor = swatch.dataset.bg;
+            selectedBgFile = null;
+            bgFileInput.value = '';
+            resetBg = (selectedBgColor === '');
+            applyBgPreview(selectedBgColor);
+        });
+
+        // Upload ảnh background
+        bgFileInput.addEventListener('change', function() {
+            var file = this.files[0];
+            if (!file) return;
+            selectedBgFile = file;
+            selectedBgColor = null;
+            resetBg = false;
+            document.querySelectorAll('.bg-swatch').forEach(function(s) { s.classList.remove('selected'); });
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                bgPreviewBar.innerHTML = '<img src="' + e.target.result + '" alt="Preview">';
+            };
+            reader.readAsDataURL(file);
+        });
+
+        function applyBgPreview(val) {
+            if (!val) {
+                bgPreviewBar.innerHTML = 'Mặc định (không có nền)';
+                bgPreviewBar.style.background = '#fff';
+            } else if (val.startsWith('/uploads/')) {
+                bgPreviewBar.innerHTML = '<img src="' + val + '" alt="Preview">';
+            } else {
+                bgPreviewBar.innerHTML = '';
+                bgPreviewBar.style.background = val;
+            }
+        }
+
+        // Lưu background
+        saveBgBtn.addEventListener('click', async function() {
+            saveBgBtn.disabled = true;
+            bgStatus.textContent = 'Đang lưu...';
+            bgStatus.style.color = '#64748b';
+
+            try {
+                var formData = new FormData();
+                if (selectedBgFile) {
+                    formData.append('background', selectedBgFile);
+                } else if (resetBg || selectedBgColor === '') {
+                    formData.append('reset', '1');
+                } else if (selectedBgColor) {
+                    formData.append('bg_color', selectedBgColor);
+                } else {
+                    bgStatus.textContent = 'Vui lòng chọn màu hoặc ảnh nền';
+                    bgStatus.style.color = '#dc2626';
+                    saveBgBtn.disabled = false;
+                    return;
+                }
+
+                var res = await fetch('/api/v1/auth/background', {
+                    method: 'POST',
+                    credentials: 'include',
+                    body: formData
+                });
+                var data = await res.json();
+                if (data.success) {
+                    bgStatus.textContent = '✅ Lưu nền thành công! Reload để xem hiệu ứng.';
+                    bgStatus.style.color = '#16a34a';
+                    // Apply ngay
+                    if (window.applyUserBackground) window.applyUserBackground(data.data.bg_preference);
+                } else {
+                    bgStatus.textContent = '❌ ' + (data.message || 'Lỗi lưu');
+                    bgStatus.style.color = '#dc2626';
+                }
+            } catch(e) {
+                bgStatus.textContent = '❌ Lỗi kết nối';
+                bgStatus.style.color = '#dc2626';
+            }
+            saveBgBtn.disabled = false;
+        });
+    })();
+    </script>
+    <script>
+    /* ── User Background Apply ── */
+    (function() {
+        function applyBg(val) {
+            var styleId = '__user_bg_style';
+            var el = document.getElementById(styleId);
+            if (!el) {
+                el = document.createElement('style');
+                el.id = styleId;
+                document.head.appendChild(el);
+            }
+            if (!val) { el.textContent = ''; return; }
+            var bgRule = val.startsWith('/uploads/')
+                ? 'background-image:url("' + val + '")!important;background-size:cover!important;background-attachment:fixed!important;background-repeat:no-repeat!important;background-position:center!important;background-color:transparent!important;'
+                : 'background-color:' + val + '!important;background-image:none!important;';
+            el.textContent = [
+                'body{' + bgRule + '}',
+                'main,#main,.main,.profile-page,.page-wrapper,.page-body,.content-wrapper,.container-fluid,.app-content,.site-content,.page-content,.adopt-page,.admin-page,.reports-page,.favorites-page{background:transparent!important;}'
+            ].join('');
+        }
+
+        window.applyUserBackground = applyBg;
+
+        var _orig = window.applyHeaderUserState;
+        window.applyHeaderUserState = function(user) {
+            if (_orig) _orig(user);
+            if (user && user.bg_preference) applyBg(user.bg_preference);
+        };
+
+        window.addEventListener('load', function() {
+            fetch('/api/v1/auth/me', { credentials: 'include' })
+                .then(function(r) { return r.ok ? r.json() : null; })
+                .then(function(data) {
+                    if (data && data.success && data.data && data.data.user && data.data.user.bg_preference) {
+                        applyBg(data.data.user.bg_preference);
+                    }
+                }).catch(function() {});
+        });
+    })();
+    </script>
+</body>
+
+</html>

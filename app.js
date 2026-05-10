@@ -37,6 +37,15 @@ app.use(express.static(path.join(__dirname, "public")));
 // Make user available in all views (JWT-based)
 app.use(setUserLocals);
 
+// Shop route
+app.get("/admin-shop", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "pages", "admin-shop.html"));
+});
+
+app.use("/api/products", require("./routes/api/v1/products"));
+app.use("/api/orders", require("./routes/api/v1/orders"));
+app.use("/api/reviews", require("./routes/api/v1/reviews"));
+
 // Route handlers
 app.use("/api/v1/auth", authApiV1Router);
 app.use("/api/v1/admin", adminApiV1Router);
@@ -61,16 +70,20 @@ app.use(function (req, res, next) {
 app.use(function (err, req, res, next) {
   const status = err.status || 500;
 
-  if ((req.path || "").startsWith("/api") || req.xhr || (req.headers.accept && req.headers.accept.includes("application/json"))) {
+  if (
+    (req.path || "").startsWith("/api") ||
+    req.xhr ||
+    (req.headers.accept && req.headers.accept.includes("application/json"))
+  ) {
     return res.status(status).json({
       success: false,
       message: err.message || "Đã xảy ra lỗi",
     });
   }
 
-  return res.status(status).sendFile(
-    path.join(__dirname, "public", "pages", "error.html"),
-  );
+  return res
+    .status(status)
+    .sendFile(path.join(__dirname, "public", "pages", "error.html"));
 });
 
 module.exports = app;

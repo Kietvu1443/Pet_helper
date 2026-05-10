@@ -500,6 +500,397 @@
       }
     }
 
+    /* ── Orders tab ── */
+    .order-summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .order-summary-card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 14px;
+    }
+
+    .order-summary-card small {
+      color: #64748b;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 700;
+    }
+
+    .order-summary-card strong {
+      display: block;
+      margin-top: 6px;
+      color: #0f172a;
+      font-size: 1.55rem;
+      line-height: 1;
+    }
+
+    .order-filter-btns {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .order-filter-btn {
+      padding: 7px 18px;
+      border-radius: 999px;
+      border: 1.5px solid #cbd5e1;
+      background: #fff;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #475569;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+
+    .order-filter-btn.active {
+      background: #2d6a4f;
+      border-color: #2d6a4f;
+      color: #fff;
+    }
+
+    .order-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .order-card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      overflow: hidden;
+      transition: box-shadow 0.18s;
+    }
+
+    .order-card:hover {
+      box-shadow: 0 4px 20px rgba(14, 54, 34, 0.09);
+    }
+
+    .order-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      border-bottom: 1px solid #f1f5f9;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .order-card-id {
+      font-weight: 700;
+      color: #1f5133;
+      font-size: 0.95rem;
+    }
+
+    .order-card-date {
+      font-size: 0.8rem;
+      color: #94a3b8;
+    }
+
+    .order-status-badge {
+      display: inline-flex;
+      align-items: center;
+      font-size: 0.78rem;
+      font-weight: 700;
+      border-radius: 999px;
+      padding: 4px 12px;
+    }
+
+    .order-status-badge.pending {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .order-status-badge.processing {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .order-status-badge.shipping {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .order-status-badge.completed {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .order-status-badge.cancelled {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .order-card-body {
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .order-card-info {
+      font-size: 0.88rem;
+      color: #374151;
+    }
+
+    .order-card-info span {
+      color: #64748b;
+    }
+
+    .order-card-total {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #1f5133;
+      white-space: nowrap;
+    }
+
+    .order-timeline {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      gap: 0;
+      border-top: 1px solid #f1f5f9;
+      overflow-x: auto;
+    }
+
+    .order-timeline-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      min-width: 64px;
+      position: relative;
+    }
+
+    .order-timeline-step::after {
+      content: '';
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      width: 100%;
+      height: 2px;
+      background: #e2e8f0;
+      z-index: 0;
+    }
+
+    .order-timeline-step:last-child::after {
+      display: none;
+    }
+
+    .order-timeline-dot {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid #e2e8f0;
+      background: #fff;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      transition: all 0.2s;
+    }
+
+    .order-timeline-dot.done {
+      background: #2d6a4f;
+      border-color: #2d6a4f;
+      color: #fff;
+    }
+
+    .order-timeline-dot.active {
+      background: #fff;
+      border-color: #2d6a4f;
+      box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.15);
+    }
+
+    .order-timeline-dot.cancelled-dot {
+      background: #fee2e2;
+      border-color: #f87171;
+      color: #b91c1c;
+    }
+
+    .order-timeline-label {
+      font-size: 0.65rem;
+      color: #94a3b8;
+      margin-top: 4px;
+      text-align: center;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .order-timeline-label.active {
+      color: #2d6a4f;
+    }
+
+    .order-detail-btn {
+      background: none;
+      border: 1.5px solid #2d6a4f;
+      color: #2d6a4f;
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.18s;
+      white-space: nowrap;
+    }
+
+    .order-detail-btn:hover {
+      background: #2d6a4f;
+      color: #fff;
+    }
+
+    /* Modal chi tiết đơn hàng */
+    .order-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .order-modal-overlay.open {
+      display: flex;
+    }
+
+    .order-modal {
+      background: #fff;
+      border-radius: 18px;
+      width: 100%;
+      max-width: 520px;
+      max-height: 88vh;
+      overflow-y: auto;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.18);
+    }
+
+    .order-modal-head {
+      padding: 18px 20px 14px;
+      border-bottom: 1px solid #f1f5f9;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .order-modal-title {
+      font-weight: 700;
+      color: #1f5133;
+      font-size: 1rem;
+    }
+
+    .order-modal-close {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: #94a3b8;
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+
+    .order-modal-close:hover {
+      background: #f1f5f9;
+      color: #374151;
+    }
+
+    .order-modal-body {
+      padding: 16px 20px;
+    }
+
+    .order-modal-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 9px 0;
+      border-bottom: 1px solid #f8fafc;
+      font-size: 0.88rem;
+    }
+
+    .order-modal-row:last-child {
+      border-bottom: none;
+    }
+
+    .order-modal-label {
+      color: #64748b;
+    }
+
+    .order-modal-val {
+      font-weight: 600;
+      color: #0f172a;
+      text-align: right;
+      max-width: 60%;
+    }
+
+    .order-modal-items-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 14px 0 8px;
+    }
+
+    .order-modal-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .order-modal-item:last-child {
+      border-bottom: none;
+    }
+
+    .order-modal-item img {
+      width: 44px;
+      height: 44px;
+      object-fit: cover;
+      border-radius: 8px;
+      background: #f3f4f6;
+    }
+
+    .order-modal-item-name {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #0f172a;
+    }
+
+    .order-modal-item-meta {
+      font-size: 0.78rem;
+      color: #64748b;
+    }
+
+    .order-modal-item-price {
+      font-weight: 700;
+      color: #1f5133;
+      margin-left: auto;
+      white-space: nowrap;
+    }
+
+    @media (max-width:980px) {
+      .order-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width:680px) {
+      .order-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
     .search-box-wrap {
       display: flex;
       align-items: center;
@@ -545,6 +936,97 @@
     }
   </style>
   <link rel="stylesheet" href="/stylesheets/staticHeader.css">
+  <style id="gtranslate-css">
+    .lang-switcher {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .lang-switcher-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: 8px;
+      padding: 5px 10px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.18s;
+      white-space: nowrap;
+    }
+
+    .lang-switcher-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    .lang-switcher-btn svg {
+      width: 14px;
+      height: 14px;
+      opacity: .8;
+    }
+
+    .lang-switcher-dropdown {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      min-width: 140px;
+      z-index: 9999;
+      overflow: hidden;
+    }
+
+    .lang-switcher-dropdown.open {
+      display: block;
+    }
+
+    .lang-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: #374151;
+      cursor: pointer;
+      transition: background 0.15s;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      font-family: inherit;
+    }
+
+    .lang-option:hover {
+      background: #f1f5f9;
+    }
+
+    .lang-option.active {
+      background: #f0fdf4;
+      color: #166534;
+      font-weight: 600;
+    }
+
+    .lang-option .flag {
+      font-size: 16px;
+    }
+
+    .goog-te-banner-frame,
+    .skiptranslate {
+      display: none !important;
+    }
+
+    body {
+      top: 0 !important;
+    }
+  </style>
 </head>
 
 <body>
@@ -589,7 +1071,29 @@
             onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('register'); } return false;"><span>Đăng
               ký</span></a>
         </div>
-        <span class="lang-switch">VN / EN</span>
+        <span onclick="toggleCart()" style="cursor:pointer;">Giỏ hàng <span id="cart-count-display">(0)</span></span>
+        <div class="lang-switcher" id="langSwitcher">
+          <button class="lang-switcher-btn" onclick="toggleLangDropdown(event)" id="langBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20" />
+            </svg>
+            <span id="langBtnLabel">VI</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:10px">
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </button>
+          <div class="lang-switcher-dropdown" id="langDropdown">
+            <button class="lang-option active" onclick="setLang('vi','VI')" data-lang="vi"><span
+                class="flag">🇻🇳</span> Tiếng Việt</button>
+            <button class="lang-option" onclick="setLang('/en','EN')" data-lang="en"><span class="flag">🇺🇸</span>
+              English</button>
+            <button class="lang-option" onclick="setLang('/zh-TW','中文')" data-lang="zh-TW"><span
+                class="flag">🇹🇼</span> 中文</button>
+            <button class="lang-option" onclick="setLang('/ja','日本語')" data-lang="ja"><span class="flag">🇯🇵</span>
+              日本語</button>
+          </div>
+        </div>
       </div>
       <button class="hamburger-btn" id="hamburgerBtn" aria-label="Mở menu">
         <span class="hamburger-line"></span>
@@ -613,8 +1117,9 @@
           <ul class="nav-dropdown">
             <li><a href="/lost">Báo mất thú cưng</a></li>
             <li><a href="/found">Báo tin nhặt được</a></li>
-            <li><a href="/tips">Mẹo chăm sóc thú cưng</a></li>
             <li><a href="/reports/list">Xem báo cáo thất lạc</a></li>
+            <li><a href="/tips">Mẹo tìm kiếm hiệu quả</a></li>
+
           </ul>
         </li>
         <li>
@@ -647,6 +1152,7 @@
           nuôi</button>
         <button class="page-tab-btn" id="tabReports" onclick="switchTab('reports')">🐾 Báo cáo thú cưng</button>
         <button class="page-tab-btn" id="tabNews" onclick="switchTab('news')">📰 Bài tin của tôi</button>
+        <button class="page-tab-btn" id="tabOrders" onclick="switchTab('orders')">📦 Đơn hàng</button>
       </div>
 
       <!-- Panel: Yêu cầu nhận nuôi -->
@@ -749,6 +1255,42 @@
         </div>
       </div><!-- /panelNews -->
 
+      <!-- Panel: Đơn hàng của tôi -->
+      <div id="panelOrders" style="display:none">
+        <p style="margin:0 0 14px;color:#5f6f67;font-size:0.9rem;">Theo dõi trạng thái các đơn hàng bạn đã đặt.</p>
+        <div class="order-summary">
+          <div class="order-summary-card"><small>Tổng đơn</small><strong id="ord-sum-total">0</strong></div>
+          <div class="order-summary-card"><small>Đang xử lý</small><strong id="ord-sum-active">0</strong></div>
+          <div class="order-summary-card"><small>Hoàn thành</small><strong id="ord-sum-done">0</strong></div>
+          <div class="order-summary-card"><small>Đã hủy</small><strong id="ord-sum-cancel">0</strong></div>
+        </div>
+        <div class="order-filter-btns">
+          <button class="order-filter-btn active" onclick="filterOrders('')">Tất cả</button>
+          <button class="order-filter-btn" onclick="filterOrders('pending')">⏳ Chờ xử lý</button>
+          <button class="order-filter-btn" onclick="filterOrders('processing')">🔄 Đang xử lý</button>
+          <button class="order-filter-btn" onclick="filterOrders('shipping')">🚚 Đang giao</button>
+          <button class="order-filter-btn" onclick="filterOrders('completed')">✅ Hoàn thành</button>
+          <button class="order-filter-btn" onclick="filterOrders('cancelled')">❌ Đã hủy</button>
+        </div>
+        <div id="ordersStatus" style="color:#64748b;font-size:0.9rem;margin-bottom:12px;min-height:20px;"></div>
+        <div id="ordersList" class="order-list"></div>
+        <div id="ordersEmpty"
+          style="display:none;text-align:center;padding:40px;color:#aaa;background:#fff;border:1px dashed #e2e8f0;border-radius:14px;">
+          Bạn chưa có đơn hàng nào.</div>
+      </div><!-- /panelOrders -->
+
+      <!-- Modal chi tiết đơn hàng -->
+      <div class="order-modal-overlay" id="orderDetailOverlay">
+        <div class="order-modal">
+          <div class="order-modal-head">
+            <span class="order-modal-title" id="orderDetailTitle">Chi tiết đơn hàng</span>
+            <button class="order-modal-close"
+              onclick="document.getElementById('orderDetailOverlay').classList.remove('open')">✕</button>
+          </div>
+          <div class="order-modal-body" id="orderDetailBody"></div>
+        </div>
+      </div>
+
     </div>
   </main>
   <script>
@@ -765,7 +1307,7 @@
       function renderCards(data) {
         var searchVal = (document.getElementById('reportSearch') ? document.getElementById('reportSearch').value : '').toLowerCase().trim();
         if (searchVal) { data = data.filter(function (r) { return ([r.description, r.location, r.address, r.found_location, r.color].join(' ').toLowerCase().includes(searchVal)); }); }
-        if (!data || data.length === 0) { statusEl.textContent = 'Không có báo cáo nào phù hợp bộ lọc hiện tại.'; gridEl.innerHTML = ''; return; } statusEl.textContent = 'Đang hiển thị ' + data.length + ' báo cáo trên trang này.'; gridEl.innerHTML = data.map(function (report) { var safeImage = escapeHtml(report.image || '/images/the_logo.webp'); var safeDesc = escapeHtml(report.description || 'Không có mô tả'); var safeLocation = escapeHtml(report.location || 'Chưa rõ vị trí'); var safeCreated = new Date(report.created_at).toLocaleString('vi-VN'); var safeType = escapeHtml(report.type || 'lost'); var safeStatus = escapeHtml(report.status || 'pending'); return `<article class="my-report-card"><img class="my-report-image" src="${safeImage}" alt="Report" onerror="this.onerror=null;this.src='/images/the_logo.webp'"><div class="my-report-body"><div class="my-report-top"><span class="my-report-pill type-${safeType}">${typeLabel(safeType)}</span><span class="my-report-pill status-${safeStatus}">${statusLabel(safeStatus)}</span></div><p class="my-report-desc">${safeDesc}</p><div class="my-report-meta">📍 ${safeLocation}</div><div class="my-report-meta">🕒 ${safeCreated}</div></div></article>`; }).join('');
+        if (!data || data.length === 0) { statusEl.textContent = 'Không có báo cáo nào phù hợp bộ lọc hiện tại.'; gridEl.innerHTML = ''; return; } statusEl.textContent = 'Đang hiển thị ' + data.length + ' báo cáo trên trang này.'; gridEl.innerHTML = data.map(function (report) { var safeImage = escapeHtml(report.image || '/images/logo.svg'); var safeDesc = escapeHtml(report.description || 'Không có mô tả'); var safeLocation = escapeHtml(report.location || 'Chưa rõ vị trí'); var safeCreated = new Date(report.created_at).toLocaleString('vi-VN'); var safeType = escapeHtml(report.type || 'lost'); var safeStatus = escapeHtml(report.status || 'pending'); return `<article class="my-report-card"><img class="my-report-image" src="${safeImage}" alt="Report" onerror="this.onerror=null;this.src='/images/logo.svg'"><div class="my-report-body"><div class="my-report-top"><span class="my-report-pill type-${safeType}">${typeLabel(safeType)}</span><span class="my-report-pill status-${safeStatus}">${statusLabel(safeStatus)}</span></div><p class="my-report-desc">${safeDesc}</p><div class="my-report-meta">📍 ${safeLocation}</div><div class="my-report-meta">🕒 ${safeCreated}</div></div></article>`; }).join('');
       }
       function renderPagination(currentPage, totalPages) { if (!totalPages || totalPages <= 1) { paginationEl.innerHTML = ''; return; } var html = []; for (var i = 1; i <= totalPages; i++) { html.push('<button class="' + (i === currentPage ? 'active' : '') + '" data-page="' + i + '">' + i + '</button>'); } paginationEl.innerHTML = html.join(''); }
       async function loadReports() { const previousHtml = gridEl.innerHTML; renderLoading(); try { var params = new URLSearchParams(); params.set('view', 'full'); params.set('page', String(state.page)); params.set('limit', String(state.limit)); if (state.status) params.set('status', state.status); if (state.type) params.set('type', state.type); var response = await fetch('/api/v1/reports/my?' + params.toString()); var json = await response.json(); if (!response.ok || !json.success || !json.data) { throw new Error((json && json.message) || 'Không thể tải báo cáo'); } var result = json.data; renderSummary(result.summary); renderCards(result.data || []); renderPagination(result.page || 1, result.totalPages || 0); } catch (error) { if (previousHtml && previousHtml.trim()) { gridEl.innerHTML = previousHtml; } else { gridEl.innerHTML = ''; } statusEl.textContent = (error && error.message) || 'Có lỗi xảy ra khi tải dữ liệu.'; statusEl.style.color = '#b91c1c'; if (String(statusEl.textContent).toLowerCase().includes('đăng nhập')) { statusEl.textContent = 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại để xem báo cáo của bạn.'; } } }
@@ -898,27 +1440,6 @@
   <script src="/javascripts/staticHeader.js"></script>
   <script src="/javascripts/staticFooter.js"></script>
   <script>
-    // Khai báo sớm để onclick trong HTML gọi được
-    function switchTab(tab) {
-      ['adoption', 'reports', 'news'].forEach(function (t) {
-        var panel = document.getElementById('panel' + t.charAt(0).toUpperCase() + t.slice(1));
-        var btn = document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1));
-        if (panel) panel.style.display = t === tab ? '' : 'none';
-        if (btn) btn.classList.toggle('active', t === tab);
-      });
-      if (tab === 'news' && !window.__myNewsLoaded) {
-        window.__myNewsLoaded = true;
-        if (typeof loadMyNews === 'function') loadMyNews(1);
-      }
-      if (tab === 'reports' && !window.__myReportsLoaded) {
-        window.__myReportsLoaded = true;
-        if (typeof loadReports === 'function') loadReports();
-      }
-      if (tab === 'adoption' && !window.__myAdoptionLoaded) {
-        window.__myAdoptionLoaded = true;
-        loadMyAdoption();
-      }
-    }
 
     const adoptionStatusLabels = { pending: 'Chờ duyệt', approved: 'Đã duyệt', rejected: 'Từ chối' };
     let __allAdoptionData = [];
@@ -996,7 +1517,7 @@
   </script>
   <script>
     function switchTab(tab) {
-      ['adoption', 'reports', 'news'].forEach(function (t) {
+      ['adoption', 'reports', 'news', 'orders'].forEach(function (t) {
         var panel = document.getElementById('panel' + t.charAt(0).toUpperCase() + t.slice(1));
         var btn = document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1));
         if (panel) panel.style.display = t === tab ? '' : 'none';
@@ -1007,7 +1528,6 @@
         if (typeof loadMyNews === 'function') loadMyNews(1);
       }
       if (tab === 'reports') {
-        // Reset filter UI và state về mặc định mỗi lần vào tab
         var selStatus = document.getElementById('filterStatus');
         var selType = document.getElementById('filterType');
         if (selStatus) selStatus.value = '';
@@ -1018,7 +1538,257 @@
       if (tab === 'adoption') {
         if (typeof loadMyAdoption === 'function') loadMyAdoption();
       }
+      if (tab === 'orders') {
+        loadMyOrders();
+      }
     }
+
+    // ── Đơn hàng của tôi ─────────────────────────────────────────────
+    var __allOrdersData = [];
+    var __ordersFilter = '';
+
+    const ORDER_STATUS_LABELS = {
+      pending: 'Chờ xử lý',
+      processing: 'Đang xử lý',
+      shipping: 'Đang giao',
+      completed: 'Hoàn thành',
+      cancelled: 'Đã hủy'
+    };
+
+    const ORDER_TIMELINE = [
+      { key: 'pending', icon: '📋', label: 'Đặt hàng' },
+      { key: 'processing', icon: '⚙️', label: 'Xử lý' },
+      { key: 'shipping', icon: '🚚', label: 'Đang giao' },
+      { key: 'completed', icon: '✅', label: 'Hoàn thành' }
+    ];
+
+    function orderStatusIndex(status) {
+      const map = { pending: 0, processing: 1, shipping: 2, completed: 3 };
+      return map[status] !== undefined ? map[status] : -1;
+    }
+
+    function fmtMoney(n) {
+      return Number(n || 0).toLocaleString('vi-VN') + '₫';
+    }
+
+    function renderOrderTimeline(status) {
+      if (status === 'cancelled') {
+        return '<div class="order-timeline">' +
+          '<div class="order-timeline-step" style="flex:unset">' +
+          '<div class="order-timeline-dot cancelled-dot">✕</div>' +
+          '<div class="order-timeline-label active" style="color:#b91c1c">Đã hủy</div>' +
+          '</div></div>';
+      }
+      const cur = orderStatusIndex(status);
+      return '<div class="order-timeline">' +
+        ORDER_TIMELINE.map(function (step, i) {
+          var dotClass = i < cur ? 'done' : (i === cur ? 'active' : '');
+          var labelClass = i === cur ? 'active' : '';
+          return '<div class="order-timeline-step">' +
+            '<div class="order-timeline-dot ' + dotClass + '">' + (i < cur ? '✓' : step.icon) + '</div>' +
+            '<div class="order-timeline-label ' + labelClass + '">' + step.label + '</div>' +
+            '</div>';
+        }).join('') +
+        '</div>';
+    }
+
+    function renderOrderCards(data) {
+      var list = document.getElementById('ordersList');
+      var empty = document.getElementById('ordersEmpty');
+      var statusEl = document.getElementById('ordersStatus');
+      if (!data || !data.length) {
+        list.innerHTML = '';
+        empty.style.display = 'block';
+        statusEl.textContent = '';
+        return;
+      }
+      empty.style.display = 'none';
+      statusEl.textContent = 'Hiển thị ' + data.length + ' / ' + __allOrdersData.length + ' đơn hàng';
+      list.innerHTML = data.map(function (o) {
+        var date = o.created_at ? new Date(o.created_at).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '—';
+        var badgeClass = o.status || 'pending';
+        return '<div class="order-card">' +
+          '<div class="order-card-header">' +
+          '<span class="order-card-id">Đơn #' + o.id + '</span>' +
+          '<span class="order-card-date">' + date + '</span>' +
+          '<span class="order-status-badge ' + badgeClass + '">' + (ORDER_STATUS_LABELS[o.status] || o.status) + '</span>' +
+          '</div>' +
+          '<div class="order-card-body">' +
+          '<div class="order-card-info">📍 <span>Địa chỉ:</span> ' + (o.address || '—') + '</div>' +
+          '<div style="display:flex;align-items:center;gap:10px;flex-shrink:0">' +
+          '<span class="order-card-total">' + fmtMoney(o.total) + '</span>' +
+          '<button class="order-detail-btn" onclick="viewOrderDetail(' + o.id + ')">Chi tiết →</button>' +
+          '</div>' +
+          '</div>' +
+          renderOrderTimeline(o.status) +
+          '</div>';
+      }).join('');
+    }
+
+    function filterOrders(status) {
+      __ordersFilter = status;
+      document.querySelectorAll('.order-filter-btn').forEach(function (btn) {
+        btn.classList.toggle('active', btn.getAttribute('onclick') === "filterOrders('" + status + "')");
+      });
+      var data = __ordersFilter ? __allOrdersData.filter(function (o) { return o.status === __ordersFilter; }) : __allOrdersData;
+      renderOrderCards(data);
+    }
+
+    async function loadMyOrders() {
+      var list = document.getElementById('ordersList');
+      var statusEl = document.getElementById('ordersStatus');
+      list.innerHTML = '<div class="my-reports-skeleton"></div><div class="my-reports-skeleton"></div>';
+      statusEl.textContent = 'Đang tải...';
+      try {
+        var res = await fetch('/api/orders/my', { credentials: 'include' });
+        if (res.status === 401) {
+          statusEl.textContent = 'Vui lòng đăng nhập để xem đơn hàng.';
+          list.innerHTML = '';
+          return;
+        }
+        var orders = await res.json();
+        __allOrdersData = Array.isArray(orders) ? orders : [];
+
+        document.getElementById('ord-sum-total').textContent = __allOrdersData.length;
+        document.getElementById('ord-sum-active').textContent = __allOrdersData.filter(function (o) { return o.status === 'processing' || o.status === 'shipping' || o.status === 'pending'; }).length;
+        document.getElementById('ord-sum-done').textContent = __allOrdersData.filter(function (o) { return o.status === 'completed'; }).length;
+        document.getElementById('ord-sum-cancel').textContent = __allOrdersData.filter(function (o) { return o.status === 'cancelled'; }).length;
+
+        __ordersFilter = '';
+        document.querySelectorAll('.order-filter-btn').forEach(function (btn, i) { btn.classList.toggle('active', i === 0); });
+        renderOrderCards(__allOrdersData);
+      } catch (e) {
+        list.innerHTML = '';
+        statusEl.textContent = 'Không thể tải đơn hàng.';
+        statusEl.style.color = '#b91c1c';
+      }
+    }
+
+    async function viewOrderDetail(id) {
+      var overlay = document.getElementById('orderDetailOverlay');
+      var body = document.getElementById('orderDetailBody');
+      var title = document.getElementById('orderDetailTitle');
+      title.textContent = 'Đơn hàng #' + id;
+      body.innerHTML = '<div style="text-align:center;padding:32px;color:#64748b">Đang tải...</div>';
+      overlay.classList.add('open');
+      try {
+        var res = await fetch('/api/orders/my/' + id + '/detail', { credentials: 'include' });
+        var order = await res.json();
+        if (!res.ok) { body.innerHTML = '<div style="color:#b91c1c;padding:16px">' + (order.message || 'Lỗi tải chi tiết') + '</div>'; return; }
+
+        var date = order.created_at ? new Date(order.created_at).toLocaleString('vi-VN') : '—';
+        var itemsHtml = (order.items || []).map(function (item) {
+          return '<div class="order-modal-item">' +
+            (item.product_image ? '<img src="' + item.product_image + '" onerror="this.style.display=\'none\'">' : '<div style="width:44px;height:44px;background:#f3f4f6;border-radius:8px;display:flex;align-items:center;justify-content:center">🐾</div>') +
+            '<div style="flex:1">' +
+            '<div class="order-modal-item-name">' + (item.product_name || 'Sản phẩm #' + item.product_id) + '</div>' +
+            '<div class="order-modal-item-meta">SL: ' + item.quantity + ' × ' + fmtMoney(item.price) + '</div>' +
+            '</div>' +
+            '<div class="order-modal-item-price">' + fmtMoney(item.quantity * item.price) + '</div>' +
+            '</div>';
+        }).join('');
+
+        body.innerHTML =
+          '<div class="order-modal-row"><span class="order-modal-label">Trạng thái</span><span class="order-modal-val"><span class="order-status-badge ' + order.status + '">' + (ORDER_STATUS_LABELS[order.status] || order.status) + '</span></span></div>' +
+          '<div class="order-modal-row"><span class="order-modal-label">Ngày đặt</span><span class="order-modal-val">' + date + '</span></div>' +
+          '<div class="order-modal-row"><span class="order-modal-label">Tên người nhận</span><span class="order-modal-val">' + (order.name || '—') + '</span></div>' +
+          '<div class="order-modal-row"><span class="order-modal-label">Số điện thoại</span><span class="order-modal-val">' + (order.phone || '—') + '</span></div>' +
+          '<div class="order-modal-row"><span class="order-modal-label">Địa chỉ</span><span class="order-modal-val">' + (order.address || '—') + '</span></div>' +
+          renderOrderTimeline(order.status) +
+          '<div class="order-modal-items-title">Sản phẩm đã đặt</div>' +
+          itemsHtml +
+          '<div class="order-modal-row" style="margin-top:8px"><span class="order-modal-label" style="font-weight:700">Tổng tiền</span><span class="order-modal-val" style="color:#1f5133;font-size:1.1rem">' + fmtMoney(order.total) + '</span></div>';
+      } catch (e) {
+        body.innerHTML = '<div style="color:#b91c1c;padding:16px">Không thể tải chi tiết đơn hàng.</div>';
+      }
+    }
+
+    // Đóng modal khi click overlay
+    document.getElementById('orderDetailOverlay').addEventListener('click', function (e) {
+      if (e.target === this) this.classList.remove('open');
+    });
+  </script>
+  <div id="google_translate_element" style="display:none"></div>
+  <script>
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({ pageLanguage: 'vi', includedLanguages: 'vi,en,zh-TW,ja', autoDisplay: false }, 'google_translate_element');
+    }
+    function setLang(lang, label) {
+      document.getElementById('langBtnLabel').textContent = label;
+      document.querySelectorAll('.lang-option').forEach(function (el) {
+        el.classList.toggle('active', el.dataset.lang === (lang === 'vi' ? 'vi' : lang.replace('/', '')));
+      });
+      document.getElementById('langDropdown').classList.remove('open');
+      if (lang === 'vi') {
+        document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=' + location.hostname;
+        location.reload(); return;
+      }
+      var val = '/vi' + lang;
+      document.cookie = 'googtrans=' + val + '; path=/';
+      document.cookie = 'googtrans=' + val + '; path=/; domain=' + location.hostname;
+      location.reload();
+    }
+    function toggleLangDropdown(e) {
+      e.stopPropagation();
+      document.getElementById('langDropdown').classList.toggle('open');
+    }
+    document.addEventListener('click', function () {
+      var dd = document.getElementById('langDropdown');
+      if (dd) dd.classList.remove('open');
+    });
+    (function () {
+      var m = document.cookie.match(/googtrans=\/vi\/([^;]+)/);
+      if (!m) return;
+      var map = { 'en': 'EN', 'zh-TW': '中文', 'ja': '日本語' };
+      if (map[m[1]]) {
+        document.getElementById('langBtnLabel').textContent = map[m[1]];
+        document.querySelectorAll('.lang-option').forEach(function (el) {
+          el.classList.toggle('active', el.dataset.lang === m[1]);
+        });
+      }
+    })();
+  </script>
+  <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script>
+    /* ── User Background Apply ── */
+    (function () {
+      function applyBg(val) {
+        var styleId = '__user_bg_style';
+        var el = document.getElementById(styleId);
+        if (!el) {
+          el = document.createElement('style');
+          el.id = styleId;
+          document.head.appendChild(el);
+        }
+        if (!val) { el.textContent = ''; return; }
+        var bgRule = val.startsWith('/uploads/')
+          ? 'background-image:url("' + val + '")!important;background-size:cover!important;background-attachment:fixed!important;background-repeat:no-repeat!important;background-position:center!important;background-color:transparent!important;'
+          : 'background-color:' + val + '!important;background-image:none!important;';
+        el.textContent = [
+          'body{' + bgRule + '}',
+          'main,#main,.main,.profile-page,.page-wrapper,.page-body,.content-wrapper,.container-fluid,.app-content,.site-content,.page-content,.adopt-page,.admin-page,.reports-page,.favorites-page{background:transparent!important;}'
+        ].join('');
+      }
+
+      window.applyUserBackground = applyBg;
+
+      var _orig = window.applyHeaderUserState;
+      window.applyHeaderUserState = function (user) {
+        if (_orig) _orig(user);
+        if (user && user.bg_preference) applyBg(user.bg_preference);
+      };
+
+      window.addEventListener('load', function () {
+        fetch('/api/v1/auth/me', { credentials: 'include' })
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (data) {
+            if (data && data.success && data.data && data.data.user && data.data.user.bg_preference) {
+              applyBg(data.data.user.bg_preference);
+            }
+          }).catch(function () { });
+      });
+    })();
   </script>
 </body>
 

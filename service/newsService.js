@@ -6,11 +6,16 @@ function createError(status, message) {
   return error;
 }
 
-const VALID_CATEGORIES = ["community", "health", "adoption", "knowledge", "rescue"];
-const VALID_STATUSES   = ["pending", "approved", "rejected"];
+const VALID_CATEGORIES = [
+  "community",
+  "health",
+  "adoption",
+  "knowledge",
+  "rescue",
+];
+const VALID_STATUSES = ["pending", "approved", "rejected"];
 
 const newsService = {
-
   // ===== PUBLIC =====
 
   async getPublicNews({ category, page = 1, limit = 12 }) {
@@ -28,7 +33,7 @@ const newsService = {
 
     const [[{ total }]] = await pool.execute(
       `SELECT COUNT(*) AS total FROM news n WHERE ${where}`,
-      params
+      params,
     );
 
     const [rows] = await pool.query(
@@ -37,6 +42,7 @@ const newsService = {
         n.created_at, n.updated_at,
         u.display_name AS author_name, u.name AS author_full_name,
         u.email AS author_email, u.role AS author_role,
+        u.avatar AS author_avatar,
         (SELECT COUNT(*) FROM news_likes nl WHERE nl.news_id = n.id) AS like_count,
         (SELECT COUNT(*) FROM news_comments nc WHERE nc.news_id = n.id) AS comment_count,
         (SELECT COUNT(*) FROM news_follows nf WHERE nf.news_id = n.id) AS follow_count
@@ -45,7 +51,7 @@ const newsService = {
        WHERE ${where}
        ORDER BY n.created_at DESC
        LIMIT ? OFFSET ?`,
-      [...params, limitNum, offset]
+      [...params, limitNum, offset],
     );
 
     return {
@@ -61,35 +67,38 @@ const newsService = {
       `SELECT
         n.*,
         u.display_name AS author_name, u.name AS author_full_name,
-        u.email AS author_email, u.role AS author_role,
+        u.email AS author_email, u.role AS author_role,u.avatar AS author_avatar,
         (SELECT COUNT(*) FROM news_likes nl WHERE nl.news_id = n.id) AS like_count,
         (SELECT COUNT(*) FROM news_comments nc WHERE nc.news_id = n.id) AS comment_count,
         (SELECT COUNT(*) FROM news_follows nf WHERE nf.news_id = n.id) AS follow_count
        FROM news n
        LEFT JOIN users u ON u.id = n.author_id
        WHERE n.id = ? AND n.status = 'approved'`,
-      [newsId]
+      [newsId],
     );
 
     if (!news) throw createError(404, "Không tìm thấy bài tin");
 
     // Tăng view count
-    await pool.execute("UPDATE news SET view_count = view_count + 1 WHERE id = ?", [newsId]);
+    await pool.execute(
+      "UPDATE news SET view_count = view_count + 1 WHERE id = ?",
+      [newsId],
+    );
 
     // Check user đã like/follow chưa
     if (userId) {
       const [[likeRow]] = await pool.execute(
         "SELECT id FROM news_likes WHERE news_id = ? AND user_id = ?",
-        [newsId, userId]
+        [newsId, userId],
       );
       const [[followRow]] = await pool.execute(
         "SELECT id FROM news_follows WHERE news_id = ? AND user_id = ?",
-        [newsId, userId]
+        [newsId, userId],
       );
-      news.is_liked   = !!likeRow;
+      news.is_liked = !!likeRow;
       news.is_followed = !!followRow;
     } else {
-      news.is_liked   = false;
+      news.is_liked = false;
       news.is_followed = false;
     }
 
@@ -101,13 +110,14 @@ const newsService = {
       `SELECT n.id, n.title, n.image, n.category, n.created_at,
               u.display_name AS author_name, u.name AS author_full_name,
               u.email AS author_email, u.role AS author_role,
+              u.avatar AS author_avatar,
               (SELECT COUNT(*) FROM news_likes nl WHERE nl.news_id = n.id) AS like_count
        FROM news n
        LEFT JOIN users u ON u.id = n.author_id
        WHERE n.status = 'approved'
        ORDER BY RAND()
        LIMIT ?`,
-      [Number(limit)]
+      [Number(limit)],
     );
     return rows;
   },
@@ -120,57 +130,79 @@ const newsService = {
         nc.id, nc.news_id, nc.user_id, nc.parent_id, nc.content,
         nc.created_at, nc.updated_at,
         u.display_name AS author_name,
+        u.avatar AS author_avatar,
         (SELECT COUNT(*) FROM news_comment_likes ncl WHERE ncl.comment_id = nc.id) AS like_count
        FROM news_comments nc
        INNER JOIN users u ON u.id = nc.user_id
        WHERE nc.news_id = ?
        ORDER BY nc.created_at ASC`,
-      [newsId]
+      [newsId],
     );
 
     // Nếu đã đăng nhập, check từng comment đã like chưa
     if (userId && rows.length > 0) {
-      const commentIds = rows.map(r => r.id);
+      const commentIds = rows.map((r) => r.id);
       const [likedRows] = await pool.query(
         `SELECT comment_id FROM news_comment_likes WHERE comment_id IN (?) AND user_id = ?`,
-        [commentIds, userId]
+        [commentIds, userId],
       );
-      const likedSet = new Set(likedRows.map(r => r.comment_id));
-      rows.forEach(r => { r.is_liked = likedSet.has(r.id); });
+      const likedSet = new Set(likedRows.map((r) => r.comment_id));
+      rows.forEach((r) => {
+        r.is_liked = likedSet.has(r.id);
+      });
     } else {
-      rows.forEach(r => { r.is_liked = false; });
+      rows.forEach((r) => {
+        r.is_liked = false;
+      });
     }
 
-    // Tổ chức thành tree: comments gốc + replies
-    const comments = rows.filter(r => !r.parent_id);
-    const repliesMap = {};
-    rows.filter(r => r.parent_id).forEach(r => {
-      if (!repliesMap[r.parent_id]) repliesMap[r.parent_id] = [];
-      repliesMap[r.parent_id].push(r);
-    });
-    comments.forEach(c => { c.replies = repliesMap[c.id] || []; });
+    // Build cây đúng:
+    // Cấp 1: comment gốc (parent_id = null)
+    // Cấp 2: reply trực tiếp vào comment gốc → gắn vào replies của cấp 1
+    // Cấp 3: reply vào cấp 2 → gắn vào replies của cấp 2 đó
+    // Cấp 4+: reply vào cấp 3+ → gắn vào replies của cha trực tiếp (frontend sẽ giới hạn hiển thị)
 
-    return comments;
+    const rowMap = {};
+    rows.forEach((r) => {
+      r.replies = [];
+      rowMap[r.id] = r;
+    });
+
+    const rootComments = [];
+    rows.forEach((r) => {
+      if (!r.parent_id) {
+        // Cấp 1 — comment gốc
+        rootComments.push(r);
+      } else {
+        const parent = rowMap[r.parent_id];
+        if (parent) {
+          // Gắn vào replies của cha trực tiếp — giữ đúng cây
+          parent.replies.push(r);
+        }
+        // Nếu không tìm thấy cha (bị xóa chẳng hạn) → bỏ qua
+      }
+    });
+    return rootComments;
   },
 
   async addComment({ newsId, userId, parentId, content }) {
     const [[news]] = await pool.execute(
       "SELECT id FROM news WHERE id = ? AND status = 'approved'",
-      [newsId]
+      [newsId],
     );
     if (!news) throw createError(404, "Không tìm thấy bài tin");
 
     if (parentId) {
       const [[parent]] = await pool.execute(
         "SELECT id FROM news_comments WHERE id = ? AND news_id = ?",
-        [parentId, newsId]
+        [parentId, newsId],
       );
       if (!parent) throw createError(404, "Bình luận gốc không tồn tại");
     }
 
     const [result] = await pool.execute(
       "INSERT INTO news_comments (news_id, user_id, parent_id, content) VALUES (?, ?, ?, ?)",
-      [newsId, userId, parentId || null, content]
+      [newsId, userId, parentId || null, content],
     );
     return { id: result.insertId };
   },
@@ -180,7 +212,7 @@ const newsService = {
   async toggleNewsLike({ newsId, userId }) {
     const [[existing]] = await pool.execute(
       "SELECT id FROM news_likes WHERE news_id = ? AND user_id = ?",
-      [newsId, userId]
+      [newsId, userId],
     );
 
     if (existing) {
@@ -189,7 +221,7 @@ const newsService = {
     } else {
       await pool.execute(
         "INSERT INTO news_likes (news_id, user_id) VALUES (?, ?)",
-        [newsId, userId]
+        [newsId, userId],
       );
       return { liked: true };
     }
@@ -198,16 +230,18 @@ const newsService = {
   async toggleCommentLike({ commentId, userId }) {
     const [[existing]] = await pool.execute(
       "SELECT id FROM news_comment_likes WHERE comment_id = ? AND user_id = ?",
-      [commentId, userId]
+      [commentId, userId],
     );
 
     if (existing) {
-      await pool.execute("DELETE FROM news_comment_likes WHERE id = ?", [existing.id]);
+      await pool.execute("DELETE FROM news_comment_likes WHERE id = ?", [
+        existing.id,
+      ]);
       return { liked: false };
     } else {
       await pool.execute(
         "INSERT INTO news_comment_likes (comment_id, user_id) VALUES (?, ?)",
-        [commentId, userId]
+        [commentId, userId],
       );
       return { liked: true };
     }
@@ -218,16 +252,18 @@ const newsService = {
   async toggleFollow({ newsId, userId }) {
     const [[existing]] = await pool.execute(
       "SELECT id FROM news_follows WHERE news_id = ? AND user_id = ?",
-      [newsId, userId]
+      [newsId, userId],
     );
 
     if (existing) {
-      await pool.execute("DELETE FROM news_follows WHERE id = ?", [existing.id]);
+      await pool.execute("DELETE FROM news_follows WHERE id = ?", [
+        existing.id,
+      ]);
       return { followed: false };
     } else {
       await pool.execute(
         "INSERT INTO news_follows (news_id, user_id) VALUES (?, ?)",
-        [newsId, userId]
+        [newsId, userId],
       );
       return { followed: true };
     }
@@ -237,13 +273,14 @@ const newsService = {
     const offset = (page - 1) * limit;
     const [[{ total }]] = await pool.execute(
       "SELECT COUNT(*) AS total FROM news_follows WHERE user_id = ?",
-      [userId]
+      [userId],
     );
 
     const [rows] = await pool.query(
       `SELECT n.id, n.title, n.image, n.category, n.created_at,
               u.display_name AS author_name, u.name AS author_full_name,
               u.email AS author_email, u.role AS author_role,
+              u.avatar AS author_avatar,
               (SELECT COUNT(*) FROM news_likes nl WHERE nl.news_id = n.id) AS like_count
        FROM news_follows nf
        INNER JOIN news n ON n.id = nf.news_id AND n.status = 'approved'
@@ -251,7 +288,7 @@ const newsService = {
        WHERE nf.user_id = ?
        ORDER BY nf.created_at DESC
        LIMIT ? OFFSET ?`,
-      [userId, limit, offset]
+      [userId, limit, offset],
     );
 
     return { news: rows, total, page, totalPages: Math.ceil(total / limit) };
@@ -267,7 +304,7 @@ const newsService = {
     const [result] = await pool.execute(
       `INSERT INTO news (author_id, title, content, image, category, status)
        VALUES (?, ?, ?, ?, ?, 'pending')`,
-      [authorId, title, content, image || null, category]
+      [authorId, title, content, image || null, category],
     );
 
     return { id: result.insertId, status: "pending" };
@@ -277,7 +314,7 @@ const newsService = {
     const offset = (page - 1) * limit;
     const [[{ total }]] = await pool.execute(
       "SELECT COUNT(*) AS total FROM news WHERE author_id = ?",
-      [userId]
+      [userId],
     );
 
     const [rows] = await pool.query(
@@ -286,7 +323,7 @@ const newsService = {
        FROM news WHERE author_id = ?
        ORDER BY created_at DESC
        LIMIT ? OFFSET ?`,
-      [userId, limit, offset]
+      [userId, limit, offset],
     );
 
     return { news: rows, total, page, totalPages: Math.ceil(total / limit) };
@@ -308,20 +345,21 @@ const newsService = {
 
     const [[{ total }]] = await pool.execute(
       `SELECT COUNT(*) AS total FROM news n ${where}`,
-      params
+      params,
     );
 
     const [rows] = await pool.query(
       `SELECT n.id, n.title, n.image, n.category, n.status,
               n.rejected_reason, n.view_count, n.created_at, n.updated_at,
               u.display_name AS author_name, u.name AS author_full_name,
-              u.email AS author_email, u.role AS author_role
+              u.email AS author_email, u.role AS author_role,
+              u.avatar AS author_avatar
        FROM news n
        LEFT JOIN users u ON u.id = n.author_id
        ${where}
        ORDER BY n.created_at DESC
        LIMIT ? OFFSET ?`,
-      [...params, Number(limit), offset]
+      [...params, Number(limit), offset],
     );
 
     return { news: rows, total, page, totalPages: Math.ceil(total / limit) };
@@ -332,22 +370,23 @@ const newsService = {
       throw createError(400, "Trạng thái không hợp lệ");
     }
 
-    const [[news]] = await pool.execute(
-      "SELECT id FROM news WHERE id = ?",
-      [newsId]
-    );
+    const [[news]] = await pool.execute("SELECT id FROM news WHERE id = ?", [
+      newsId,
+    ]);
     if (!news) throw createError(404, "Không tìm thấy bài tin");
 
     await pool.execute(
       "UPDATE news SET status = ?, rejected_reason = ?, updated_at = NOW() WHERE id = ?",
-      [status, status === "rejected" ? (rejectedReason || null) : null, newsId]
+      [status, status === "rejected" ? rejectedReason || null : null, newsId],
     );
 
     return { id: newsId, status };
   },
 
   async deleteNews(newsId) {
-    const [[news]] = await pool.execute("SELECT id FROM news WHERE id = ?", [newsId]);
+    const [[news]] = await pool.execute("SELECT id FROM news WHERE id = ?", [
+      newsId,
+    ]);
     if (!news) throw createError(404, "Không tìm thấy bài tin");
     await pool.execute("DELETE FROM news WHERE id = ?", [newsId]);
     return { id: newsId };

@@ -14,6 +14,141 @@
   </style>
   <link rel="stylesheet" href="/stylesheets/style.css">
   <link rel="stylesheet" href="/stylesheets/staticHeader.css">
+  <style>
+    /* Fix header layout khi có avatar */
+    #headerDisplayNameText {
+      display: inline-flex;
+      align-items: center;
+      vertical-align: middle;
+    }
+
+    #headerDisplayNameText img {
+      width: 28px !important;
+      height: 28px !important;
+      border-radius: 50% !important;
+      object-fit: cover !important;
+      vertical-align: middle !important;
+      flex-shrink: 0;
+    }
+
+    .top-bar {
+      align-items: center;
+    }
+
+    .user-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .auth-user-actions {
+      display: flex;
+      align-items: center;
+    }
+
+    .user-dropdown {
+      display: flex;
+      align-items: center;
+    }
+
+    #userDropdownBtn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
+  </style>
+  <style id="gtranslate-css">
+    .lang-switcher {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .lang-switcher-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: 8px;
+      padding: 5px 10px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.18s;
+      white-space: nowrap;
+    }
+
+    .lang-switcher-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    .lang-switcher-btn svg {
+      width: 14px;
+      height: 14px;
+      opacity: .8;
+    }
+
+    .lang-switcher-dropdown {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      min-width: 140px;
+      z-index: 9999;
+      overflow: hidden;
+    }
+
+    .lang-switcher-dropdown.open {
+      display: block;
+    }
+
+    .lang-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: #374151;
+      cursor: pointer;
+      transition: background 0.15s;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      font-family: inherit;
+    }
+
+    .lang-option:hover {
+      background: #f1f5f9;
+    }
+
+    .lang-option.active {
+      background: #f0fdf4;
+      color: #166534;
+      font-weight: 600;
+    }
+
+    .lang-option .flag {
+      font-size: 16px;
+    }
+
+    .goog-te-banner-frame,
+    .skiptranslate {
+      display: none !important;
+    }
+
+    body {
+      top: 0 !important;
+    }
+  </style>
 </head>
 
 <body>
@@ -31,23 +166,7 @@
             <span id="userDropdownBtn" style="cursor: pointer;">
               <span id="headerDisplayNameText">Tài khoản</span> ▼
             </span>
-            <div class="user-dropdown-menu" id="userDropdownMenu">
-              <div class="dropdown-header">
-                <strong id="headerDropdownDisplayName">Tài khoản</strong>
-                <span class="user-role" id="headerUserRole">👤 User</span>
-              </div>
-              <div class="dropdown-divider"></div>
-              <a href="/profile" class="dropdown-item">👤 Tài khoản</a>
-              <a href="/my-favorites" class="dropdown-item">❤️ Thú cưng đã yêu thích</a>
-              <a href="/my-reports" class="dropdown-item">📋 Báo cáo của tôi</a>
-              <a href="/adopt/admin/add" class="dropdown-item role-staff-only is-auth-hidden">🐾 Thêm thú cưng</a>
-              <a href="/admin/reports" class="dropdown-item role-staff-only is-auth-hidden">📋 Duyệt báo cáo</a>
-              <a href="/admin/adoption-requests" class="dropdown-item role-staff-only is-auth-hidden">🏠 Xét duyệt nhận
-                nuôi</a>
-              <a href="/admin" class="dropdown-item role-admin-only is-auth-hidden">⚙️ Quản trị</a>
-              <div class="dropdown-divider"></div>
-              <a href="#" class="dropdown-item logout" id="logoutBtn" onclick="handleLogout(event)">🚪 Đăng xuất</a>
-            </div>
+            <div class="user-dropdown-menu" id="userDropdownMenu"></div>
           </div>
         </div>
         <div class="auth-guest-actions is-auth-visible" id="headerAuthGuestState">
@@ -58,7 +177,29 @@
             onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('register'); } return false;"><span>Đăng
               ký</span></a>
         </div>
-        <span class="lang-switch">VN / EN</span>
+        <span onclick="toggleCart()" style="cursor:pointer;">Giỏ hàng <span id="cart-count-display">(0)</span></span>
+        <div class="lang-switcher" id="langSwitcher">
+          <button class="lang-switcher-btn" onclick="toggleLangDropdown(event)" id="langBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20" />
+            </svg>
+            <span id="langBtnLabel">VI</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:10px">
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </button>
+          <div class="lang-switcher-dropdown" id="langDropdown">
+            <button class="lang-option active" onclick="setLang('vi','VI')" data-lang="vi"><span
+                class="flag">🇻🇳</span> Tiếng Việt</button>
+            <button class="lang-option" onclick="setLang('/en','EN')" data-lang="en"><span class="flag">🇺🇸</span>
+              English</button>
+            <button class="lang-option" onclick="setLang('/zh-TW','中文')" data-lang="zh-TW"><span
+                class="flag">🇹🇼</span> 中文</button>
+            <button class="lang-option" onclick="setLang('/ja','日本語')" data-lang="ja"><span class="flag">🇯🇵</span>
+              日本語</button>
+          </div>
+        </div>
       </div>
       <button class="hamburger-btn" id="hamburgerBtn" aria-label="Mở menu">
         <span class="hamburger-line"></span>
@@ -82,8 +223,9 @@
           <ul class="nav-dropdown">
             <li><a href="/lost">Báo mất thú cưng</a></li>
             <li><a href="/found">Báo tin nhặt được</a></li>
-            <li><a href="/tips">Mẹo chăm sóc thú cưng</a></li>
             <li><a href="/reports/list">Xem báo cáo thất lạc</a></li>
+            <li><a href="/tips">Mẹo tìm kiếm hiệu quả</a></li>
+
           </ul>
         </li>
         <li>
@@ -206,6 +348,48 @@
   <script src="/javascripts/authOverlayLoader.js" defer></script>
   <script src="/javascripts/staticHeader.js"></script>
   <script src="/javascripts/staticFooter.js"></script>
+  <div id="google_translate_element" style="display:none"></div>
+  <script>
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({ pageLanguage: 'vi', includedLanguages: 'vi,en,zh-TW,ja', autoDisplay: false }, 'google_translate_element');
+    }
+    function setLang(lang, label) {
+      document.getElementById('langBtnLabel').textContent = label;
+      document.querySelectorAll('.lang-option').forEach(function (el) {
+        el.classList.toggle('active', el.dataset.lang === (lang === 'vi' ? 'vi' : lang.replace('/', '')));
+      });
+      document.getElementById('langDropdown').classList.remove('open');
+      if (lang === 'vi') {
+        document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=' + location.hostname;
+        location.reload(); return;
+      }
+      var val = '/vi' + lang;
+      document.cookie = 'googtrans=' + val + '; path=/';
+      document.cookie = 'googtrans=' + val + '; path=/; domain=' + location.hostname;
+      location.reload();
+    }
+    function toggleLangDropdown(e) {
+      e.stopPropagation();
+      document.getElementById('langDropdown').classList.toggle('open');
+    }
+    document.addEventListener('click', function () {
+      var dd = document.getElementById('langDropdown');
+      if (dd) dd.classList.remove('open');
+    });
+    (function () {
+      var m = document.cookie.match(/googtrans=\/vi\/([^;]+)/);
+      if (!m) return;
+      var map = { 'en': 'EN', 'zh-TW': '中文', 'ja': '日本語' };
+      if (map[m[1]]) {
+        document.getElementById('langBtnLabel').textContent = map[m[1]];
+        document.querySelectorAll('.lang-option').forEach(function (el) {
+          el.classList.toggle('active', el.dataset.lang === m[1]);
+        });
+      }
+    })();
+  </script>
+  <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 
 </html>

@@ -525,7 +525,7 @@
         <div class="top-bar">
             <a href="/" class="logo-group">
                 <div class="logo-circle">
-                    <img src="/images/the_logo.webp" alt="logo" id="the_logo">
+                    <img src="/images/logo.svg" alt="logo" id="the_logo">
                 </div>
                 <div class="web-name">PET HELPER</div>
             </a>
@@ -561,7 +561,8 @@
                         onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('register'); } return false;"><span>Đăng
                             ký</span></a>
                 </div>
-                <span>Giỏ hàng <span id="cart-count-display">(0)</span></span>
+                <span onclick="toggleCart()" style="cursor:pointer;">Giỏ hàng <span
+                        id="cart-count-display">(0)</span></span>
                 <span class="lang-switch">VN / EN</span>
             </div>
             <button class="hamburger-btn" id="hamburgerBtn" aria-label="Mở menu">
@@ -1453,7 +1454,46 @@
             window.loadAdoptionRequests();
         })();
     </script>
+    <script>
+        /* ── User Background Apply ── */
+        (function () {
+            function applyBg(val) {
+                var styleId = '__user_bg_style';
+                var el = document.getElementById(styleId);
+                if (!el) {
+                    el = document.createElement('style');
+                    el.id = styleId;
+                    document.head.appendChild(el);
+                }
+                if (!val) { el.textContent = ''; return; }
+                var bgRule = val.startsWith('/uploads/')
+                    ? 'background-image:url("' + val + '")!important;background-size:cover!important;background-attachment:fixed!important;background-repeat:no-repeat!important;background-position:center!important;background-color:transparent!important;'
+                    : 'background-color:' + val + '!important;background-image:none!important;';
+                el.textContent = [
+                    'body{' + bgRule + '}',
+                    'main,#main,.main,.profile-page,.page-wrapper,.page-body,.content-wrapper,.container-fluid,.app-content,.site-content,.page-content,.adopt-page,.admin-page,.reports-page,.favorites-page{background:transparent!important;}'
+                ].join('');
+            }
 
+            window.applyUserBackground = applyBg;
+
+            var _orig = window.applyHeaderUserState;
+            window.applyHeaderUserState = function (user) {
+                if (_orig) _orig(user);
+                if (user && user.bg_preference) applyBg(user.bg_preference);
+            };
+
+            window.addEventListener('load', function () {
+                fetch('/api/v1/auth/me', { credentials: 'include' })
+                    .then(function (r) { return r.ok ? r.json() : null; })
+                    .then(function (data) {
+                        if (data && data.success && data.data && data.data.user && data.data.user.bg_preference) {
+                            applyBg(data.data.user.bg_preference);
+                        }
+                    }).catch(function () { });
+            });
+        })();
+    </script>
 </body>
 
 </html>

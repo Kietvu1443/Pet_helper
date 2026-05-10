@@ -32,20 +32,24 @@
         <form id="overlayLoginForm" class="auth-overlay__form auth-overlay__fade-in">
             <div class="auth-overlay__field">
                 <label for="overlayLoginDisplayName">Tên đăng nhập</label>
-                <input type="text" id="overlayLoginDisplayName" name="display_name" placeholder="Nhập tên đăng nhập" required autocomplete="username">
+                <input type="text" id="overlayLoginDisplayName" name="display_name" placeholder="Nhập tên đăng nhập"
+                    required autocomplete="username">
             </div>
             <div class="auth-overlay__field">
                 <label for="overlayLoginPassword">Mật khẩu</label>
                 <div class="auth-overlay__password-wrap">
-                    <input type="password" id="overlayLoginPassword" name="password" placeholder="••••••••" required autocomplete="current-password">
-                    <span class="auth-overlay__toggle-pass" onclick="overlayTogglePassword('overlayLoginPassword', this)">👁️</span>
+                    <input type="password" id="overlayLoginPassword" name="password" placeholder="••••••••" required
+                        autocomplete="current-password">
+                    <span class="auth-overlay__toggle-pass"
+                        onclick="overlayTogglePassword('overlayLoginPassword', this)">👁️</span>
                 </div>
             </div>
             <div class="auth-overlay__options">
                 <label class="auth-overlay__checkbox">
                     <input type="checkbox" name="remember"> Ghi nhớ đăng nhập
                 </label>
-                <a href="#" class="auth-overlay__forgot" id="overlayForgotLink" onclick="overlayShowForgotPassword(); return false;">Quên mật khẩu?</a>
+                <a href="#" class="auth-overlay__forgot" id="overlayForgotLink"
+                    onclick="overlayShowForgotPassword(); return false;">Quên mật khẩu?</a>
             </div>
             <button type="submit" class="auth-overlay__btn">ĐĂNG NHẬP</button>
         </form>
@@ -55,7 +59,8 @@
             <div class="auth-overlay__row">
                 <div class="auth-overlay__field">
                     <label for="overlayDisplayName">Tên hiển thị</label>
-                    <input type="text" id="overlayDisplayName" name="display_name" placeholder="Ví dụ: Nguyễn Văn A" required>
+                    <input type="text" id="overlayDisplayName" name="display_name" placeholder="Ví dụ: Nguyễn Văn A"
+                        required>
                 </div>
                 <div class="auth-overlay__field">
                     <label for="overlayFullName">Họ và tên</label>
@@ -70,15 +75,19 @@
                 <div class="auth-overlay__field">
                     <label for="overlayRegisterPassword">Mật khẩu</label>
                     <div class="auth-overlay__password-wrap">
-                        <input type="password" id="overlayRegisterPassword" name="password" placeholder="Ít nhất 8 ký tự" required minlength="8">
-                        <span class="auth-overlay__toggle-pass" onclick="overlayTogglePassword('overlayRegisterPassword', this)">👁️</span>
+                        <input type="password" id="overlayRegisterPassword" name="password"
+                            placeholder="Ít nhất 8 ký tự" required minlength="8">
+                        <span class="auth-overlay__toggle-pass"
+                            onclick="overlayTogglePassword('overlayRegisterPassword', this)">👁️</span>
                     </div>
                 </div>
                 <div class="auth-overlay__field">
                     <label for="overlayConfirmPassword">Xác nhận MK</label>
                     <div class="auth-overlay__password-wrap">
-                        <input type="password" id="overlayConfirmPassword" name="confirmPassword" placeholder="Nhập lại mật khẩu" required>
-                        <span class="auth-overlay__toggle-pass" onclick="overlayTogglePassword('overlayConfirmPassword', this)">👁️</span>
+                        <input type="password" id="overlayConfirmPassword" name="confirmPassword"
+                            placeholder="Nhập lại mật khẩu" required>
+                        <span class="auth-overlay__toggle-pass"
+                            onclick="overlayTogglePassword('overlayConfirmPassword', this)">👁️</span>
                     </div>
                 </div>
             </div>
@@ -92,7 +101,8 @@
             </div>
             <div class="auth-overlay__options">
                 <label class="auth-overlay__checkbox">
-                    <input type="checkbox" name="terms" required> Tôi đồng ý với <a href="#" class="auth-overlay__terms-link">điều khoản</a>
+                    <input type="checkbox" name="terms" required> Tôi đồng ý với <a href="#"
+                        class="auth-overlay__terms-link">điều khoản</a>
                 </label>
             </div>
             <button type="submit" class="auth-overlay__btn">TẠO TÀI KHOẢN</button>
@@ -102,38 +112,48 @@
         <div id="overlayForgotPasswordForm" class="auth-overlay__form auth-overlay__hidden">
             <!-- Step 1: Enter email -->
             <div id="forgotStep1">
-                <p style="font-size: 0.92rem; color: #555; margin-bottom: 16px;">Nhập email tài khoản của bạn để nhận mã OTP đặt lại mật khẩu.</p>
+                <p style="font-size: 0.92rem; color: #555; margin-bottom: 16px;">Nhập email tài khoản của bạn để nhận mã
+                    OTP đặt lại mật khẩu.</p>
                 <div class="auth-overlay__field">
                     <label for="overlayForgotEmail">Email</label>
                     <input type="email" id="overlayForgotEmail" placeholder="email@example.com" required>
                 </div>
-                <button type="button" class="auth-overlay__btn" id="forgotSendOtpBtn" onclick="forgotSendOtp()">GỬI MÃ OTP</button>
+                <button type="button" class="auth-overlay__btn" id="forgotSendOtpBtn" onclick="forgotSendOtp()">GỬI MÃ
+                    OTP</button>
             </div>
             <!-- Step 2: Enter OTP + new password -->
             <div id="forgotStep2" style="display: none;">
-                <p style="font-size: 0.92rem; color: #555; margin-bottom: 16px;">Nhập mã OTP đã gửi về email và mật khẩu mới.</p>
+                <p style="font-size: 0.92rem; color: #555; margin-bottom: 16px;">Nhập mã OTP đã gửi về email và mật khẩu
+                    mới.</p>
                 <div class="auth-overlay__field">
                     <label for="overlayForgotOtp">Mã OTP</label>
-                    <input type="text" id="overlayForgotOtp" maxlength="6" inputmode="numeric" placeholder="Nhập mã 6 chữ số" required>
+                    <input type="text" id="overlayForgotOtp" maxlength="6" inputmode="numeric"
+                        placeholder="Nhập mã 6 chữ số" required>
                 </div>
                 <div class="auth-overlay__field">
                     <label for="overlayForgotNewPassword">Mật khẩu mới</label>
                     <div class="auth-overlay__password-wrap">
-                        <input type="password" id="overlayForgotNewPassword" placeholder="Ít nhất 8 ký tự" required minlength="8">
-                        <span class="auth-overlay__toggle-pass" onclick="overlayTogglePassword('overlayForgotNewPassword', this)">👁️</span>
+                        <input type="password" id="overlayForgotNewPassword" placeholder="Ít nhất 8 ký tự" required
+                            minlength="8">
+                        <span class="auth-overlay__toggle-pass"
+                            onclick="overlayTogglePassword('overlayForgotNewPassword', this)">👁️</span>
                     </div>
                 </div>
                 <div class="auth-overlay__field">
                     <label for="overlayForgotConfirmPassword">Xác nhận mật khẩu</label>
                     <div class="auth-overlay__password-wrap">
-                        <input type="password" id="overlayForgotConfirmPassword" placeholder="Nhập lại mật khẩu" required>
-                        <span class="auth-overlay__toggle-pass" onclick="overlayTogglePassword('overlayForgotConfirmPassword', this)">👁️</span>
+                        <input type="password" id="overlayForgotConfirmPassword" placeholder="Nhập lại mật khẩu"
+                            required>
+                        <span class="auth-overlay__toggle-pass"
+                            onclick="overlayTogglePassword('overlayForgotConfirmPassword', this)">👁️</span>
                     </div>
                 </div>
-                <button type="button" class="auth-overlay__btn" id="forgotResetBtn" onclick="forgotResetPassword()">ĐẶT LẠI MẬT KHẨU</button>
+                <button type="button" class="auth-overlay__btn" id="forgotResetBtn" onclick="forgotResetPassword()">ĐẶT
+                    LẠI MẬT KHẨU</button>
             </div>
             <p style="text-align: center; margin-top: 14px; font-size: 0.85rem;">
-                <a href="#" style="color: #2d6a4f; font-weight: 600; text-decoration: none;" onclick="overlayBackToLogin(); return false;">← Quay lại đăng nhập</a>
+                <a href="#" style="color: #2d6a4f; font-weight: 600; text-decoration: none;"
+                    onclick="overlayBackToLogin(); return false;">← Quay lại đăng nhập</a>
             </p>
         </div>
 
@@ -205,9 +225,11 @@
     .auth-overlay__modal::-webkit-scrollbar {
         width: 5px;
     }
+
     .auth-overlay__modal::-webkit-scrollbar-track {
         background: transparent;
     }
+
     .auth-overlay__modal::-webkit-scrollbar-thumb {
         background: rgba(45, 106, 79, 0.25);
         border-radius: 10px;
@@ -330,11 +352,27 @@
     }
 
     @keyframes overlayShake {
-        0%, 100% { transform: translateX(0); }
-        20% { transform: translateX(-6px); }
-        40% { transform: translateX(6px); }
-        60% { transform: translateX(-4px); }
-        80% { transform: translateX(4px); }
+
+        0%,
+        100% {
+            transform: translateX(0);
+        }
+
+        20% {
+            transform: translateX(-6px);
+        }
+
+        40% {
+            transform: translateX(6px);
+        }
+
+        60% {
+            transform: translateX(-4px);
+        }
+
+        80% {
+            transform: translateX(4px);
+        }
     }
 
     /* ---------- Forms ---------- */
@@ -351,8 +389,15 @@
     }
 
     @keyframes overlayFadeIn {
-        from { opacity: 0; transform: translateY(8px); }
-        to { opacity: 1; transform: translateY(0); }
+        from {
+            opacity: 0;
+            transform: translateY(8px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
     /* ---------- Fields ---------- */
@@ -930,7 +975,7 @@
                 body: JSON.stringify({ email: email }),
             });
             var data = null;
-            try { data = await response.json(); } catch (e) {}
+            try { data = await response.json(); } catch (e) { }
             if (!response.ok) {
                 overlayShowError((data && data.error) || 'Không thể gửi mã OTP.');
                 btn.textContent = originalText;
@@ -982,7 +1027,7 @@
                 body: JSON.stringify({ email: __forgotEmail, otp: otp, newPassword: newPassword }),
             });
             var data = null;
-            try { data = await response.json(); } catch (e) {}
+            try { data = await response.json(); } catch (e) { }
             if (!response.ok) {
                 overlayShowError((data && data.error) || 'Không thể đặt lại mật khẩu.');
                 btn.textContent = originalText;

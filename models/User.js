@@ -181,7 +181,7 @@ const User = {
 
       const queryParams = [...params, String(limit), String(offset)];
       const [rows] = await pool.execute(
-        `SELECT id, display_name, name, email, role, status, banned_reason, banned_at, created_at
+        `SELECT id, display_name, name, email, role, status, avatar, banned_reason, banned_at, created_at
          FROM users ${whereClause}
          ORDER BY created_at DESC
          LIMIT ? OFFSET ?`,

@@ -70,8 +70,8 @@ const cloudStorage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
     folder: "pets",
-    allowed_formats: ["jpg", "png", "webp", "jpeg"],
-    transformation: [{ quality: "auto" }],
+    allowed_formats: ["jpg", "png", "webp", "jpeg", "heic", "heif", "gif"],
+    transformation: [{ width: 1000, crop: "limit" }],
   },
 });
 
@@ -81,8 +81,8 @@ const cloudPetStorage = new CloudinaryStorage({
     const petId = req.params.id || req.petId;
     return {
       folder: `pets/${petId}`,
-      allowed_formats: ["jpg", "png", "webp", "jpeg"],
-      transformation: [{ quality: "auto" }],
+      allowed_formats: ["jpg", "png", "webp", "jpeg", "heic", "heif", "gif"],
+      transformation: [{ width: 1000, crop: "limit" }],
     };
   },
 });
@@ -117,8 +117,8 @@ const cloudAvatarStorage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
     folder: "avatars",
-    allowed_formats: ["jpg", "png", "webp", "jpeg", "gif"],
-    transformation: [{ quality: "auto", width: 400, height: 400, crop: "limit" }],
+    allowed_formats: ["jpg", "png", "webp", "jpeg", "gif", "heic", "heif"],
+    transformation: [{ width: 400, height: 400, crop: "limit" }],
   },
 });
 
@@ -126,8 +126,8 @@ const cloudBgStorage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
     folder: "backgrounds",
-    allowed_formats: ["jpg", "png", "webp", "jpeg", "gif"],
-    transformation: [{ quality: "auto" }],
+    allowed_formats: ["jpg", "png", "webp", "jpeg", "gif", "heic", "heif"],
+    transformation: [{ width: 1920, height: 1080, crop: "limit" }],
   },
 });
 
@@ -150,12 +150,12 @@ if (isProduction) {
   avatarUpload = multer({
     storage: cloudAvatarStorage,
     fileFilter: fileFilter,
-    limits: { fileSize: 3 * 1024 * 1024 },
+    limits: { fileSize: MAX_FILE_SIZE },
   });
   bgUpload = multer({
     storage: cloudBgStorage,
     fileFilter: fileFilter,
-    limits: { fileSize: 5 * 1024 * 1024 },
+    limits: { fileSize: MAX_FILE_SIZE },
   });
 } else {
   // DEVELOPMENT: Lưu xuống ổ cứng
@@ -173,12 +173,12 @@ if (isProduction) {
   avatarUpload = multer({
     storage: localAvatarStorage,
     fileFilter: fileFilter,
-    limits: { fileSize: 3 * 1024 * 1024 },
+    limits: { fileSize: MAX_FILE_SIZE },
   });
   bgUpload = multer({
     storage: localBgStorage,
     fileFilter: fileFilter,
-    limits: { fileSize: 5 * 1024 * 1024 },
+    limits: { fileSize: MAX_FILE_SIZE },
   });
 }
 

@@ -5,13 +5,17 @@ if (window.__staticHeaderInitialized) {
 window.__staticHeaderInitialized = true;
 
 if (!window.applyUserBackground) {
+    function isImageBackgroundValue(bg) {
+        return !!bg && !/^(#|rgb\(|rgba\(|hsl\(|hsla\(|transparent$|inherit$|initial$|unset$)/i.test(bg);
+    }
+
     window.applyUserBackground = function (bg) {
         if (!bg) {
             document.body.style.backgroundColor = '';
             document.body.style.backgroundImage = '';
             return;
         }
-        if (bg.startsWith('/uploads/')) {
+        if (isImageBackgroundValue(bg)) {
             document.body.style.backgroundImage = 'url(' + bg + ')';
             document.body.style.backgroundSize = 'cover';
             document.body.style.backgroundPosition = 'center';

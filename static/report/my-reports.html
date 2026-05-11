@@ -1762,7 +1762,7 @@
           document.head.appendChild(el);
         }
         if (!val) { el.textContent = ''; return; }
-        var bgRule = val.startsWith('/uploads/')
+        var bgRule = val && !/^(#|rgb\(|rgba\(|hsl\(|hsla\(|transparent$|inherit$|initial$|unset$)/i.test(val)
           ? 'background-image:url("' + val + '")!important;background-size:cover!important;background-attachment:fixed!important;background-repeat:no-repeat!important;background-position:center!important;background-color:transparent!important;'
           : 'background-color:' + val + '!important;background-image:none!important;';
         el.textContent = [

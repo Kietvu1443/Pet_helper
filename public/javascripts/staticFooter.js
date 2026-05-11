@@ -3,6 +3,10 @@ function fallbackPetImage(img, id) {
   img.src = "/images/the_logo.webp";
 }
 
+function isImageBackgroundValue(val) {
+  return !!val && !/^(#|rgb\(|rgba\(|hsl\(|hsla\(|transparent$|inherit$|initial$|unset$)/i.test(val);
+}
+
 // ── Apply User Background ──────────────────────────────────
 window.applyUserBackground = function (val) {
   var styleId = "__user_bg_style";
@@ -16,7 +20,7 @@ window.applyUserBackground = function (val) {
     el.textContent = "";
     return;
   }
-  var bgRule = val.startsWith("/uploads/")
+  var bgRule = isImageBackgroundValue(val)
     ? 'background-image:url("' +
       val +
       '")!important;background-size:cover!important;background-attachment:fixed!important;background-repeat:no-repeat!important;background-position:center!important;background-color:transparent!important;'

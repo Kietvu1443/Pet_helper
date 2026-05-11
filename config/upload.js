@@ -1,14 +1,26 @@
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
+require("dotenv").config();
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const cloudinary = require("cloudinary").v2;
 
 // ========== Cấu hình Cloudinary ==========
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
+  cloud_name: (process.env.CLOUDINARY_CLOUD_NAME || "").trim(),
+  api_key: (process.env.CLOUDINARY_API_KEY || "").trim(),
+  api_secret: (process.env.CLOUDINARY_API_SECRET || "").trim(),
+});
+
+const cloudName = (process.env.CLOUDINARY_CLOUD_NAME || "").trim();
+const apiKey = (process.env.CLOUDINARY_API_KEY || "").trim();
+
+const apiSecret = (process.env.CLOUDINARY_API_SECRET || "").trim();
+
+console.log("☁️ Cloudinary Config Check:", {
+  cloud_name: cloudName ? `FOUND (${cloudName.substring(0, 3)}...)` : "MISSING",
+  api_key: apiKey ? `FOUND (${apiKey.substring(0, 4)}...)` : "MISSING",
+  api_secret: apiSecret ? `FOUND (${apiSecret.substring(0, 2)}...${apiSecret.slice(-2)})` : "MISSING",
 });
 
 // ========== Cấu hình chung ==========

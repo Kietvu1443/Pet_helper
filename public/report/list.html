@@ -248,135 +248,134 @@
 </head>
 
 <body class="min-h-screen">
-  <header class="header">
-    <div class="top-bar">
-      <a href="/" class="logo-group">
-        <div class="logo-circle">
-          <img src="/images/the_logo.webp" alt="logo" id="the_logo">
-        </div>
-        <div class="web-name">PET HELPER</div>
-      </a>
-      <div class="user-actions">
-        <div class="auth-user-actions is-auth-hidden" id="headerAuthUserState">
-          <div class="user-dropdown" id="headerUserDropdown">
-            <span id="userDropdownBtn" style="cursor: pointer;">
-              <span id="headerDisplayNameText">Tài khoản</span> ▼
-            </span>
-            <div class="user-dropdown-menu" id="userDropdownMenu">
-              <div class="dropdown-header">
-                <strong id="headerDropdownDisplayName">Tài khoản</strong>
-                <span class="user-role" id="headerUserRole">👤 User</span>
-              </div>
-              <div class="dropdown-divider"></div>
-              <a href="/profile" class="dropdown-item">👤 Tài khoản</a>
-              <a href="/my-favorites" class="dropdown-item">❤️ Thú cưng đã yêu thích</a>
-              <a href="/my-reports" class="dropdown-item">📋 Báo cáo của tôi</a>
-              <a href="/adopt/admin/add" class="dropdown-item role-staff-only is-auth-hidden">🐾 Thêm thú cưng</a>
-              <a href="/admin/reports" class="dropdown-item role-staff-only is-auth-hidden">📋 Duyệt báo cáo</a>
-              <a href="/admin/adoption-requests" class="dropdown-item role-staff-only is-auth-hidden">🏠 Xét duyệt nhận
-                nuôi</a>
-              <a href="/admin" class="dropdown-item role-admin-only is-auth-hidden">⚙️ Quản trị</a>
-              <div class="dropdown-divider"></div>
-              <a href="#" class="dropdown-item logout" id="logoutBtn" onclick="handleLogout(event)">🚪 Đăng xuất</a>
+    <header class="header">
+        <div class="top-bar">
+            <a href="/" class="logo-group">
+                <div class="logo-circle">
+                    <img src="/images/the_logo.webp" alt="logo" id="the_logo">
+                </div>
+                <div class="web-name">PET HELPER</div>
+            </a>
+            <!-- <div class="search-box">
+                <span style="margin-right: 10px;">🔍</span>
+                <span class="search-text">Tìm thú cưng, bài viết...</span>
+            </div> -->
+            <div class="user-actions">
+                <div class="auth-user-actions is-auth-hidden" id="headerAuthUserState">
+                    <div class="user-dropdown" id="headerUserDropdown">
+                        <span id="userDropdownBtn" style="cursor: pointer;">
+                            <span id="headerDisplayNameText">Tài khoản</span> ▼
+                        </span>
+                        <div class="user-dropdown-menu" id="userDropdownMenu">
+                            <div class="dropdown-header">
+                                <strong id="headerDropdownDisplayName">Tài khoản</strong>
+                                <span class="user-role" id="headerUserRole">👤 User</span>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <a href="/profile" class="dropdown-item">👤 Tài khoản</a>
+                            <a href="/my-favorites" class="dropdown-item">❤️
+                                Thú cưng đã yêu thích</a>
+                            <a href="/my-reports" class="dropdown-item">📋
+                                Báo cáo của tôi</a>
+                            <a href="/adopt/admin/add" class="dropdown-item role-staff-only is-auth-hidden">🐾 Thêm thú
+                                cưng</a>
+                            <a href="/admin/reports" class="dropdown-item role-staff-only is-auth-hidden">📋 Duyệt báo
+                                cáo</a>
+                            <a href="/admin" class="dropdown-item role-admin-only is-auth-hidden">⚙️ Quản trị</a>
+                            <a href="/admin-shop" class="dropdown-item role-admin-only is-auth-hidden">🛒 Quản lý cửa
+                                hàng</a>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" class="dropdown-item logout" id="logoutBtn" onclick="handleLogout(event)">🚪
+                                Đăng xuất</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="auth-guest-actions is-auth-visible" id="headerAuthGuestState">
+                    <a href="#"
+                        onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('login'); } return false;"><span>Đăng
+                            nhập</span></a>
+                    <a href="#"
+                        onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('register'); } return false;"><span>Đăng
+                            ký</span></a>
+                </div>
+                <span onclick="toggleCart()" style="cursor:pointer;">Giỏ hàng <span
+                        id="cart-count-display">(0)</span></span>
+                <div class="lang-switcher" id="langSwitcher">
+                    <button class="lang-switcher-btn" onclick="toggleLangDropdown(event)" id="langBtn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10" />
+                            <path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20" />
+                        </svg>
+                        <span id="langBtnLabel">VI</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:10px">
+                            <path d="M6 9l6 6 6-6" />
+                        </svg>
+                    </button>
+                    <div class="lang-switcher-dropdown" id="langDropdown">
+                        <button class="lang-option active" onclick="setLang('vi','VI')" data-lang="vi"><span
+                                class="flag">🇻🇳</span> Tiếng Việt</button>
+                        <button class="lang-option" onclick="setLang('/en','EN')" data-lang="en"><span
+                                class="flag">🇺🇸</span> English</button>
+                        <button class="lang-option" onclick="setLang('/zh-TW','中文')" data-lang="zh-TW"><span
+                                class="flag">🇹🇼</span> 中文</button>
+                        <button class="lang-option" onclick="setLang('/ja','日本語')" data-lang="ja"><span
+                                class="flag">🇯🇵</span> 日本語</button>
+                    </div>
+                </div>
             </div>
-          </div>
+            <button class="hamburger-btn" id="hamburgerBtn" aria-label="Mở menu">
+                <span class="hamburger-line"></span><span class="hamburger-line"></span><span
+                    class="hamburger-line"></span>
+            </button>
         </div>
-        <div class="auth-guest-actions is-auth-visible" id="headerAuthGuestState">
-          <a href="#"
-            onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('login'); } return false;"><span>Đăng
-              nhập</span></a>
-          <a href="#"
-            onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('register'); } return false;"><span>Đăng
-              ký</span></a>
-        </div>
-        <span onclick="toggleCart()" style="cursor:pointer;">Giỏ hàng <span id="cart-count-display">(0)</span></span>
-        <div class="lang-switcher" id="langSwitcher">
-          <button class="lang-switcher-btn" onclick="toggleLangDropdown(event)" id="langBtn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10" />
-              <path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20" />
-            </svg>
-            <span id="langBtnLabel">VI</span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:10px">
-              <path d="M6 9l6 6 6-6" />
-            </svg>
-          </button>
-          <div class="lang-switcher-dropdown" id="langDropdown">
-            <button class="lang-option active" onclick="setLang('vi','VI')" data-lang="vi"><span
-                class="flag">🇻🇳</span> Tiếng Việt</button>
-            <button class="lang-option" onclick="setLang('/en','EN')" data-lang="en"><span class="flag">🇺🇸</span>
-              English</button>
-            <button class="lang-option" onclick="setLang('/zh-TW','中文')" data-lang="zh-TW"><span
-                class="flag">🇹🇼</span> 中文</button>
-            <button class="lang-option" onclick="setLang('/ja','日本語')" data-lang="ja"><span class="flag">🇯🇵</span>
-              日本語</button>
-          </div>
-        </div>
-      </div>
-      <button class="hamburger-btn" id="hamburgerBtn" aria-label="Mở menu">
-        <span class="hamburger-line"></span>
-        <span class="hamburger-line"></span>
-        <span class="hamburger-line"></span>
-      </button>
-    </div>
-    <div class="mobile-nav-overlay" id="mobileNavOverlay"></div>
-    <nav class="main-nav" id="mainNav">
-      <button class="mobile-nav-close" id="mobileNavClose" aria-label="Đóng menu">✕</button>
-      <ul>
-        <li>
-          <a href="#" class="has-dropdown nav-item">Nhận nuôi <span class="nav-arrow arrow">▼</span></a>
-          <ul class="nav-dropdown">
-            <li><a href="/adopt">Xem vật nuôi có thể nhận nuôi</a></li>
-            <li><a href="/snap" style="color: #ea580c; font-weight: bold;">PetSnap (Tìm kiếm ngẫu hứng!)</a></li>
-          </ul>
-        </li>
-        <li>
-          <<a href="#" class="has-dropdown nav-item">Thất lạc <span class="nav-arrow arrow">▼</span></a>
-            <ul class="nav-dropdown">
-              <li><a href="/lost">Báo mất thú cưng</a></li>
-              <li><a href="/found">Báo tin nhặt được</a></li>
-              <li><a href="/reports/list">Xem báo cáo thất lạc</a></li>
-              <li><a href="/tips">Mẹo tìm kiếm hiệu quả</a></li>
-
+        <div class="mobile-nav-overlay" id="mobileNavOverlay"></div>
+        <nav class="main-nav" id="mainNav">
+            <button class="mobile-nav-close" id="mobileNavClose" aria-label="Đóng menu">✕</button>
+            <ul>
+                <li>
+                    <a href="#" class="has-dropdown nav-item">Nhận nuôi <span class="nav-arrow arrow">▼</span></a>
+                    <ul class="nav-dropdown">
+                        <li><a href="/adopt">Xem vật nuôi có thể nhận nuôi</a></li>
+                        <li><a href="/snap" style="color: #ea580c; font-weight: bold;">PetSnap (Tìm kiếm ngẫu
+                                hứng!)</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="has-dropdown nav-item">Thất lạc <span class="nav-arrow arrow">▼</span></a>
+                    <ul class="nav-dropdown">
+                        <li><a href="/lost" onclick="window.location.href='/lost'; return false;">Báo mất thú cưng</a>
+                        </li>
+                        <li><a href="/found" onclick="window.location.href='/found'; return false;">Báo tin nhặt
+                                được</a>
+                        </li>
+                        <li><a href="/reports/list" onclick="window.location.href='/reports/list'; return false;">Xem
+                                báo cáo thất lạc</a>
+                        </li>
+                        <li><a href="/tips" onclick="window.location.href='/tips'; return false;">Mẹo chăm sóc thú
+                                cưng</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="has-dropdown nav-item">Dịch vụ <span class="nav-arrow arrow">▼</span></a>
+                    <ul class="nav-dropdown">
+                        <li><a href="/booking">Đặt lịch tiêm phòng</a></li>
+                        <li><a href="/shop">Danh mục đồ ăn/ đồ dùng</a></li>
+                    </ul>
+                </li>
+                <li><a href="/news">Tin tức</a></li>
+                <li>
+                    <a href="#" class="has-dropdown nav-item">Về chúng tôi <span class="nav-arrow arrow">▼</span></a>
+                    <ul class="nav-dropdown">
+                        <li><a href="#contact-section">Liên hệ với chúng tôi</a></li>
+                    </ul>
+                </li>
             </ul>
-        </li>
-        <li>
-          <a href="#" class="has-dropdown nav-item">Dịch vụ <span class="nav-arrow arrow">▼</span></a>
-          <ul class="nav-dropdown">
-            <li><a href="/booking">Đặt lịch tiêm phòng</a></li>
-            <li><a href="/shop">Danh mục đồ ăn/ đồ dùng</a></li>
-          </ul>
-        </li>
-        <li><a href="/news">Tin tức</a></li>
-        <li>
-          <a href="#" class="has-dropdown nav-item">Về chúng tôi <span class="nav-arrow arrow">▼</span></a>
-          <ul class="nav-dropdown">
-            <li><a href="#contact-section">Liên hệ với chúng tôi</a></li>
-          </ul>
-        </li>
-      </ul>
-    </nav>
-  </header>
-
-  <!-- HEADER -->
-  <div class="sticky top-0 z-50 shadow-md" style="background:var(--primary);">
-    <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <h1 class="text-white font-bold text-lg tracking-wide">Báo Cáo Thú Cưng</h1>
-      </div>
-      <div class="flex gap-2">
-        <a href="/lost"
-          class="text-xs font-semibold bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-full transition-colors">+
-          Báo mất</a>
-        <a href="/found"
-          class="text-xs font-semibold text-white border border-white/40 hover:bg-white/10 px-3 py-1.5 rounded-full transition-colors">+
-          Nhặt được</a>
-      </div>
-    </div>
-  </div>
+        </nav>
+    </header>
 
   <!-- MAIN -->
-  <div class="max-w-5xl mx-auto px-4 py-8">
+  <div class="max-w-5xl mx-auto px-4 py-8 mt-4">
 
     <!-- TABS -->
     <div class="flex gap-3 mb-8 bg-white rounded-2xl p-2 shadow-sm border border-green-100 w-fit mx-auto">

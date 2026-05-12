@@ -1305,7 +1305,31 @@
                     const { value: role } = await Swal.fire({ title: 'Đổi quyền', input: 'select', inputOptions: { 0: 'Admin', 1: 'Staff', 2: 'User' }, showCancelButton: true });
                     if (role) { await adminApiFetch(`/api/v1/admin/users/${id}/role`, { method: 'PATCH', body: { role } }); loadPagedTab('users', true); }
                 }
-                else if (act === 'user-status') { await adminApiFetch(`/api/v1/admin/users/${id}/status`, { method: 'PATCH', body: { status: t.dataset.next } }); loadPagedTab('users', true); }
+                else if (act === 'user-status') {
+                    const nextStatus = t.dataset.next;
+                    let reason = null;
+                    if (nextStatus === 'banned') {
+                        const { value: inputReason } = await Swal.fire({
+                            title: 'Khóa tài khoản',
+                            input: 'text',
+                            inputLabel: 'Lý do khóa',
+                            inputPlaceholder: 'Nhập lý do (Bắt buộc)...',
+                            showCancelButton: true,
+                            confirmButtonColor: '#d33',
+                            confirmButtonText: 'Khóa',
+                            cancelButtonText: 'Hủy',
+                            inputValidator: (value) => {
+                                if (!value || !value.trim()) {
+                                    return 'Bạn phải nhập lý do khóa tài khoản!';
+                                }
+                            }
+                        });
+                        if (!inputReason) return;
+                        reason = inputReason.trim();
+                    }
+                    await adminApiFetch(`/api/v1/admin/users/${id}/status`, { method: 'PATCH', body: { status: nextStatus, reason } });
+                    loadPagedTab('users', true);
+                }
                 else if (act === 'status-adoption') { await adminApiFetch(`/api/v1/adoption-requests/${id}/status`, { method: 'PATCH', body: { status: t.dataset.next } }); loadPagedTab('adoption', true); }
                 else if (act === 'delete-pet') { if (confirm('Xóa?')) { await adminApiFetch(`/api/v1/pets/${id}`, { method: 'DELETE' }); loadPagedTab('pets', true); } }
                 else if (act === 'status-report') { await adminApiFetch(`/api/v1/admin/reports/${id}/status`, { method: 'PATCH', body: { status: t.dataset.next } }); loadPagedTab('reports', true); }

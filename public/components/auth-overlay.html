@@ -806,7 +806,7 @@
                 }
             } catch (error) {
                 console.error('Login error:', error);
-                overlayShowError('Đã xảy ra lỗi kết nối, vui lòng thử lại');
+                overlayShowError('Sai tài khoản hoặc mật khẩu');
                 btn.textContent = originalText;
                 btn.classList.remove('loading');
             }

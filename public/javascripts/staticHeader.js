@@ -155,7 +155,7 @@ if (userDropdownBtn && userDropdown) {
         if (displayNameText) {
             // Nếu có avatar thì hiện ảnh nhỏ kèm tên
             if (user && user.avatar) {
-                displayNameText.innerHTML = '<img src="' + user.avatar + '" style="width:28px;height:28px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:6px;border:2px solid rgba(255,255,255,0.6)">' + safeName;
+                displayNameText.innerHTML = '<img src="' + user.avatar + '" style="display:inline-block;width:28px;height:28px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:6px;border:2px solid rgba(255,255,255,0.6)">' + safeName;
             } else {
                 displayNameText.textContent = safeName;
             }
@@ -191,7 +191,7 @@ if (userDropdownBtn && userDropdown) {
     window.applyHeaderAvatar = function(avatarSrc) {
         if (displayNameText && avatarSrc) {
             const name = displayNameText.textContent || 'Tài khoản';
-            displayNameText.innerHTML = '<img src="' + avatarSrc + '" style="width:28px;height:28px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:6px;border:2px solid rgba(255,255,255,0.6)">' + name;
+            displayNameText.innerHTML = '<img src="' + avatarSrc + '" style="display:inline-block;width:28px;height:28px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:6px;border:2px solid rgba(255,255,255,0.6)">' + name;
         }
     };
 

@@ -2,7 +2,13 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const { JWT_SECRET } = require("../middleware/authMiddleware");
 const { sendSuccess, sendError } = require("../utils/apiResponse");
-const { avatarUpload, bgUpload, getAvatarUrl, getBgUrl, deleteImage } = require("../config/upload");
+const {
+  avatarUpload,
+  bgUpload,
+  getAvatarUrl,
+  getBgUrl,
+  deleteImage,
+} = require("../config/upload");
 
 // Trích xuất Cloudinary public_id từ URL (VD: https://res.cloudinary.com/.../avatars/avatar_1_123.jpg)
 // Trả về null nếu không phải URL Cloudinary
@@ -165,7 +171,10 @@ const authApiV1Controller = {
             [req.user.id],
           );
           if (user && user.bg_preference) {
-            await deleteImage(user.bg_preference, extractCloudinaryId(user.bg_preference));
+            await deleteImage(
+              user.bg_preference,
+              extractCloudinaryId(user.bg_preference),
+            );
           }
         } else if (req.body && req.body.bg_color) {
           // Chọn màu
@@ -210,10 +219,11 @@ const authApiV1Controller = {
 
       // Check if user is banned
       if (user.status === "banned") {
+        const reason = user.banned_reason || "Không rõ nguyên nhân";
         return sendError(
           res,
           403,
-          "Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.",
+          `Tài khoản của bạn đã bị khóa. Lý do: ${reason}. Vui lòng liên hệ pethelper@gmail.com.`,
         );
       }
 

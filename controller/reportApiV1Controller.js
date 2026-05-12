@@ -5,7 +5,7 @@ const { sendSuccess, sendError } = require("../utils/apiResponse");
 const PHONE_REGEX = /^[0-9\-\+]{9,15}$/;
 
 const REPORT_TYPES = ["lost", "found"];
-const REPORT_STATUSES = ["approved", "rejected"];
+const REPORT_STATUSES = ["approved", "rejected", "resolved"];
 
 const toNumber = (value, fallback) => {
   const parsed = Number(value);

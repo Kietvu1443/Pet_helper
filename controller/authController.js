@@ -119,9 +119,9 @@ const authController = {
 
       // Check if user is banned
       if (user.status === "banned") {
+        const reason = user.banned_reason || "Không rõ nguyên nhân";
         return res.status(403).json({
-          error:
-            "Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.",
+          error: `Tài khoản của bạn đã bị khóa. Lý do: ${reason}. Vui lòng liên hệ pethelper@gmail.com.`,
         });
       }
 

@@ -1194,7 +1194,7 @@
                         <td><span class="status-pill ${row.status}">${statusLabel}</span></td>
                         <td>${formatDate(row.created_at)}</td>
                         <td><div class="row-actions">
-                            <select class="role-select" data-action="user-role" data-id="${row.id}">
+                            <select class="role-select" data-id="${row.id}">
                                 <option value="0" ${row.role === 0 ? 'selected' : ''}>Admin</option>
                                 <option value="1" ${row.role === 1 ? 'selected' : ''}>Staff</option>
                                 <option value="2" ${row.role === 2 ? 'selected' : ''}>User</option>
@@ -1249,6 +1249,22 @@
             }
         };
 
+        document.addEventListener('change', async (e) => {
+            const t = e.target.closest('.role-select');
+            if (t) {
+                const id = t.dataset.id;
+                const role = t.value;
+                try {
+                    await adminApiFetch(`/api/v1/admin/users/${id}/role`, { method: 'PATCH', body: { role } });
+                    Swal.fire({ icon: 'success', title: 'Cập nhật thành công', toast: true, position: 'top-end', timer: 3000, showConfirmButton: false });
+                    loadPagedTab('users', true);
+                } catch (err) {
+                    Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
+                    loadPagedTab('users'); // Reset select value
+                }
+            }
+        });
+
         async function bootstrap() {
             try {
                 const res = await adminApiFetch('/api/v1/auth/me');
@@ -1301,10 +1317,7 @@
 
             if (act && id) {
                 if (act.startsWith('detail-')) { openDetailModal(act.replace('detail-', ''), id); }
-                else if (act === 'user-role') {
-                    const { value: role } = await Swal.fire({ title: 'Đổi quyền', input: 'select', inputOptions: { 0: 'Admin', 1: 'Staff', 2: 'User' }, showCancelButton: true });
-                    if (role) { await adminApiFetch(`/api/v1/admin/users/${id}/role`, { method: 'PATCH', body: { role } }); loadPagedTab('users', true); }
-                }
+
                 else if (act === 'user-status') {
                     const nextStatus = t.dataset.next;
                     let reason = null;

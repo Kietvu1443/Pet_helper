@@ -103,10 +103,25 @@
             display: block;
         }
 
-        .global-note.info { background: #e8f5ec; color: #1f5133; }
-        .global-note.success { background: #ecfdf3; color: #166534; }
-        .global-note.warning { background: #fff7ed; color: #9a3412; }
-        .global-note.error { background: #fef2f2; color: #991b1b; }
+        .global-note.info {
+            background: #e8f5ec;
+            color: #1f5133;
+        }
+
+        .global-note.success {
+            background: #ecfdf3;
+            color: #166534;
+        }
+
+        .global-note.warning {
+            background: #fff7ed;
+            color: #9a3412;
+        }
+
+        .global-note.error {
+            background: #fef2f2;
+            color: #991b1b;
+        }
 
         .blocked-state {
             display: none;
@@ -192,10 +207,25 @@
             display: block;
         }
 
-        .panel-state.loading { background: #e8f5ec; color: #1f5133; }
-        .panel-state.empty { background: #f8fafc; color: #475569; }
-        .panel-state.error { background: #fef2f2; color: #991b1b; }
-        .panel-state.unauthorized { background: #fff7ed; color: #9a3412; }
+        .panel-state.loading {
+            background: #e8f5ec;
+            color: #1f5133;
+        }
+
+        .panel-state.empty {
+            background: #f8fafc;
+            color: #475569;
+        }
+
+        .panel-state.error {
+            background: #fef2f2;
+            color: #991b1b;
+        }
+
+        .panel-state.unauthorized {
+            background: #fff7ed;
+            color: #9a3412;
+        }
 
         .panel-content.is-hidden {
             display: none;
@@ -231,7 +261,8 @@
             min-width: 780px;
         }
 
-        th, td {
+        th,
+        td {
             padding: 11px 10px;
             border-bottom: 1px solid #edf3ee;
             text-align: left;
@@ -259,15 +290,50 @@
             white-space: nowrap;
         }
 
-        .status-pill.pending { background: #fef3c7; color: #92400e; }
-        .status-pill.approved { background: #dcfce7; color: #166534; }
-        .status-pill.rejected { background: #fee2e2; color: #b91c1c; }
-        .status-pill.available { background: #dcfce7; color: #166534; }
-        .status-pill.adopted { background: #dbeafe; color: #1d4ed8; }
-        .status-pill.published { background: #dcfce7; color: #166534; }
-        .status-pill.lost { background: #fee2e2; color: #b91c1c; }
-        .status-pill.found { background: #dcfce7; color: #166534; }
-        .status-pill.closed { background: #f1f5f9; color: #475569; }
+        .status-pill.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-pill.approved {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-pill.rejected {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .status-pill.available {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-pill.adopted {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .status-pill.published {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-pill.lost {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .status-pill.found {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-pill.closed {
+            background: #f1f5f9;
+            color: #475569;
+        }
 
         /* Split report card — 2 sub-cards inside 1 grid cell */
         .stat-card-split {
@@ -334,9 +400,23 @@
             letter-spacing: 0.02em;
         }
 
-        .role-badge.admin { background: #fef2f2; color: #991b1b; border: 1px solid #fee2e2; }
-        .role-badge.staff { background: #fff7ed; color: #9a3412; border: 1px solid #ffedd5; }
-        .role-badge.user { background: #f0fdf4; color: #166534; border: 1px solid #dcfce7; }
+        .role-badge.admin {
+            background: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fee2e2;
+        }
+
+        .role-badge.staff {
+            background: #fff7ed;
+            color: #9a3412;
+            border: 1px solid #ffedd5;
+        }
+
+        .role-badge.user {
+            background: #f0fdf4;
+            color: #166534;
+            border: 1px solid #dcfce7;
+        }
 
         .row-actions {
             display: inline-flex;
@@ -354,14 +434,45 @@
             font-size: 0.82rem;
         }
 
-        .action-btn.approve { background: #16a34a; color: #ffffff; }
-        .action-btn.reject { background: #dc2626; color: #ffffff; }
-        .action-btn.detail { background: #f8fafc; color: #334155; border-color: #cbd5e1; }
-        .action-btn.detail:hover { background: #f1f5f9; }
-        .action-btn.delete { background: #7f1d1d; color: #ffffff; }
-        .action-btn.info { background: #f0f9ff; color: #0369a1; border: 1px solid #bae6fd; }
-        .action-btn.info:hover { background: #e0f2fe; }
-        .action-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+        .action-btn.approve {
+            background: #16a34a;
+            color: #ffffff;
+        }
+
+        .action-btn.reject {
+            background: #dc2626;
+            color: #ffffff;
+        }
+
+        .action-btn.detail {
+            background: #f8fafc;
+            color: #334155;
+            border-color: #cbd5e1;
+        }
+
+        .action-btn.detail:hover {
+            background: #f1f5f9;
+        }
+
+        .action-btn.delete {
+            background: #7f1d1d;
+            color: #ffffff;
+        }
+
+        .action-btn.info {
+            background: #f0f9ff;
+            color: #0369a1;
+            border: 1px solid #bae6fd;
+        }
+
+        .action-btn.info:hover {
+            background: #e0f2fe;
+        }
+
+        .action-btn:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
 
         /* ── Users Panel Styles ── */
         .user-cell {
@@ -427,18 +538,62 @@
             box-shadow: 0 0 0 3px rgba(43, 102, 62, 0.12);
         }
 
-        .status-pill.active { background: #dcfce7; color: #166534; }
-        .status-pill.banned { background: #fee2e2; color: #b91c1c; }
+        .status-pill.active {
+            background: #dcfce7;
+            color: #166534;
+        }
 
-        .action-btn.ban { background: #dc2626; color: #ffffff; }
-        .action-btn.ban:hover { background: #b91c1c; }
-        .action-btn.unban { background: #16a34a; color: #ffffff; }
-        .action-btn.unban:hover { background: #15803d; }
+        .status-pill.banned {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
 
-        .dashboard-body { padding: 16px; display: grid; gap: 14px; }
-        .stats-grid { display: grid; gap: 12px; grid-template-columns: repeat(2, 1fr); }
-        .stats-grid-row2 { display: grid; gap: 12px; grid-template-columns: repeat(3, 1fr); }
-        
+        .action-btn.ban {
+            background: #dc2626;
+            color: #ffffff;
+        }
+
+        .action-btn.ban:hover {
+            background: #b91c1c;
+        }
+
+        .action-btn.unban {
+            background: #16a34a;
+            color: #ffffff;
+        }
+
+        .action-btn.unban:hover {
+            background: #15803d;
+        }
+
+        .dashboard-body {
+            padding: 16px;
+            display: grid;
+            gap: 14px;
+        }
+
+        /* Footer sections centering */
+        .dashboard-footer-layout {
+            max-width: 1200px;
+            width: 100%;
+            margin: 10px auto 30px;
+            display: grid;
+            gap: 20px;
+            padding: 0 10px;
+        }
+
+        .stats-grid {
+            display: grid;
+            gap: 12px;
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .stats-grid-row2 {
+            display: grid;
+            gap: 12px;
+            grid-template-columns: repeat(3, 1fr);
+        }
+
         .stat-card {
             border: 1px solid #dbe9df;
             border-radius: 12px;
@@ -469,8 +624,11 @@
             letter-spacing: 0.3px;
         }
 
-        .stat-icon { font-size: 1.2rem; line-height: 1; }
-        
+        .stat-icon {
+            font-size: 1.2rem;
+            line-height: 1;
+        }
+
         .stat-main {
             display: flex;
             align-items: baseline;
@@ -508,66 +666,336 @@
             font-weight: 700;
         }
 
-        .stat-chip.pending { background: #fef3c7; color: #92400e; }
-        .stat-chip.approved, .stat-chip.available { background: #dcfce7; color: #166534; }
-        .stat-chip.rejected, .stat-chip.closed { background: #fee2e2; color: #b91c1c; }
-        .stat-chip.adopted { background: #dbeafe; color: #1d4ed8; }
-        .stat-chip.neutral { background: #f1f5f9; color: #475569; }
+        .stat-chip.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
 
-        .urgent-section { border: 1px solid #fde68a; border-radius: 12px; overflow: hidden; background: #fffbeb; }
-        .urgent-header { display: flex; align-items: center; justify-content: space-between; padding: 11px 14px; border-bottom: 1px solid #fde68a; background: #fef9c3; }
-        .urgent-title { margin: 0; color: #78350f; font-size: 0.88rem; font-weight: 800; display: flex; align-items: center; gap: 6px; }
-        .urgent-count-badge { display: inline-flex; align-items: center; justify-content: center; background: #f59e0b; color: #ffffff; border-radius: 999px; min-width: 20px; height: 20px; font-size: 0.72rem; font-weight: 800; }
-        .urgent-empty { padding: 16px 14px; color: #6b7280; text-align: center; }
-        .urgent-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 14px; border-bottom: 1px solid #fde68a; font-size: 0.88rem; }
-        .urgent-row:last-child { border-bottom: none; }
-        .urgent-type-badge { border-radius: 6px; padding: 2px 8px; font-size: 0.73rem; font-weight: 800; }
-        .urgent-type-badge.adoption { background: #ede9fe; color: #5b21b6; }
-        .urgent-type-badge.report { background: #fee2e2; color: #b91c1c; }
-        .urgent-type-badge.news { background: #e0f2fe; color: #0369a1; }
+        .stat-chip.approved,
+        .stat-chip.available {
+            background: #dcfce7;
+            color: #166534;
+        }
 
-        .quick-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-        .quick-action-btn { border: 1px solid #d4e4d9; border-radius: 10px; background: #ffffff; color: #1f5133; font-weight: 700; padding: 10px 8px; cursor: pointer; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 5px; }
-        .quick-action-btn:hover { background: #eef8f2; border-color: #8fbfa4; }
+        .stat-chip.rejected,
+        .stat-chip.closed {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
 
-        .pagination-bar { padding: 12px 16px; border-top: 1px solid #edf3ee; display: flex; align-items: center; justify-content: space-between; background: #ffffff; }
-        .pagination-summary { color: #64748b; font-size: 0.84rem; }
-        .pagination-controls { display: flex; align-items: center; gap: 6px; }
-        .pagination-btn { border: 1px solid #d4e4d9; border-radius: 8px; background: #f8fcfa; color: #1f5133; font-weight: 700; padding: 6px 12px; cursor: pointer; }
-        .pagination-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .stat-chip.adopted {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
 
-        .detail-modal { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.52); z-index: 1300; align-items: center; justify-content: center; padding: 16px; }
-        .detail-modal.show { display: flex; }
-        .detail-modal-card { width: 920px; max-width: 100%; background: #ffffff; border-radius: 14px; border: 1px solid #dbe7df; overflow: hidden; box-shadow: 0 18px 45px rgba(15, 23, 42, 0.28); }
-        .detail-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-bottom: 1px solid #e6efe9; background: #f8fcfa; }
-        .detail-modal-title { margin: 0; color: #1f5133; font-size: 1.08rem; font-weight: 800; }
-        .detail-modal-close { border: 1px solid #cbd5e1; background: #ffffff; color: #334155; border-radius: 8px; padding: 6px 10px; font-weight: 700; cursor: pointer; }
-        .detail-modal-body { padding: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-        .detail-preview img { width: 100%; height: 260px; object-fit: cover; border-radius: 10px; background: #f3f4f6; border: 1px solid #e2e8f0; }
-        .detail-image-placeholder { min-height: 260px; border-radius: 10px; border: 1px dashed #cbd5e1; background: #f8fafc; color: #64748b; display: none; align-items: center; justify-content: center; font-weight: 700; }
-        .detail-image-placeholder.show { display: flex; }
-        .detail-groups { display: grid; gap: 12px; }
-        .detail-group { display: none; }
-        .detail-group.show { display: block; }
-        .detail-label { margin: 0; color: #64748b; font-size: 0.8rem; text-transform: uppercase; font-weight: 800; }
-        .detail-value { margin: 4px 0 0; color: #0f172a; font-size: 0.94rem; font-weight: 600; word-break: break-word; line-height: 1.45; }
+        .stat-chip.neutral {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .urgent-section {
+            border: 1px solid #fde68a;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #fffbeb;
+        }
+
+        .urgent-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 11px 14px;
+            border-bottom: 1px solid #fde68a;
+            background: #fef9c3;
+        }
+
+        .urgent-title {
+            margin: 0;
+            color: #78350f;
+            font-size: 0.88rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .urgent-count-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #f59e0b;
+            color: #ffffff;
+            border-radius: 999px;
+            min-width: 20px;
+            height: 20px;
+            font-size: 0.72rem;
+            font-weight: 800;
+        }
+
+        .urgent-empty {
+            padding: 16px 14px;
+            color: #6b7280;
+            text-align: center;
+        }
+
+        .urgent-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 9px 14px;
+            border-bottom: 1px solid #fde68a;
+            font-size: 0.88rem;
+        }
+
+        .urgent-row:last-child {
+            border-bottom: none;
+        }
+
+        .urgent-type-badge {
+            border-radius: 6px;
+            padding: 2px 8px;
+            font-size: 0.73rem;
+            font-weight: 800;
+        }
+
+        .urgent-type-badge.adoption {
+            background: #ede9fe;
+            color: #5b21b6;
+        }
+
+        .urgent-type-badge.report {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .urgent-type-badge.news {
+            background: #e0f2fe;
+            color: #0369a1;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .quick-action-btn {
+            border: 1px solid #d4e4d9;
+            border-radius: 10px;
+            background: #ffffff;
+            color: #1f5133;
+            font-weight: 700;
+            padding: 10px 8px;
+            cursor: pointer;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .quick-action-btn:hover {
+            background: #eef8f2;
+            border-color: #8fbfa4;
+        }
+
+        .pagination-bar {
+            padding: 12px 16px;
+            border-top: 1px solid #edf3ee;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #ffffff;
+        }
+
+        .pagination-summary {
+            color: #64748b;
+            font-size: 0.84rem;
+        }
+
+        .pagination-controls {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .pagination-btn {
+            border: 1px solid #d4e4d9;
+            border-radius: 8px;
+            background: #f8fcfa;
+            color: #1f5133;
+            font-weight: 700;
+            padding: 6px 12px;
+            cursor: pointer;
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .detail-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.52);
+            z-index: 1300;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .detail-modal.show {
+            display: flex;
+        }
+
+        .detail-modal-card {
+            width: 920px;
+            max-width: 100%;
+            background: #ffffff;
+            border-radius: 14px;
+            border: 1px solid #dbe7df;
+            overflow: hidden;
+            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.28);
+        }
+
+        .detail-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            border-bottom: 1px solid #e6efe9;
+            background: #f8fcfa;
+        }
+
+        .detail-modal-title {
+            margin: 0;
+            color: #1f5133;
+            font-size: 1.08rem;
+            font-weight: 800;
+        }
+
+        .detail-modal-close {
+            border: 1px solid #cbd5e1;
+            background: #ffffff;
+            color: #334155;
+            border-radius: 8px;
+            padding: 6px 10px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .detail-modal-body {
+            padding: 16px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .detail-preview img {
+            width: 100%;
+            height: 260px;
+            object-fit: cover;
+            border-radius: 10px;
+            background: #f3f4f6;
+            border: 1px solid #e2e8f0;
+        }
+
+        .detail-image-placeholder {
+            min-height: 260px;
+            border-radius: 10px;
+            border: 1px dashed #cbd5e1;
+            background: #f8fafc;
+            color: #64748b;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .detail-image-placeholder.show {
+            display: flex;
+        }
+
+        .detail-groups {
+            display: grid;
+            gap: 12px;
+        }
+
+        .detail-group {
+            display: none;
+        }
+
+        .detail-group.show {
+            display: block;
+        }
+
+        .detail-label {
+            margin: 0;
+            color: #64748b;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            font-weight: 800;
+        }
+
+        .detail-value {
+            margin: 4px 0 0;
+            color: #0f172a;
+            font-size: 0.94rem;
+            font-weight: 600;
+            word-break: break-word;
+            line-height: 1.45;
+        }
 
         @media (max-width: 1024px) {
-            .admin-shell { grid-template-columns: 1fr; }
-            .sidebar { position: static; }
-            .sidebar-nav { display: flex; flex-wrap: wrap; gap: 6px; }
-            .nav-btn { width: auto; flex: 1 1 auto; text-align: center; min-width: 120px; }
-            .stats-grid, .stats-grid-row2 { grid-template-columns: repeat(2, 1fr); }
-            .detail-modal-body { grid-template-columns: 1fr; }
+            .admin-shell {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: static;
+            }
+
+            .sidebar-nav {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+
+            .nav-btn {
+                width: auto;
+                flex: 1 1 auto;
+                text-align: center;
+                min-width: 120px;
+            }
+
+            .stats-grid,
+            .stats-grid-row2 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .detail-modal-body {
+                grid-template-columns: 1fr;
+            }
         }
 
         @media (max-width: 768px) {
-            .stats-grid, .stats-grid-row2 { grid-template-columns: 1fr; }
-            .quick-actions { grid-template-columns: repeat(2, 1fr); }
+
+            .stats-grid,
+            .stats-grid-row2 {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-actions {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
         @media (max-width: 480px) {
-            .stats-grid { grid-template-columns: 1fr; }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -596,13 +1024,18 @@
                             <a href="/profile" class="dropdown-item">👤 Tài khoản</a>
                             <a href="/admin" class="dropdown-item" id="headerManagementLink">🧭 Dashboard quản trị</a>
                             <div class="dropdown-divider"></div>
-                            <a href="#" class="dropdown-item logout" id="logoutBtn" onclick="handleLogout(event)">🚪 Đăng xuất</a>
+                            <a href="#" class="dropdown-item logout" id="logoutBtn" onclick="handleLogout(event)">🚪
+                                Đăng xuất</a>
                         </div>
                     </div>
                 </div>
                 <div class="auth-guest-actions is-auth-visible" id="headerAuthGuestState">
-                    <a href="#" onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('login'); } return false;"><span>Đăng nhập</span></a>
-                    <a href="#" onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('register'); } return false;"><span>Đăng ký</span></a>
+                    <a href="#"
+                        onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('login'); } return false;"><span>Đăng
+                            nhập</span></a>
+                    <a href="#"
+                        onclick="openOverlay('auth-overlay'); if (typeof overlayActivateTab === 'function') { overlayActivateTab('register'); } return false;"><span>Đăng
+                            ký</span></a>
                 </div>
                 <span>Giỏ hàng <span id="cart-count-display">(0)</span></span>
                 <span class="lang-switch">VN / EN</span>
@@ -631,8 +1064,9 @@
     <main class="admin-page">
         <section class="admin-shell">
             <aside class="sidebar">
-                <h1 class="sidebar-title">Admin Dashboard</h1>
-                <p class="sidebar-desc">Quản lý hồ sơ nhận nuôi, thú cưng, báo cáo và tin tức trong một màn hình duy nhất.</p>
+                <h1 class="sidebar-title">Web Dashboard</h1>
+                <p class="sidebar-desc">Quản lý hồ sơ nhận nuôi, thú cưng, báo cáo và tin tức trong một màn hình duy
+                    nhất.</p>
                 <nav class="sidebar-nav">
                     <button class="nav-btn" data-tab="dashboard">📊 Dashboard</button>
                     <button class="nav-btn" data-tab="adoption">🗂️ Hồ sơ nhận nuôi</button>
@@ -640,7 +1074,8 @@
                     <button class="nav-btn" data-tab="reports">📣 Báo cáo</button>
                     <button class="nav-btn" data-tab="news">📰 Bài tin</button>
                     <button class="nav-btn" data-tab="users" data-admin-only="true">👥 Quản lý tài khoản</button>
-                    <a href="/admin-shop" class="nav-btn" style="text-decoration:none;display:block;">🛒 Quản lý cửa hàng</a>
+                    <a href="/admin-shop" class="nav-btn" style="text-decoration:none;display:block;">🛒 Quản lý cửa
+                        hàng</a>
                 </nav>
             </aside>
 
@@ -697,7 +1132,8 @@
                         <!-- Hàng 2: Thất lạc + Tìm thấy + Bài tin -->
                         <div class="stats-grid-row2">
                             <article class="stat-card-split">
-                                <div class="stat-card-split-inner" data-report-filter="lost" title="Lọc báo cáo thất lạc">
+                                <div class="stat-card-split-inner" data-report-filter="lost"
+                                    title="Lọc báo cáo thất lạc">
                                     <div class="stat-card-header">
                                         <p class="stat-label">Báo cáo thất lạc</p>
                                         <span class="stat-icon">🔴</span>
@@ -711,7 +1147,8 @@
                                         <span class="stat-chip approved" id="statReportsLostApproved">– duyệt</span>
                                     </div>
                                 </div>
-                                <div class="stat-card-split-inner" data-report-filter="found" title="Lọc báo cáo tìm thấy">
+                                <div class="stat-card-split-inner" data-report-filter="found"
+                                    title="Lọc báo cáo tìm thấy">
                                     <div class="stat-card-header">
                                         <p class="stat-label">Báo cáo tìm thấy</p>
                                         <span class="stat-icon">🟢</span>
@@ -760,9 +1197,11 @@
                         </div>
                     </div>
 
+                    <div class="dashboard-footer-layout">
                         <div class="urgent-section">
                             <div class="urgent-header">
-                                <p class="urgent-title">⚡ Cần xử lý ngay <span class="urgent-count-badge" id="urgentCount">0</span></p>
+                                <p class="urgent-title">⚡ Cần xử lý ngay <span class="urgent-count-badge"
+                                        id="urgentCount">0</span></p>
                             </div>
                             <div id="urgentList">
                                 <div class="urgent-empty">Đang tải dữ liệu...</div>
@@ -772,34 +1211,53 @@
                         <div>
                             <p class="stat-label" style="margin-bottom:8px;">Truy cập nhanh</p>
                             <div class="quick-actions">
-                                <button class="quick-action-btn" data-jump-tab="adoption"><span class="qa-icon">🗂️</span><span>Nhận nuôi</span></button>
-                                <button class="quick-action-btn" data-jump-tab="pets"><span class="qa-icon">🐾</span><span>Thú cưng</span></button>
-                                <button class="quick-action-btn" data-jump-tab="reports"><span class="qa-icon">📣</span><span>Báo cáo</span></button>
-                                <button class="quick-action-btn" data-jump-tab="news"><span class="qa-icon">📰</span><span>Bài tin</span></button>
+                                <button class="quick-action-btn" data-jump-tab="adoption"><span
+                                        class="qa-icon">🗂️</span><span>Nhận nuôi</span></button>
+                                <button class="quick-action-btn" data-jump-tab="pets"><span
+                                        class="qa-icon">🐾</span><span>Thú cưng</span></button>
+                                <button class="quick-action-btn" data-jump-tab="reports"><span
+                                        class="qa-icon">📣</span><span>Báo cáo</span></button>
+                                <button class="quick-action-btn" data-jump-tab="news"><span
+                                        class="qa-icon">📰</span><span>Bài tin</span></button>
                             </div>
                         </div>
+                    </div>
                     </div>
                 </section>
 
                 <!-- ADOPTION PANEL -->
                 <section id="panel-adoption" class="tab-panel">
                     <div class="panel-head">
-                        <div><h2>Adoption Requests</h2><p class="panel-sub">Hồ sơ nhận nuôi.</p></div>
-                        <div class="panel-tools"><button class="tool-btn" data-refresh-tab="adoption">Tải lại</button></div>
+                        <div>
+                            <h2>Adoption Requests</h2>
+                            <p class="panel-sub">Hồ sơ nhận nuôi.</p>
+                        </div>
+                        <div class="panel-tools"><button class="tool-btn" data-refresh-tab="adoption">Tải lại</button>
+                        </div>
                     </div>
                     <div class="panel-state" id="adoptionState"></div>
                     <div class="panel-content is-hidden" id="adoptionContent">
                         <div class="table-wrap">
                             <table>
-                                <thead><tr><th>Người dùng</th><th>Thú cưng</th><th>Trạng thái</th><th>Ngày tạo</th><th>Hành động</th></tr></thead>
+                                <thead>
+                                    <tr>
+                                        <th>Người dùng</th>
+                                        <th>Thú cưng</th>
+                                        <th>Trạng thái</th>
+                                        <th>Ngày tạo</th>
+                                        <th>Hành động</th>
+                                    </tr>
+                                </thead>
                                 <tbody id="adoptionBody"></tbody>
                             </table>
                         </div>
                         <div class="pagination-bar" id="adoptionPagination">
                             <div class="pagination-summary" id="adoptionPaginationSummary">0-0 of 0</div>
                             <div class="pagination-controls">
-                                <button class="pagination-btn" data-page-nav="prev" data-page-tab="adoption">Trước</button>
-                                <button class="pagination-btn" data-page-nav="next" data-page-tab="adoption">Tiếp</button>
+                                <button class="pagination-btn" data-page-nav="prev"
+                                    data-page-tab="adoption">Trước</button>
+                                <button class="pagination-btn" data-page-nav="next"
+                                    data-page-tab="adoption">Tiếp</button>
                             </div>
                         </div>
                     </div>
@@ -808,14 +1266,26 @@
                 <!-- PETS PANEL -->
                 <section id="panel-pets" class="tab-panel">
                     <div class="panel-head">
-                        <div><h2>Pets</h2><p class="panel-sub">Danh sách thú cưng.</p></div>
+                        <div>
+                            <h2>Pets</h2>
+                            <p class="panel-sub">Danh sách thú cưng.</p>
+                        </div>
                         <div class="panel-tools"><button class="tool-btn" data-refresh-tab="pets">Tải lại</button></div>
                     </div>
                     <div class="panel-state" id="petsState"></div>
                     <div class="panel-content is-hidden" id="petsContent">
                         <div class="table-wrap">
                             <table>
-                                <thead><tr><th>ID</th><th>Tên</th><th>Loại</th><th>Trạng thái</th><th>Cập nhật</th><th>Hành động</th></tr></thead>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Tên</th>
+                                        <th>Loại</th>
+                                        <th>Trạng thái</th>
+                                        <th>Cập nhật</th>
+                                        <th>Hành động</th>
+                                    </tr>
+                                </thead>
                                 <tbody id="petsBody"></tbody>
                             </table>
                         </div>
@@ -832,8 +1302,12 @@
                 <!-- REPORTS PANEL -->
                 <section id="panel-reports" class="tab-panel">
                     <div class="panel-head">
-                        <div><h2>Reports</h2><p class="panel-sub">Báo cáo thất lạc.</p></div>
-                        <div class="panel-tools"><button class="tool-btn" data-refresh-tab="reports">Tải lại</button></div>
+                        <div>
+                            <h2>Reports</h2>
+                            <p class="panel-sub">Báo cáo thất lạc.</p>
+                        </div>
+                        <div class="panel-tools"><button class="tool-btn" data-refresh-tab="reports">Tải lại</button>
+                        </div>
                     </div>
                     <div class="panel-state" id="reportsState"></div>
                     <div class="panel-content is-hidden" id="reportsContent">
@@ -844,15 +1318,26 @@
                         </div>
                         <div class="table-wrap">
                             <table>
-                                <thead><tr><th>Người báo cáo</th><th>Loại</th><th>Vị trí</th><th>Trạng thái</th><th>Ngày tạo</th><th>Hành động</th></tr></thead>
+                                <thead>
+                                    <tr>
+                                        <th>Người báo cáo</th>
+                                        <th>Loại</th>
+                                        <th>Vị trí</th>
+                                        <th>Trạng thái</th>
+                                        <th>Ngày tạo</th>
+                                        <th>Hành động</th>
+                                    </tr>
+                                </thead>
                                 <tbody id="reportsBody"></tbody>
                             </table>
                         </div>
                         <div class="pagination-bar" id="reportsPagination">
                             <div class="pagination-summary" id="reportsPaginationSummary">0-0 of 0</div>
                             <div class="pagination-controls">
-                                <button class="pagination-btn" data-page-nav="prev" data-page-tab="reports">Trước</button>
-                                <button class="pagination-btn" data-page-nav="next" data-page-tab="reports">Tiếp</button>
+                                <button class="pagination-btn" data-page-nav="prev"
+                                    data-page-tab="reports">Trước</button>
+                                <button class="pagination-btn" data-page-nav="next"
+                                    data-page-tab="reports">Tiếp</button>
                             </div>
                         </div>
                     </div>
@@ -861,15 +1346,28 @@
                 <!-- USERS PANEL -->
                 <section id="panel-users" class="tab-panel" data-admin-only="true">
                     <div class="panel-head">
-                        <div><h2>👥 Quản lý tài khoản</h2><p class="panel-sub">Phân quyền, trạng thái và quản lý người dùng.</p></div>
-                        <div class="panel-tools"><button class="tool-btn" data-refresh-tab="users">🔄 Tải lại</button></div>
+                        <div>
+                            <h2>👥 Quản lý tài khoản</h2>
+                            <p class="panel-sub">Phân quyền, trạng thái và quản lý người dùng.</p>
+                        </div>
+                        <div class="panel-tools"><button class="tool-btn" data-refresh-tab="users">🔄 Tải lại</button>
+                        </div>
                     </div>
                     <div class="panel-state" id="usersState"></div>
                     <div class="panel-content is-hidden" id="usersContent">
                         <div class="table-wrap">
                             <div class="table-loading-overlay" id="usersTableLoading">Đang tải...</div>
                             <table>
-                                <thead><tr><th>ID</th><th>Tài khoản</th><th>Vai trò</th><th>Trạng thái</th><th>Ngày tham gia</th><th>Hành động</th></tr></thead>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Tài khoản</th>
+                                        <th>Vai trò</th>
+                                        <th>Trạng thái</th>
+                                        <th>Ngày tham gia</th>
+                                        <th>Hành động</th>
+                                    </tr>
+                                </thead>
                                 <tbody id="usersBody"></tbody>
                             </table>
                         </div>
@@ -886,14 +1384,25 @@
                 <!-- NEWS PANEL -->
                 <section id="panel-news" class="tab-panel">
                     <div class="panel-head">
-                        <div><h2>Bài tin</h2><p class="panel-sub">Duyệt tin tức.</p></div>
+                        <div>
+                            <h2>Bài tin</h2>
+                            <p class="panel-sub">Duyệt tin tức.</p>
+                        </div>
                         <div class="panel-tools"><button class="tool-btn" data-refresh-tab="news">Tải lại</button></div>
                     </div>
                     <div class="panel-state" id="newsState"></div>
                     <div class="panel-content is-hidden" id="newsContent">
                         <div class="table-wrap">
                             <table>
-                                <thead><tr><th>Tiêu đề</th><th>Tác giả</th><th>Trạng thái</th><th>Ngày tạo</th><th>Hành động</th></tr></thead>
+                                <thead>
+                                    <tr>
+                                        <th>Tiêu đề</th>
+                                        <th>Tác giả</th>
+                                        <th>Trạng thái</th>
+                                        <th>Ngày tạo</th>
+                                        <th>Hành động</th>
+                                    </tr>
+                                </thead>
                                 <tbody id="newsBody"></tbody>
                             </table>
                         </div>
@@ -927,14 +1436,38 @@
                     </div>
                 </div>
                 <div class="detail-groups">
-                    <div class="detail-group" id="detailUserGroup"><p class="detail-label">Người dùng</p><p class="detail-value" id="detailUserValue">-</p></div>
-                    <div class="detail-group" id="detailEmailGroup"><p class="detail-label">Email</p><p class="detail-value" id="detailEmailValue">-</p></div>
-                    <div class="detail-group" id="detailPhoneGroup"><p class="detail-label">SĐT</p><p class="detail-value" id="detailPhoneValue">-</p></div>
-                    <div class="detail-group" id="detailPetGroup"><p class="detail-label">Thú cưng</p><p class="detail-value" id="detailPetValue">-</p></div>
-                    <div class="detail-group" id="detailTypeGroup"><p class="detail-label">Loại</p><p class="detail-value" id="detailTypeValue">-</p></div>
-                    <div class="detail-group" id="detailLocationGroup"><p class="detail-label">Vị trí</p><p class="detail-value" id="detailLocationValue">-</p></div>
-                    <div class="detail-group show"><p class="detail-label">Trạng thái</p><p class="detail-value" id="detailStatusValue">-</p></div>
-                    <div class="detail-group show"><p class="detail-label">Ngày tạo</p><p class="detail-value" id="detailDateValue">-</p></div>
+                    <div class="detail-group" id="detailUserGroup">
+                        <p class="detail-label">Người dùng</p>
+                        <p class="detail-value" id="detailUserValue">-</p>
+                    </div>
+                    <div class="detail-group" id="detailEmailGroup">
+                        <p class="detail-label">Email</p>
+                        <p class="detail-value" id="detailEmailValue">-</p>
+                    </div>
+                    <div class="detail-group" id="detailPhoneGroup">
+                        <p class="detail-label">SĐT</p>
+                        <p class="detail-value" id="detailPhoneValue">-</p>
+                    </div>
+                    <div class="detail-group" id="detailPetGroup">
+                        <p class="detail-label">Thú cưng</p>
+                        <p class="detail-value" id="detailPetValue">-</p>
+                    </div>
+                    <div class="detail-group" id="detailTypeGroup">
+                        <p class="detail-label">Loại</p>
+                        <p class="detail-value" id="detailTypeValue">-</p>
+                    </div>
+                    <div class="detail-group" id="detailLocationGroup">
+                        <p class="detail-label">Vị trí</p>
+                        <p class="detail-value" id="detailLocationValue">-</p>
+                    </div>
+                    <div class="detail-group show">
+                        <p class="detail-label">Trạng thái</p>
+                        <p class="detail-value" id="detailStatusValue">-</p>
+                    </div>
+                    <div class="detail-group show">
+                        <p class="detail-label">Ngày tạo</p>
+                        <p class="detail-value" id="detailDateValue">-</p>
+                    </div>
                 </div>
             </div>
             <div class="detail-modal-footer"><button class="tool-btn" id="detailModalCloseFooterBtn">Đóng</button></div>
@@ -942,11 +1475,13 @@
     </div>
 
     <footer class="footer">
-        <div class="footer-bottom"><p>© 2026 Pet Helper. All rights reserved.</p></div>
+        <div class="footer-bottom">
+            <p>© 2026 Pet Helper. All rights reserved.</p>
+        </div>
     </footer>
 
     <script src="/javascripts/staticHeader.js"></script>
-<script src="/javascripts/staticFooter.js"></script>
+    <script src="/javascripts/staticFooter.js"></script>
 
     <script>
         const TAB_KEY = 'pet_helper_admin_tab';
@@ -1062,7 +1597,7 @@
                 });
                 state.newsRows = n.data?.news || [];
                 state.pagination.users.total = u.data?.total || 0;
-                
+
                 state.fetchedTabs.adoption = true;
                 state.fetchedTabs.pets = true;
                 state.fetchedTabs.reports = true;
@@ -1070,9 +1605,9 @@
 
                 renderDashboardStats();
                 setSectionState('dashboard', 'ready');
-            } catch (e) { 
+            } catch (e) {
                 console.error('[Dashboard] Error:', e);
-                setSectionState('dashboard', 'error', 'Lỗi tải dữ liệu'); 
+                setSectionState('dashboard', 'error', 'Lỗi tải dữ liệu');
             }
         };
 
@@ -1096,7 +1631,7 @@
             document.getElementById('statReportsLostTotal').textContent = lost.length;
             document.getElementById('statReportsLostPending').textContent = `${lost.filter(r => r.status === 'pending').length} chờ`;
             document.getElementById('statReportsLostApproved').textContent = `${lost.filter(r => r.status === 'approved').length} duyệt`;
-            
+
             document.getElementById('statReportsFoundTotal').textContent = found.length;
             document.getElementById('statReportsFoundPending').textContent = `${found.filter(r => r.status === 'pending').length} chờ`;
             document.getElementById('statReportsFoundApproved').textContent = `${found.filter(r => r.status === 'approved').length} duyệt`;
@@ -1121,7 +1656,7 @@
                 ...state.reportRows.filter(r => r.status === 'pending').map(r => ({ type: 'report', label: 'Báo cáo', name: r.reporter_name || r.name, meta: r.found_location || '', id: r.id })),
                 ...state.newsRows.filter(r => r.status === 'pending').map(r => ({ type: 'news', label: 'Bài tin', name: r.title, meta: r.author_name || '', id: r.id }))
             ].slice(0, 5);
-            
+
             const countEl = document.getElementById('urgentCount');
             const listEl = document.getElementById('urgentList');
             if (countEl) countEl.textContent = list.length;
@@ -1145,12 +1680,12 @@
             const p = state.pagination[tab];
             setSectionState(tab, 'loading', 'Đang tải...');
             try {
-                const urlMap = { 
-                    adoption: `/api/v1/adoption-requests/admin?page=${p.page}&limit=${p.pageSize}`, 
-                    pets: `/api/v1/pets?page=${p.page}&limit=${p.pageSize}`, 
-                    reports: `/api/v1/admin/reports?page=${p.page}&limit=${p.pageSize}`, 
-                    news: `/api/v1/admin/news?page=${p.page}&limit=${p.pageSize}`, 
-                    users: `/api/v1/admin/users?page=${p.page}&limit=${p.pageSize}` 
+                const urlMap = {
+                    adoption: `/api/v1/adoption-requests/admin?page=${p.page}&limit=${p.pageSize}`,
+                    pets: `/api/v1/pets?page=${p.page}&limit=${p.pageSize}`,
+                    reports: `/api/v1/admin/reports?page=${p.page}&limit=${p.pageSize}`,
+                    news: `/api/v1/admin/news?page=${p.page}&limit=${p.pageSize}`,
+                    users: `/api/v1/admin/users?page=${p.page}&limit=${p.pageSize}`
                 };
                 const payload = await adminApiFetch(urlMap[tab]);
                 const data = payload.data || {};
@@ -1214,11 +1749,11 @@
 
             const modal = document.getElementById('detailModal');
             document.getElementById('detailModalTitle').textContent = `Chi tiết ${context}`;
-            
+
             const img = document.getElementById('detailModalImage');
             const placeholder = document.getElementById('detailImagePlaceholder');
             const src = item.pet_image || item.avatar_image || item.image_url || item.image;
-            
+
             if (src) { img.src = src; img.style.display = 'block'; placeholder.classList.remove('show'); }
             else { img.style.display = 'none'; placeholder.classList.add('show'); }
 
@@ -1293,7 +1828,7 @@
             if (tab) switchTab(tab);
             if (jump) switchTab(jump);
             if (refresh) loadTabData(refresh, true);
-            
+
             if (reportType) {
                 state.reportFilter = reportType;
                 document.querySelectorAll('.report-filter-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.reportType === reportType));
@@ -1385,4 +1920,5 @@
         bootstrap();
     </script>
 </body>
+
 </html>

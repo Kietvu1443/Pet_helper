@@ -9,6 +9,10 @@ var cors = require("cors");
 // Middleware
 var { setUserLocals } = require("./middleware/authMiddleware");
 
+// Swagger
+var { swaggerUi, swaggerSpec } = require("./config/swagger");
+
+
 // Routes
 var indexRouter = require("./routes/index");
 var authRouter = require("./routes/auth");
@@ -60,6 +64,10 @@ app.use("/adopt", petRouter);
 app.use("/", adoptionRequestRouter);
 app.use("/", reportRouter);
 app.use("/api/v1", newsApiV1Router);
+
+// Swagger UI Route
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 
 // Catch 404 and forward to error handler
 app.use(function (req, res, next) {

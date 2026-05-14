@@ -89,8 +89,8 @@ if (userDropdownBtn && userDropdown) {
             '<a href="/adopt/admin/add" class="dropdown-item role-staff-only is-auth-hidden">&#128062; Thêm thú cưng</a>',
             '<a href="/admin/reports" class="dropdown-item role-staff-only is-auth-hidden">&#128450;&#65039; Duyệt báo cáo</a>',
 
-            '<a href="/admin" class="dropdown-item role-admin-only is-auth-hidden">&#9881;&#65039; Quản trị</a>',
-            '<a href="/admin-shop" class="dropdown-item role-admin-only is-auth-hidden">&#128722; Quản lý cửa hàng</a>',
+            '<a href="/admin" class="dropdown-item role-staff-only is-auth-hidden">&#9881;&#65039; Quản trị</a>',
+            '<a href="/admin-shop" class="dropdown-item role-staff-only is-auth-hidden">&#128722; Quản lý cửa hàng</a>',
             '<div class="dropdown-divider"></div>',
 '<a href="javascript:void(0)" onclick="window.handleLogout(event)" class="dropdown-item">&#x1F6AA; Đăng xuất</a>',
         ].join('');

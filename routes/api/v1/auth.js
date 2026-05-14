@@ -9,7 +9,6 @@ router.post("/logout", authApiV1Controller.logout);
 router.get("/me", requireApiAuth, authApiV1Controller.me);
 router.patch("/profile", requireApiAuth, authApiV1Controller.updateProfile);
 
-//avatar
 router.post("/avatar", requireApiAuth, authApiV1Controller.uploadAvatar);
 router.post(
   "/background",

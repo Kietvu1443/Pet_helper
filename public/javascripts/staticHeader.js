@@ -768,3 +768,13 @@ if (!window.handleLogout) {
     }
 })();
 // ─────────────────────────────────────────────────────────────────────────────
+
+// ── MASCOT SYSTEM ─────────────────────────────────────────────────────────────
+(function() {
+    if (document.getElementById('__mascotScript')) return;
+    var s = document.createElement('script');
+    s.id = '__mascotScript';
+    s.src = '/javascripts/mascot.js';
+    document.head.appendChild(s);
+})();
+// ─────────────────────────────────────────────────────────────────────────────

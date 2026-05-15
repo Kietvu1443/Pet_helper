@@ -139,7 +139,7 @@ window.__mascotInitialized = true;
             // Panel:  left = 226px, bottom = 20px (ngang đáy avatar, mở lên trên)
             '#__mascotWrap{position:fixed;bottom:20px;left:16px;z-index:9999;display:flex;flex-direction:row;align-items:flex-end;gap:8px;pointer-events:none;}',
             '#__mascotWrap.hidden{display:none;}',
-            '#__mascotBubble{position:fixed;bottom:232px;left:226px;z-index:10001;background:#fff;border:1px solid #c8e6c9;border-radius:14px 14px 14px 4px;padding:9px 13px;font-size:12.5px;color:#1b4332;max-width:240px;box-shadow:0 2px 10px rgba(0,0,0,0.1);opacity:0;transform:translateY(6px);transition:opacity 0.3s,transform 0.3s;line-height:1.5;pointer-events:none;font-family:inherit;}',
+            '#__mascotBubble{position:fixed;bottom:150px;left:200px;z-index:10001;background:#fff;border:1px solid #c8e6c9;border-radius:14px 14px 14px 4px;padding:9px 13px;font-size:12.5px;color:#1b4332;max-width:240px;box-shadow:0 2px 10px rgba(0,0,0,0.1);opacity:0;transform:translateY(6px);transition:opacity 0.3s,transform 0.3s;line-height:1.5;pointer-events:none;font-family:inherit;}',
             '#__mascotBubble.show{opacity:1;transform:translateY(0);}',
             '#__mascotAvatar{width:200px;height:200px;object-fit:contain;cursor:pointer;pointer-events:all;animation:mscFloat 3s ease-in-out infinite;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.15));transition:transform 0.15s;}',
             '#__mascotAvatar:hover{transform:scale(1.07);animation-play-state:paused;}',

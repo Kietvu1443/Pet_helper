@@ -4,6 +4,15 @@ if (window.__staticHeaderInitialized) {
 } else {
   window.__staticHeaderInitialized = true;
 
+  (function () {
+    if (document.querySelector('link[rel~="icon"]')) return;
+    var favicon = document.createElement("link");
+    favicon.rel = "icon";
+    favicon.type = "image/png";
+    favicon.href = "/images/favicon.png";
+    document.head.appendChild(favicon);
+  })();
+
   if (!window.applyUserBackground) {
     function isImageBackgroundValue(bg) {
       return (

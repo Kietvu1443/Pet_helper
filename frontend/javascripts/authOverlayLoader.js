@@ -3,6 +3,62 @@
     return;
   }
   window.__authOverlayLoaderInitialized = true;
+  
+  // Tải SimpleWebAuthn Browser SDK động nếu chưa có
+  if (!window.SimpleWebAuthnBrowser) {
+    if (!document.querySelector('script[src*="@simplewebauthn/browser"]')) {
+      var swaScript = document.createElement("script");
+      swaScript.src = "https://cdn.jsdelivr.net/npm/@simplewebauthn/browser/dist/bundle/index.umd.min.js";
+      swaScript.async = true;
+      document.head.appendChild(swaScript);
+    }
+  }
+
+  // ─── Tải cấu hình và tích hợp SDK Google & Facebook động ───
+  fetch("/api/v1/auth/config")
+    .then(function (res) { return res.json(); })
+    .then(function (data) {
+      if (data && data.success && data.data) {
+        window.GOOGLE_CLIENT_ID = data.data.googleClientId;
+        window.FACEBOOK_APP_ID = data.data.facebookAppId;
+
+        // Tải Google Client SDK động nếu có GOOGLE_CLIENT_ID hợp lệ
+        if (window.GOOGLE_CLIENT_ID && !window.GOOGLE_CLIENT_ID.includes("YOUR_")) {
+          if (!document.querySelector('script[src*="accounts.google.com/gsi/client"]')) {
+            var gScript = document.createElement("script");
+            gScript.src = "https://accounts.google.com/gsi/client";
+            gScript.async = true;
+            gScript.defer = true;
+            document.head.appendChild(gScript);
+          }
+        }
+
+        // Tải Facebook Client SDK động nếu có FACEBOOK_APP_ID hợp lệ
+        if (window.FACEBOOK_APP_ID && !window.FACEBOOK_APP_ID.includes("YOUR_")) {
+          if (!document.querySelector('script[src*="connect.facebook.net"]')) {
+            (function (d, s, id) {
+              var js, fjs = d.getElementsByTagName(s)[0];
+              if (d.getElementById(id)) return;
+              js = d.createElement(s); js.id = id;
+              js.src = "https://connect.facebook.net/vi_VN/sdk.js";
+              fjs.parentNode.insertBefore(js, fjs);
+            }(document, "script", "facebook-jssdk"));
+
+            window.fbAsyncInit = function () {
+              FB.init({
+                appId: window.FACEBOOK_APP_ID,
+                cookie: true,
+                xfbml: true,
+                version: "v18.0"
+              });
+            };
+          }
+        }
+      }
+    })
+    .catch(function (err) {
+      console.error("[Auth Overlay Loader] Failed to load config:", err);
+    });
 
   var mount = document.getElementById("auth-overlay-mount") || document.body;
   if (!mount) {

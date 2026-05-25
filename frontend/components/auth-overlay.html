@@ -160,10 +160,20 @@
         <!-- Social Login -->
         <div class="auth-overlay__social">
             <p>Hoặc tiếp tục với</p>
-            <div class="auth-overlay__social-icons">
-                <div class="auth-overlay__social-icon" title="Google">G</div>
-                <div class="auth-overlay__social-icon" title="Facebook">F</div>
-                <div class="auth-overlay__social-icon" title="Apple ID">A</div>
+            <div class="auth-overlay__social-btns">
+
+                <button type="button" class="auth-overlay__social-btn auth-overlay__social-btn--google" id="googleLoginBtn" onclick="triggerGoogleLogin()">
+                    <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.716v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58z"/></svg>
+                    Tiếp tục với Google
+                </button>
+                <button type="button" class="auth-overlay__social-btn auth-overlay__social-btn--facebook" id="facebookLoginBtn" onclick="triggerFacebookLogin()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                    Tiếp tục với Facebook
+                </button>
+                <button type="button" class="auth-overlay__social-btn auth-overlay__social-btn--passkey" id="passkeyLoginBtn" onclick="triggerPasskeyLogin()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+                    Đăng nhập bằng Passkey
+                </button>
             </div>
         </div>
     </div>
@@ -1047,4 +1057,234 @@
             btn.classList.remove('loading');
         }
     }
+
+    // ===== Social Auth Shared Helper =====
+    async function _handleOAuthSuccess(data) {
+        if (data && data.data && data.data.token) {
+            localStorage.setItem('token', data.data.token);
+        }
+        if (data && data.data && data.data.user) {
+            localStorage.setItem('user', JSON.stringify(data.data.user));
+        }
+        overlayShowSuccess(data.message || 'Đăng nhập thành công!');
+        setTimeout(function () { window.location.reload(); }, 700);
+    }
+
+    // ===== Google Login =====
+    // Được gọi khi user click nút Google
+    async function triggerGoogleLogin() {
+        const googleClientId = window.GOOGLE_CLIENT_ID || '';
+        if (!googleClientId || googleClientId.includes('YOUR_')) {
+            overlayShowError('Google Login chưa được cấu hình. Vui lòng điền GOOGLE_CLIENT_ID vào .env');
+            return;
+        }
+        // Sử dụng Google Identity Services prompt nếu SDK đã load
+        if (window.google && window.google.accounts && window.google.accounts.id) {
+            if (!window.__googleLoginInitialized) {
+                google.accounts.id.initialize({
+                    client_id: googleClientId,
+                    callback: window.handleGoogleCredentialResponse,
+                    use_fedcm_for_prompt: false
+                });
+                window.__googleLoginInitialized = true;
+            }
+            google.accounts.id.prompt();
+        } else {
+            overlayShowError('Google SDK chưa sẵn sàng. Vui lòng tải lại trang.');
+        }
+    }
+
+    // Callback nhận idToken từ Google SDK
+    function handleGoogleCredentialResponse(response) {
+        (async () => {
+            const btn = document.getElementById('googleLoginBtn');
+            const originalText = btn ? btn.innerHTML : '';
+            if (btn) { btn.disabled = true; btn.textContent = 'Đang xác thực...'; }
+            try {
+                const res = await fetch('/api/v1/auth/google', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ token: response.credential }),
+                });
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    await _handleOAuthSuccess(data);
+                } else {
+                    overlayShowError(data.message || 'Đăng nhập Google thất bại');
+                }
+            } catch (err) {
+                overlayShowError('Lỗi kết nối khi đăng nhập Google');
+            } finally {
+                if (btn) { btn.disabled = false; btn.innerHTML = originalText; }
+            }
+        })();
+    }
+    // Expose globally for Google SDK callback
+    window.handleGoogleCredentialResponse = handleGoogleCredentialResponse;
+
+    // ===== Facebook Login =====
+    async function triggerFacebookLogin() {
+        const fbAppId = window.FACEBOOK_APP_ID || '';
+        if (!fbAppId || fbAppId.includes('YOUR_')) {
+            overlayShowError('Facebook Login chưa được cấu hình. Vui lòng điền FACEBOOK_APP_ID vào .env');
+            return;
+        }
+        if (window.location.protocol === 'http:') {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Yêu cầu HTTPS!',
+                text: 'Facebook SDK yêu cầu kết nối bảo mật HTTPS để đăng nhập. Giao thức HTTP thường (http://localhost:3000) không được hỗ trợ bởi Meta.',
+                footer: 'Lời khuyên: Chuyển máy chủ local sang HTTPS hoặc sử dụng công cụ ngrok/localtunnel.',
+                confirmButtonColor: '#2d6a4f'
+            });
+            overlayShowError('Facebook Login yêu cầu kết nối HTTPS.');
+            return;
+        }
+        if (typeof FB === 'undefined') {
+            overlayShowError('Facebook SDK chưa sẵn sàng. Vui lòng tải lại trang.');
+            return;
+        }
+        FB.login(function(response) {
+            (async () => {
+                if (!response.authResponse) return;
+                const btn = document.getElementById('facebookLoginBtn');
+                const originalText = btn ? btn.innerHTML : '';
+                if (btn) { btn.disabled = true; btn.textContent = 'Đang xác thực...'; }
+                try {
+                    const res = await fetch('/api/v1/auth/facebook', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify({ accessToken: response.authResponse.accessToken }),
+                    });
+                    const data = await res.json();
+                    if (res.ok && data.success) {
+                        await _handleOAuthSuccess(data);
+                    } else {
+                        overlayShowError(data.message || 'Đăng nhập Facebook thất bại');
+                    }
+                } catch (err) {
+                    overlayShowError('Lỗi kết nối khi đăng nhập Facebook');
+                } finally {
+                    if (btn) { btn.disabled = false; btn.innerHTML = originalText; }
+                }
+            })();
+        }, { scope: 'email,public_profile' });
+    }
+
+    // ===== Passkey Login =====
+    async function triggerPasskeyLogin() {
+        if (!window.PublicKeyCredential) {
+            overlayShowError('Trình duyệt của bạn không hỗ trợ Passkey. Vui lòng dùng trình duyệt hiện đại hơn.');
+            return;
+        }
+        const btn = document.getElementById('passkeyLoginBtn');
+        const originalText = btn ? btn.innerHTML : '';
+        if (btn) { btn.disabled = true; btn.textContent = 'Đang xác thực...'; }
+        try {
+            // 1. Lấy challenge từ backend
+            const optRes = await fetch('/api/v1/auth/passkey/login/options', { credentials: 'include' });
+            const optData = await optRes.json();
+            if (!optRes.ok || !optData.success) {
+                overlayShowError(optData.message || 'Không thể khởi tạo Passkey');
+                return;
+            }
+            // 2. Gọi trình duyệt yêu cầu vân tay / PIN
+            const { startAuthentication } = window.SimpleWebAuthnBrowser || {};
+            if (!startAuthentication) {
+                overlayShowError('Thư viện SimpleWebAuthn chưa được tải. Hãy thêm script vào trang.');
+                return;
+            }
+            let credential;
+            try {
+                credential = await startAuthentication(optData.data.options);
+            } catch (err) {
+                if (err.name === 'NotAllowedError') {
+                    overlayShowError('Bạn đã hủy xác thực Passkey.');
+                } else {
+                    overlayShowError('Không tìm thấy Passkey phù hợp trên thiết bị này.');
+                }
+                return;
+            }
+            // 3. Gửi kết quả về backend
+            const verRes = await fetch('/api/v1/auth/passkey/login/verify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ credential }),
+            });
+            const verData = await verRes.json();
+            if (verRes.ok && verData.success) {
+                await _handleOAuthSuccess(verData);
+            } else {
+                overlayShowError(verData.message || 'Xác thực Passkey thất bại');
+            }
+        } catch (err) {
+            console.error('Passkey login error:', err);
+            overlayShowError('Đã xảy ra lỗi khi đăng nhập bằng Passkey');
+        } finally {
+            if (btn) { btn.disabled = false; btn.innerHTML = originalText; }
+        }
+    }
 </script>
+
+<!-- ========== SOCIAL AUTH STYLES ========== -->
+<style>
+    .auth-overlay__social-btns {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 4px;
+    }
+
+    .auth-overlay__social-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+        padding: 11px 16px;
+        border-radius: 12px;
+        border: 1.5px solid #e0e0e0;
+        background: #fff;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: inherit;
+        transition: all 0.22s ease;
+        color: #374151;
+    }
+
+    .auth-overlay__social-btn:hover {
+        background: #f9fafb;
+        border-color: #b0b0b0;
+        transform: translateY(-1px);
+        box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    }
+
+    .auth-overlay__social-btn:active {
+        transform: translateY(0);
+    }
+
+    .auth-overlay__social-btn:disabled {
+        opacity: 0.65;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .auth-overlay__social-btn--google:hover {
+        border-color: #4285F4;
+        color: #4285F4;
+    }
+
+    .auth-overlay__social-btn--facebook:hover {
+        border-color: #1877F2;
+        color: #1877F2;
+    }
+
+    .auth-overlay__social-btn--passkey:hover {
+        border-color: #2d6a4f;
+        color: #2d6a4f;
+    }
+</style>

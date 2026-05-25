@@ -420,6 +420,18 @@ const authApiV1Controller = {
       return sendError(res, 500, "Đã xảy ra lỗi, vui lòng thử lại");
     }
   },
+
+  getConfig(req, res) {
+    try {
+      return sendSuccess(res, 200, "Lấy cấu hình thành công", {
+        googleClientId: process.env.GOOGLE_CLIENT_ID || "",
+        facebookAppId: process.env.FACEBOOK_APP_ID || "",
+      });
+    } catch (error) {
+      console.error("[Auth API v1] getConfig error:", error);
+      return sendError(res, 500, "Đã xảy ra lỗi khi lấy cấu hình");
+    }
+  },
 };
 
 module.exports = authApiV1Controller;

@@ -720,6 +720,7 @@
             display: none !important;
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
@@ -1018,6 +1019,27 @@
                         <div class="bg-preview-bar" id="bgPreviewBar">Chưa chọn nền</div>
                         <button type="button" class="media-save-btn" id="saveBgBtn">💾 Lưu nền trang web</button>
                         <div id="bgStatus" style="margin-top:10px;font-size:13px;color:#64748b;min-height:18px;"></div>
+                    </div>
+
+                    <!-- ── Connected Accounts ── -->
+                    <div class="media-section" id="connectedAccountsSection">
+                        <div class="media-section-title">🔗 Tài khoản liên kết</div>
+                        <div class="connected-list" id="connectedList">
+                            <div class="connected-loading">Đang tải...</div>
+                        </div>
+                    </div>
+
+                    <!-- ── Passkeys / Security Keys ── -->
+                    <div class="media-section" id="passkeysSection">
+                        <div class="media-section-title">🔑 Bảo mật / Passkeys</div>
+                        <p style="font-size:0.85rem;color:#64748b;margin:0 0 14px;">Quản lý các thiết bị đăng nhập nhanh bằng vân tay, FaceID hoặc mã PIN của thiết bị.</p>
+                        <div class="passkeys-list" id="passkeysList">
+                            <div class="connected-loading">Đang tải...</div>
+                        </div>
+                        <button type="button" class="verify-btn" id="addPasskeyBtn" style="margin-top:14px;" onclick="addNewPasskey()">
+                            ➕ Thêm thiết bị Passkey mới
+                        </button>
+                        <p class="pwd-hint" id="passkeyHint"></p>
                     </div>
                 </div>
             </article>
@@ -1967,6 +1989,517 @@
             });
         })();
     </script>
+
+<!-- SimpleWebAuthn Browser SDK (cho Passkey) -->
+<script src="https://cdn.jsdelivr.net/npm/@simplewebauthn/browser/dist/bundle/index.umd.min.js"></script>
+
+<style>
+    /* ── Connected Accounts & Passkeys ──────────────────────────────────────── */
+    .connected-loading {
+        color: #94a3b8;
+        font-size: 0.875rem;
+        padding: 8px 0;
+    }
+
+    .connected-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px 14px;
+        border: 1px solid #e1efe7;
+        border-radius: 12px;
+        background: #f7fbf8;
+        margin-bottom: 10px;
+        flex-wrap: wrap;
+    }
+
+    .connected-item-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .connected-item-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+        font-weight: 700;
+    }
+
+    .connected-item-icon--google { background: #e8f0fe; color: #4285F4; }
+    .connected-item-icon--facebook { background: #e7f0fd; color: #1877F2; }
+    .connected-item-icon--passkey { background: #f0fdf4; color: #2d6a4f; }
+
+    .connected-item-name {
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: #1f2937;
+    }
+
+    .connected-item-email {
+        font-size: 0.8rem;
+        color: #64748b;
+        word-break: break-all;
+    }
+
+    .connected-item-meta {
+        font-size: 0.78rem;
+        color: #94a3b8;
+    }
+
+    .connected-badge-linked {
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: 999px;
+        background: #dcfce7;
+        color: #166534;
+        white-space: nowrap;
+    }
+
+    .connected-badge-unlinked {
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: 999px;
+        background: #f1f5f9;
+        color: #64748b;
+        white-space: nowrap;
+    }
+
+    .connected-item-actions {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        flex-shrink: 0;
+    }
+
+    .btn-connected-link {
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        cursor: pointer;
+        border: 1px solid #2d6a4f;
+        color: #2d6a4f;
+        background: transparent;
+        font-family: inherit;
+        transition: all 0.2s;
+    }
+
+    .btn-connected-link:hover { background: #2d6a4f; color: #fff; }
+
+    .btn-connected-unlink {
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        cursor: pointer;
+        border: 1px solid #dc2626;
+        color: #dc2626;
+        background: transparent;
+        font-family: inherit;
+        transition: all 0.2s;
+    }
+
+    .btn-connected-unlink:hover { background: #fef2f2; }
+
+    /* Passkey item uses same connected-item style but with rename */
+    .passkey-label-input {
+        border: 1px solid #cfe2d7;
+        border-radius: 8px;
+        padding: 5px 8px;
+        font-size: 0.82rem;
+        outline: none;
+        width: 120px;
+        font-family: inherit;
+    }
+
+    .passkey-label-input:focus {
+        border-color: #2d6a4f;
+        box-shadow: 0 0 0 2px rgba(45,106,79,0.12);
+    }
+
+    .backed-up-badge {
+        font-size: 0.72rem;
+        font-weight: 700;
+        padding: 2px 7px;
+        border-radius: 999px;
+    }
+
+    .backed-up-badge--yes { background: #dcfce7; color: #166534; }
+    .backed-up-badge--no  { background: #f1f5f9; color: #64748b; }
+
+    /* OTP confirm inline box */
+    .otp-confirm-box {
+        display: none;
+        margin-top: 10px;
+        padding: 12px 14px;
+        background: #fff7ed;
+        border: 1px solid #fed7aa;
+        border-radius: 10px;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    .otp-confirm-box.visible { display: flex; }
+    .otp-confirm-box input {
+        border: 1px solid #fdba74;
+        border-radius: 8px;
+        padding: 7px 10px;
+        font-size: 0.9rem;
+        width: 130px;
+        letter-spacing: 3px;
+        text-align: center;
+        outline: none;
+        font-family: inherit;
+    }
+    .otp-confirm-box input:focus { border-color: #ea580c; }
+    .otp-confirm-box p { margin: 0; font-size: 0.82rem; color: #9a3412; font-weight: 600; width: 100%; }
+</style>
+
+<script>
+// ===== Connected Accounts Logic =====
+(function() {
+    const PROVIDERS = [
+        { key: 'google',   label: 'Google',   icon: 'G', iconClass: 'google' },
+        { key: 'facebook', label: 'Facebook', icon: 'F', iconClass: 'facebook' },
+    ];
+
+    let connections = [];
+    let unlinkOtpTarget = null; // { type: 'connection'|'passkey', key, id }
+
+    async function loadConnectedAccounts() {
+        const list = document.getElementById('connectedList');
+        if (!list) return;
+        try {
+            const res = await fetch('/api/v1/auth/connections', { credentials: 'include' });
+            if (res.status === 401) { list.innerHTML = '<div class="connected-loading">Vui lòng đăng nhập</div>'; return; }
+            const data = await res.json();
+            connections = (data.success && data.data && data.data.connections) ? data.data.connections : [];
+            renderConnections();
+        } catch (e) {
+            list.innerHTML = '<div class="connected-loading">Không thể tải dữ liệu</div>';
+        }
+    }
+
+    function renderConnections() {
+        const list = document.getElementById('connectedList');
+        if (!list) return;
+        list.innerHTML = PROVIDERS.map(p => {
+            const conn = connections.find(c => c.provider === p.key);
+            return `
+            <div class="connected-item" id="conn-item-${p.key}">
+                <div class="connected-item-info">
+                    <div class="connected-item-icon connected-item-icon--${p.iconClass}">${p.icon}</div>
+                    <div>
+                        <div class="connected-item-name">${p.label}</div>
+                        ${conn ? `<div class="connected-item-email">${conn.linked_email || '(không có email)'}</div>` : '<div class="connected-item-email">Chưa liên kết</div>'}
+                    </div>
+                </div>
+                <div class="connected-item-actions">
+                    ${conn
+                        ? `<span class="connected-badge-linked">✓ Đã liên kết</span>
+                           <button class="btn-connected-unlink" onclick="startUnlinkProvider('${p.key}')">Hủy liên kết</button>`
+                        : `<span class="connected-badge-unlinked">Chưa kết nối</span>
+                           <button class="btn-connected-link" onclick="startLinkProvider('${p.key}')">Liên kết</button>`
+                    }
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    window.startLinkProvider = async function(provider) {
+        if (provider === 'google') {
+            if (!window.GOOGLE_CLIENT_ID || window.GOOGLE_CLIENT_ID.includes('YOUR_')) {
+                setNote('error', 'Google Login chưa được cấu hình (thiếu GOOGLE_CLIENT_ID)'); return;
+            }
+            if (window.google && window.google.accounts && window.google.accounts.id) {
+                if (!window.__googleLinkingInitialized) {
+                    const linkingCallback = (response) => {
+                        (async () => {
+                            const res = await fetch('/api/v1/auth/link/google', {
+                                method: 'POST', headers: {'Content-Type': 'application/json'},
+                                credentials: 'include', body: JSON.stringify({ token: response.credential }),
+                            });
+                            const data = await res.json();
+                            if (res.ok && data.success) {
+                                setNote('success', 'Liên kết Google thành công');
+                                await loadConnectedAccounts();
+                            } else {
+                                setNote('error', data.message || 'Liên kết Google thất bại');
+                            }
+                        })();
+                    };
+
+                    google.accounts.id.initialize({
+                        client_id: window.GOOGLE_CLIENT_ID,
+                        callback: linkingCallback,
+                        use_fedcm_for_prompt: false
+                    });
+                    window.__googleLinkingInitialized = true;
+                }
+                google.accounts.id.prompt();
+            } else {
+                setNote('error', 'Google SDK chưa sẵn sàng');
+            }
+        } else if (provider === 'facebook') {
+            if (!window.FACEBOOK_APP_ID || window.FACEBOOK_APP_ID.includes('YOUR_')) {
+                setNote('error', 'Facebook Login chưa được cấu hình (thiếu FACEBOOK_APP_ID)'); return;
+            }
+            if (window.location.protocol === 'http:') {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Yêu cầu HTTPS!',
+                    text: 'Facebook SDK yêu cầu kết nối bảo mật HTTPS để thực hiện liên kết tài khoản. Giao thức HTTP thường (http://localhost:3000) không được hỗ trợ bởi Meta.',
+                    footer: 'Lời khuyên: Chuyển máy chủ local sang HTTPS hoặc sử dụng công cụ ngrok/localtunnel.',
+                    confirmButtonColor: '#2d6a4f'
+                });
+                setNote('error', 'Facebook Login yêu cầu kết nối HTTPS.');
+                return;
+            }
+            if (typeof FB === 'undefined') { setNote('error', 'Facebook SDK chưa sẵn sàng'); return; }
+            FB.login(function(response) {
+                (async () => {
+                    if (!response.authResponse) return;
+                    const res = await fetch('/api/v1/auth/link/facebook', {
+                        method: 'POST', headers: {'Content-Type': 'application/json'},
+                        credentials: 'include', body: JSON.stringify({ accessToken: response.authResponse.accessToken }),
+                    });
+                    const data = await res.json();
+                    if (res.ok && data.success) {
+                        setNote('success', 'Liên kết Facebook thành công');
+                        await loadConnectedAccounts();
+                    } else {
+                        setNote('error', data.message || 'Liên kết Facebook thất bại');
+                    }
+                })();
+            }, { scope: 'email,public_profile' });
+        }
+    };
+
+    window.startUnlinkProvider = function(provider) {
+        unlinkOtpTarget = { type: 'connection', key: provider };
+        showUnlinkOtpBox(provider + '-unlink-otp', `Nhập mã OTP để xác nhận hủy liên kết ${provider === 'google' ? 'Google' : 'Facebook'}`);
+    };
+
+    function showUnlinkOtpBox(boxId, hint) {
+        // Remove old box if any
+        document.querySelectorAll('.otp-confirm-box').forEach(b => b.remove());
+        const box = document.createElement('div');
+        box.className = 'otp-confirm-box visible';
+        box.id = boxId;
+        box.innerHTML = `
+            <p>${hint}</p>
+            <button type="button" class="verify-btn" onclick="sendUnlinkOtp()">Gửi mã OTP</button>
+            <input type="text" id="unlinkOtpInput" maxlength="6" inputmode="numeric" placeholder="Nhập OTP">
+            <button type="button" class="verify-btn" onclick="confirmUnlink()">Xác nhận</button>
+            <button type="button" class="verify-btn secondary" onclick="cancelUnlink()">Hủy</button>
+        `;
+        const targetItem = unlinkOtpTarget && unlinkOtpTarget.type === 'connection'
+            ? document.getElementById(`conn-item-${unlinkOtpTarget.key}`)
+            : (unlinkOtpTarget ? document.getElementById(`passkey-item-${unlinkOtpTarget.id}`) : null);
+        if (targetItem) targetItem.after(box);
+        else document.getElementById('connectedList').appendChild(box);
+    }
+
+    window.sendUnlinkOtp = async function() {
+        const url = unlinkOtpTarget && unlinkOtpTarget.type === 'passkey'
+            ? '/api/v1/auth/passkeys/delete/send-otp'
+            : '/api/v1/auth/unlink/send-otp';
+        const res = await fetch(url, { method: 'POST', credentials: 'include' });
+        const data = await res.json();
+        setNote(res.ok ? 'success' : 'error', data.message || (res.ok ? 'OTP đã gửi' : 'Không gửi được OTP'));
+    };
+
+    window.confirmUnlink = async function() {
+        const otp = (document.getElementById('unlinkOtpInput') || {}).value;
+        if (!otp || !/^\d{6}$/.test(otp)) { setNote('error', 'Nhập đúng mã OTP 6 chữ số'); return; }
+        let res, data;
+        if (unlinkOtpTarget.type === 'connection') {
+            res = await fetch(`/api/v1/auth/unlink/${unlinkOtpTarget.key}`, {
+                method: 'DELETE', headers: {'Content-Type': 'application/json'},
+                credentials: 'include', body: JSON.stringify({ otp }),
+            });
+        } else {
+            res = await fetch(`/api/v1/auth/passkeys/${unlinkOtpTarget.id}`, {
+                method: 'DELETE', headers: {'Content-Type': 'application/json'},
+                credentials: 'include', body: JSON.stringify({ otp }),
+            });
+        }
+        data = await res.json();
+        if (res.ok && data.success) {
+            setNote('success', data.message);
+            const targetType = unlinkOtpTarget.type;
+            cancelUnlink();
+            if (targetType === 'connection') loadConnectedAccounts();
+            else loadPasskeys();
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
+        } else {
+            setNote('error', data.message || 'Thao tác thất bại');
+        }
+    };
+
+    window.cancelUnlink = function() {
+        document.querySelectorAll('.otp-confirm-box').forEach(b => b.remove());
+        unlinkOtpTarget = null;
+    };
+
+    // ===== Passkeys Logic =====
+    async function loadPasskeys() {
+        const list = document.getElementById('passkeysList');
+        if (!list) return;
+        try {
+            const res = await fetch('/api/v1/auth/passkeys', { credentials: 'include' });
+            if (res.status === 401) { list.innerHTML = '<div class="connected-loading">Vui lòng đăng nhập</div>'; return; }
+            const data = await res.json();
+            const passkeys = (data.success && data.data) ? data.data.passkeys : [];
+            if (passkeys.length === 0) {
+                list.innerHTML = '<div class="connected-loading">Chưa có thiết bị Passkey nào được đăng ký.</div>';
+                return;
+            }
+            list.innerHTML = passkeys.map(pk => {
+                const created = new Date(pk.created_at).toLocaleDateString('vi-VN');
+                const deviceLabel = pk.label || pk.device_type || 'Thiết bị không tên';
+                const backedUp = pk.backed_up ? '<span class="backed-up-badge backed-up-badge--yes">☁️ Đồng bộ</span>' : '<span class="backed-up-badge backed-up-badge--no">📱 Cục bộ</span>';
+                return `
+                <div class="connected-item" id="passkey-item-${pk.id}">
+                    <div class="connected-item-info">
+                        <div class="connected-item-icon connected-item-icon--passkey">🔑</div>
+                        <div>
+                            <div class="connected-item-name">
+                                <input type="text" class="passkey-label-input" id="passkey-label-${pk.id}" value="${deviceLabel}" maxlength="100">
+                                <button class="btn-connected-link" style="margin-left:6px;padding:4px 8px;font-size:0.75rem;" onclick="savePasskeyLabel(${pk.id})">Lưu</button>
+                            </div>
+                            <div class="connected-item-meta">Ngày đăng ký: ${created} &nbsp;${backedUp}</div>
+                        </div>
+                    </div>
+                    <div class="connected-item-actions">
+                        <button class="btn-connected-unlink" onclick="startDeletePasskey(${pk.id})">Xóa</button>
+                    </div>
+                </div>`;
+            }).join('');
+        } catch(e) {
+            list.innerHTML = '<div class="connected-loading">Không thể tải danh sách Passkeys</div>';
+        }
+    }
+
+    window.savePasskeyLabel = async function(id) {
+        const input = document.getElementById(`passkey-label-${id}`);
+        const label = input ? input.value.trim() : '';
+        if (!label) { setNote('error', 'Tên nhãn không được để trống'); return; }
+        const res = await fetch(`/api/v1/auth/passkeys/${id}`, {
+            method: 'PATCH', headers: {'Content-Type': 'application/json'},
+            credentials: 'include', body: JSON.stringify({ label }),
+        });
+        const data = await res.json();
+        setNote(res.ok ? 'success' : 'error', data.message || (res.ok ? 'Đã cập nhật' : 'Thất bại'));
+    };
+
+    window.startDeletePasskey = function(id) {
+        unlinkOtpTarget = { type: 'passkey', id };
+        const list = document.getElementById('passkeysList');
+        showUnlinkOtpBox(`passkey-otp-${id}`, 'Nhập mã OTP gửi về email để xác nhận xóa thiết bị Passkey này');
+    };
+
+    window.addNewPasskey = async function() {
+        const hint = document.getElementById('passkeyHint');
+        const btn = document.getElementById('addPasskeyBtn');
+        if (!window.PublicKeyCredential) {
+            hint.className = 'pwd-hint error'; hint.textContent = 'Trình duyệt không hỗ trợ Passkey.'; return;
+        }
+        if (!window.SimpleWebAuthnBrowser || !window.SimpleWebAuthnBrowser.startRegistration) {
+            hint.className = 'pwd-hint error'; hint.textContent = 'Thư viện SimpleWebAuthn chưa tải. Tải lại trang thử.'; return;
+        }
+        if (btn) { btn.disabled = true; btn.textContent = '⏳ Đang chuẩn bị...'; }
+        try {
+            const optRes = await fetch('/api/v1/auth/passkey/register/options', { credentials: 'include' });
+            const optData = await optRes.json();
+            if (!optRes.ok || !optData.success) {
+                hint.className = 'pwd-hint error'; hint.textContent = optData.message || 'Không thể tạo cấu hình đăng ký'; return;
+            }
+            let credential;
+            try {
+                credential = await window.SimpleWebAuthnBrowser.startRegistration(optData.data.options);
+            } catch(e) {
+                hint.className = 'pwd-hint error';
+                hint.textContent = e.name === 'NotAllowedError' ? 'Bạn đã hủy thao tác.' : 'Thiết bị không hỗ trợ hoặc đã tồn tại Passkey này.';
+                return;
+            }
+            let label = navigator.platform || 'Thiết bị mới';
+            const { value: inputLabel, isDismissed } = await Swal.fire({
+                title: 'Thiết bị đã xác thực!',
+                text: 'Hãy đặt tên gợi nhớ cho thiết bị này để quản lý:',
+                input: 'text',
+                inputValue: label,
+                showCancelButton: true,
+                confirmButtonColor: '#2d6a4f',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'Lưu tên',
+                cancelButtonText: 'Dùng mặc định',
+                allowOutsideClick: false
+            });
+
+            if (!isDismissed && inputLabel !== undefined) {
+                label = inputLabel.trim() || label;
+            }
+
+            const verRes = await fetch('/api/v1/auth/passkey/register/verify', {
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                credentials: 'include', body: JSON.stringify({ credential, label }),
+            });
+            const verData = await verRes.json();
+            if (verRes.ok && verData.success) {
+                hint.className = 'pwd-hint success'; hint.textContent = 'Đăng ký Passkey thành công!';
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công!',
+                    text: 'Thiết bị Passkey mới đã được liên kết thành công.',
+                    confirmButtonColor: '#2d6a4f'
+                });
+                await loadPasskeys();
+            } else {
+                hint.className = 'pwd-hint error'; hint.textContent = verData.message || 'Đăng ký Passkey thất bại';
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi đăng ký!',
+                    text: verData.message || 'Đăng ký Passkey thất bại, vui lòng thử lại.',
+                    confirmButtonColor: '#d33'
+                });
+            }
+        } catch(e) {
+            hint.className = 'pwd-hint error'; hint.textContent = 'Đã xảy ra lỗi khi đăng ký Passkey.';
+        } finally {
+            if (btn) { btn.disabled = false; btn.textContent = '➕ Thêm thiết bị Passkey mới'; }
+        }
+    };
+
+    // Auto-load khi profile đã load xong
+    document.addEventListener('DOMContentLoaded', function() {
+        // Load sau một chút để token/cookie đã sẵn sàng
+        setTimeout(function() {
+            loadConnectedAccounts();
+            loadPasskeys();
+        }, 600);
+    });
+
+    // Expose for use by profile loadProfile()
+    window.reloadSecuritySections = function() {
+        loadConnectedAccounts();
+        loadPasskeys();
+    };
+})();
+</script>
 </body>
 
-</html>
+</html>

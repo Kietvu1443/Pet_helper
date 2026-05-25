@@ -5,6 +5,8 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var cors = require("cors");
+var session = require("express-session");
+var rateLimit = require("express-rate-limit");
 
 // Middleware
 var { setUserLocals } = require("./middleware/authMiddleware");
@@ -37,6 +39,34 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "../frontend")));
+
+// Session (dùng cho WebAuthn challenge storage)
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "pet-helper-session-secret-2026",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: process.env.NODE_ENV === "production" && !process.env.PASSKEY_ORIGIN?.includes("localhost"),
+      sameSite: "Lax",
+      maxAge: 5 * 60 * 1000, // 5 phút - chỉ dùng để lưu challenge tạm thời
+    },
+  })
+);
+
+// Rate limiting cho các route xác thực (chống brute-force)
+const authRateLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 phút
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: "Quá nhiều yêu cầu. Vui lòng thử lại sau 1 phút." },
+});
+app.use("/api/v1/auth/login", authRateLimiter);
+app.use("/api/v1/auth/register", authRateLimiter);
+app.use("/api/v1/auth/google", authRateLimiter);
+app.use("/api/v1/auth/facebook", authRateLimiter);
+app.use("/api/v1/auth/passkey/login", authRateLimiter);
 
 // Make user available in all views (JWT-based)
 app.use(setUserLocals);

@@ -8,621 +8,483 @@
     <link rel="stylesheet" href="/stylesheets/style.css">
     <link rel="stylesheet" href="/stylesheets/auth.css">
     <link rel="stylesheet" href="/stylesheets/staticHeader.css">
+    <!-- Tailwind CDN (preflight disabled to protect global Header/Footer styles) -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+    <script id="tailwind-config">
+        tailwind.config = {
+            corePlugins: {
+                preflight: false
+            },
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'on-primary': '#ffffff',
+                        'on-background': '#191c1a',
+                        'tertiary': '#0d1e31',
+                        'surface-container': '#edeee9',
+                        'primary-fixed-dim': '#9dd3ab',
+                        'status-approved-bg': '#f0fdf4',
+                        'inverse-on-surface': '#f0f1ec',
+                        'sidebar-glass': 'rgba(255,255,255,0.7)',
+                        'on-secondary-container': '#3b6d4c',
+                        'on-error-container': '#93000a',
+                        'error': '#ba1a1a',
+                        'tertiary-container': '#233347',
+                        'surface': '#f8faf5',
+                        'surface-bright': '#f8faf5',
+                        'surface-tint': '#376848',
+                        'on-tertiary': '#ffffff',
+                        'status-pending-bg': '#fffbeb',
+                        'secondary': '#376848',
+                        'primary-container': '#023a1e',
+                        'inverse-primary': '#9dd3ab',
+                        'status-approved-text': '#15803d',
+                        'primary': '#00220f',
+                        'secondary-fixed': '#b9efc6',
+                        'on-primary-container': '#72a580',
+                        'background': '#f8faf5',
+                        'surface-container-low': '#f3f4ef',
+                        'status-error-text': '#b91c1c',
+                        'on-tertiary-fixed-variant': '#38485d',
+                        'on-primary-fixed': '#00210e',
+                        'inverse-surface': '#2e312e',
+                        'on-secondary-fixed-variant': '#1e5032',
+                        'on-surface-variant': '#414942',
+                        'on-secondary-fixed': '#00210f',
+                        'on-secondary': '#ffffff',
+                        'surface-gradient-end': '#f7f9f7',
+                        'on-error': '#ffffff',
+                        'tertiary-fixed-dim': '#b7c8e1',
+                        'status-pending-text': '#b45309',
+                        'secondary-fixed-dim': '#9ed3ac',
+                        'surface-container-highest': '#e1e3de',
+                        'outline-variant': '#c0c9bf',
+                        'tertiary-fixed': '#d3e4fe',
+                        'surface-gradient-start': '#f0f4f1',
+                        'surface-container-high': '#e7e9e4',
+                        'on-surface': '#191c1a',
+                        'surface-dim': '#d9dbd6',
+                        'surface-container-lowest': '#ffffff',
+                        'on-primary-fixed-variant': '#1e5032',
+                        'outline': '#717971',
+                        'on-tertiary-container': '#8b9bb4',
+                        'on-tertiary-fixed': '#0b1c30',
+                        'secondary-container': '#b6ecc4',
+                        'primary-fixed': '#b9efc6',
+                        'status-error-bg': '#fef2f2',
+                        'surface-variant': '#e1e3de',
+                        'error-container': '#ffdad6'
+                    },
+                    borderRadius: {
+                        'DEFAULT': '0.25rem',
+                        'lg': '0.5rem',
+                        'xl': '0.75rem',
+                        '2xl': '1rem',
+                        '3xl': '1.5rem',
+                        'full': '9999px'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        };
+    </script>
     <style>
-        body {
-            margin: 0;
-        }
-
-        .profile-page {
+        /* ── Profile Page Body ────────────────────────────────────── */
+        .profile-main {
+            font-family: 'Inter', sans-serif;
             min-height: calc(100vh - 140px);
-            background: linear-gradient(180deg, #f5fbf7 0%, #eef8f1 100%);
-            padding: 32px 16px;
+            background: radial-gradient(circle at top left, #f0f4f1, #f7f9f7);
         }
 
-        .profile-container {
-            max-width: 900px;
-            margin: 0 auto;
+        .premium-card {
+            background: rgba(255,255,255,0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.4);
+            border-radius: 28px;
+            box-shadow: 0 12px 40px -10px rgba(0,34,15,0.05), 0 4px 12px -4px rgba(0,34,15,0.02);
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.23,1,0.32,1);
+        }
+        .premium-card:hover {
+            transform: translateY(-2px);
+            background: rgba(255,255,255,0.7);
+            box-shadow: 0 20px 50px -12px rgba(0,34,15,0.08);
         }
 
-        .profile-heading {
-            margin-bottom: 18px;
-        }
+        .profile-title { color: #023a1e; font-weight: 800; letter-spacing: -0.03em; }
 
-        .profile-heading h1 {
-            margin: 0 0 8px;
-            color: #1f5133;
-            font-size: clamp(1.45rem, 2.6vw, 2rem);
-        }
-
-        .profile-heading p {
-            margin: 0;
-            color: #4b5563;
-        }
-
+        /* Status notes */
         .status-note {
             display: none;
-            padding: 12px 14px;
-            border-radius: 10px;
-            margin-bottom: 16px;
+            padding: 1.25rem;
+            border-radius: 1.25rem;
+            margin-bottom: 2rem;
             font-weight: 600;
-            line-height: 1.45;
+            font-size: 0.9375rem;
+            animation: slideDown 0.4s ease;
         }
-
-        .status-note.warning {
-            display: block;
-            background: #fff7ed;
-            color: #9a3412;
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
+        .status-note.warning { display: block; background: #fffbeb; color: #b45309; border: 1px solid rgba(180,83,9,0.1); }
+        .status-note.error   { display: block; background: #fef2f2; color: #b91c1c; border: 1px solid rgba(185,28,28,0.1); }
+        .status-note.success { display: block; background: #f0fdf4; color: #15803d; border: 1px solid rgba(21,128,61,0.1); }
 
-        .status-note.error {
-            display: block;
-            background: #fef2f2;
-            color: #991b1b;
-        }
-
-        .status-note.success {
-            display: block;
-            background: #ecfdf3;
-            color: #166534;
-        }
-
+        /* Loading box */
         .loading-box {
             display: none;
-            background: #e8f5ec;
-            color: #1f5133;
-            border-radius: 10px;
-            padding: 12px 14px;
-            margin-bottom: 16px;
+            background: rgba(231,233,228,0.6);
+            backdrop-filter: blur(8px);
+            color: #191c1a;
+            border-radius: 1.25rem;
+            padding: 1.25rem;
+            margin-bottom: 2rem;
             font-weight: 600;
-        }
-
-        .loading-box.show {
-            display: block;
-        }
-
-        .profile-card {
-            background: #ffffff;
-            border: 1px solid #dfeee4;
-            border-radius: 16px;
-            box-shadow: 0 8px 24px rgba(31, 81, 51, 0.08);
-            overflow: hidden;
-        }
-
-        .profile-card-body {
-            padding: 24px;
-            display: grid;
-            gap: 22px;
-        }
-
-        .summary-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 14px;
-        }
-
-        .summary-item {
-            background: #f7fbf8;
-            border: 1px solid #e1efe7;
-            border-radius: 12px;
-            padding: 12px;
-        }
-
-        .summary-value.verify-state {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 999px;
-            padding: 4px 10px;
-            font-size: 0.86rem;
-            font-weight: 700;
-            width: fit-content;
-        }
-
-        .summary-value.verify-state.verified {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .summary-value.verify-state.unverified {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .summary-label {
-            margin: 0 0 6px;
-            color: #64748b;
-            font-size: 0.84rem;
-            font-weight: 700;
-            letter-spacing: 0.2px;
-            text-transform: uppercase;
-        }
-
-        .summary-value {
-            margin: 0;
-            color: #1f2937;
-            font-size: 1rem;
-            font-weight: 700;
-            word-break: break-word;
-        }
-
-        .profile-form {
-            display: grid;
-            gap: 14px;
-        }
-
-        .verify-panel {
-            border: 1px solid #dbece1;
-            border-radius: 12px;
-            background: #f9fcfa;
-            padding: 14px;
-            display: grid;
-            gap: 12px;
-        }
-
-        .verify-head {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-        }
-
-        .verify-title {
-            margin: 0 0 4px;
-            color: #1f5133;
-            font-size: 0.98rem;
-            font-weight: 800;
-        }
-
-        .verify-desc {
-            margin: 0;
-            color: #64748b;
-            font-size: 0.88rem;
-            line-height: 1.45;
-        }
-
-        .verify-badge {
-            border-radius: 999px;
-            padding: 5px 10px;
-            font-size: 0.8rem;
-            font-weight: 800;
-            white-space: nowrap;
-        }
-
-        .verify-badge.verified {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .verify-badge.unverified {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .verify-actions {
-            display: grid;
-            gap: 10px;
-        }
-
-        .verify-actions.hidden {
-            display: none;
-        }
-
-        .verify-btn {
-            border: 0;
-            border-radius: 10px;
-            background: #2d6a4f;
-            color: #ffffff;
-            font-weight: 700;
-            padding: 9px 14px;
-            cursor: pointer;
-            width: fit-content;
-            transition: background 0.2s ease;
-        }
-
-        .verify-btn:hover {
-            background: #1b4332;
-        }
-
-        .verify-btn.secondary {
-            background: #334155;
-        }
-
-        .verify-btn.secondary:hover {
-            background: #1f2937;
-        }
-
-        .verify-btn:disabled {
-            background: #94a3b8;
-            cursor: not-allowed;
-        }
-
-        .otp-row {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .otp-input {
-            border: 1px solid #cfe2d7;
-            border-radius: 10px;
-            padding: 9px 12px;
-            font-size: 1rem;
-            letter-spacing: 2px;
-            font-weight: 700;
-            width: 180px;
             text-align: center;
+            font-family: 'Inter', sans-serif;
+        }
+        .loading-box.show { display: block; }
+
+        /* Premium inputs */
+        .input-premium {
+            width: 100%;
+            background: rgba(255,255,255,0.8);
+            border: 1.5px solid #e1e3de;
+            border-radius: 16px;
+            padding: 0.875rem 1.125rem;
+            transition: all 0.3s ease;
             outline: none;
+            color: #191c1a;
+            font-size: 0.9375rem;
+            font-family: 'Inter', sans-serif;
         }
-
-        .otp-input:focus {
-            border-color: #2d6a4f;
-            box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.16);
+        .input-premium:focus {
+            border-color: #376848;
+            box-shadow: 0 0 0 4px rgba(55,104,72,0.08);
+            background: #ffffff;
         }
-
-        .otp-hint {
-            margin: 0;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #64748b;
-        }
-
-        .otp-hint.error {
-            color: #991b1b;
-        }
-
-        .otp-hint.success {
-            color: #166534;
-        }
-
-        .form-row {
-            display: grid;
-            gap: 7px;
-        }
-
-        .form-row label {
-            color: #1f5133;
-            font-weight: 700;
-            font-size: 0.92rem;
-        }
-
-        .form-row input {
-            border: 1px solid #cfe2d7;
-            border-radius: 10px;
-            padding: 10px 12px;
-            font-size: 0.95rem;
-            outline: none;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .form-row input:focus {
-            border-color: #2d6a4f;
-            box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.16);
-        }
-
-        .form-row input:disabled {
-            background: #f8fafc;
+        .input-premium:disabled {
+            background: #f3f4ef;
             cursor: not-allowed;
+            opacity: 0.7;
         }
 
-        .form-actions {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 4px;
-        }
-
-        .save-btn {
-            border: 0;
-            border-radius: 999px;
-            background: #2d6a4f;
+        /* Primary button */
+        .btn-primary-premium {
+            background: #023a1e;
             color: #ffffff;
             font-weight: 700;
-            font-size: 0.95rem;
-            padding: 10px 20px;
+            padding: 0.875rem 1.75rem;
+            border-radius: 18px;
+            border: none;
             cursor: pointer;
-            transition: background 0.2s ease, transform 0.2s ease;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+            box-shadow: 0 6px 15px rgba(2,58,30,0.15);
         }
-
-        .save-btn:hover {
-            background: #1b4332;
-            transform: translateY(-1px);
+        .btn-primary-premium:hover:not(:disabled) {
+            background: #00220f;
+            transform: scale(1.02);
+            box-shadow: 0 10px 25px rgba(2,58,30,0.22);
         }
-
-        .save-btn:disabled {
-            background: #94a3b8;
+        .btn-primary-premium:active:not(:disabled) { transform: scale(0.98); }
+        .btn-primary-premium:disabled {
+            background: #c0c9bf;
             cursor: not-allowed;
-            transform: none;
+            box-shadow: none;
+            opacity: 0.6;
         }
 
-        @media (max-width: 768px) {
-            .profile-page {
-                padding: 24px 12px;
-            }
-
-            .profile-card-body {
-                padding: 18px;
-            }
-
-            .summary-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .form-actions {
-                justify-content: stretch;
-            }
-
-            .save-btn {
-                width: 100%;
-            }
-
-            .verify-head {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .verify-btn {
-                width: 100%;
-            }
-
-            .otp-row {
-                width: 100%;
-            }
-
-            .otp-input {
-                width: 100%;
-            }
-        }
-
-        .pwd-section {
-            border: 1px solid #dbece1;
-            border-radius: 12px;
-            background: #f9fcfa;
-            padding: 14px;
-            display: grid;
-            gap: 12px;
-        }
-
-        .pwd-title {
-            margin: 0 0 4px;
-            color: #1f5133;
-            font-size: 0.98rem;
-            font-weight: 800;
-        }
-
-        .pwd-desc {
-            margin: 0;
-            color: #64748b;
-            font-size: 0.88rem;
-            line-height: 1.45;
-        }
-
-        .pwd-hint {
-            margin: 0;
-            font-size: 0.85rem;
+        /* Secondary button */
+        .btn-secondary-premium {
+            background: rgba(237,238,233,0.8);
+            color: #191c1a;
             font-weight: 600;
-            color: #64748b;
-        }
-
-        .pwd-hint.error {
-            color: #991b1b;
-        }
-
-        .pwd-hint.success {
-            color: #166534;
-        }
-
-        .pwd-forgot-link {
-            color: #2d6a4f;
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-decoration: none;
+            padding: 0.75rem 1.25rem;
+            border-radius: 16px;
+            border: none;
             cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
         }
+        .btn-secondary-premium:hover { background: #e1e3de; transform: translateY(-1px); }
+        .btn-secondary-premium:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
-        .pwd-forgot-link:hover {
-            text-decoration: underline;
+        /* Summary items */
+        .summary-item {
+            background: rgba(255,255,255,0.4);
+            border: 1px solid rgba(192,201,191,0.2);
+            border-radius: 20px;
+            padding: 1.5rem;
+            transition: background 0.3s ease;
         }
-    </style>
-    <style id="avatar-bg-css">
-        .media-section {
-            margin-top: 32px;
-        }
+        .summary-item:hover { background: rgba(255,255,255,0.6); }
 
-        .media-section-title {
-            font-size: 13px;
-            font-weight: 700;
-            color: #64748b;
-            text-transform: uppercase;
-            letter-spacing: .5px;
-            margin-bottom: 16px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .avatar-wrap {
-            display: flex;
+        /* Verify state badges */
+        .verify-state-badge {
+            display: inline-flex;
             align-items: center;
-            gap: 20px;
-            flex-wrap: wrap;
+            padding: 0.375rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.6875rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
         }
+        .verify-state-badge.verified   { color: #15803d; background: rgba(240,253,244,0.8); }
+        .verify-state-badge.unverified { color: #b91c1c; background: rgba(254,242,242,0.8); }
 
-        .avatar-preview {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
+        /* Avatar frame */
+        .avatar-frame {
+            position: relative;
+            width: 110px;
+            height: 110px;
+            border-radius: 36px;
+            background: linear-gradient(135deg, #b9efc6 0%, #376848 100%);
+            padding: 4px;
+            box-shadow: 0 12px 30px rgba(55,104,72,0.12);
+            flex-shrink: 0;
+        }
+        .avatar-img {
+            width: 100%;
+            height: 100%;
+            border-radius: 32px;
             object-fit: cover;
-            border: 3px solid #2d6a4f;
-            background: #f1f5f9;
         }
-
         .avatar-placeholder {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: #e2e8f0;
+            width: 100%;
+            height: 100%;
+            border-radius: 32px;
+            background: rgba(237,238,233,0.5);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 32px;
-            flex-shrink: 0;
-            border: 3px solid #2d6a4f;
+            color: #376848;
         }
 
-        .avatar-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .btn-upload {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: #2d6a4f;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            padding: 8px 16px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            font-family: inherit;
-            transition: background .2s;
-        }
-
-        .btn-upload:hover {
-            background: #1b4332;
-        }
-
-        .btn-secondary-sm {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: #f1f5f9;
-            color: #475569;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 7px 14px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            font-family: inherit;
-            transition: background .2s;
-        }
-
-        .btn-secondary-sm:hover {
-            background: #e2e8f0;
-        }
-
-        .bg-palette {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 14px;
-        }
-
+        /* Background swatches */
         .bg-swatch {
-            width: 44px;
-            height: 44px;
-            border-radius: 10px;
+            width: 52px;
+            height: 52px;
+            border-radius: 16px;
             cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
             border: 3px solid transparent;
-            transition: transform .15s, border-color .15s;
             flex-shrink: 0;
         }
-
-        .bg-swatch:hover {
-            transform: scale(1.1);
-        }
-
-        .bg-swatch.selected {
-            border-color: #2d6a4f;
-            box-shadow: 0 0 0 2px #fff, 0 0 0 4px #2d6a4f;
-        }
-
+        .bg-swatch:hover { transform: scale(1.15); }
+        .bg-swatch.selected { border-color: #023a1e; box-shadow: 0 0 0 2px #fff, 0 0 0 4px #023a1e; }
         .bg-swatch.bg-image-swatch {
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            color: #fff;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 18px;
         }
 
-        .bg-swatch.reset-swatch {
-            background: #fff;
-            border: 2px dashed #cbd5e1;
+        /* Connected account items */
+        .connected-item {
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 18px;
+            justify-content: space-between;
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid rgba(192,201,191,0.15);
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .connected-item:last-child { border-bottom: none; }
+        .connected-item-info { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
+        .connected-item-icon {
+            width: 40px; height: 40px; border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; flex-shrink: 0; font-weight: 700;
+        }
+        .connected-item-icon--google   { background: #e8f0fe; color: #4285F4; }
+        .connected-item-icon--facebook { background: #e7f0fd; color: #1877F2; }
+        .connected-item-icon--passkey  { background: #f0fdf4; color: #2d6a4f; }
+        .connected-item-name  { font-weight: 700; font-size: 0.9rem; color: #191c1a; }
+        .connected-item-email { font-size: 0.8rem; color: #717971; word-break: break-all; }
+        .connected-item-meta  { font-size: 0.78rem; color: #717971; }
+        .connected-item-actions { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+        .connected-badge-linked {
+            font-size: 0.72rem; font-weight: 700; padding: 3px 10px;
+            border-radius: 9999px; background: #dcfce7; color: #166534; white-space: nowrap;
+        }
+        .connected-badge-unlinked {
+            font-size: 0.72rem; font-weight: 700; padding: 3px 10px;
+            border-radius: 9999px; background: #f3f4ef; color: #717971; white-space: nowrap;
         }
 
-        .bg-upload-label {
-            display: inline-flex;
+        .btn-connected-link {
+            padding: 8px 16px; border-radius: 14px; font-size: 0.825rem; font-weight: 700;
+            cursor: pointer; border: 1.5px solid #023a1e; color: #023a1e;
+            background: rgba(2, 58, 30, 0.03); font-family: 'Inter', sans-serif;
+            transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+            display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+        }
+        .btn-connected-link:hover { background: #023a1e; color: #fff; transform: translateY(-1px) scale(1.03); box-shadow: 0 4px 12px rgba(2,58,30,0.15); }
+        .btn-connected-link:active { transform: scale(0.97); }
+
+        .btn-connected-unlink {
+            padding: 8px 16px; border-radius: 14px; font-size: 0.825rem; font-weight: 700;
+            cursor: pointer; border: 1.5px solid #ba1a1a; color: #ba1a1a;
+            background: rgba(186, 26, 26, 0.03); font-family: 'Inter', sans-serif;
+            transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+            display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+        }
+        .btn-connected-unlink:hover { background: #ba1a1a; color: #fff; transform: translateY(-1px) scale(1.03); box-shadow: 0 4px 12px rgba(186,26,26,0.15); }
+        .btn-connected-unlink:active { transform: scale(0.97); }
+
+        /* Passkey */
+        .passkey-label-input {
+            border: 1.5px solid #c0c9bf; border-radius: 10px; padding: 5px 10px;
+            font-size: 0.82rem; outline: none; width: 130px; font-family: 'Inter', sans-serif;
+        }
+        .passkey-label-input:focus { border-color: #376848; box-shadow: 0 0 0 3px rgba(55,104,72,0.1); }
+        .backed-up-badge { font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 9999px; }
+        .backed-up-badge--yes { background: #dcfce7; color: #166534; }
+        .backed-up-badge--no  { background: #f3f4ef; color: #717971; }
+
+        /* OTP confirm inline box */
+        .otp-confirm-box {
+            display: none;
+            margin-top: 14px;
+            padding: 18px 22px;
+            background: rgba(254, 243, 219, 0.45);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1.5px solid rgba(251, 146, 60, 0.3);
+            border-radius: 20px;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            box-shadow: 0 8px 30px rgba(234, 88, 12, 0.04);
+            animation: slideDown 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .otp-confirm-box.visible { display: flex; }
+        .otp-confirm-box input {
+            border: 1.5px solid rgba(251, 146, 60, 0.4);
+            border-radius: 14px;
+            padding: 8px 14px;
+            font-size: 1rem;
+            width: 135px;
+            letter-spacing: 4px;
+            font-weight: 700;
+            text-align: center;
+            outline: none;
+            font-family: 'Inter', sans-serif;
+            background: #ffffff;
+            color: #ea580c;
+            transition: all 0.3s ease;
+        }
+        .otp-confirm-box input:focus {
+            border-color: #ea580c;
+            box-shadow: 0 0 0 4px rgba(234, 88, 12, 0.12);
+            background: #ffffff;
+        }
+        .otp-confirm-box p {
+            margin: 0 0 4px 0;
+            font-size: 0.875rem;
+            color: #ea580c;
+            font-weight: 700;
+            width: 100%;
+            display: flex;
             align-items: center;
             gap: 6px;
-            border: 2px dashed #cbd5e1;
-            border-radius: 10px;
-            padding: 9px 16px;
-            color: #64748b;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: border-color .2s, color .2s;
         }
 
-        .bg-upload-label:hover {
-            border-color: #2d6a4f;
-            color: #2d6a4f;
+        /* Hint texts */
+        .otp-hint {
+            font-size: 0.8125rem; font-weight: 600; color: #717971;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .otp-hint.error   { color: #b91c1c; }
+        .otp-hint.success { color: #15803d; }
+        .pwd-hint { font-size: 0.8125rem; font-weight: 600; color: #717971; margin-top: 1rem; }
+        .pwd-hint.error   { color: #b91c1c; }
+        .pwd-hint.success { color: #15803d; }
+
+        /* Forgot password link */
+        .pwd-forgot-link {
+            color: #023a1e; font-size: 0.875rem; font-weight: 700;
+            text-decoration: none; cursor: pointer; display: inline-flex;
+            align-items: center; gap: 4px; transition: opacity 0.2s;
+        }
+        .pwd-forgot-link:hover { opacity: 0.75; text-decoration: underline; }
+
+        /* Material Symbols */
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .icon-accent { color: #376848; opacity: 0.9; }
+
+        /* Connected loading */
+        .connected-loading {
+            color: #717971; font-size: 0.875rem; padding: 1rem;
+            display: flex; align-items: center; gap: 8px;
         }
 
-        .bg-preview-bar {
-            height: 56px;
-            border-radius: 10px;
-            margin-top: 12px;
-            border: 1px solid #e2e8f0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            color: #94a3b8;
-            overflow: hidden;
-            transition: all .3s;
+        /* SweetAlert2 Custom Theme */
+        .swal2-popup.premium-swal {
+            font-family: 'Inter', sans-serif !important;
+            background: rgba(255,255,255,0.92) !important;
+            backdrop-filter: blur(20px) !important;
+            -webkit-backdrop-filter: blur(20px) !important;
+            border: 1px solid rgba(255,255,255,0.5) !important;
+            border-radius: 28px !important;
+            box-shadow: 0 20px 60px rgba(0,34,15,0.12) !important;
+            padding: 2rem !important;
+        }
+        .swal2-popup.premium-swal .swal2-title {
+            color: #023a1e !important;
+            font-weight: 800 !important;
+            letter-spacing: -0.02em !important;
+        }
+        .swal2-popup.premium-swal .swal2-html-container,
+        .swal2-popup.premium-swal .swal2-content {
+            color: #414942 !important;
+        }
+        .swal2-popup.premium-swal .swal2-confirm {
+            background: #023a1e !important;
+            border-radius: 14px !important;
+            font-weight: 700 !important;
+            font-family: 'Inter', sans-serif !important;
+            box-shadow: 0 4px 12px rgba(2,58,30,0.2) !important;
+            padding: 0.75rem 1.75rem !important;
+        }
+        .swal2-popup.premium-swal .swal2-cancel {
+            background: rgba(237,238,233,0.9) !important;
+            color: #191c1a !important;
+            border-radius: 14px !important;
+            font-weight: 700 !important;
+            font-family: 'Inter', sans-serif !important;
+            padding: 0.75rem 1.75rem !important;
+        }
+        .swal2-popup.premium-swal .swal2-input {
+            border: 1.5px solid #e1e3de !important;
+            border-radius: 14px !important;
+            font-family: 'Inter', sans-serif !important;
+        }
+        .swal2-popup.premium-swal .swal2-input:focus {
+            border-color: #376848 !important;
+            box-shadow: 0 0 0 4px rgba(55,104,72,0.08) !important;
         }
 
-        .bg-preview-bar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .media-save-btn {
-            margin-top: 14px;
-            background: #2d6a4f;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            padding: 9px 20px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            font-family: inherit;
-            transition: background .2s;
-        }
-
-        .media-save-btn:hover {
-            background: #1b4332;
-        }
-
-        .media-save-btn:disabled {
-            background: #94a3b8;
-            cursor: not-allowed;
-        }
+        /* Spin animation */
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .animate-spin { animation: spin 1s linear infinite; display: inline-block; }
     </style>
+
     <style id="gtranslate-css">
         /* Custom language switcher */
         .lang-switcher {
@@ -840,211 +702,275 @@
     <div id="auth-overlay-mount"></div>
     <script src="/javascripts/authOverlayLoader.js" defer></script>
 
-    <main class="profile-page">
-        <section class="profile-container">
-            <div class="profile-heading">
-                <h1>Thông Tin Tài Khoản</h1>
-                <p>Cập nhật các thông tin cơ bản của tài khoản của bạn.</p>
+    <main class="profile-main py-16 px-4">
+        <div class="max-w-4xl mx-auto" style="font-family:'Inter',sans-serif;">
+            <!-- Header Section -->
+            <div class="text-center mb-12">
+                <h1 class="profile-title" style="font-size:2.5rem;margin:0 0 0.75rem;">Thông Tin Tài Khoản</h1>
+                <p style="color:#717971;font-weight:500;font-size:1.0625rem;margin:0;opacity:0.85;">Quản lý không gian cá nhân và bảo mật của bạn tại Pet Helper</p>
             </div>
 
             <div id="statusNote" class="status-note" aria-live="polite"></div>
-            <div id="loadingBox" class="loading-box show">Đang tải thông tin tài khoản...</div>
+            <div id="loadingBox" class="loading-box show">
+                <span class="material-symbols-outlined animate-spin" style="margin-right:8px;">sync</span>
+                Đang kết nối dữ liệu...
+            </div>
 
-            <article class="profile-card">
-                <div class="profile-card-body">
-                    <div class="summary-grid">
-                        <div class="summary-item">
-                            <p class="summary-label">Tên đăng nhập</p>
-                            <p class="summary-value" id="summaryDisplayName">-</p>
-                        </div>
-                        <div class="summary-item">
-                            <p class="summary-label">Họ và tên</p>
-                            <p class="summary-value" id="summaryName">-</p>
-                        </div>
-                        <div class="summary-item">
-                            <p class="summary-label">Email</p>
-                            <p class="summary-value" id="summaryEmail">-</p>
-                        </div>
-                        <div class="summary-item">
-                            <p class="summary-label">Vai trò</p>
-                            <p class="summary-value" id="summaryRole">-</p>
-                        </div>
-                        <div class="summary-item">
-                            <p class="summary-label">Trạng thái xác thực</p>
-                            <p class="summary-value verify-state unverified" id="summaryVerify">Chưa xác thực</p>
+            <div style="display:flex;flex-direction:column;gap:2.5rem;">
+                <!-- Quick Overview Card -->
+                <article class="premium-card" style="padding:2.5rem;">
+                    <div style="display:flex;flex-direction:column;gap:2.5rem;align-items:center;" class="md:flex-row">
+                        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:2.5rem;width:100%;">
+                            <!-- Avatar -->
+                            <div class="avatar-frame" id="avatarPreviewWrap">
+                                <div class="avatar-placeholder" id="avatarPlaceholder">
+                                    <span class="material-symbols-outlined" style="font-size:2.5rem;">pets</span>
+                                </div>
+                            </div>
+                            <!-- Name + role -->
+                            <div style="flex:1;min-width:0;">
+                                <h2 style="font-size:1.75rem;font-weight:800;color:#023a1e;margin:0 0 0.25rem;letter-spacing:-0.02em;" id="summaryDisplayName">-</h2>
+                                <p style="color:#717971;font-weight:500;margin:0 0 1.25rem;font-size:0.9375rem;" id="summaryEmail">-</p>
+                                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;">
+                                    <span class="verify-state-badge" style="background:rgba(182,236,196,0.4);color:#1e5032;font-size:0.6875rem;" id="summaryRole">USER</span>
+                                    <span class="verify-state-badge unverified" id="summaryVerify">CHƯA XÁC THỰC</span>
+                                </div>
+                            </div>
+                            <!-- Avatar actions -->
+                            <div style="display:flex;flex-direction:column;gap:0.75rem;align-items:flex-start;">
+                                <label class="btn-primary-premium" for="avatarFileInput" style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;padding:0.75rem 1.25rem;font-size:0.875rem;">
+                                    <span class="material-symbols-outlined" style="font-size:1.25rem;">upload</span>
+                                    Tải ảnh
+                                </label>
+                                <input type="file" accept="image/*" id="avatarFileInput" style="display:none;">
+                                <button class="btn-secondary-premium" id="removeAvatarBtn" style="display:none;font-size:0.8125rem;padding:0.625rem 1rem;align-items:center;gap:6px;">
+                                    <span class="material-symbols-outlined" style="font-size:1rem;">delete</span>
+                                    Xóa
+                                </button>
+                            </div>
                         </div>
                     </div>
+                    <div id="avatarStatus" style="text-align:center;font-size:0.8125rem;font-weight:600;color:#717971;min-height:1.25rem;margin-top:0.75rem;"></div>
+                    <!-- Summary grid -->
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.25rem;margin-top:1.75rem;">
+                        <div class="summary-item">
+                            <p style="font-size:0.625rem;text-transform:uppercase;font-weight:800;color:#717971;letter-spacing:0.12em;margin:0 0 0.5rem;">Họ và tên</p>
+                            <p style="font-weight:700;color:#191c1a;font-size:1.0625rem;margin:0;" id="summaryName">-</p>
+                        </div>
+                        <div class="summary-item">
+                            <p style="font-size:0.625rem;text-transform:uppercase;font-weight:800;color:#717971;letter-spacing:0.12em;margin:0 0 0.5rem;">Tên đăng nhập</p>
+                            <p style="font-weight:700;color:#191c1a;font-size:1.0625rem;margin:0;" id="summaryDisplayNameSub">-</p>
+                        </div>
+                    </div>
+                </article>
 
-                    <section class="verify-panel">
-                        <div class="verify-head">
-                            <div>
-                                <p class="verify-title">Xác thực email tài khoản</p>
-                                <p class="verify-desc" id="verifyDescription">Xác thực email để mở đầy đủ tính năng nhận
-                                    nuôi và tăng độ tin cậy tài khoản.</p>
+                <!-- Basic Info Form Card -->
+                <article class="premium-card" style="padding:2.5rem;">
+                    <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:2rem;">
+                        <span class="material-symbols-outlined icon-accent" style="font-size:1.75rem;">edit_note</span>
+                        <h3 style="font-size:1.375rem;font-weight:700;color:#023a1e;margin:0;">Hồ sơ cá nhân</h3>
+                    </div>
+                    <form id="profileForm" style="display:flex;flex-direction:column;gap:1.75rem;">
+                        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.75rem;">
+                            <div style="display:flex;flex-direction:column;gap:0.625rem;">
+                                <label style="font-size:0.6875rem;font-weight:800;color:#414942;text-transform:uppercase;letter-spacing:0.08em;" for="inputDisplayName">Tên đăng nhập</label>
+                                <input class="input-premium" id="inputDisplayName" maxlength="100" name="display_name" required type="text">
                             </div>
-                            <span class="verify-badge unverified" id="verifyBadge">Chưa xác thực</span>
-                        </div>
-
-                        <div class="verify-actions" id="verifyActions">
-                            <button type="button" class="verify-btn" id="sendOtpBtn">Gửi mã OTP</button>
-                            <div class="otp-row">
-                                <input type="text" id="otpInput" class="otp-input" maxlength="6" inputmode="numeric"
-                                    placeholder="Nhập mã OTP">
-                                <button type="button" class="verify-btn secondary" id="verifyOtpBtn">Xác thực
-                                    OTP</button>
+                            <div style="display:flex;flex-direction:column;gap:0.625rem;">
+                                <label style="font-size:0.6875rem;font-weight:800;color:#414942;text-transform:uppercase;letter-spacing:0.08em;" for="inputName">Họ và tên</label>
+                                <input class="input-premium" id="inputName" maxlength="100" name="name" required type="text">
                             </div>
-                            <p class="otp-hint" id="otpHint">Mã OTP gồm 6 chữ số và có hiệu lực trong 5 phút.</p>
                         </div>
-                    </section>
-
-                    <form id="profileForm" class="profile-form">
-                        <div class="form-row">
-                            <label for="inputDisplayName">Tên đăng nhập</label>
-                            <input id="inputDisplayName" name="display_name" type="text" maxlength="100" required>
+                        <div style="display:flex;flex-direction:column;gap:0.625rem;">
+                            <label style="font-size:0.6875rem;font-weight:800;color:#414942;text-transform:uppercase;letter-spacing:0.08em;" for="inputEmail">Email liên hệ</label>
+                            <input class="input-premium" id="inputEmail" maxlength="255" name="email" required type="email">
                         </div>
-
-                        <div class="form-row">
-                            <label for="inputName">Họ và tên</label>
-                            <input id="inputName" name="name" type="text" maxlength="100" required>
-                        </div>
-
-                        <div class="form-row">
-                            <label for="inputEmail">Email</label>
-                            <input id="inputEmail" name="email" type="email" maxlength="255" required>
-                        </div>
-
-                        <div class="form-actions">
-                            <button type="submit" id="saveBtn" class="save-btn">Lưu thay đổi</button>
+                        <div style="display:flex;justify-content:flex-end;padding-top:0.5rem;">
+                            <button class="btn-primary-premium" id="saveBtn" type="submit" style="display:inline-flex;align-items:center;gap:8px;min-width:160px;justify-content:center;">
+                                <span class="material-symbols-outlined" style="font-size:1.25rem;">save</span>
+                                Lưu thay đổi
+                            </button>
                         </div>
                     </form>
+                </article>
 
-                    <section class="pwd-section">
+                <!-- Email Verification Card -->
+                <article class="premium-card" style="padding:2.5rem;">
+                    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:2rem;gap:1rem;flex-wrap:wrap;">
+                        <div style="display:flex;align-items:flex-start;gap:1rem;">
+                            <span class="material-symbols-outlined icon-accent" style="font-size:1.75rem;margin-top:2px;">verified_user</span>
+                            <div>
+                                <h3 style="font-size:1.375rem;font-weight:700;color:#023a1e;margin:0 0 0.375rem;">Xác thực tài khoản</h3>
+                                <p style="font-size:0.875rem;color:#717971;margin:0;font-weight:500;" id="verifyDescription">Tăng độ tin cậy và mở khóa toàn bộ tính năng bảo mật.</p>
+                            </div>
+                        </div>
+                        <span class="verify-state-badge unverified" id="verifyBadge">CHƯA XÁC THỰC</span>
+                    </div>
+                    <div id="verifyActions" style="background:rgba(243,244,239,0.5);backdrop-filter:blur(8px);padding:2rem;border-radius:24px;border:1px solid rgba(255,255,255,0.4);">
+                        <div style="display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;margin-bottom:1rem;">
+                            <button class="btn-primary-premium" id="sendOtpBtn" type="button" style="white-space:nowrap;">Gửi mã OTP</button>
+                            <div style="display:flex;align-items:center;gap:0.75rem;flex:1;min-width:240px;">
+                                <input class="input-premium" id="otpInput" inputmode="numeric" maxlength="6" placeholder="••••••" type="text" style="text-align:center;letter-spacing:0.4em;font-weight:700;font-size:1.25rem;">
+                                <button class="btn-secondary-premium" id="verifyOtpBtn" type="button" style="white-space:nowrap;padding:0.875rem 1.5rem;">Xác thực</button>
+                            </div>
+                        </div>
+                        <p class="otp-hint" id="otpHint">
+                            <span class="material-symbols-outlined" style="font-size:1rem;">info</span>
+                            Mã OTP gồm 6 chữ số gửi qua email của bạn, có hiệu lực trong 5 phút.
+                        </p>
+                    </div>
+                </article>
+
+                <!-- Password Change Card -->
+                <article class="premium-card" style="padding:2.5rem;">
+                    <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:2rem;">
+                        <span class="material-symbols-outlined icon-accent" style="font-size:1.75rem;">lock</span>
+                        <h3 style="font-size:1.375rem;font-weight:700;color:#023a1e;margin:0;">Bảo mật mật khẩu</h3>
+                    </div>
+                    <!-- Mode: Old password -->
+                    <div id="pwdModeOld" style="display:flex;flex-direction:column;gap:1.5rem;">
+                        <div style="display:flex;flex-direction:column;gap:0.625rem;">
+                            <label style="font-size:0.6875rem;font-weight:800;color:#414942;text-transform:uppercase;letter-spacing:0.08em;" for="inputOldPassword">Mật khẩu hiện tại</label>
+                            <input class="input-premium" id="inputOldPassword" type="password" maxlength="255">
+                        </div>
+                        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.5rem;">
+                            <div style="display:flex;flex-direction:column;gap:0.625rem;">
+                                <label style="font-size:0.6875rem;font-weight:800;color:#414942;text-transform:uppercase;letter-spacing:0.08em;" for="inputNewPassword">Mật khẩu mới</label>
+                                <input class="input-premium" id="inputNewPassword" placeholder="Ít nhất 8 ký tự" type="password" maxlength="255">
+                            </div>
+                            <div style="display:flex;flex-direction:column;gap:0.625rem;">
+                                <label style="font-size:0.6875rem;font-weight:800;color:#414942;text-transform:uppercase;letter-spacing:0.08em;" for="inputConfirmNewPassword">Xác nhận mật khẩu</label>
+                                <input class="input-premium" id="inputConfirmNewPassword" placeholder="Nhập lại mật khẩu mới" type="password" maxlength="255">
+                            </div>
+                        </div>
+                        <div style="display:flex;align-items:center;justify-content:space-between;gap:1.5rem;padding-top:0.5rem;flex-wrap:wrap;">
+                            <a href="#" class="pwd-forgot-link" id="pwdForgotLink">
+                                <span class="material-symbols-outlined" style="font-size:1rem;">help</span>
+                                Quên mật khẩu? Gửi mã OTP
+                            </a>
+                            <button class="btn-primary-premium" id="pwdChangeBtn" type="button" style="display:inline-flex;align-items:center;gap:8px;">
+                                <span class="material-symbols-outlined" style="font-size:1.25rem;">key</span>
+                                Cập nhật mật khẩu
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Mode: OTP Password Reset -->
+                    <div id="pwdModeOtp" style="display:none;flex-direction:column;gap:1.5rem;">
+                        <div style="background:rgba(231,233,228,0.6);backdrop-filter:blur(8px);padding:1.25rem;border-radius:18px;font-size:0.875rem;font-weight:600;color:#414942;border:1px solid rgba(255,255,255,0.3);">
+                            Xác minh OTP để đặt mật khẩu mới mà không cần mật khẩu cũ.
+                        </div>
+                        <div style="display:flex;flex-direction:column;gap:0.625rem;">
+                            <label style="font-size:0.6875rem;font-weight:800;color:#414942;text-transform:uppercase;letter-spacing:0.08em;">Xác thực mã</label>
+                            <div style="display:flex;gap:0.75rem;">
+                                <input class="input-premium" id="pwdOtpInput" maxlength="6" placeholder="Mã OTP" type="text" style="text-align:center;font-weight:700;letter-spacing:0.25em;font-size:1.125rem;">
+                                <button class="btn-secondary-premium" id="pwdSendOtpBtn" type="button" style="white-space:nowrap;">Gửi mã</button>
+                            </div>
+                        </div>
+                        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.5rem;">
+                            <input class="input-premium" id="inputNewPasswordOtp" placeholder="Mật khẩu mới" type="password" maxlength="255">
+                            <input class="input-premium" id="inputConfirmNewPasswordOtp" placeholder="Xác nhận lại" type="password" maxlength="255">
+                        </div>
+                        <div style="display:flex;align-items:center;justify-content:space-between;padding-top:0.5rem;">
+                            <a href="#" class="pwd-forgot-link" id="pwdBackToOldLink" style="color:#717971;">
+                                <span class="material-symbols-outlined" style="font-size:1rem;">arrow_back</span>
+                                Quay lại
+                            </a>
+                            <button class="btn-primary-premium" id="pwdChangeOtpBtn" type="button">Xác nhận đổi</button>
+                        </div>
+                    </div>
+                    <p class="pwd-hint" id="pwdHint"></p>
+                </article>
+
+                <!-- Personalization Card -->
+                <article class="premium-card" style="padding:2.5rem;">
+                    <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:2.5rem;">
+                        <span class="material-symbols-outlined icon-accent" style="font-size:1.75rem;">palette</span>
+                        <h3 style="font-size:1.375rem;font-weight:700;color:#023a1e;margin:0;">Cá nhân hóa giao diện</h3>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:2.5rem;">
+                        <!-- Background colors -->
                         <div>
-                            <p class="pwd-title">Đổi mật khẩu</p>
-                            <p class="pwd-desc">Cập nhật mật khẩu đăng nhập của bạn.</p>
-                        </div>
-
-                        <!-- Mode: Old password -->
-                        <div id="pwdModeOld">
-                            <div class="form-row">
-                                <label for="inputOldPassword">Mật khẩu hiện tại</label>
-                                <input id="inputOldPassword" type="password" maxlength="255">
-                            </div>
-                            <div class="form-row" style="margin-top: 10px;">
-                                <label for="inputNewPassword">Mật khẩu mới</label>
-                                <input id="inputNewPassword" type="password" maxlength="255"
-                                    placeholder="Ít nhất 8 ký tự">
-                            </div>
-                            <div class="form-row" style="margin-top: 10px;">
-                                <label for="inputConfirmNewPassword">Xác nhận mật khẩu mới</label>
-                                <input id="inputConfirmNewPassword" type="password" maxlength="255"
-                                    placeholder="Nhập lại mật khẩu mới">
-                            </div>
-                            <div
-                                style="margin-top: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
-                                <a href="#" class="pwd-forgot-link" id="pwdForgotLink">Quên mật khẩu? Gửi mã OTP</a>
-                                <button type="button" class="verify-btn" id="pwdChangeBtn">Đổi mật khẩu</button>
+                            <p style="font-size:0.6875rem;font-weight:800;color:#414942;text-transform:uppercase;letter-spacing:0.12em;margin:0 0 1.25rem;display:flex;align-items:center;gap:6px;">
+                                <span class="material-symbols-outlined" style="font-size:0.875rem;">colors</span>
+                                Màu nền trang web
+                            </p>
+                            <div id="bgPalette" style="display:flex;flex-wrap:wrap;gap:1rem;">
+                                <div class="bg-swatch reset-swatch" data-bg="" title="Mặc định" style="border:2px dashed #c0c9bf;display:flex;align-items:center;justify-content:center;">
+                                    <span class="material-symbols-outlined" style="font-size:1.25rem;color:#717971;">refresh</span>
+                                </div>
+                                <div class="bg-swatch" data-bg="#f0fdf4" style="background:#f0fdf4;" title="Xanh lá nhạt"></div>
+                                <div class="bg-swatch" data-bg="#fef3c7" style="background:#fef3c7;" title="Vàng kem"></div>
+                                <div class="bg-swatch" data-bg="#ffe4e6" style="background:#ffe4e6;" title="Hồng nhạt"></div>
+                                <div class="bg-swatch" data-bg="#e0f2fe" style="background:#e0f2fe;" title="Xanh dương nhạt"></div>
+                                <div class="bg-swatch" data-bg="#f5f3ff" style="background:#f5f3ff;" title="Tím nhạt"></div>
+                                <div class="bg-swatch" data-bg="#1a1a2e" style="background:#1a1a2e;" title="Tối"></div>
                             </div>
                         </div>
-
-                        <!-- Mode: OTP -->
-                        <div id="pwdModeOtp" style="display: none;">
-                            <p class="pwd-desc" style="margin-bottom: 10px;">Mã OTP sẽ được gửi tới email của bạn để xác
-                                minh.</p>
-                            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                                <button type="button" class="verify-btn" id="pwdSendOtpBtn">Gửi mã OTP</button>
+                        <!-- Background image upload -->
+                        <div>
+                            <p style="font-size:0.6875rem;font-weight:800;color:#414942;text-transform:uppercase;letter-spacing:0.12em;margin:0 0 1.25rem;display:flex;align-items:center;gap:6px;">
+                                <span class="material-symbols-outlined" style="font-size:0.875rem;">image</span>
+                                Hoặc sử dụng ảnh nền
+                            </p>
+                            <label for="bgFileInput" style="display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;height:10rem;border:2px dashed rgba(192,201,191,0.6);border-radius:24px;cursor:pointer;transition:all 0.3s ease;">
+                                <span class="material-symbols-outlined" style="font-size:2.5rem;color:#717971;margin-bottom:0.75rem;">add_photo_alternate</span>
+                                <p style="font-size:0.875rem;font-weight:700;color:#414942;margin:0;">Nhấn để tải ảnh lên</p>
+                                <p style="font-size:0.75rem;color:#717971;margin:0.375rem 0 0;font-weight:500;">Định dạng PNG, JPG • Tối đa 5MB</p>
+                            </label>
+                            <input type="file" accept="image/*" id="bgFileInput" style="display:none;">
+                            <div id="bgPreviewBar" style="margin-top:1.5rem;padding:1rem;background:rgba(237,238,233,0.6);backdrop-filter:blur(8px);border-radius:18px;display:flex;align-items:center;justify-content:center;min-height:3.5rem;overflow:hidden;border:1px solid rgba(255,255,255,0.4);">
+                                <span style="font-size:0.625rem;font-weight:800;color:#717971;text-transform:uppercase;letter-spacing:0.2em;">Xem trước nền</span>
                             </div>
-                            <div class="otp-row" style="margin-top: 10px;">
-                                <input type="text" id="pwdOtpInput" class="otp-input" maxlength="6" inputmode="numeric"
-                                    placeholder="Nhập mã OTP">
+                            <div style="display:flex;justify-content:flex-end;margin-top:2rem;">
+                                <button class="btn-primary-premium" id="saveBgBtn" type="button" style="display:inline-flex;align-items:center;gap:8px;padding:0.875rem 2.5rem;">
+                                    <span class="material-symbols-outlined" style="font-size:1.25rem;">save_as</span>
+                                    Lưu tùy chỉnh
+                                </button>
                             </div>
-                            <div class="form-row" style="margin-top: 10px;">
-                                <label for="inputNewPasswordOtp">Mật khẩu mới</label>
-                                <input id="inputNewPasswordOtp" type="password" maxlength="255"
-                                    placeholder="Ít nhất 8 ký tự">
-                            </div>
-                            <div class="form-row" style="margin-top: 10px;">
-                                <label for="inputConfirmNewPasswordOtp">Xác nhận mật khẩu mới</label>
-                                <input id="inputConfirmNewPasswordOtp" type="password" maxlength="255"
-                                    placeholder="Nhập lại mật khẩu mới">
-                            </div>
-                            <div
-                                style="margin-top: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
-                                <a href="#" class="pwd-forgot-link" id="pwdBackToOldLink">← Nhập mật khẩu cũ</a>
-                                <button type="button" class="verify-btn" id="pwdChangeOtpBtn">Đổi mật khẩu</button>
-                            </div>
-                        </div>
-
-                        <p class="pwd-hint" id="pwdHint"></p>
-                    </section>
-
-                    <!-- ── Avatar ── -->
-                    <div class="media-section">
-                        <div class="media-section-title">📷 Ảnh đại diện</div>
-                        <div class="avatar-wrap">
-                            <div id="avatarPreviewWrap">
-                                <div class="avatar-placeholder" id="avatarPlaceholder">🐾</div>
-                            </div>
-                            <div class="avatar-actions">
-                                <label class="btn-upload" for="avatarFileInput">
-                                    📤 Chọn ảnh
-                                </label>
-                                <input type="file" id="avatarFileInput" accept="image/*" style="display:none">
-                                <button type="button" class="btn-secondary-sm" id="removeAvatarBtn"
-                                    style="display:none">🗑️ Xóa avatar</button>
-                            </div>
-                        </div>
-                        <div id="avatarStatus" style="margin-top:10px;font-size:13px;color:#64748b;min-height:18px;">
+                            <div id="bgStatus" style="margin-top:0.75rem;font-size:0.75rem;text-align:center;font-weight:700;color:rgba(2,58,30,0.6);min-height:1.25rem;"></div>
                         </div>
                     </div>
+                </article>
 
-                    <!-- ── Background ── -->
-                    <div class="media-section">
-                        <div class="media-section-title">🎨 Tùy chỉnh nền trang web</div>
-                        <div class="bg-palette" id="bgPalette">
-                            <div class="bg-swatch reset-swatch" data-bg="" title="Mặc định">↩</div>
-                            <div class="bg-swatch" data-bg="#f0fdf4" style="background:#f0fdf4" title="Xanh lá nhạt">
+                <!-- Security & Connections -->
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:2.5rem;">
+                    <!-- Connected Accounts -->
+                    <article class="premium-card" id="connectedAccountsSection" style="padding:2rem;">
+                        <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.5rem;">
+                            <span class="material-symbols-outlined icon-accent" style="font-size:1.5rem;">link</span>
+                            <h3 style="font-size:1.25rem;font-weight:700;color:#023a1e;margin:0;">Tài khoản liên kết</h3>
+                        </div>
+                        <div id="connectedList">
+                            <div class="connected-loading">
+                                <span class="material-symbols-outlined animate-spin" style="font-size:1rem;">sync</span>
+                                Đang tải...
                             </div>
-                            <div class="bg-swatch" data-bg="#fef3c7" style="background:#fef3c7" title="Vàng kem"></div>
-                            <div class="bg-swatch" data-bg="#ffe4e6" style="background:#ffe4e6" title="Hồng nhạt"></div>
-                            <div class="bg-swatch" data-bg="#e0f2fe" style="background:#e0f2fe" title="Xanh dương nhạt">
+                        </div>
+                    </article>
+                    <!-- Passkeys -->
+                    <article class="premium-card" id="passkeysSection" style="padding:2rem;">
+                        <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.5rem;">
+                            <span class="material-symbols-outlined icon-accent" style="font-size:1.5rem;">passkey</span>
+                            <h3 style="font-size:1.25rem;font-weight:700;color:#023a1e;margin:0;">Passkeys</h3>
+                        </div>
+                        <p style="font-size:0.75rem;color:#717971;margin:0 0 1.5rem;font-weight:500;">Đăng nhập nhanh bảo mật bằng vân tay hoặc FaceID.</p>
+                        <div id="passkeysList">
+                            <div class="connected-loading">
+                                <span class="material-symbols-outlined animate-spin" style="font-size:1rem;">sync</span>
+                                Đang tải...
                             </div>
-                            <div class="bg-swatch" data-bg="#f5f3ff" style="background:#f5f3ff" title="Tím nhạt"></div>
-                            <div class="bg-swatch" data-bg="#1a1a2e" style="background:#1a1a2e" title="Tối"></div>
                         </div>
-                        <label class="bg-upload-label" for="bgFileInput">
-                            🖼️ Hoặc tải ảnh nền lên
-                        </label>
-                        <input type="file" id="bgFileInput" accept="image/*" style="display:none">
-                        <div class="bg-preview-bar" id="bgPreviewBar">Chưa chọn nền</div>
-                        <button type="button" class="media-save-btn" id="saveBgBtn">💾 Lưu nền trang web</button>
-                        <div id="bgStatus" style="margin-top:10px;font-size:13px;color:#64748b;min-height:18px;"></div>
-                    </div>
-
-                    <!-- ── Connected Accounts ── -->
-                    <div class="media-section" id="connectedAccountsSection">
-                        <div class="media-section-title">🔗 Tài khoản liên kết</div>
-                        <div class="connected-list" id="connectedList">
-                            <div class="connected-loading">Đang tải...</div>
-                        </div>
-                    </div>
-
-                    <!-- ── Passkeys / Security Keys ── -->
-                    <div class="media-section" id="passkeysSection">
-                        <div class="media-section-title">🔑 Bảo mật / Passkeys</div>
-                        <p style="font-size:0.85rem;color:#64748b;margin:0 0 14px;">Quản lý các thiết bị đăng nhập nhanh bằng vân tay, FaceID hoặc mã PIN của thiết bị.</p>
-                        <div class="passkeys-list" id="passkeysList">
-                            <div class="connected-loading">Đang tải...</div>
-                        </div>
-                        <button type="button" class="verify-btn" id="addPasskeyBtn" style="margin-top:14px;" onclick="addNewPasskey()">
-                            ➕ Thêm thiết bị Passkey mới
+                        <button class="btn-primary-premium" id="addPasskeyBtn" onclick="addNewPasskey()" type="button" style="margin-top:2rem;width:100%;display:flex;align-items:center;justify-content:center;gap:8px;background:transparent;color:#023a1e;border:2px dashed rgba(2,58,30,0.3);box-shadow:none;transition:all 0.3s;">
+                            <span class="material-symbols-outlined" style="font-size:1.25rem;">add_circle</span>
+                            Thêm thiết bị mới
                         </button>
-                        <p class="pwd-hint" id="passkeyHint"></p>
-                    </div>
+                        <p class="pwd-hint" id="passkeyHint" style="text-align:center;text-transform:uppercase;letter-spacing:0.08em;margin-top:0.75rem;"></p>
+                    </article>
                 </div>
-            </article>
-        </section>
+            </div>
+        </div>
     </main>
+
 
     <footer class="footer">
         <div class="footer-grid">
@@ -1184,22 +1110,26 @@
         const setVerifiedUi = (isVerified) => {
             const verified = Number(isVerified) === 1;
 
-            summaryVerify.className = `summary-value verify-state ${verified ? 'verified' : 'unverified'}`;
-            summaryVerify.textContent = verified ? 'Đã xác thực' : 'Chưa xác thực';
+            // Update summaryVerify badge
+            summaryVerify.classList.remove('verified', 'unverified');
+            summaryVerify.classList.add(verified ? 'verified' : 'unverified');
+            summaryVerify.textContent = verified ? 'ĐÃ XÁC THỰC' : 'CHƯA XÁC THỰC';
 
-            verifyBadge.className = `verify-badge ${verified ? 'verified' : 'unverified'}`;
-            verifyBadge.textContent = verified ? 'Đã xác thực' : 'Chưa xác thực';
+            // Update verifyBadge
+            verifyBadge.classList.remove('verified', 'unverified');
+            verifyBadge.classList.add(verified ? 'verified' : 'unverified');
+            verifyBadge.textContent = verified ? 'ĐÃ XÁC THỰC' : 'CHƯA XÁC THỰC';
 
             verifyDescription.textContent = verified
                 ? 'Email của bạn đã được xác thực. Tài khoản đã đủ điều kiện thực hiện đầy đủ tính năng.'
                 : 'Xác thực email để mở đầy đủ tính năng nhận nuôi và tăng độ tin cậy tài khoản.';
 
             if (verified) {
-                verifyActions.classList.add('hidden');
+                verifyActions.style.display = 'none';
                 clearOtpCooldown();
                 otpInput.value = '';
             } else {
-                verifyActions.classList.remove('hidden');
+                verifyActions.style.display = 'block';
                 if (!otpCooldownTimer) {
                     sendOtpBtn.disabled = false;
                     updateSendOtpButtonText();
@@ -1514,7 +1444,7 @@
         pwdForgotLink.addEventListener('click', (e) => {
             e.preventDefault();
             pwdModeOld.style.display = 'none';
-            pwdModeOtp.style.display = 'block';
+            pwdModeOtp.style.display = 'flex';
             setPwdHint('', '');
         });
 
@@ -1522,7 +1452,7 @@
         pwdBackToOldLink.addEventListener('click', (e) => {
             e.preventDefault();
             pwdModeOtp.style.display = 'none';
-            pwdModeOld.style.display = 'block';
+            pwdModeOld.style.display = 'flex';
             setPwdHint('', '');
         });
 
@@ -1797,8 +1727,8 @@
                 }).catch(function () { });
 
             function setAvatarPreview(src) {
-                avatarPreviewWrap.innerHTML = '<img class="avatar-preview" src="' + src + '" alt="Avatar">';
-                if (removeAvatarBtn) removeAvatarBtn.style.display = 'inline-flex';
+                avatarPreviewWrap.innerHTML = '<img class="avatar-img" src="' + src + '" alt="Avatar">';
+                if (removeAvatarBtn) removeAvatarBtn.style.display = 'flex';
             }
 
             // Chọn file avatar
@@ -1827,7 +1757,7 @@
                     if (data.success) {
                         avatarStatus.textContent = '✅ Cập nhật avatar thành công!';
                         avatarStatus.style.color = '#16a34a';
-                        if (removeAvatarBtn) removeAvatarBtn.style.display = 'inline-flex';
+                        if (removeAvatarBtn) removeAvatarBtn.style.display = 'flex';
                         // Cập nhật avatar trên header nếu có
                         if (window.applyHeaderAvatar) window.applyHeaderAvatar(data.data.avatar);
                     } else {
@@ -1849,10 +1779,10 @@
                             credentials: 'include',
                             body: new FormData() // empty = reset
                         });
-                        avatarPreviewWrap.innerHTML = '<div class="avatar-placeholder" id="avatarPlaceholder">🐾</div>';
+                        avatarPreviewWrap.innerHTML = '<div class="avatar-placeholder" id="avatarPlaceholder"><span class="material-symbols-outlined" style="font-size:2.5rem;">pets</span></div>';
                         removeAvatarBtn.style.display = 'none';
                         avatarStatus.textContent = 'Đã xóa avatar';
-                        avatarStatus.style.color = '#64748b';
+                        avatarStatus.style.color = '#717971';
                     } catch (e) { }
                 });
             }
@@ -2083,49 +2013,78 @@
     }
 
     .btn-connected-link {
-        padding: 6px 12px;
-        border-radius: 8px;
-        font-size: 0.8rem;
+        padding: 8px 16px;
+        border-radius: 14px;
+        font-size: 0.825rem;
         font-weight: 700;
         cursor: pointer;
-        border: 1px solid #2d6a4f;
-        color: #2d6a4f;
-        background: transparent;
+        border: 1.5px solid #023a1e;
+        color: #023a1e;
+        background: rgba(2, 58, 30, 0.03);
         font-family: inherit;
-        transition: all 0.2s;
+        transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
     }
 
-    .btn-connected-link:hover { background: #2d6a4f; color: #fff; }
+    .btn-connected-link:hover {
+        background: #023a1e;
+        color: #fff;
+        transform: translateY(-1px) scale(1.03);
+        box-shadow: 0 4px 12px rgba(2,58,30,0.15);
+    }
+    
+    .btn-connected-link:active {
+        transform: scale(0.97);
+    }
 
     .btn-connected-unlink {
-        padding: 6px 12px;
-        border-radius: 8px;
-        font-size: 0.8rem;
+        padding: 8px 16px;
+        border-radius: 14px;
+        font-size: 0.825rem;
         font-weight: 700;
         cursor: pointer;
-        border: 1px solid #dc2626;
-        color: #dc2626;
-        background: transparent;
+        border: 1.5px solid #ba1a1a;
+        color: #ba1a1a;
+        background: rgba(186, 26, 26, 0.03);
         font-family: inherit;
-        transition: all 0.2s;
+        transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
     }
 
-    .btn-connected-unlink:hover { background: #fef2f2; }
+    .btn-connected-unlink:hover {
+        background: #ba1a1a;
+        color: #fff;
+        transform: translateY(-1px) scale(1.03);
+        box-shadow: 0 4px 12px rgba(186,26,26,0.15);
+    }
+    
+    .btn-connected-unlink:active {
+        transform: scale(0.97);
+    }
 
     /* Passkey item uses same connected-item style but with rename */
     .passkey-label-input {
-        border: 1px solid #cfe2d7;
-        border-radius: 8px;
-        padding: 5px 8px;
+        border: 1.5px solid #cfe2d7;
+        border-radius: 12px;
+        padding: 6px 12px;
         font-size: 0.82rem;
         outline: none;
-        width: 120px;
+        width: 125px;
         font-family: inherit;
+        background: rgba(255,255,255,0.7);
+        transition: all 0.25s ease;
     }
 
     .passkey-label-input:focus {
         border-color: #2d6a4f;
-        box-shadow: 0 0 0 2px rgba(45,106,79,0.12);
+        box-shadow: 0 0 0 3px rgba(45,106,79,0.08);
+        background: #ffffff;
     }
 
     .backed-up-badge {
@@ -2141,29 +2100,90 @@
     /* OTP confirm inline box */
     .otp-confirm-box {
         display: none;
-        margin-top: 10px;
-        padding: 12px 14px;
-        background: #fff7ed;
-        border: 1px solid #fed7aa;
-        border-radius: 10px;
-        gap: 10px;
+        margin-top: 14px;
+        padding: 18px 22px;
+        background: rgba(254, 243, 219, 0.45);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1.5px solid rgba(251, 146, 60, 0.3);
+        border-radius: 20px;
+        gap: 12px;
         align-items: center;
         flex-wrap: wrap;
+        box-shadow: 0 8px 30px rgba(234, 88, 12, 0.04);
+        animation: slideDown 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .otp-confirm-box.visible { display: flex; }
     .otp-confirm-box input {
-        border: 1px solid #fdba74;
-        border-radius: 8px;
-        padding: 7px 10px;
-        font-size: 0.9rem;
-        width: 130px;
-        letter-spacing: 3px;
+        border: 1.5px solid rgba(251, 146, 60, 0.4);
+        border-radius: 14px;
+        padding: 8px 14px;
+        font-size: 1rem;
+        width: 135px;
+        letter-spacing: 4px;
+        font-weight: 700;
         text-align: center;
         outline: none;
         font-family: inherit;
+        background: #ffffff;
+        color: #ea580c;
+        transition: all 0.3s ease;
     }
-    .otp-confirm-box input:focus { border-color: #ea580c; }
-    .otp-confirm-box p { margin: 0; font-size: 0.82rem; color: #9a3412; font-weight: 600; width: 100%; }
+    .otp-confirm-box input:focus {
+        border-color: #ea580c;
+        box-shadow: 0 0 0 4px rgba(234, 88, 12, 0.12);
+        background: #ffffff;
+    }
+    .otp-confirm-box p {
+        margin: 0 0 4px 0;
+        font-size: 0.875rem;
+        color: #ea580c;
+        font-weight: 700;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    
+    .verify-btn {
+        padding: 8px 18px;
+        border-radius: 14px;
+        font-size: 0.825rem;
+        font-weight: 700;
+        cursor: pointer;
+        border: none;
+        color: #ffffff;
+        background: #ea580c;
+        font-family: inherit;
+        transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+        box-shadow: 0 4px 12px rgba(234, 88, 12, 0.15);
+    }
+    .verify-btn:hover {
+        background: #d94e06;
+        transform: translateY(-1px) scale(1.03);
+        box-shadow: 0 6px 18px rgba(234, 88, 12, 0.22);
+    }
+    .verify-btn:active {
+        transform: scale(0.97);
+    }
+    .verify-btn.secondary {
+        background: rgba(0, 0, 0, 0.05);
+        color: #414942;
+        box-shadow: none;
+    }
+    .verify-btn.secondary:hover {
+        background: rgba(0, 0, 0, 0.1);
+        color: #191c1a;
+        box-shadow: none;
+        transform: translateY(-1px) scale(1.03);
+    }
+
+    #addPasskeyBtn:hover {
+        background: rgba(2, 58, 30, 0.05) !important;
+        border-color: #023a1e !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(2, 58, 30, 0.08) !important;
+    }
 </style>
 
 <script>
@@ -2261,7 +2281,8 @@
                     title: 'Yêu cầu HTTPS!',
                     text: 'Facebook SDK yêu cầu kết nối bảo mật HTTPS để thực hiện liên kết tài khoản. Giao thức HTTP thường (http://localhost:3000) không được hỗ trợ bởi Meta.',
                     footer: 'Lời khuyên: Chuyển máy chủ local sang HTTPS hoặc sử dụng công cụ ngrok/localtunnel.',
-                    confirmButtonColor: '#2d6a4f'
+                    confirmButtonColor: '#023a1e',
+                    customClass: { popup: 'premium-swal' }
                 });
                 setNote('error', 'Facebook Login yêu cầu kết nối HTTPS.');
                 return;
@@ -2443,11 +2464,12 @@
                 input: 'text',
                 inputValue: label,
                 showCancelButton: true,
-                confirmButtonColor: '#2d6a4f',
-                cancelButtonColor: '#64748b',
+                confirmButtonColor: '#023a1e',
+                cancelButtonColor: '#717971',
                 confirmButtonText: 'Lưu tên',
                 cancelButtonText: 'Dùng mặc định',
-                allowOutsideClick: false
+                allowOutsideClick: false,
+                customClass: { popup: 'premium-swal' }
             });
 
             if (!isDismissed && inputLabel !== undefined) {
@@ -2460,27 +2482,29 @@
             });
             const verData = await verRes.json();
             if (verRes.ok && verData.success) {
-                hint.className = 'pwd-hint success'; hint.textContent = 'Đăng ký Passkey thành công!';
+                hint.classList.remove('error'); hint.classList.add('success'); hint.textContent = 'Đăng ký Passkey thành công!';
                 Swal.fire({
                     icon: 'success',
                     title: 'Thành công!',
                     text: 'Thiết bị Passkey mới đã được liên kết thành công.',
-                    confirmButtonColor: '#2d6a4f'
+                    confirmButtonColor: '#023a1e',
+                    customClass: { popup: 'premium-swal' }
                 });
                 await loadPasskeys();
             } else {
-                hint.className = 'pwd-hint error'; hint.textContent = verData.message || 'Đăng ký Passkey thất bại';
+                hint.classList.remove('success'); hint.classList.add('error'); hint.textContent = verData.message || 'Đăng ký Passkey thất bại';
                 Swal.fire({
                     icon: 'error',
                     title: 'Lỗi đăng ký!',
                     text: verData.message || 'Đăng ký Passkey thất bại, vui lòng thử lại.',
-                    confirmButtonColor: '#d33'
+                    confirmButtonColor: '#ba1a1a',
+                    customClass: { popup: 'premium-swal' }
                 });
             }
         } catch(e) {
-            hint.className = 'pwd-hint error'; hint.textContent = 'Đã xảy ra lỗi khi đăng ký Passkey.';
+            hint.classList.remove('success'); hint.classList.add('error'); hint.textContent = 'Đã xảy ra lỗi khi đăng ký Passkey.';
         } finally {
-            if (btn) { btn.disabled = false; btn.textContent = '➕ Thêm thiết bị Passkey mới'; }
+            if (btn) { btn.disabled = false; btn.textContent = 'Thêm thiết bị mới'; }
         }
     };
 
@@ -2502,4 +2526,4 @@
 </script>
 </body>
 
-</html>
+</html>

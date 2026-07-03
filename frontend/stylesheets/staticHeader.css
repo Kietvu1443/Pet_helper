@@ -23,6 +23,19 @@ body {
     padding-top: 0;
 }
 
+html,
+body {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    top: 0 !important;
+}
+
+iframe.goog-te-banner-frame,
+iframe.skiptranslate,
+.skiptranslate iframe {
+    display: none !important;
+}
+
 .top-bar {
     display: contents;
 }

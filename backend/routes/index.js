@@ -35,6 +35,18 @@ router.get("/my-favorites", (_req, res) => {
   res.sendFile(path.join(staticPagesRoot, "my-favorites.html"));
 });
 
+router.get("/my-adoption-requests", (_req, res) => {
+  res.sendFile(path.join(staticPagesRoot, "my-adoption-requests.html"));
+});
+
+router.get("/my-pet-returns", (_req, res) => {
+  res.sendFile(path.join(staticPagesRoot, "my-pet-returns.html"));
+});
+
+router.get("/admin/adoption-requests", (_req, res) => {
+  res.sendFile(path.join(staticPagesRoot, "adoption-review.html"));
+});
+
 router.get("/snap", (_req, res) => {
   res.sendFile(path.join(staticPagesRoot, "snap.html"));
 });

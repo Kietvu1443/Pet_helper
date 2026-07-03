@@ -1,6 +1,7 @@
 <!-- ========== AUTH OVERLAY MODAL ========== -->
 <div class="auth-overlay" id="auth-overlay" role="dialog" aria-modal="true" aria-label="Đăng nhập / Đăng ký">
     <div class="auth-overlay__backdrop" onclick="closeOverlay('auth-overlay')"></div>
+    <div id="googlePromptContainer" class="auth-overlay__google-prompt"></div>
     <div class="auth-overlay__modal">
         <!-- Close Button -->
         <button class="auth-overlay__close" onclick="closeOverlay('auth-overlay')" aria-label="Đóng">&times;</button>
@@ -225,6 +226,13 @@
             0 0 0 1px rgba(255, 255, 255, 0.3) inset;
         transform: scale(0.88) translateY(30px);
         transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .auth-overlay__google-prompt {
+        position: fixed;
+        top: 24px;
+        right: 24px;
+        z-index: 10002;
     }
 
     .auth-overlay.active .auth-overlay__modal {
@@ -1084,6 +1092,9 @@
                 google.accounts.id.initialize({
                     client_id: googleClientId,
                     callback: window.handleGoogleCredentialResponse,
+                    prompt_parent_id: 'googlePromptContainer',
+                    context: 'signin',
+                    cancel_on_tap_outside: false,
                     use_fedcm_for_prompt: false
                 });
                 window.__googleLoginInitialized = true;

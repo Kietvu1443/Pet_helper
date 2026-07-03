@@ -328,12 +328,15 @@
             <div id="adminNote" class="admin-note"></div>
 
             <div class="tab-bar">
-                <button class="tab-btn active" data-status="pending">Chờ duyệt</button>
-                <button class="tab-btn" data-status="approved">Đã duyệt</button>
-                <button class="tab-btn" data-status="rejected">Đã từ chối</button>
+                <button class="tab-btn active" data-section="adoption" data-status="pending">Chờ duyệt (Nhận nuôi)</button>
+                <button class="tab-btn" data-section="adoption" data-status="approved">Đã duyệt</button>
+                <button class="tab-btn" data-section="adoption" data-status="rejected">Đã từ chối</button>
+                <button class="tab-btn" data-section="returns" data-status="pending" style="margin-left:14px;border-color:#f59e0b;color:#92400e;">🔄 Trả THÚ CƯỢNG - Chờ</button>
+                <button class="tab-btn" data-section="returns" data-status="approved_online">🔄 Trả - Đã duyệt online</button>
+                <button class="tab-btn" data-section="returns" data-status="completed">🔄 Trả - Hoàn tất</button>
             </div>
 
-            <div class="table-wrap">
+            <div class="table-wrap" id="adoptionTableWrap">
                 <table>
                     <thead>
                         <tr>
@@ -353,6 +356,25 @@
                     </tbody>
                 </table>
             </div>
+
+            <!-- Panel hồ sơ trả thú cưng -->
+            <div class="table-wrap" id="returnsTableWrap" style="display:none">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Người trả</th>
+                            <th>Tên thú cưng</th>
+                            <th>Lý do</th>
+                            <th>Ngày gửi</th>
+                            <th>Trạng thái</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody id="returnsTableBody">
+                        <tr><td colspan="6" class="table-message">Đang tải...</td></tr>
+                    </tbody>
+                </table>
+            </div>
         </section>
     </main>
 
@@ -365,8 +387,10 @@
             <div class="modal-body">
                 <div>
                     <img id="modalPetImage" src="https://via.placeholder.com/640x360?text=No+Image" alt="Pet image">
-                    <div class="meta-label" style="margin-top: 10px;">Lý do nhận nuôi</div>
+                    <div class="meta-label" style="margin-top: 10px;">Lý do</div>
                     <div class="meta-value" id="modalReason">-</div>
+                    <div class="meta-label" style="margin-top: 6px;">Ảnh minh chứng thực tế</div>
+                    <div id="modalReturnImages" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;"></div>
                 </div>
                 <div>
                     <div class="meta-label">Người xin nhận nuôi</div>
@@ -413,6 +437,9 @@
     <script>
         const adminNote = document.getElementById('adminNote');
         const adminTableBody = document.getElementById('adminTableBody');
+        const returnsTableBody = document.getElementById('returnsTableBody');
+        const adoptionTableWrap = document.getElementById('adoptionTableWrap');
+        const returnsTableWrap = document.getElementById('returnsTableWrap');
         const tabButtons = Array.from(document.querySelectorAll('.tab-btn'));
         const detailModal = document.getElementById('detailModal');
         const closeModalBtn = document.getElementById('closeModalBtn');
@@ -426,8 +453,11 @@
         const modalFooterActions = document.getElementById('modalFooterActions');
 
         let allRequests = [];
+        let allReturns = [];
         let currentFilter = 'pending';
+        let currentSection = 'adoption'; // 'adoption' | 'returns'
         let selectedRequest = null;
+        let selectedReturn = null;
         let hasAdminAccess = false;
         let isUpdatingStatus = false;
 
@@ -504,6 +534,41 @@
             }).join('');
         };
 
+        const REASON_LABELS = {
+            financial: '💰 Tài chính',
+            allergy: '🤧 Dị ứng',
+            housing: '🏠 Nhà ở',
+            behavior: '🐕 Hành vi',
+            medical: '🏥 Sức khỏe',
+            other: '📝 Khác',
+        };
+        const RETURN_STATUS_LABELS = {
+            pending: 'Chờ duyệt',
+            approved_online: 'Duyệt online',
+            completed: 'Hoàn tất',
+            rejected: 'Từ chối',
+            cancelled: 'Đã hủy',
+        };
+
+        const renderReturnsTable = () => {
+            const rows = allReturns.filter(r => r.status === currentFilter);
+            if (!rows.length) {
+                returnsTableBody.innerHTML = '<tr><td colspan="6" class="table-message">Không có hồ sơ trả nào trong trạng thái này.</td></tr>';
+                return;
+            }
+            returnsTableBody.innerHTML = rows.map(r => {
+                const d = r.created_at ? new Date(r.created_at).toLocaleDateString('vi-VN') : '-';
+                return `<tr>
+                    <td>${escapeHtml(r.display_name || r.user_name || '-')}<br><small style="color:#64748b">${escapeHtml(r.email || '')}</small></td>
+                    <td>${escapeHtml(r.pet_name_snapshot || '-')}</td>
+                    <td>${escapeHtml(REASON_LABELS[r.reason_category] || r.reason_category)}</td>
+                    <td>${escapeHtml(d)}</td>
+                    <td>${renderStatusPill(r.status)}</td>
+                    <td><button class="btn-view" data-return-id="${escapeHtml(r.id)}">Xem</button></td>
+                </tr>`;
+            }).join('');
+        };
+
         const closeModal = () => {
             detailModal.classList.remove('show');
             selectedRequest = null;
@@ -528,16 +593,25 @@
             detailModal.classList.add('show');
         };
 
-        const applyFilter = (status) => {
+        const applyFilter = (section, status) => {
+            currentSection = section;
             currentFilter = status;
             tabButtons.forEach((button) => {
-                if (button.dataset.status === status) {
+                if (button.dataset.section === section && button.dataset.status === status) {
                     button.classList.add('active');
                 } else {
                     button.classList.remove('active');
                 }
             });
-            renderTable();
+            if (section === 'adoption') {
+                adoptionTableWrap.style.display = '';
+                returnsTableWrap.style.display = 'none';
+                renderTable();
+            } else {
+                adoptionTableWrap.style.display = 'none';
+                returnsTableWrap.style.display = '';
+                renderReturnsTable();
+            }
         };
 
         const ensureAdminAccess = async () => {
@@ -576,41 +650,38 @@
 
         const loadAdminRequests = async () => {
             if (!hasAdminAccess) return;
-
             adminTableBody.innerHTML = '<tr><td colspan="7" class="table-message">Đang tải hồ sơ...</td></tr>';
-
             try {
-                const response = await fetch('/api/v1/adoption-requests/admin', {
+                const response = await fetch('/api/v1/adoption-requests/admin?pageSize=200', {
                     method: 'GET',
                     headers: { Accept: 'application/json' },
                     credentials: 'same-origin',
                 });
-
                 const payload = await parseJsonSafe(response);
-
-                if (response.status === 401) {
-                    hasAdminAccess = false;
-                    setNote('warning', 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
-                    adminTableBody.innerHTML = '<tr><td colspan="7" class="table-message">Bạn chưa đăng nhập.</td></tr>';
-                    openLoginOverlay();
-                    return;
-                }
-
-                if (response.status === 403) {
-                    hasAdminAccess = false;
-                    setNote('error', 'Bạn không có quyền truy cập dữ liệu xét duyệt.');
-                    adminTableBody.innerHTML = '<tr><td colspan="7" class="table-message">Không đủ quyền truy cập.</td></tr>';
-                    return;
-                }
-
-                if (!response.ok) {
-                    throw new Error((payload && payload.message) || 'Không thể tải danh sách hồ sơ.');
-                }
-
-                allRequests = payload && payload.data ? (payload.data.requests || []) : [];
+                if (response.status === 401) { hasAdminAccess = false; openLoginOverlay(); return; }
+                if (response.status === 403) { setNote('error', 'Bạn không có quyền truy cập dữ liệu xét duyệt.'); return; }
+                if (!response.ok) throw new Error((payload && payload.message) || 'Không thể tải danh sách hồ sơ.');
+                allRequests = payload && payload.data ? (payload.data.data || []) : [];
                 renderTable();
             } catch (error) {
                 adminTableBody.innerHTML = `<tr><td colspan="7" class="table-message">${escapeHtml(error.message || 'Không thể tải dữ liệu.')}</td></tr>`;
+            }
+        };
+
+        const loadAdminReturns = async () => {
+            if (!hasAdminAccess) return;
+            returnsTableBody.innerHTML = '<tr><td colspan="6" class="table-message">Đang tải...</td></tr>';
+            try {
+                const response = await fetch('/api/v1/pet-returns/admin?limit=200', {
+                    credentials: 'same-origin',
+                    headers: { Accept: 'application/json' },
+                });
+                const payload = await parseJsonSafe(response);
+                if (!response.ok) throw new Error(payload?.message || 'Không thể tải danh sách hồ sơ trả.');
+                allReturns = payload?.data?.data || [];
+                if (currentSection === 'returns') renderReturnsTable();
+            } catch (err) {
+                returnsTableBody.innerHTML = `<tr><td colspan="6" class="table-message">${escapeHtml(err.message)}</td></tr>`;
             }
         };
 
@@ -658,19 +729,131 @@
 
         tabButtons.forEach((button) => {
             button.addEventListener('click', () => {
-                applyFilter(button.dataset.status);
+                const section = button.dataset.section || 'adoption';
+                const status = button.dataset.status;
+                applyFilter(section, status);
+                if (section === 'returns') loadAdminReturns();
             });
         });
 
         adminTableBody.addEventListener('click', (event) => {
             const button = event.target.closest('[data-view-id]');
             if (!button) return;
-
             const itemId = Number(button.dataset.viewId);
             const requestItem = allRequests.find((item) => Number(item.id) === itemId);
             if (!requestItem) return;
             openModal(requestItem);
         });
+
+        returnsTableBody.addEventListener('click', async (event) => {
+            const button = event.target.closest('[data-return-id]');
+            if (!button) return;
+            const id = Number(button.dataset.returnId);
+            const rec = allReturns.find(r => Number(r.id) === id);
+            if (!rec) return;
+            openReturnDetailModal(rec);
+        });
+
+        function openReturnDetailModal(rec) {
+            selectedReturn = rec;
+            const imagesHtml = (rec.images && rec.images.length)
+                ? rec.images.map(src => `<img src="${escapeHtml(src)}" alt="proof" style="width:100%;height:100px;object-fit:cover;border-radius:8px;margin-right:6px;">`).join('')
+                : '<em style="color:#9ca3af">Không có ảnh</em>';
+
+            modalPetImage.src = rec.pet_image_snapshot || rec.pet_primary_image || 'https://via.placeholder.com/640x360?text=No+Image';
+            modalReason.innerHTML = `<strong>${escapeHtml(REASON_LABELS[rec.reason_category] || rec.reason_category)}</strong><br>${escapeHtml(rec.reason_detail)}`;
+            modalDisplayName.textContent = rec.display_name || rec.user_name || '-';
+            modalEmail.textContent = rec.email || '-';
+            modalAddress.textContent = rec.address || '-';
+            modalPetName.textContent = rec.pet_name_snapshot || '-';
+            modalStatus.innerHTML = renderStatusPill(rec.status);
+
+            // Ảnh minh chứng
+            const extraDiv = document.getElementById('modalReturnImages');
+            if (extraDiv) extraDiv.innerHTML = imagesHtml;
+
+            // Nút hành động
+            let actionsHtml = '<button class="btn btn-close" data-close-modal="1">Đóng</button>';
+            if (hasAdminAccess) {
+                if (rec.status === 'pending') {
+                    actionsHtml += '<button class="btn btn-reject" data-return-action="rejected">Từ chối</button>';
+                    actionsHtml += '<button class="btn btn-approve" data-return-action="approved_online" style="background:#f59e0b">✅ Duyệt Online</button>';
+                } else if (rec.status === 'approved_online') {
+                    actionsHtml += '<button class="btn btn-reject" data-return-action="rejected">Từ chối</button>';
+                    actionsHtml += '<button class="btn btn-approve" data-return-action="completed">🏡 Xác nhận đã nhận lại tại trạm</button>';
+                }
+            }
+            modalFooterActions.innerHTML = actionsHtml;
+
+            // Gắn sự kiện return action
+            modalFooterActions.querySelectorAll('[data-return-action]').forEach(btn => {
+                btn.addEventListener('click', () => updateReturnStatus(btn.dataset.returnAction));
+            });
+
+            detailModal.classList.add('show');
+        }
+
+        const updateReturnStatus = async (nextStatus) => {
+            if (!selectedReturn || isUpdatingStatus || !hasAdminAccess) return;
+
+            let adminNotes = '';
+            if (nextStatus === 'rejected') {
+                const { value, isConfirmed } = await Swal.fire({
+                    title: 'Lý do từ chối',
+                    input: 'textarea',
+                    inputPlaceholder: 'Nhập lý do từ chối (bắt buộc)...',
+                    showCancelButton: true,
+                    confirmButtonText: 'Xác nhận từ chối',
+                    cancelButtonText: 'Huỷ',
+                    confirmButtonColor: '#dc2626',
+                    inputValidator: (v) => !v?.trim() ? 'Vui lòng nhập lý do' : undefined,
+                });
+                if (!isConfirmed) return;
+                adminNotes = value;
+            } else if (nextStatus === 'completed') {
+                const res = await Swal.fire({
+                    icon: 'question',
+                    title: 'Xác nhận đã nhận lại thú cưng tại trạm?',
+                    text: 'Thao tác này sẽ chuyển trạng thái thú cưng về "sẵn sàng nhận nuôi". Không thể hoàn tác!',
+                    showCancelButton: true,
+                    confirmButtonText: 'Xác nhận',
+                    cancelButtonText: 'Huỷ',
+                    confirmButtonColor: '#16a34a',
+                });
+                if (!res.isConfirmed) return;
+            } else if (nextStatus === 'approved_online') {
+                const { value, isConfirmed } = await Swal.fire({
+                    title: 'Ghi chú hẹn lịch bàn giao',
+                    input: 'textarea',
+                    inputPlaceholder: 'Nhập ghi chú cho người dùng về lịch bàn giao (tùy chọn)...',
+                    showCancelButton: true,
+                    confirmButtonText: 'Duyệt Online',
+                    cancelButtonText: 'Huỷ',
+                    confirmButtonColor: '#f59e0b',
+                });
+                if (!isConfirmed) return;
+                adminNotes = value || '';
+            }
+
+            isUpdatingStatus = true;
+            try {
+                const res = await fetch(`/api/v1/pet-returns/${selectedReturn.id}/status`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({ status: nextStatus, adminNotes }),
+                });
+                const payload = await parseJsonSafe(res);
+                if (!res.ok) throw new Error(payload?.message || 'Không thể cập nhật trạng thái.');
+                closeModal();
+                setNote('warning', 'Cập nhật trạng thái hồ sơ trả thành công.');
+                await loadAdminReturns();
+            } catch (err) {
+                setNote('error', err.message || 'Không thể cập nhật.');
+            } finally {
+                isUpdatingStatus = false;
+            }
+        };
 
         closeModalBtn.addEventListener('click', closeModal);
         detailModal.addEventListener('click', (event) => {
@@ -693,10 +876,9 @@
 
         (async () => {
             const canAccess = await ensureAdminAccess();
-            if (!canAccess) {
-                return;
-            }
+            if (!canAccess) return;
             await loadAdminRequests();
+            await loadAdminReturns(); // pre-load
         })();
     </script>
 </body>

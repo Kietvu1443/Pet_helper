@@ -29,6 +29,7 @@ var reportRouter = require("./routes/report");
 var reportApiV1Router = require("./routes/api/v1/reports");
 var adminApiV1Router = require("./routes/api/v1/admin");
 var newsApiV1Router = require("./routes/api/v1/news");
+var petReturnApiV1Router = require("./routes/api/v1/petReturns");
 
 var app = express();
 
@@ -88,6 +89,7 @@ app.use("/api/v1", petApiV1Router);
 app.use("/api/v1", petSnapApiV1Router);
 app.use("/api/v1", favoritesApiV1Router);
 app.use("/api/v1", adoptionRequestApiV1Router);
+app.use("/api/v1", petReturnApiV1Router);
 app.use("/", indexRouter);
 app.use("/auth", authRouter);
 app.use("/adopt", petRouter);

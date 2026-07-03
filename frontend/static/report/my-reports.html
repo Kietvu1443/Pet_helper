@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Báo Cáo Của Tôi</title>
   <link rel="stylesheet" href="/stylesheets/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     .my-reports-page {
       background: #f4f7f6;
@@ -934,6 +935,210 @@
     .search-clear.vis {
       display: block;
     }
+
+    /* ── Return button ─────────────────────── */
+    .btn-return {
+        margin-top: 10px;
+        width: 100%;
+        padding: 8px 12px;
+        background: #fff7ed;
+        border: 1.5px solid #f59e0b;
+        color: #92400e;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.88rem;
+        cursor: pointer;
+        transition: background 0.18s;
+    }
+    .btn-return:hover { background: #fef3c7; }
+    .btn-return:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+    }
+    .return-pending-label {
+        margin-top: 10px;
+        display: block;
+        text-align: center;
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: #b45309;
+        background: #fef3c7;
+        padding: 5px 8px;
+        border-radius: 6px;
+    }
+    .return-completed-label {
+        margin-top: 10px;
+        display: block;
+        text-align: center;
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: #166534;
+        background: #dcfce7;
+        padding: 5px 8px;
+        border-radius: 6px;
+    }
+
+    /* ── Timeline ──────────────────────────── */
+    .timeline {
+        display: flex;
+        align-items: flex-start;
+        gap: 0;
+        margin-top: 10px;
+        margin-bottom: 4px;
+    }
+    .tl-step {
+        flex: 1;
+        text-align: center;
+        position: relative;
+    }
+    .tl-step:not(:last-child)::after {
+        content: '';
+        position: absolute;
+        top: 10px;
+        right: -50%;
+        width: 100%;
+        height: 2px;
+        background: #d1d5db;
+        z-index: 0;
+    }
+    .tl-step.done:not(:last-child)::after { background: #22c55e; }
+    .tl-dot {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #d1d5db;
+        margin: 0 auto 4px;
+        position: relative;
+        z-index: 1;
+    }
+    .tl-step.done .tl-dot { background: #22c55e; }
+    .tl-step.active .tl-dot { background: #f59e0b; box-shadow: 0 0 0 3px #fef3c7; }
+    .tl-step.rejected .tl-dot, .tl-step.cancelled .tl-dot { background: #ef4444; }
+    .tl-label { font-size: 0.68rem; color: #6b7280; line-height: 1.2; }
+    .tl-step.done .tl-label { color: #166534; font-weight: 600; }
+    .tl-step.active .tl-label { color: #92400e; font-weight: 700; }
+    .tl-step.rejected .tl-label, .tl-step.cancelled .tl-label { color: #b91c1c; font-weight: 700; }
+
+    /* ── Modal ─────────────────────────────── */
+    body .swal2-container {
+        z-index: 999999 !important;
+    }
+    .modal-overlay-r {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(15,23,42,0.5);
+        z-index: 900;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+    }
+    .modal-overlay-r.show { display: flex; }
+    .modal-box-r {
+        background: #fff;
+        border-radius: 16px;
+        width: 540px;
+        max-width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+    }
+    .modal-header-r {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 20px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+    .modal-header-r h2 { margin: 0; font-size: 1.1rem; color: #1f5133; }
+    .modal-body-r { padding: 20px; }
+    .modal-footer-r {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        padding: 14px 20px;
+        border-top: 1px solid #e5e7eb;
+        background: #f9fafb;
+        border-radius: 0 0 16px 16px;
+    }
+    .form-group-r {
+        margin-bottom: 14px;
+    }
+    .form-group-r label {
+        display: block;
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 5px;
+        text-align: left;
+    }
+    .form-group-r select,
+    .form-group-r textarea {
+        width: 100%;
+        padding: 9px 12px;
+        border: 1.5px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 0.92rem;
+        box-sizing: border-box;
+    }
+    .form-group-r select:focus,
+    .form-group-r textarea:focus {
+        outline: none;
+        border-color: #22c55e;
+    }
+    .image-preview-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        margin-top: 8px;
+    }
+    .image-preview-item {
+        border-radius: 8px;
+        overflow: hidden;
+        aspect-ratio: 1;
+        background: #f3f4f6;
+        position: relative;
+    }
+    .image-preview-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .char-count {
+        font-size: 0.78rem;
+        color: #9ca3af;
+        text-align: right;
+        margin-top: 3px;
+    }
+    .btn-modal-cancel {
+        border: 1px solid #d1d5db;
+        background: #fff;
+        color: #374151;
+        border-radius: 8px;
+        padding: 8px 16px;
+        cursor: pointer;
+        font-weight: 600;
+    }
+    .btn-modal-submit {
+        background: #1f5133;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 8px 16px;
+        cursor: pointer;
+        font-weight: 700;
+    }
+    .btn-modal-submit:disabled { opacity: 0.55; cursor: not-allowed; }
+    .notice-box {
+        background: #fff7ed;
+        border: 1px solid #fed7aa;
+        border-radius: 8px;
+        padding: 10px 12px;
+        font-size: 0.85rem;
+        color: #92400e;
+        margin-bottom: 14px;
+        text-align: left;
+    }
   </style>
   <link rel="stylesheet" href="/stylesheets/staticHeader.css">
   <style id="gtranslate-css">
@@ -1291,6 +1496,48 @@
         </div>
       </div>
 
+      <!-- ══ Modal: Gửi yêu cầu trả thú cưng ══ -->
+      <div class="modal-overlay-r" id="returnModal" style="z-index: 900 !important;">
+          <div class="modal-box-r">
+              <div class="modal-header-r">
+                  <h2>🐾 Gửi yêu cầu trả thú cưng</h2>
+                  <button class="btn-modal-cancel" id="closeReturnModal" style="border:none;background:none;font-size:1.2rem;cursor:pointer;">✕</button>
+              </div>
+              <div class="modal-body-r">
+                  <div class="notice-box">
+                      ⚠️ Yêu cầu sẽ được trạm xét duyệt online trước, sau đó hẹn lịch bàn giao thực tế. Vui lòng cung cấp thông tin chính xác và trung thực.
+                  </div>
+                  <div class="form-group-r">
+                      <label for="returnReason">Lý do trả *</label>
+                      <select id="returnReason">
+                          <option value="">-- Chọn lý do --</option>
+                          <option value="financial">💰 Tài chính khó khăn</option>
+                          <option value="allergy">🤧 Dị ứng với thú cưng</option>
+                          <option value="housing">🏠 Thay đổi nơi ở / không được nuôi</option>
+                          <option value="behavior">🐕 Hành vi khó kiểm soát</option>
+                          <option value="medical">🏥 Sức khỏe cá nhân</option>
+                          <option value="other">📝 Lý do khác</option>
+                      </select>
+                  </div>
+                  <div class="form-group-r">
+                      <label for="returnDetail">Mô tả chi tiết * <span style="font-weight:400;color:#9ca3af">(10-1000 ký tự)</span></label>
+                      <textarea id="returnDetail" rows="4" maxlength="1000" placeholder="Vui lòng mô tả chi tiết lý do bạn không thể tiếp tục nuôi thú cưng..."></textarea>
+                      <div class="char-count"><span id="returnDetailCount">0</span>/1000</div>
+                  </div>
+                  <div class="form-group-r">
+                      <label style="text-align:left; display:block;">Ảnh minh chứng thực tế <span style="font-weight:400;color:#9ca3af">(1-3 ảnh, tối đa 5MB/ảnh)</span></label>
+                      <input type="file" id="returnImages" accept="image/*" multiple style="display:none">
+                      <button type="button" onclick="document.getElementById('returnImages').click()" style="padding:7px 14px;border:1.5px dashed #d1d5db;border-radius:8px;background:#f9fafb;cursor:pointer;font-size:0.88rem;display:block;margin-top:5px;">📷 Chọn ảnh</button>
+                      <div class="image-preview-grid" id="imagePreviewGrid"></div>
+                  </div>
+              </div>
+              <div class="modal-footer-r">
+                  <button class="btn-modal-cancel" id="cancelReturnModal">Hủy</button>
+                  <button class="btn-modal-submit" id="submitReturnBtn">Gửi yêu cầu trả</button>
+              </div>
+          </div>
+      </div>
+
     </div>
   </main>
   <script>
@@ -1440,10 +1687,58 @@
   <script src="/javascripts/staticHeader.js"></script>
   <script src="/javascripts/staticFooter.js"></script>
   <script>
+    function escapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
 
     const adoptionStatusLabels = { pending: 'Chờ duyệt', approved: 'Đã duyệt', rejected: 'Từ chối' };
     let __allAdoptionData = [];
     let __adoptionFilter = '';
+
+    // ── Pet Returns integration ──────────────────────────────────────────
+    const TIMELINE_STEPS = [
+        { key: 'pending', label: 'Đã gửi' },
+        { key: 'approved_online', label: 'Duyệt online' },
+        { key: 'completed', label: 'Hoàn tất' }
+    ];
+    const TERMINAL_NEGATIVE = { rejected: 'Từ chối', cancelled: 'Đã hủy' };
+
+    const buildTimeline = (returnRecord) => {
+        if (!returnRecord) return '';
+        const st = returnRecord.status;
+        if (st === 'rejected' || st === 'cancelled') {
+            return `<div class="timeline"><div class="tl-step ${st}"><div class="tl-dot"></div><div class="tl-label">${TERMINAL_NEGATIVE[st]}</div></div></div>`;
+        }
+        const stepOrder = ['pending','approved_online','completed'];
+        const currentIdx = stepOrder.indexOf(st);
+        return `<div class="timeline">${TIMELINE_STEPS.map((s, i) => {
+            let cls = '';
+            if (i < currentIdx) cls = 'done';
+            else if (i === currentIdx) cls = 'active';
+            return `<div class="tl-step ${cls}"><div class="tl-dot"></div><div class="tl-label">${s.label}</div></div>`;
+        }).join('')}</div>`;
+    };
+
+    let myReturnMap = {}; // key: pet_id, value: returnRecord
+
+    async function loadMyReturns() {
+        try {
+            const res = await fetch('/api/v1/pet-returns/my', {
+                credentials: 'same-origin',
+                headers: { Accept: 'application/json' },
+            });
+            if (!res.ok) return;
+            const payload = await res.json();
+            const returns = payload?.data?.returns || [];
+            myReturnMap = {};
+            returns.forEach(r => { myReturnMap[r.pet_id] = r; });
+        } catch (_) {}
+    }
 
     function renderAdoptionCards() {
       const grid = document.getElementById('adoptionGrid');
@@ -1460,17 +1755,40 @@
         const st = String(item.status || 'pending');
         const date = item.created_at ? new Date(item.created_at).toLocaleDateString('vi-VN') : '-';
         const img = item.pet_image || '';
+
+        // ── Return status indicator ──────────────────────────────────
+        let returnHtml = '';
+        if (st === 'approved') {
+            const ret = myReturnMap[item.pet_id];
+            if (!ret) {
+                returnHtml = `<button class="btn-return" data-pet-id="${escapeHtml(item.pet_id)}" data-adoption-id="${escapeHtml(item.id)}">🔄 Trả thú cưng</button>`;
+            } else if (ret.status === 'completed') {
+                returnHtml = `<span class="return-completed-label">✅ Đã trả thú cưng thành công</span>${buildTimeline(ret)}`;
+            } else if (ret.status === 'rejected' || ret.status === 'cancelled') {
+                returnHtml = `<button class="btn-return" data-pet-id="${escapeHtml(item.pet_id)}" data-adoption-id="${escapeHtml(item.id)}">🔄 Gửi lại yêu cầu trả</button>`;
+            } else {
+                returnHtml = `<span class="return-pending-label">⏳ Yêu cầu trả: ${escapeHtml(ret.status === 'pending' ? 'Đang chờ duyệt' : 'Đã duyệt online – chờ bàn giao')}</span>${buildTimeline(ret)}`;
+            }
+        }
+
         return '<div class="adoption-card">' +
           '<img src="' + img + '" alt="' + (item.pet_name || 'Pet') + '" onerror="this.style.display=\'none\'">' +
           '<div class="adoption-card-body">' +
           '<h3>' + (item.pet_name || 'Không rõ tên') + '</h3>' +
           '<p class="adoption-meta">Loài: ' + (item.pet_type || '-') + '</p>' +
           '<p class="adoption-msg">' + (item.message || 'Không có ghi chú') + '</p>' +
-          '<div class="adoption-footer">' +
+          '<div class="adoption-footer" style="margin-bottom:6px;">' +
           '<span class="adoption-status ' + st + '">' + (adoptionStatusLabels[st] || st) + '</span>' +
           '<span style="color:#64748b;font-size:0.78rem;">' + date + '</span>' +
-          '</div></div></div>';
+          '</div>' +
+          returnHtml +
+          '</div></div>';
       }).join('');
+
+      // Gán sự kiện cho các nút trả
+      grid.querySelectorAll('.btn-return').forEach(btn => {
+          btn.addEventListener('click', () => openReturnModal(btn.dataset.petId));
+      });
     }
 
     function filterAdoption(status) {
@@ -1488,6 +1806,9 @@
       grid.innerHTML = '<div style="color:#64748b;padding:16px;">Đang tải...</div>';
       empty.classList.remove('show');
       try {
+        // Load my pet returns first
+        await loadMyReturns();
+
         const res = await fetch('/api/v1/adoption-requests/my', { credentials: 'same-origin' });
         const payload = await res.json();
         if (res.status === 401) {
@@ -1508,6 +1829,154 @@
         document.getElementById('adoptionStatus').style.color = '#b91c1c';
       }
     }
+
+    // ── Return Modal Logic ──────────────────────────────────────────────
+    let currentReturnPetId = null;
+    let isSubmittingReturn = false;
+    const returnModal = document.getElementById('returnModal');
+    const closeReturnModal = document.getElementById('closeReturnModal');
+    const cancelReturnModal = document.getElementById('cancelReturnModal');
+    const submitReturnBtn = document.getElementById('submitReturnBtn');
+    const returnReason = document.getElementById('returnReason');
+    const returnDetail = document.getElementById('returnDetail');
+    const returnImages = document.getElementById('returnImages');
+    const imagePreviewGrid = document.getElementById('imagePreviewGrid');
+    const returnDetailCount = document.getElementById('returnDetailCount');
+
+    function openReturnModal(petId) {
+        currentReturnPetId = petId;
+        returnReason.value = '';
+        returnDetail.value = '';
+        returnDetailCount.textContent = '0';
+        returnImages.value = '';
+        imagePreviewGrid.innerHTML = '';
+        returnModal.classList.add('show');
+    }
+
+    function closeModal() {
+        returnModal.classList.remove('show');
+        currentReturnPetId = null;
+    }
+
+    closeReturnModal.addEventListener('click', closeModal);
+    cancelReturnModal.addEventListener('click', closeModal);
+    returnModal.addEventListener('click', (e) => { if (e.target === returnModal) closeModal(); });
+
+    returnDetail.addEventListener('input', () => {
+        returnDetailCount.textContent = returnDetail.value.length;
+    });
+
+    returnImages.addEventListener('change', () => {
+        imagePreviewGrid.innerHTML = '';
+        const files = Array.from(returnImages.files).slice(0, 3);
+        files.forEach(file => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const div = document.createElement('div');
+                div.className = 'image-preview-item';
+                div.innerHTML = `<img src="${e.target.result}" alt="preview">`;
+                imagePreviewGrid.appendChild(div);
+            };
+            reader.readAsDataURL(file);
+        });
+    });
+
+    submitReturnBtn.addEventListener('click', async () => {
+        if (isSubmittingReturn) return;
+        if (!returnReason.value) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Thiếu thông tin',
+                text: 'Vui lòng chọn lý do trả thú cưng.',
+                confirmButtonColor: '#1f5133',
+                willOpen: () => {
+                    const c = Swal.getContainer();
+                    if (c) c.style.setProperty('z-index', '999999', 'important');
+                }
+            });
+            return;
+        }
+        if (returnDetail.value.trim().length < 10) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Mô tả quá ngắn',
+                text: 'Vui lòng mô tả chi tiết ít nhất 10 ký tự.',
+                confirmButtonColor: '#1f5133',
+                willOpen: () => {
+                    const c = Swal.getContainer();
+                    if (c) c.style.setProperty('z-index', '999999', 'important');
+                }
+            });
+            return;
+        }
+
+        const confirmed = await Swal.fire({
+            icon: 'question',
+            title: 'Xác nhận gửi yêu cầu trả?',
+            text: 'Yêu cầu sẽ được gửi đến trạm để xét duyệt. Bạn có chắc chắn không?',
+            showCancelButton: true,
+            confirmButtonText: 'Gửi yêu cầu',
+            cancelButtonText: 'Không',
+            confirmButtonColor: '#1f5133',
+            willOpen: () => {
+                const c = Swal.getContainer();
+                if (c) c.style.setProperty('z-index', '999999', 'important');
+            }
+        });
+        if (!confirmed.isConfirmed) return;
+
+        isSubmittingReturn = true;
+        submitReturnBtn.disabled = true;
+        submitReturnBtn.textContent = 'Đang gửi...';
+
+        try {
+            const formData = new FormData();
+            formData.append('petId', currentReturnPetId);
+            formData.append('reasonCategory', returnReason.value);
+            formData.append('reasonDetail', returnDetail.value.trim());
+            const files = Array.from(returnImages.files).slice(0, 3);
+            files.forEach(f => formData.append('images', f));
+
+            const res = await fetch('/api/v1/pet-returns', {
+                method: 'POST',
+                credentials: 'same-origin',
+                body: formData,
+            });
+            const payload = await res.json().catch(() => null);
+
+            if (!res.ok) {
+                throw new Error(payload?.message || 'Không thể gửi yêu cầu trả.');
+            }
+
+            closeModal();
+            Swal.fire({
+                icon: 'success',
+                title: 'Đã gửi!',
+                text: 'Yêu cầu trả thú cưng đã được gửi. Trạm sẽ liên hệ với bạn sớm.',
+                confirmButtonColor: '#1f5133',
+                willOpen: () => {
+                    const c = Swal.getContainer();
+                    if (c) c.style.setProperty('z-index', '999999', 'important');
+                }
+            });
+            await loadMyAdoption();
+        } catch (err) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi',
+                text: err.message,
+                confirmButtonColor: '#1f5133',
+                willOpen: () => {
+                    const c = Swal.getContainer();
+                    if (c) c.style.setProperty('z-index', '999999', 'important');
+                }
+            });
+        } finally {
+            isSubmittingReturn = false;
+            submitReturnBtn.disabled = false;
+            submitReturnBtn.textContent = 'Gửi yêu cầu trả';
+        }
+    });
 
     // Load adoption mặc định khi trang mở
     window.addEventListener('DOMContentLoaded', function () {

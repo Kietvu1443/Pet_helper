@@ -1022,6 +1022,68 @@
         checkAdoptionStatus();
     </script>
 
+    <div id="google_translate_element" style="display:none"></div>
+    <script>
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({ pageLanguage: 'vi', includedLanguages: 'vi,en,zh-TW,ja', autoDisplay: false }, 'google_translate_element');
+        }
+
+        function setLang(lang, label) {
+            var langLabel = document.getElementById('langBtnLabel');
+            if (langLabel) {
+                langLabel.textContent = label;
+            }
+
+            document.querySelectorAll('.lang-option').forEach(function (el) {
+                el.classList.toggle('active', el.dataset.lang === (lang === 'vi' ? 'vi' : lang.replace('/', '')));
+            });
+
+            var dropdown = document.getElementById('langDropdown');
+            if (dropdown) {
+                dropdown.classList.remove('open');
+            }
+
+            if (lang === 'vi') {
+                document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+                document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=' + location.hostname;
+                location.reload();
+                return;
+            }
+
+            var val = '/vi' + lang;
+            document.cookie = 'googtrans=' + val + '; path=/';
+            document.cookie = 'googtrans=' + val + '; path=/; domain=' + location.hostname;
+            location.reload();
+        }
+
+        function toggleLangDropdown(e) {
+            e.stopPropagation();
+            var dropdown = document.getElementById('langDropdown');
+            if (dropdown) {
+                dropdown.classList.toggle('open');
+            }
+        }
+
+        document.addEventListener('click', function () {
+            var dd = document.getElementById('langDropdown');
+            if (dd) dd.classList.remove('open');
+        });
+
+        (function () {
+            var m = document.cookie.match(/googtrans=\/vi\/([^;]+)/);
+            if (!m) return;
+            var map = { 'en': 'EN', 'zh-TW': '中文', 'ja': '日本語' };
+            var langLabel = document.getElementById('langBtnLabel');
+            if (map[m[1]] && langLabel) {
+                langLabel.textContent = map[m[1]];
+                document.querySelectorAll('.lang-option').forEach(function (el) {
+                    el.classList.toggle('active', el.dataset.lang === m[1]);
+                });
+            }
+        })();
+    </script>
+    <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
     <style>
         .pet-detail-page {
             padding: 40px 0 80px;

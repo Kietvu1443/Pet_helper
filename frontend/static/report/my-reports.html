@@ -2183,11 +2183,13 @@
       new google.translate.TranslateElement({ pageLanguage: 'vi', includedLanguages: 'vi,en,zh-TW,ja', autoDisplay: false }, 'google_translate_element');
     }
     function setLang(lang, label) {
-      document.getElementById('langBtnLabel').textContent = label;
+      var langLabel = document.getElementById('langBtnLabel');
+      if (langLabel) langLabel.textContent = label;
       document.querySelectorAll('.lang-option').forEach(function (el) {
         el.classList.toggle('active', el.dataset.lang === (lang === 'vi' ? 'vi' : lang.replace('/', '')));
       });
-      document.getElementById('langDropdown').classList.remove('open');
+      var dropdown = document.getElementById('langDropdown');
+      if (dropdown) dropdown.classList.remove('open');
       if (lang === 'vi') {
         document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
         document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=' + location.hostname;
@@ -2211,7 +2213,8 @@
       if (!m) return;
       var map = { 'en': 'EN', 'zh-TW': '中文', 'ja': '日本語' };
       if (map[m[1]]) {
-        document.getElementById('langBtnLabel').textContent = map[m[1]];
+        var langLabel = document.getElementById('langBtnLabel');
+        if (langLabel) langLabel.textContent = map[m[1]];
         document.querySelectorAll('.lang-option').forEach(function (el) {
           el.classList.toggle('active', el.dataset.lang === m[1]);
         });

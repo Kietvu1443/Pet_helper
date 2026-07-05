@@ -133,6 +133,7 @@ if (window.__staticHeaderInitialized) {
 
         '<a href="/admin" class="dropdown-item role-staff-only is-auth-hidden">&#9881;&#65039; Quản trị</a>',
         '<a href="/admin-shop" class="dropdown-item role-staff-only is-auth-hidden">&#128722; Quản lý cửa hàng</a>',
+        '<a href="/admin/adoption-requests" class="dropdown-item role-staff-only is-auth-hidden">&#128260; Quản lí yêu cầu trả thú cưng</a>',
         '<div class="dropdown-divider"></div>',
         '<a href="javascript:void(0)" onclick="window.handleLogout(event)" class="dropdown-item">&#x1F6AA; Đăng xuất</a>',
       ].join("");

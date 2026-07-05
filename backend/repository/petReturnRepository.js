@@ -63,9 +63,14 @@ const petReturnRepository = {
 
     const [rows] = await pool.execute(
       `SELECT pr.*,
-              u.display_name, u.name AS user_name, u.email, u.address,
-              p.name AS pet_name_current, p.pet_type, p.status AS pet_status,
-              pi.image_path AS pet_primary_image,
+              ANY_VALUE(u.display_name) AS display_name,
+              ANY_VALUE(u.name) AS user_name,
+              ANY_VALUE(u.email) AS email,
+              ANY_VALUE(u.address) AS address,
+              ANY_VALUE(p.name) AS pet_name_current,
+              ANY_VALUE(p.pet_type) AS pet_type,
+              ANY_VALUE(p.status) AS pet_status,
+              ANY_VALUE(pi.image_path) AS pet_primary_image,
               GROUP_CONCAT(pri.image_path ORDER BY pri.id SEPARATOR '|') AS images
        FROM pet_returns pr
        INNER JOIN users u ON u.id = pr.user_id

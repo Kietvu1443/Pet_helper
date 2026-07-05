@@ -977,6 +977,17 @@
         padding: 5px 8px;
         border-radius: 6px;
     }
+    .return-approved-label {
+        margin-top: 10px;
+        display: block;
+        text-align: center;
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: #1e3a8a;
+        background: #dbeafe;
+        padding: 5px 8px;
+        border-radius: 6px;
+    }
 
     /* ── Timeline ──────────────────────────── */
     .timeline {
@@ -1766,8 +1777,10 @@
                 returnHtml = `<span class="return-completed-label">✅ Đã trả thú cưng thành công</span>${buildTimeline(ret)}`;
             } else if (ret.status === 'rejected' || ret.status === 'cancelled') {
                 returnHtml = `<button class="btn-return" data-pet-id="${escapeHtml(item.pet_id)}" data-adoption-id="${escapeHtml(item.id)}">🔄 Gửi lại yêu cầu trả</button>`;
+            } else if (ret.status === 'approved_online') {
+                returnHtml = `<span class="return-approved-label">📅 Yêu cầu trả: Đã duyệt online – chờ bàn giao</span>${buildTimeline(ret)}`;
             } else {
-                returnHtml = `<span class="return-pending-label">⏳ Yêu cầu trả: ${escapeHtml(ret.status === 'pending' ? 'Đang chờ duyệt' : 'Đã duyệt online – chờ bàn giao')}</span>${buildTimeline(ret)}`;
+                returnHtml = `<span class="return-pending-label">⏳ Yêu cầu trả: Đang chờ duyệt</span>${buildTimeline(ret)}`;
             }
         }
 

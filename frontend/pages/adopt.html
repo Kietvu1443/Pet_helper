@@ -932,7 +932,7 @@
             const previousHasNextPage = hasNextPage;
 
             try {
-                const url = `/api/v1/pets?page=${requestedPage}&limit=${PETS_PER_PAGE}&search=${encodeURIComponent(search)}&species=${encodeURIComponent(species)}`;
+                const url = `/api/v1/pets?page=${requestedPage}&limit=${PETS_PER_PAGE}&search=${encodeURIComponent(search)}&species=${encodeURIComponent(species)}&status=available`;
                 const response = await fetch(url, {
                     method: 'GET',
                     headers: {

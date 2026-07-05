@@ -131,6 +131,24 @@
             color: #b91c1c;
         }
 
+        .status-pill.approved_online {
+            background: #eff6ff;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+        }
+
+        .status-pill.completed {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .status-pill.cancelled {
+            background: #f3f4f6;
+            color: #4b5563;
+            border: 1px solid #e5e7eb;
+        }
+
         .btn-view {
             border: 1px solid #9bc7ad;
             background: #fff;
@@ -503,9 +521,10 @@
             }
         };
 
-        const renderStatusPill = (status) => {
+        const renderStatusPill = (status, isReturn = false) => {
             const safeStatus = String(status || 'pending');
-            const label = statusLabels[safeStatus] || 'Không rõ';
+            const map = isReturn ? RETURN_STATUS_LABELS : statusLabels;
+            const label = map[safeStatus] || 'Không rõ';
             return `<span class="status-pill ${escapeHtml(safeStatus)}">${escapeHtml(label)}</span>`;
         };
 
@@ -563,7 +582,7 @@
                     <td>${escapeHtml(r.pet_name_snapshot || '-')}</td>
                     <td>${escapeHtml(REASON_LABELS[r.reason_category] || r.reason_category)}</td>
                     <td>${escapeHtml(d)}</td>
-                    <td>${renderStatusPill(r.status)}</td>
+                    <td>${renderStatusPill(r.status, true)}</td>
                     <td><button class="btn-view" data-return-id="${escapeHtml(r.id)}">Xem</button></td>
                 </tr>`;
             }).join('');
@@ -766,7 +785,7 @@
             modalEmail.textContent = rec.email || '-';
             modalAddress.textContent = rec.address || '-';
             modalPetName.textContent = rec.pet_name_snapshot || '-';
-            modalStatus.innerHTML = renderStatusPill(rec.status);
+            modalStatus.innerHTML = renderStatusPill(rec.status, true);
 
             // Ảnh minh chứng
             const extraDiv = document.getElementById('modalReturnImages');

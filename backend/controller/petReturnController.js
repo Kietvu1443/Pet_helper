@@ -28,6 +28,7 @@ const petReturnController = {
       });
       return sendSuccess(res, 201, "Gửi yêu cầu trả thú cưng thành công", { return: result });
     } catch (err) {
+      console.error("[petReturnController] createReturn error:", err);
       return sendError(res, err.status || 500, err.message || "Không thể gửi yêu cầu trả");
     }
   },

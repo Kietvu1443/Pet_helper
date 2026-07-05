@@ -208,6 +208,17 @@
             padding: 5px 8px;
             border-radius: 6px;
         }
+        .return-approved-label {
+            margin-top: 10px;
+            display: block;
+            text-align: center;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            background: #dbeafe;
+            padding: 5px 8px;
+            border-radius: 6px;
+        }
 
         /* ── Timeline ──────────────────────────── */
         .timeline {
@@ -251,6 +262,9 @@
         .tl-step.rejected .tl-label, .tl-step.cancelled .tl-label { color: #b91c1c; font-weight: 700; }
 
         /* ── Modal ─────────────────────────────── */
+        body .swal2-container {
+            z-index: 999999 !important;
+        }
         .modal-overlay {
             display: none;
             position: fixed;
@@ -644,8 +658,10 @@
                         returnHtml = `<span class="return-completed-label">✅ Đã trả thú cưng thành công</span>${buildTimeline(ret)}`;
                     } else if (ret.status === 'rejected' || ret.status === 'cancelled') {
                         returnHtml = `<button class="btn-return" data-pet-id="${escapeHtml(item.pet_id)}" data-adoption-id="${escapeHtml(item.id)}">🔄 Gửi lại yêu cầu trả</button>`;
+                    } else if (ret.status === 'approved_online') {
+                        returnHtml = `<span class="return-approved-label">📅 Yêu cầu trả: Đã duyệt online – chờ bàn giao</span>${buildTimeline(ret)}`;
                     } else {
-                        returnHtml = `<span class="return-pending-label">⏳ Yêu cầu trả: ${escapeHtml(ret.status === 'pending' ? 'Đang chờ duyệt' : 'Đã duyệt online – chờ bàn giao')}</span>${buildTimeline(ret)}`;
+                        returnHtml = `<span class="return-pending-label">⏳ Yêu cầu trả: Đang chờ duyệt</span>${buildTimeline(ret)}`;
                     }
                 }
 
@@ -807,6 +823,10 @@
                 confirmButtonText: 'Gửi yêu cầu',
                 cancelButtonText: 'Không',
                 confirmButtonColor: '#1f5133',
+                willOpen: () => {
+                    const c = Swal.getContainer();
+                    if (c) c.style.setProperty('z-index', '999999', 'important');
+                }
             });
             if (!confirmed.isConfirmed) return;
 

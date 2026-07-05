@@ -359,6 +359,7 @@
         const adoptLoginBtnEl = document.getElementById('adoptLoginBtn');
 
         let currentAuthUser = null;
+        let currentPetStatus = null;
 
         function escapeHtml(value) {
             return String(value || '')
@@ -475,11 +476,16 @@
 
         function syncActionVisibility() {
             const isAuthenticated = !!currentAuthUser;
+            const isAdopted = currentPetStatus === 'adopted';
             if (adoptBtnEl) {
-                adoptBtnEl.style.display = isAuthenticated ? 'inline-flex' : 'none';
+                if (isAdopted) {
+                    adoptBtnEl.style.display = 'inline-flex';
+                } else {
+                    adoptBtnEl.style.display = isAuthenticated ? 'inline-flex' : 'none';
+                }
             }
             if (adoptLoginBtnEl) {
-                adoptLoginBtnEl.style.display = isAuthenticated ? 'none' : 'inline-flex';
+                adoptLoginBtnEl.style.display = (isAuthenticated || isAdopted) ? 'none' : 'inline-flex';
             }
             if (likeBtnEl) {
                 likeBtnEl.style.display = isAuthenticated ? 'inline-flex' : 'none';
@@ -513,6 +519,7 @@
         }
 
         function applyPetData(pet) {
+            currentPetStatus = pet.status;
             const petId = pet.id || getCurrentPetId();
             const imageList = Array.isArray(pet.images) ? pet.images : [];
             const firstImagePath = imageList.length > 0
@@ -595,6 +602,30 @@
             if (pet.name) {
                 document.title = `${pet.name} - Pet Helper`;
             }
+
+            if (pet.status === 'adopted') {
+                if (adoptBtnEl) {
+                    adoptBtnEl.disabled = true;
+                    adoptBtnEl.style.opacity = '0.65';
+                    adoptBtnEl.style.background = '#6b7280';
+                    adoptBtnEl.style.cursor = 'default';
+                    if (!adoptBtnEl.innerHTML.includes('Đã được duyệt')) {
+                        adoptBtnEl.innerHTML = '🤝 Đã được nhận nuôi';
+                    }
+                }
+            } else {
+                if (adoptBtnEl) {
+                    const isPendingOrApproved = adoptBtnEl.innerHTML.includes('Chờ duyệt') || adoptBtnEl.innerHTML.includes('Đã được duyệt');
+                    if (!isPendingOrApproved) {
+                        adoptBtnEl.disabled = false;
+                        adoptBtnEl.style.opacity = '1';
+                        adoptBtnEl.style.background = '';
+                        adoptBtnEl.style.cursor = '';
+                        adoptBtnEl.innerHTML = '🐾 Đăng ký nhận nuôi';
+                    }
+                }
+            }
+            syncActionVisibility();
         }
 
         async function hydratePetDetailFromApi() {
@@ -1010,6 +1041,8 @@
                     adoptBtnEl.style.cursor = 'default';
                     if (existing.status === 'approved') {
                         adoptBtnEl.innerHTML = '✅ Đã được duyệt nhận nuôi';
+                    } else if (currentPetStatus === 'adopted') {
+                        adoptBtnEl.innerHTML = '🤝 Đã được nhận nuôi';
                     } else {
                         adoptBtnEl.innerHTML = '⏳ Đã đăng ký — Chờ duyệt';
                     }
